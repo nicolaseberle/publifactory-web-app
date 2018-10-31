@@ -9,11 +9,11 @@
         <el-button type="primary" icon="plus" @click.native="createArticle">{{$t('operation.create')}}</el-button>
       </div>
       <el-table :data="articles" border height="100%">
-        <el-table-column property="_id" label="ID" sortable min-width="20"></el-table-column>
+        <!--<el-table-column property="_id" label="ID" sortable min-width="20"></el-table-column>-->
         <el-table-column property="title" :label="$t('article.model.title')" sortable min-width="100"></el-table-column>
         <!--<el-table-column :label="$t('article.model.author')" sortable min-width="100">-->
         <el-table-column width="120px" align="center" label="Author">
-          <template slot-scope="articles">
+          <template slot-scope="articles" >
 
             <tr v-for="author in articles.row.authors">
               <span style="white-space: pre;">{{ author.name }}</span>
@@ -61,6 +61,17 @@ export default {
   data () {
     return {
       search: {
+      },
+      filters: {
+        statusFilter(status) {
+          const statusMap = {
+            published: 'success',
+            draft: 'info',
+            deleted: 'danger',
+            rejected: 'danger'
+          }
+          return statusMap[status]
+        }
       },
       form: {
         title: ''

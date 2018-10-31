@@ -61,13 +61,6 @@ Here is some important/frequently-used configuration:
 - `backend.mongo.uri` change this if your mongodb uri is not matched
 - `backend.serverFrontend` whether to server the frontend code. If set to `true` the express server servers the frontend code, otherwise you may need a http server like nginx to server frontend code and there is a nginx configuration at `nginx.example.conf` (default true)
 
-## Environment variable
-When you deploy your app to you cloud server, it's easy to config you app with `environment variable`, here is the supported:  
-- `APP_port` or `PORT`: set to `backend.port`
-- `APP_HOST` or `APP_IP` or `HOST` or `IP`: set to `backend.ip`
-- `MONGODB_URI` or `MONGOHQ_URI`: set to `backend.mongo.uri`
-- `SECRET`: set to `backend.secrets.session`
-
 ## Notice
 The generated app is just a template to build your app system fast, maybe it can't meet your needs, so you need to do some change at this issue.
 
