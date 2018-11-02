@@ -1,6 +1,6 @@
 <template>
   <div id="app-main">
-    <nav-menu></nav-menu>
+    <nav-menu ></nav-menu>
     <div class="app-wrapper">
       <x-header></x-header>
       <div class="app-container" :class="{active: loggedIn}">
@@ -54,7 +54,7 @@ body
   margin 0
   padding 0
   font-size .75rem
-  background-color #f0f0f0
+  background-color #f8f8f8
 /**
 *::before
 *::after

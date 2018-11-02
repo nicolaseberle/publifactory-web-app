@@ -2,7 +2,13 @@
   <transition name="menu">
     <div v-if="loggedIn" id="app-menu">
       <router-link class="logo-wrapper" to="/" exact>PubliFactory</router-link>
-      <el-menu :default-active="$route.path" theme="dark" :router="true">
+      <el-menu
+            :default-active="$route.path"
+            :router="true"
+            background-color="#304156"
+            text-color="#bfcbd9"
+            active-text-color="#409EFF"
+      >
         <el-menu-item index="/users">{{$t('menu.users')}}</el-menu-item>
         <el-menu-item index="/things">{{$t('menu.things')}}</el-menu-item>
         <el-menu-item index="/articles">{{$t('menu.articles')}}</el-menu-item>
@@ -13,17 +19,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import locales from 'locales/menu'
-import { Menu, Submenu, MenuItem, MenuItemGroup } from 'element-ui'
+
+import { NavMenu } from 'element-ui'
 export default {
   locales,
   computed: {
     ...mapGetters(['loggedIn'])
-  },
-  components: {
-    [Menu.name]: Menu,
-    [Submenu.name]: Submenu,
-    [MenuItem.name]: MenuItem,
-    [MenuItemGroup.name]: MenuItemGroup
   }
 }
 </script>
@@ -43,11 +44,13 @@ export default {
   .logo-wrapper
     display block
     padding-left 1rem
+    padding-bottom 100px
     height $header-height
     line-height @height
     color #fff
     font-size 1.25rem
-    background-color #435065
+    font-weight:800
+    background-color #304156
   .el-submenu
   .el-menu-item
     .iconfont

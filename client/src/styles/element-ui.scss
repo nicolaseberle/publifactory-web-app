@@ -1,6 +1,4 @@
- //覆盖一些element-ui样式
-
- .el-breadcrumb__inner, .el-breadcrumb__inner a{
+.el-breadcrumb__inner, .el-breadcrumb__inner a{
   font-weight: 400!important;
 }
 
@@ -14,7 +12,15 @@
    display: none;
  }
 
+ .el-table th {
+     background-color: #F8F8F8;
+     border-bottom: 2px solid #000000;
+     text-align: center;
+ }
+
+
  .cell {
+
    .el-tag {
      margin-right: 0px;
    }
@@ -34,25 +40,58 @@
   }
  }
 
+ .author-col {
+   .cell {
+     padding: 0 5px;
+     text-align: center;
+   }
+ }
+ .doi-col{
+  .cell {
+    padding: 0 5px;
+    text-align: center;
+    .el-tag {
+      margin-right: 0px;
+    }
+  }
+}
+
  .status-col {
    .cell {
-     padding: 0 10px;
+     padding: 0 5px;
      text-align: center;
      .el-tag {
        margin-right: 0px;
      }
+     .el-button-status{
+       Cursor:text !important;
+       Text-Decoration: None !important; }
+    }
+  }
+
+ .date-col {
+   .cell {
+     padding: 0 5px;
+     text-align: center;
    }
  }
 
- //暂时性解决dialog 问题 https://github.com/ElemeFE/element/issues/2461
  .el-dialog {
    transform: none;
    left: 0;
    position: relative;
+   text-align: center;
    margin: 0 auto;
  }
+ .action-col{
+   .cell {
+     padding: 0 5px;
+     text-align: center;
+     .el-button-action{}
+   }
+ }
 
- //文章页textarea修改样式
+
  .article-textarea {
    textarea {
      padding-right: 40px;

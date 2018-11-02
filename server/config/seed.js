@@ -29,20 +29,28 @@ function createArticles(user_tmp) {
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
-
             authors: [user_tmp[1]._id,user_tmp[2]._id],
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],
             published: true,
+            status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
 
           }, {
             title: 'New Article 2',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
-
             authors: [user_tmp[1]._id,user_tmp[3]._id],
             reviewers : [user_tmp[2]._id,user_tmp[4]._id],
             published: true,
+            status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
+
+          }, {
+            title: 'New Article 3',
+            abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
+            authors: [user_tmp[1]._id,user_tmp[3]._id],
+            published: true,
+            status: 'Draft',
+            doi: '',
 
           });
           return article;

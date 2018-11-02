@@ -1,4 +1,5 @@
 <template>
+  <div class="app-container">
   <content-module name="things">
     <el-breadcrumb separator="/" style="margin-bottom:.5rem">
       <el-breadcrumb-item to="/dashboard">{{$t('thing.breadcrumb.home')}}</el-breadcrumb-item>
@@ -34,6 +35,7 @@
       </span>
     </el-dialog>
   </content-module>
+</div>
 </template>
 <script>
 import { thing as thingRes } from 'resources'

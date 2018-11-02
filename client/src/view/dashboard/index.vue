@@ -1,6 +1,5 @@
 <template>
-  <div class="app-container">
-  <content-module name="articles">
+  <content-module name="app-container">
     <el-breadcrumb separator="/" style="margin-bottom:.5rem">
       <el-breadcrumb-item to="/dashboard">{{$t('article.breadcrumb.home')}}</el-breadcrumb-item>
       <el-breadcrumb-item>{{$t('article.breadcrumb.current')}}</el-breadcrumb-item>
@@ -52,7 +51,6 @@
       </span>
     </el-dialog>
   </content-module>
-</div>
 </template>
 <script>
 import DataTable from 'components/DataTable'

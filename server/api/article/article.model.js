@@ -8,6 +8,7 @@ mongoose.plugin(slug);
 const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
+  creationDate: { type: Date, default: Date.now },
   title: {
     type: String,
     required: true,
@@ -27,6 +28,10 @@ const ArticleSchema = new Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  status: {
+    type: String,
+    default: 'draft',
   },
   doi: {
     type: String,

@@ -11,10 +11,18 @@ import { sync } from 'vuex-router-sync'
 sync(store, router)
 
 // ui library
-import './element-ui'
+
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+Vue.use(ElementUI)
+Vue.use(require('vue-moment'))
+
+import './styles/index.scss' // global css
 
 // ajax
 import './http'
+
+import * as filters from './filters' // global filters
 
 const userPromise = store.dispatch('initUserInfo')
 routerHook(userPromise)
@@ -23,6 +31,11 @@ routerHook(userPromise)
 import App from './App'
 
 import './socket'
+
+// register global utility filters.
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 userPromise.then(() => {
   const app = new Vue({

@@ -1,4 +1,5 @@
 <template>
+  <div class="app-container">
   <content-module name="users">
     <el-breadcrumb separator="/" style="margin-bottom:.5rem">
       <el-breadcrumb-item to="/dashboard">{{$t('user.breadcrumb.home')}}</el-breadcrumb-item>
@@ -35,6 +36,7 @@
       </span>
     </el-dialog>
   </content-module>
+</div>
 </template>
 <script>
 import DataTable from 'components/DataTable'

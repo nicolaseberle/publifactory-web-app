@@ -2,7 +2,12 @@ import Vue from 'vue'
 import store from '../store'
 import router from '../router'
 import VueResource from 'vue-resource'
-import { Message } from 'element-ui'
+
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+Vue.use(ElementUI)
+// import { Message } from 'element-ui'
+
 Vue.use(VueResource)
 // Vue.http.options.emulateJSON = true
 Vue.http.options.root = '/api'
@@ -40,7 +45,7 @@ Vue.http.interceptors.push((request, next) => {
       return
     }
     if (response.status === 401) {
-      Message.error(Vue.t('http.error.E401'))
+      this.$message('http.error.E401')
       store.dispatch('logout').then(() => {
         const location = window.location
         const path = store.state.route.fullpath || (location.pathname + location.search)
@@ -49,22 +54,20 @@ Vue.http.interceptors.push((request, next) => {
       return
     }
     if (response.status === 403) {
-      Message.error(Vue.t('http.error.E403'))
+      this.$message('http.error.E403')
       return
     }
     if (response.status === 404) {
-      Message.error(Vue.t('http.error.E404'))
+      this.$message('http.error.E404')
       return
     }
     if (response.status === 500) {
-      Message.error(Vue.t('http.error.E500'))
+      this.$message('http.error.E500')
       return
     }
     // other errors
     if (!response.ok) {
-      Message.error({
-        message: response.data || Vue.t('http.error.others')
-      })
+      this.$message('http.error.others')
     }
   })
 })
