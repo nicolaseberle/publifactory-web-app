@@ -21,6 +21,7 @@ const routes = [{
   component: (resolve) => {
     import('../view/CommonView.vue').then(resolve)
   },
+  meta: { title: 'Dashboard' },
   children: [...otherModuleRoutes, {
     path: '/', redirect: '/dashboard'
   }]

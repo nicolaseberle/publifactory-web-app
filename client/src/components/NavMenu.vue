@@ -10,7 +10,6 @@
             active-text-color="#409EFF"
       >
         <el-menu-item index="/users">{{$t('menu.users')}}</el-menu-item>
-        <el-menu-item index="/things">{{$t('menu.things')}}</el-menu-item>
         <el-menu-item index="/articles">{{$t('menu.articles')}}</el-menu-item>
       </el-menu>
     </div>
