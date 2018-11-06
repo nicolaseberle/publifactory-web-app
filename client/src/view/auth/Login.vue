@@ -21,12 +21,6 @@
           native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
       </el-form-item>
     </el-form>
-    <!-- <div class="lang">
-      <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
-        <el-option v-for="lang in globalConfig.langs" :key="lang.value"
-          :label="lang.label" :value="lang.value"></el-option>
-      </el-select>
-    </div> -->
   </div>
 </template>
 <script>
@@ -101,7 +95,7 @@ $input-width = 15rem
     height 100%
     background-size cover
     background-position 100%
-    background-image url('../../assets/images/login-bg.jpg')
+    background-image url('../../assets/images/login-bg-2.jpg')
   > h1
     position relative
     margin 0 0 1rem
@@ -113,7 +107,7 @@ $input-width = 15rem
     .el-input__inner
       color $color-black-exact-light
       border-color $color-silver-light
-      background-color transparent
+      background-color rgba(255,255,255,1)
       &:focus
         color $color-black
         border-color $color-black
