@@ -9,10 +9,11 @@ export default [{
     import('../view/UserList.vue').then(resolve)
   }
 }, {
-  path: '/articles',
+  path: '/articles/:id',
   component: (resolve) => {
     import('../view/ArticleList.vue').then(resolve)
-  }
+  },
+  hidden: true
 }, {
   path: '/dashboard',
   component: (resolve) => {

@@ -9,6 +9,8 @@ var router = express.Router()
 
 
 router.get('/', articlesController.getArticles);
+router.get('/:id', articlesController.findArticleById);
+router.put('/:id', articlesController.findArticlebyIdAndUpdate);
 /*router.get('/:slug', articlesController.findArticleBySlug);
 router.get('/draft/:slug', articlesController.findEditedArticleBySlug);
 router.post('/', articlesController.createArticle);

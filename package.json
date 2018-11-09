@@ -26,10 +26,12 @@
     "lint": "eslint --ext .js,.vue client/src"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.15.2",
     "composable-middleware": "^0.3.0",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
+    "cors": "^2.8.5",
     "crypto": "0.0.3",
     "ejs": "^2.5.2",
     "element-ui": "2.4.6",

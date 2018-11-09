@@ -9,6 +9,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
 var express = require('express')
 var mongoose = require('mongoose')
+var cors = require('cors')
 var config = require('../config').backend
 
 // Connect to database
@@ -19,6 +20,7 @@ require('./config/seed')
 
 // Setup server
 var app = express()
+app.use(cors())
 var server = require('http').createServer(app)
 var socketio = require('socket.io')(server)
 require('./config/socketio')(socketio)

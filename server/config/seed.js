@@ -32,6 +32,19 @@ function createArticles(user_tmp) {
             authors: [user_tmp[1]._id,user_tmp[2]._id],
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],
             published: true,
+            content: gen_text,
+            arr_content: [{
+                            title:"Introduction",
+                            content: gen_text,
+                          },
+                          {
+                            title:"Results",
+                            content: gen_text,
+                          },
+                          {
+                            title:"Conclusion",
+                            content: gen_text,
+                          }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
 
@@ -41,6 +54,19 @@ function createArticles(user_tmp) {
             authors: [user_tmp[1]._id,user_tmp[3]._id],
             reviewers : [user_tmp[2]._id,user_tmp[4]._id],
             published: true,
+            content: gen_text,
+            arr_content: [{
+                            title:"Introduction",
+                            content: gen_text,
+                          },
+                          {
+                            title:"Results",
+                            content: gen_text,
+                          },
+                          {
+                            title:"Conclusion",
+                            content: gen_text,
+                          }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
 
@@ -49,6 +75,7 @@ function createArticles(user_tmp) {
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
             authors: [user_tmp[1]._id,user_tmp[3]._id],
             published: true,
+            content: gen_text,
             status: 'Draft',
             doi: '',
 

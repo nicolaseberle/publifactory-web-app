@@ -5,5 +5,7 @@ export const thing = Vue.resource('things{/_id}')
 export const user = Vue.resource('users{/_id}', {}, {
   changePassword: { method: 'put', url: 'users{/id}/password' }
 })
-// things resource
-export const article = Vue.resource('articles{/_id}')
+// artcile resource
+export const article = Vue.resource('articles{/_id}', {}, {
+  saveChange: { method: 'put', url: 'articles{/id}' }
+})

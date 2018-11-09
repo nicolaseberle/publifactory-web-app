@@ -52,3 +52,60 @@ exports.getArticles = async (req, res, next) => {
     return next(err);
   }
 };
+
+/**
+ * getArticleBySlug - Returns an article requested by slug
+ *
+ * @function findArticleBySlug
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.findArticleById = async (req, res, next) => {
+  try {
+    console.log(JSON.stringify("findArticleById", null, "\t"))
+    const article = await Article.findById(req.params.id).populate('authors reviewers').lean();
+    console.log(JSON.stringify(article, null, "\t"))
+    if (!article) return res.sendStatus(404);
+
+    return res.status(200).json(article);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+
+/**
+ * @function findArticleBySlugAndUpdate
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
+  try {
+    /*req.check(ArticleValidator.checkArticleData);
+    const validationResult = await req.getValidationResult();
+    if (!validationResult.isEmpty()) {
+      return res.status(400).json({ errors: validationResult.array() });
+    }*/
+    console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
+    const title = req.body.title.trim();
+    const abstract = req.body.abstract.trim();
+    const content = req.body.content;
+    const published = req.body.published;
+    const article = await Article
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $set: { title, abstract, content, published } },
+        { new: true }
+      );
+
+    if (!article) return res.sendStatus(404);
+
+    return res.status(200).json(article);
+  } catch (err) {
+    return next(err);
+  }
+};

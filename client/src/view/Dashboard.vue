@@ -10,7 +10,7 @@
         </el-table-column>
         <el-table-column min-width="300px"  label="Title">
           <template slot-scope="scope">
-            <router-link :to="'/example/edit/'+scope.row.id" class="link-type">
+            <router-link :to="'/articles/'+scope.row.id" class="link-type">
               <span>{{ scope.row.title }}</span>
             </router-link>
           </template>
@@ -18,7 +18,7 @@
         <el-table-column class-name="author-col" width="120px"  label="Author">
           <template slot-scope="articles">
             <div v-for="author in articles.row.authors">
-              {{ author.name | capitalize }}
+              {{ author.name }}
             </div>
           </template>
         </el-table-column>
@@ -88,13 +88,6 @@ export default {
       },
       search: {
       },
-      filters: {
-        capitalize(value) {
-          if (!value) return ''
-          value = value.toString()
-          return value.charAt(0).toUpperCase() + value.slice(1)
-        }
-      },
       form: {
         title: ''
       },
@@ -114,9 +107,6 @@ export default {
     DataTable
   },
   methods: {
-    headerRowStyle({row, rowIndex}) {
-      return {"backgroundColor":"red"};
-    },
     fetch (current = 1) {
       this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
         this.articles = list.articles
