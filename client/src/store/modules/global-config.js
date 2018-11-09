@@ -5,7 +5,6 @@ import { STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_SIDEBAR, STORE_KEY_CONFIG_PAGE_
 
 const state = {
   lang: lang,
-  sidebar: 'open',
   langs: [{
     label: '中文',
     value: 'zh-CN'
@@ -18,7 +17,6 @@ const state = {
 
 const mutations = {
   UPDATE (state, config) {
-    state.sidebar = config.sidebar || state.sidebar
     state.lang = config.lang || state.lang
     state.pageLimit = config.pageLimit || state.pageLimit
   },
@@ -43,13 +41,8 @@ const actions = {
       Vue.config.lang = config.lang
       save(STORE_KEY_CONFIG_LANG, config.lang)
     }
-    if (config.sidebar !== state.sidebar) {
-      Vue.config.sidebar = config.sidebar
-      save(STORE_KEY_CONFIG_SIDEBAR, config.sidebar)
-    }
     commit('UPDATE', config)
     save(STORE_KEY_CONFIG_LANG, state.lang)
-    save(STORE_KEY_CONFIG_SIDEBAR, state.sidebar)
     save(STORE_KEY_CONFIG_PAGE_LIMIT, state.pageLimit)
   }
 }

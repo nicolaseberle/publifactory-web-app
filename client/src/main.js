@@ -3,6 +3,8 @@ import Vue from 'vue'
 import './stored'
 // locale
 import './locales'
+import './icons'
+import './errorLog' // error log
 
 // router and store
 import store from './store'

@@ -4,11 +4,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
-import otherModuleRoutes from './module'
+import Layout from '../view/layout/Layout'
+import componentsRouter from './modules/components'
+// import otherModuleRoutes from './module'
 
 Vue.use(VueRouter)
 
-const routes = [{
+export const constantRouterMap = [{
   path: '/login',
   component: (resolve) => {
     import('../view/auth/Login.vue').then(resolve)
@@ -17,6 +19,18 @@ const routes = [{
     skipAuth: true
   }
 }, {
+  path: '',
+  component: Layout,
+  redirect: 'dashboard',
+  children: [
+    {
+      path: 'dashboard',
+      component: () => import('../view/dashboard/index.vue'),
+      name: 'Dashboard',
+      meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+    }
+  ]
+}, /* {
   path: '/',
   component: (resolve) => {
     import('../view/CommonView.vue').then(resolve)
@@ -25,7 +39,7 @@ const routes = [{
   children: [...otherModuleRoutes, {
     path: '/', redirect: '/dashboard'
   }]
-}, {
+}, */ {
   path: '*',
   component: {
     render (h) {
@@ -38,9 +52,12 @@ const router = new VueRouter({
   mode: 'history',
   linkActiveClass: 'active',
   scrollBehavior: () => ({ y: 0 }),
-  routes
+  routes: constantRouterMap
 })
 
+export const asyncRouterMap = [
+  componentsRouter
+]
 /*
 export const asyncRouterMap = [
   {

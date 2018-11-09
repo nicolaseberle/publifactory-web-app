@@ -31,15 +31,7 @@
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
           </router-link>
-          <!--
-          <router-link to="/">
-            <el-dropdown-item>
-              {{ $t('navbar.profil') }}
-            </el-dropdown-item>
-          </router-link>-->
-          <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">{{ $t('navbar.logOut') }}</span>
-          </el-dropdown-item>
+          <el-dropdown-item @click.native="doLogout">{{$t('navbar.logout')}}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -47,13 +39,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Breadcrumb from '../../../components/Breadcrumb'
 import Hamburger from '../../../components/Hamburger'
 import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
 import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
+import locales from '../../../locales/header'
 
 export default {
   components: {
@@ -66,6 +59,10 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'username',
+      'loggedIn',
+      'userId',
+      'globalConfig',
       'sidebar',
       'name',
       'avatar',
@@ -73,14 +70,20 @@ export default {
     ])
   },
   methods: {
+    ...mapActions(['logout', 'updateGlobalConfig']),
+    doLogout () {
+      this.logout().then(() => {
+        this.$router.push('/login')
+      })
+    },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
-    logout() {
+    /*logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
       })
-    }
+    }*/
   }
 }
 </script>

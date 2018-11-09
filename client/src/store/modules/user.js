@@ -8,6 +8,8 @@ import { STORE_KEY_USERNAME, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN } f
 const state = {
   _id: '',
   role: 'guest',
+  roles: ['guest'],
+  avatar: '',
   username: username,
   access_token, // eslint-disable-line
   refresh_token // eslint-disable-line
@@ -23,8 +25,16 @@ const mutations = {
     state._id = ''
     state.username = ''
     state.role = 'guest'
+    state.roles = []
+    state.avatar = ''
     state.access_token = '' // eslint-disable-line
     state.refresh_token = '' // eslint-disable-line
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+  },
+  SET_AVATAR: (state, avatar) => {
+    state.avatar = avatar
   }
 }
 
@@ -49,12 +59,19 @@ const actions = {
   login ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
       login(payload.username, payload.password).then(data => {
+        if (!data) {
+          reject('error')
+        }
         getUserInfo(data.token).then(user => {
           const userInfo = merge({}, user, {
             username: payload.username,
             access_token: data.token, // eslint-disable-line
             refresh_token: '' // eslint-disable-line
           })
+          var arrRoles = []
+          arrRoles.push(user.role)
+          commit('SET_ROLES', arrRoles)
+          commit('SET_AVATAR', user.avatar)
           commit('SET_USER_INFO', userInfo)
           saveMulti([{
             key: STORE_KEY_USERNAME,
@@ -95,6 +112,12 @@ const getters = {
   },
   userRole (state) {
     return state.role
+  },
+  userRoles (state) {
+    return state.roles
+  },
+  userAvatar (state) {
+    return state.avatar
   },
   accessToken (state) {
     return state.access_token // eslint-disable-line

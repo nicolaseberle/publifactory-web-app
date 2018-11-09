@@ -8,10 +8,18 @@ var UserSchema = new Schema({
   name: String,
   email: { type: String, lowercase: true },
   username: { type: String, lowercase: true },
+  avatar: {
+    type: String,
+    default: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+  },
   role: {
     type: String,
     default: 'user'
   },
+  roles: [{
+    type: String,
+    default: 'user'
+  }],
   hashedPassword: String,
   provider: String,
   salt: String
@@ -37,7 +45,8 @@ UserSchema
   .get(function () {
     return {
       'name': this.name,
-      'role': this.role
+      'role': this.role,
+      'roles': this.roles
     }
   })
 
@@ -47,7 +56,8 @@ UserSchema
   .get(function () {
     return {
       '_id': this._id,
-      'role': this.role
+      'role': this.role,
+      'roles': this.roles
     }
   })
 

@@ -1,14 +1,14 @@
 <template>
   <div class="app-wrapper">
-    <!--<sidebar class="sidebar-container"/>-->
+    <sidebar class="sidebar-container"/>
     <transition name="router" mode="out-in">
-      <router-view></router-view>
+      <!--<router-view></router-view>-->
     </transition>
   </div>
 </template>
 
-<!--<script>
-import { Sidebar, AppMain } from './layout/components'
+<script>
+import { Sidebar } from './layout/components'
 import ResizeMixin from './layout/mixin/ResizeHandler'
 
 export default {
@@ -34,7 +34,7 @@ export default {
     }
   }
 }
-</script>-->
+</script>
 <style lang="stylus" scoped>
 .router-enter-active
 .router-leave-active
