@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import { lang, pageLimit } from '../../stored'
 import { save } from '../../storage'
-import { STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_PAGE_LIMIT } from '../../constants'
+import { STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_SIDEBAR, STORE_KEY_CONFIG_PAGE_LIMIT } from '../../constants'
 
 const state = {
   lang: lang,
-  // value see http://stackoverflow.com/questions/5580876/navigator-language-list-of-all-languages
+  sidebar: 'open',
   langs: [{
     label: '中文',
     value: 'zh-CN'
@@ -18,6 +18,7 @@ const state = {
 
 const mutations = {
   UPDATE (state, config) {
+    state.sidebar = config.sidebar || state.sidebar
     state.lang = config.lang || state.lang
     state.pageLimit = config.pageLimit || state.pageLimit
   },
@@ -32,13 +33,23 @@ const actions = {
     commit('UPDATE_LANG', lang)
     save(STORE_KEY_CONFIG_LANG, lang)
   },
+  changeSideBar ({ commit }, sidebar) {
+    Vue.config.sidebar = sidebar
+    commit('UPDATE_SIDEBAR', sidebar)
+    save(STORE_KEY_CONFIG_SIDEBAR, sidebar)
+  },
   updateGlobalConfig ({ commit, state, dispatch }, config) {
     if (config.lang !== state.lang) {
       Vue.config.lang = config.lang
       save(STORE_KEY_CONFIG_LANG, config.lang)
     }
+    if (config.sidebar !== state.sidebar) {
+      Vue.config.sidebar = config.sidebar
+      save(STORE_KEY_CONFIG_SIDEBAR, config.sidebar)
+    }
     commit('UPDATE', config)
     save(STORE_KEY_CONFIG_LANG, state.lang)
+    save(STORE_KEY_CONFIG_SIDEBAR, state.sidebar)
     save(STORE_KEY_CONFIG_PAGE_LIMIT, state.pageLimit)
   }
 }

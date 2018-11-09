@@ -2,7 +2,7 @@
   <div class="app-container">
     <content-module name="articles">
       <data-table ref="articles" @page-change="fetch">
-        <el-table :data="articles" fit highlight-current-row style="width: 100%" header-row-style="headerRowStyle">
+        <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
             <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>

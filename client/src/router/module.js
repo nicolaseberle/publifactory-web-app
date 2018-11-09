@@ -14,10 +14,5 @@ export default [{
     import('../view/ArticleList.vue').then(resolve)
   },
   hidden: true
-}, {
-  path: '/dashboard',
-  component: (resolve) => {
-    import('../view/dashboard/index.vue').then(resolve)
-  }
 }
 ]

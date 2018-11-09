@@ -9,9 +9,6 @@ function commonValidator (regex, defaultMessage, rule, value, callback) {
   }
 }
 
-/**
- * 邮箱验证
- */
 export function email (rule, value, callback) {
   commonValidator(EMAIL_REGEX, Vue.t('validation.email'), rule, value, callback)
 }

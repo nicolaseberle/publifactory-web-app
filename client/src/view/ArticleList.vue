@@ -3,11 +3,8 @@
     <el-row :gutter="20">
       <el-col :span="16">
         <div class="editor-container"  >
-          <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
           Titre : {{ postForm.title }}
-        </MDinput>
         <ul id="example-1">
-          Authors:
           <li v-for="item in postForm.authors">
             {{ item.name }}
           </li>
@@ -24,6 +21,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import MarkdownEditor from '../components/MarkdownEditor'
 import { validateURL } from '../utils/validate'
 import { article as articleRes } from 'resources'
@@ -94,7 +92,6 @@ export default {
       html: '',
       content: "content",
       rules: {
-        image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
@@ -102,6 +99,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['sidebar']),
     contentShortLength() {
       return this.postForm.content_short.length
     }

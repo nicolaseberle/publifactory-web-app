@@ -1,10 +1,40 @@
 <template>
   <div class="app-wrapper">
+    <!--<sidebar class="sidebar-container"/>-->
     <transition name="router" mode="out-in">
       <router-view></router-view>
     </transition>
   </div>
 </template>
+
+<!--<script>
+import { Sidebar, AppMain } from './layout/components'
+import ResizeMixin from './layout/mixin/ResizeHandler'
+
+export default {
+  name: 'Layout',
+  components: {
+    Sidebar,
+    AppMain
+  },
+  mixins: [ResizeMixin],
+  computed: {
+    classObj() {
+      return {
+        hideSidebar: !this.sidebar.opened,
+        openSidebar: this.sidebar.opened,
+        withoutAnimation: this.sidebar.withoutAnimation,
+        mobile: this.device === 'mobile'
+      }
+    }
+  },
+  methods: {
+    handleClickOutside() {
+      this.$store.dispatch('closeSideBar', { withoutAnimation: false })
+    }
+  }
+}
+</script>-->
 <style lang="stylus" scoped>
 .router-enter-active
 .router-leave-active
@@ -18,7 +48,7 @@
   transform translate3D(-100%, 0, 0)
 </style>
 <style rel="stylesheet/scss" lang="scss" scoped>
-  @import "src/styles/mixin.scss";
+  @import "../styles/mixin.scss";
   .app-wrapper {
     @include clearfix;
     position: relative;
