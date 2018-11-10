@@ -70,7 +70,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import { merge } from 'lodash'
 import { user as userResource } from 'resources'
-import locales from 'locales/header'
+import locales from 'locales/navbar'
 export default {
   locales,
   data () {

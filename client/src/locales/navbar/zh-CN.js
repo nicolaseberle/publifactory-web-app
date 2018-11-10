@@ -1,5 +1,5 @@
 export default {
-  header: {
+  navbar: {
     settings: '用户设置',
     password: '修改密码',
     logout: '退出',

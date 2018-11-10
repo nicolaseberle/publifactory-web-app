@@ -46,9 +46,10 @@ import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
 import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
-import locales from '../../../locales/header'
+import locales from '../../../locales/navbar'
 
 export default {
+  locales,
   components: {
     Breadcrumb,
     Hamburger,

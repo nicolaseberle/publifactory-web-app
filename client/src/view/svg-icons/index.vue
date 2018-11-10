@@ -22,7 +22,7 @@
 
 <script>
 import icons from './requireIcons'
-import clipboard from '@/utils/clipboard'
+import clipboard from '../../utils/clipboard'
 
 export default {
   name: 'Icons',

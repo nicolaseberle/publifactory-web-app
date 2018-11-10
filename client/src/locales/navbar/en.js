@@ -1,9 +1,10 @@
 export default {
-  header: {
+  navbar: {
     settings: 'User settings',
     password: 'Password',
     logout: 'Logout',
     langSetting: 'Lang',
+    dashboard: 'Dashboard',
     pageLimit: 'Data count limit per page',
     _password: {
       description: 'Change your password. It\'s strongly recommend that you should pick a complex password.',
