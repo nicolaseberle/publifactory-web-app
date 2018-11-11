@@ -6,6 +6,7 @@ export default {
     langSetting: 'Lang',
     dashboard: 'Dashboard',
     pageLimit: 'Data count limit per page',
+    size: 'size',
     _password: {
       description: 'Change your password. It\'s strongly recommend that you should pick a complex password.',
       old: 'Old password',

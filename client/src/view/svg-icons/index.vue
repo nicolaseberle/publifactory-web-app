@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     generateIconCode(symbol) {
+      console.log(symbol)
       return `<svg-icon icon-class="${symbol}" />`
     },
     handleClipboard(text, event) {

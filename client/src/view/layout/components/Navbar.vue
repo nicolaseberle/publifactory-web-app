@@ -17,7 +17,6 @@
         </el-tooltip>
 
         <lang-select class="international right-menu-item"/>
-
       </template>
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
@@ -26,11 +25,11 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <!--<router-link to="/">-->
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          </router-link>
+          <!--</router-link>-->
           <el-dropdown-item @click.native="doLogout">{{$t('navbar.logout')}}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -46,10 +45,12 @@ import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
 import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
-import locales from '../../../locales/navbar'
+import locales from  '../../../locales/navbar'
+// import locales2 from '../../../locales/header'
 
 export default {
   locales,
+  // locales2,
   components: {
     Breadcrumb,
     Hamburger,

@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import Cookies from 'js-cookie'
+
 // read localStorage stored data
 import './stored'
 // locale
@@ -12,11 +14,18 @@ import router, { hook as routerHook } from './router'
 import { sync } from 'vuex-router-sync'
 sync(store, router)
 
+import i18n from './lang' // Internationalization
+import './locales'
+import './icons'
 // ui library
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
+Vue.use(ElementUI, {
+  size: Cookies.get('size') || 'medium', // set element-ui default size
+  i18n: (key, value) => i18n.t(key, value)
+})
 Vue.use(require('vue-moment'))
 
 import './styles/index.scss' // global css
@@ -43,6 +52,7 @@ userPromise.then(() => {
   const app = new Vue({
     router,
     store,
+    i18n,
     ...App // Object spread copying everything from App.vue
   })
   // actually mount to DOM

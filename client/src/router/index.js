@@ -27,7 +27,7 @@ export const constantRouterMap = [{
       path: 'dashboard',
       component: () => import('../view/dashboard/index.vue'),
       name: 'Dashboard',
-      meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+      meta: { title: 'Dashboard', icon: 'dashboard', noCache: true }
     }
   ]
 }, /* {
