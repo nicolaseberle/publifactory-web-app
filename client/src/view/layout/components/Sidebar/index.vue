@@ -1,6 +1,8 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
-    <router-link class="logo-wrapper" to="/" exact>PubliFactory</router-link>
+    <div class="logo-wrapper">
+         <router-link v-if="!isCollapse" to="/" exact>PubliFactory</router-link>
+    </div>
     <el-menu
       :show-timeout="200"
       :default-active="$route.path"

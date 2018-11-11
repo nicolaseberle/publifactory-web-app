@@ -5,9 +5,37 @@ var Schema = mongoose.Schema
 var crypto = require('crypto')
 
 var UserSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    default: 'None'
+  },
   email: { type: String, lowercase: true },
   username: { type: String, lowercase: true },
+  orcid : {
+    type: String,
+    default: 'None'
+  },
+  lastname: {
+    type: String,
+    default: 'None'
+  },
+  firstname: {
+    type: String,
+    default: 'None'
+  },
+  email: {
+    type: String,
+    lowercase: true,
+    required: true
+  },
+  field: {
+    type: String,
+    default: 'None'
+  },
+  laboratory: {
+    type: String,
+    default: 'None'
+  },
   avatar: {
     type: String,
     default: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',

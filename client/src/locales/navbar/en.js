@@ -4,6 +4,7 @@ export default {
     password: 'Password',
     logout: 'Logout',
     langSetting: 'Lang',
+    screenfull: 'fullscreen',
     dashboard: 'Dashboard',
     pageLimit: 'Data count limit per page',
     size: 'size',

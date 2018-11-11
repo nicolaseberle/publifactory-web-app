@@ -26,12 +26,10 @@ export const constantRouterMap = [{
   meta: { title: 'Dashboard', icon: 'dashboard', noCache: true },
   children: [
     {
-      path: '/articles/:id',
-      name: 'Article',
-      meta: { title: 'Articles', icon: 'edit', noCache: true },
-      component: (resolve) => {
-        import('../view/ArticleList.vue').then(resolve)
-      }
+      path: '',
+      name: 'Articles',
+      meta: { title: 'Articles', icon: 'list', noCache: true },
+      component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
@@ -43,7 +41,22 @@ export const constantRouterMap = [{
       component: () => import('../view/dashboard/index.vue')
     }
   ]
-}, /*
+},
+{
+  path: '',
+  component: Layout,
+  hidden: true,
+  children: [
+    {
+      path: '/articles/:id',
+      name: 'Article',
+      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      component: (resolve) => {
+        import('../view/ArticleList.vue').then(resolve)
+      }
+    }]
+},
+/*
 { path: '',
   component: Layout,
   redirect: 'Article',

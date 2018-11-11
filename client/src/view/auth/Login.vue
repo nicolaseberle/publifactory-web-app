@@ -98,7 +98,7 @@ $input-width = 15rem
     background-image url('../../assets/images/login-bg-2.jpg')
   > h1
     position relative
-    margin 0 0 1rem
+    margin 10rem  0 1rem
     text-align center
     z-index 1
   > form
