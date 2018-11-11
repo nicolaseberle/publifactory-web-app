@@ -25,9 +25,20 @@
     .scrollbar-wrapper {
       overflow-x: hidden!important;
       background-color: $menuBg;
-      padding-top: 110px;
+      padding-top: 20px;
       .el-scrollbar__view {
         height: 100%;
+      }
+      .logo-wrapper {
+        display: block;
+        padding-left: 1rem;
+        padding-bottom: 100px;
+        height: 40px;
+        line-height: 30px;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 800;
+        background-color: #304156;
       }
     }
     .el-scrollbar__bar.is-vertical{

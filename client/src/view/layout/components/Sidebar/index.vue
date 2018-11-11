@@ -1,5 +1,6 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
+    <router-link class="logo-wrapper" to="/" exact>PubliFactory</router-link>
     <el-menu
       :show-timeout="200"
       :default-active="$route.path"

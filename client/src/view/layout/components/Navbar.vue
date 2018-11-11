@@ -11,11 +11,11 @@
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
-
+<!--
         <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
           <size-select class="international right-menu-item"/>
         </el-tooltip>
-
+-->
         <lang-select class="international right-menu-item"/>
       </template>
 
@@ -43,7 +43,7 @@ import Breadcrumb from '../../../components/Breadcrumb'
 import Hamburger from '../../../components/Hamburger'
 import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
-import SizeSelect from '../../../components/SizeSelect'
+// import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
 import locales from  '../../../locales/navbar'
 // import locales2 from '../../../locales/header'
@@ -56,7 +56,7 @@ export default {
     Hamburger,
     ErrorLog,
     Screenfull,
-    SizeSelect,
+    // SizeSelect,
     LangSelect
   },
   computed: {

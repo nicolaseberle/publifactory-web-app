@@ -19,27 +19,46 @@ export const constantRouterMap = [{
     skipAuth: true
   }
 }, {
-  path: '',
+  path: '/',
   component: Layout,
   redirect: 'dashboard',
+  // hidden: true,
+  meta: { title: 'Dashboard', icon: 'dashboard', noCache: true },
   children: [
     {
+      path: '/articles/:id',
+      name: 'Article',
+      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      component: (resolve) => {
+        import('../view/ArticleList.vue').then(resolve)
+      }
+    },
+    {
+      path: '/journal',
+      name: 'Journals',
+      meta: { title: 'Journal', icon: 'list', noCache: true }
+    },
+    {
       path: 'dashboard',
-      component: () => import('../view/dashboard/index.vue'),
-      name: 'Dashboard',
-      meta: { title: 'Dashboard', icon: 'dashboard', noCache: true }
+      component: () => import('../view/dashboard/index.vue')
     }
   ]
-}, /* {
-  path: '/',
-  component: (resolve) => {
-    import('../view/CommonView.vue').then(resolve)
-  },
-  meta: { title: 'Dashboard' },
-  children: [...otherModuleRoutes, {
-    path: '/', redirect: '/dashboard'
-  }]
-}, */ {
+}, /*
+{ path: '',
+  component: Layout,
+  redirect: 'Article',
+  children: [
+    {
+      path: '/articles/:id',
+      meta: { title: 'Article', noCache: true },
+      component: (resolve) => {
+        import('../view/ArticleList.vue').then(resolve)
+      },
+      hidden: true
+    }
+  ]
+}, */
+{
   path: '*',
   component: {
     render (h) {

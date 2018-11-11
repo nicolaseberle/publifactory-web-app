@@ -1,7 +1,7 @@
 <template>
   <div class="components-container">
     <el-row :gutter="20">
-      <el-col :span="16">
+      <el-col :span="12">
         <div class="editor-container"  >
           Titre : {{ postForm.title }}
         <ul id="example-1">
@@ -12,7 +12,7 @@
           <markdown-editor id="contentEditor" @input="save($event)" v-model="postForm.content" :height="300" :z-index="20"/>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :span="12">
         <el-button type="primary" icon="el-icon-document" @click="markdown2Html">Generate PDF</el-button>
         <div v-html="html"/>
       </el-col>

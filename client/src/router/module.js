@@ -1,4 +1,4 @@
-export default [{
+export default [ /* {
   path: '/dashboard',
   component: (resolve) => {
     import('../view/Dashboard.vue').then(resolve)
@@ -8,11 +8,13 @@ export default [{
   component: (resolve) => {
     import('../view/UserList.vue').then(resolve)
   }
-}, {
-  path: '/articles/:id',
-  component: (resolve) => {
-    import('../view/ArticleList.vue').then(resolve)
-  },
-  hidden: true
-}
+}, */
+  {
+    path: '/articles/:id',
+    meta: { title: 'Article', noCache: true },
+    component: (resolve) => {
+      import('../view/ArticleList.vue').then(resolve)
+    },
+    hidden: true
+  }
 ]
