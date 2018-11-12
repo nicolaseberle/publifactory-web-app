@@ -1,0 +1,48 @@
+// Scss Rules
+// ----------
+
+.accordion-control-left,
+.accordion-control-right {
+    cursor: pointer;
+}
+
+.accordion-control-left::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -24px;
+    background-image: url("/assets/images/icons/Accordion.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 10px;
+    transform: translateY(-75%);
+}
+
+.accordion-control-right::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -24px;
+    background-image: url("/assets/images/icons/Accordion.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 10px;
+    height: 6px;
+    transform: translateY(-50%) rotateZ(-180deg);
+}
+
+.collapsed-180deg,
+.collapsed-90deg {
+    cursor: pointer;
+}
+
+.collapsed-180deg::before {
+    content: '';
+    transform: translateY(-75%) rotateZ(180deg);
+}
+
+.collapsed-90deg::before {
+    content: '';
+    transform: translateY(-50%) rotateZ(-90deg);
+}

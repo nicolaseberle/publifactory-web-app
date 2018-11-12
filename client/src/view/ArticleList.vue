@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <div class="components-container">
     <el-row :gutter="20">
       <el-col :span="22">
@@ -11,18 +11,59 @@
         </ul>
           <markdown-editor id="contentEditor" @input="save($event)" v-model="postForm.content" :height="300" :z-index="20"/>
         </div>
-      </el-col>
+      </el-col>-->
       <!--
       <el-col :span="12">
         <el-button type="primary" icon="el-icon-document" @click="markdown2Html">Generate PDF</el-button>
         <div v-html="html"/>
       </el-col>-->
-
+<!--
 
     </el-row>
   </div>
 </template>
+-->
+<template>
+  <div class="components-container">
+    <main class="article">
+        <article>
+            <header>
+                <h2>Research article <span class="category grey">Physics</span></h2>
+                <div class="article-info">
+                    <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
+                    <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
+                    <p class="font-dnltp-bold font-style-bold">20 Reads</p>
+                    <p class="font-dnltp-bold font-style-bold">Cited 200 times</p>
+                </div>
+                <p class="article-doi">DOI: 1200.22/2344</p>
+                <h1>{{ postForm.title }} </i></h1>
+                <div class="article-author">
+                  <li v-for="item in postForm.authors">
+                    {{ item.firstname }} {{ item.lastname }}
+                  </li>
+                </div>
 
+                <div class="article-tag">
+                    <a href="#" title="Search more articles with this tag" ><h4>Aging</h4></a>
+                </div>
+            </header>
+            <section  class="abstract">
+                <h2>Abstract</h2><br>
+                {{postForm.abstract}}
+            </section>
+            <div v-for="(item,key) in postForm.arr_content">
+              <section id="item.title">
+                  <h2 class="accordion-control-left">{{ item.title }}</h2>
+                  <div class="accordion-panel">
+                    <span v-html="item.content"></span>
+
+                  </div>
+              </section>
+            </div>
+        </article>
+    </main>
+  </div>
+</template>
 <script>
 import { mapGetters } from 'vuex'
 import MarkdownEditor from '../components/MarkdownEditor'

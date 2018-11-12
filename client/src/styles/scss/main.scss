@@ -1,0 +1,50 @@
+// Main scss file
+// Which connect to all other scss files
+// -------------------------------------
+
+// Charset declaration
+// -------------------
+@charset 'utf-8';
+
+// All importation files
+// Normalize css for compatibility
+// -------------------------------
+@import 'normalize';
+// Import bootstrap style
+// ----------------------
+@import 'bootstrap/scss/bootstrap';
+// Import all fonts
+// ----------------
+@import 'common/fonts';
+// Import all common
+// -----------------
+@import 'common/colorVariables';
+// Import mixins
+// -------------
+@import 'common/mixins';
+// Import body rules
+// -----------------
+@import 'common/body';
+// Import screens rules
+// --------------------
+@import 'common/screens';
+// Import header template
+// ----------------------
+@import 'header/header';
+// Import main template
+// --------------------
+@import 'main/main';
+// Import aside template
+// ---------------------
+@import 'aside/aside';
+// Import footer template
+// ----------------------
+@import 'footer/footer';
+// Import helpers
+// --------------
+@import 'common/helpers';
+// Import scrollbar style
+// ----------------------
+@import 'common/scrollbar';
+
+@import 'modal/modal';

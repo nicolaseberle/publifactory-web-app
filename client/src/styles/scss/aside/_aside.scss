@@ -1,0 +1,465 @@
+// Import aside variables
+// ----------------------
+
+@import 'variables';
+
+// Scss rules
+// ----------
+
+aside.related {
+    position: relative;
+    display: block;
+    margin: 300px 0 0;
+
+    h4 {
+        font-family: 'DNLTPro-medium';
+        font-size: 36px;
+        font-weight: 500;
+        color: black;
+        margin: 0;
+        text-align: center;
+    }
+
+    section {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin: 57px 7%;
+
+        a {
+            text-decoration: none;
+
+            article {
+                position: relative;
+                box-sizing: border-box;
+                width: 280px;
+                height: 270px;
+                padding: 14px 20px;
+                box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+
+                header {
+                    z-index: auto;
+                    height: auto;
+
+                    div.article-info {
+                        font-size: 16px;
+                    }
+
+                    h1 {
+                        margin: 10px 0 auto;
+                        width: 100%;
+                        @include text-overflow(24px, 30px, 2);
+                    }
+                }
+
+                section.summary {
+                    margin: 56px 0;
+
+                    p {
+                        font-family: 'DroidSerif-regular';
+                        font-weight: 500;
+                        font-style: normal;
+                        color: $blackColor;
+                        margin: 0 auto;
+                        width: 100%;
+                        hyphens: auto;
+                        @include text-overflow(16px, 18px, 3);
+                    }
+                }
+
+                section.counter {
+                    position: absolute;
+                    bottom: 18px;
+                    left: 0;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    flex-direction: row;
+                    align-items: flex-end;
+                    justify-content: flex-end;
+                    height: auto;
+                    width: 260px;
+                    margin: 0;
+
+                    span {
+                        position: relative;
+                        font-family: 'DNLTPro-regular';
+                        font-size: 16px;
+                        line-height: 13px;
+                        font-style: normal;
+                        font-weight: normal;
+                        color: $greyColor;
+                        height: 13px;
+                        width: auto;
+                        margin-left: 32px;
+                    }
+
+                    span::before {
+                        position: absolute;
+                        content: '';
+                        top: 50%;
+                        left: -20px;
+                        width: 13px;
+                        height: 13px;
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        color: $greyColor;
+                        transform: translateY(-75%);
+                    }
+
+                    .counter-comment::before {
+                        /* serve this img cause fill / stroke probleme for another element with same SVG
+                           ----------------------------------------------------------------------------- */
+                        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"> <title> Comment </title> <path fill="none" stroke="#5c748d" d="M9.9355485 10.6V13l-2.112071-2.4H1.487265V1h10.5603544v9.6h-2.112071z"/> </svg>');
+                    }
+
+                    .counter-star::before {
+                        background-image: url('/assets/images/icons/Star.svg');
+                    }
+                }
+            }
+        }
+    }
+}
+
+aside.comments-reviews {
+    box-sizing: border-box;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    height: 270px;
+    width: 54px;
+    background-color: $greenColor;
+    color: white;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    transform: translateY(-50%);
+    padding-top: 20px;
+    z-index: 205;
+    cursor: pointer;
+
+    p {
+        position: relative;
+        height: auto;
+        transform: rotateZ(180deg);
+        text-align: right;
+        margin: 0;
+        line-height: 54px;
+        writing-mode: vertical-lr;
+
+    }
+
+    p::before {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        content: '';
+        width: 20px;
+        height: 14px;
+        background-color: white;
+        mask: url('/assets/images/icons/Book.svg') no-repeat;
+        transform: rotateZ(-180deg) translateX(50%);
+    }
+}
+
+aside.content-comments-reviews {
+    position: fixed;
+    right: 0;
+    top: $headerHeight;
+    width: $asideRightWidth;
+    height: calc(100% - #{$headerHeight});
+    z-index: 206;
+    background-color: white;
+    display: none;
+
+    div.wrapper {
+        display: grid;
+        grid-template-columns: $asideRightWidth;
+        grid-template-rows: $asideRightHeaderHeight 1fr $asideRightFooterHeight;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 5px 15px 0 rgba(34, 34, 35, 0.15);
+        margin: 0 ;
+        padding: 0;
+
+        header.wrapper {
+            grid-row: 1;
+            grid-column: 1;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: $asideRightHeaderHeight;
+            border-bottom: solid 1px greyBorderColor(0.3);
+            margin: 0;
+            padding: 0;
+
+            a {
+                position: relative;
+                text-decoration: none;
+                display: block;
+                font-family: 'DNLTPro-regular';
+                font-size: 18px;
+                line-height: $asideRightHeaderHeight;
+                font-weight: 500;
+                width: 45%;
+                text-align: center;
+                color: $headerFirstSectionLinkColor;
+                margin: 0;
+
+                img,
+                svg,
+                svg path {
+                    margin-right: 15px;
+                    transform: translateY(1px);
+                    fill: $headerFirstSectionLinkColor !important;
+                }
+
+                svg.reviews {
+                    width: 20px;
+                    height: 14px;
+                }
+
+                svg.comments {
+                    width: 15px;
+                    height: 15px;
+                }
+
+                svg.close {
+                    width: 14px;
+                    height: 14px;
+                }
+            }
+
+            a.close {
+                width: 10%;
+                margin-right: 15px;
+                text-align: left
+                img,
+                svg,
+                svg path {
+                    margin-right: 0;
+                    transform: none;
+                    fill: $headerFirstSectionLinkColor !important;
+                    border: 0px solid white;
+                }
+            }
+
+            a.active,
+            a:hover {
+                color: $blueColor;
+
+                img,
+                svg path {
+                    fill: $blueColor !important;
+
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background-color: $blueColor;
+
+                }
+            }
+        }
+
+        section.content {
+            grid-row: 2;
+            grid-column: 1;
+            box-sizing: border-box;
+            width: 100%;
+            height: auto;
+            left: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: 20px;
+            background-color: $greyColor3;
+
+            article {
+                box-sizing: border-box;
+                border-radius: 3px;
+                background-color: #ffffff;
+                box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+                padding: 10px;
+                width: 100%;
+                margin-bottom: 20px;
+
+                header {
+                    height: 68px;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: auto;
+                    margin: 0;
+                    padding: 0 16px;
+
+                    a {
+                        text-decoration: none;
+                        font-family: 'DNLTPro-regular';
+                        font-size: 16px;
+                        color: $blackColor;
+                        line-height: 30px;
+
+                        img {
+                            box-sizing: border-box;
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 50%;
+                            margin: 0 10px 0 0;
+                            border: 1px solid white;
+                            float: left;
+                            z-index: 1;
+                        }
+                    }
+
+                    svg.certified {
+                        width: 14px;
+                        height: 14px;
+                        margin: 0 auto 0 16px;
+                        object-fit: contain;
+                    }
+
+                    p {
+                        font-size: 16px;
+                        opacity: 0.8;
+                    }
+                }
+
+                section {
+                    h2 {
+                        font-family: 'DNLTPro-medium';
+                        font-size: 21px;
+                        font-style: normal;
+                        font-weight: 500;
+                        line-height: 31.5px;
+                        color: black;
+                        opacity: 0.6;
+                        margin-left: 16px;
+                    }
+
+                    p {
+                        font-family: 'DroidSerif-regular';
+                        font-size: 16px;
+                        line-height: 30px;
+                        font-weight: normal;
+                        padding: 7px 9px;
+                        margin: 7px 0;
+                    }
+                }
+            }
+        }
+
+        section.comments {
+            display: none;
+        }
+
+        section.reviews {
+            display: block;
+            overflow-wrap: break-word;
+
+            p:hover {
+                background-color: greyBorderColor(0.3);
+                cursor: pointer;
+            }
+            footer.grid-header {
+              display: grid;
+              grid-template-columns: 250px;
+              grid-template-rows: 60px;
+              nav {
+                  grid-column: 1;
+                  grid-row: 1;
+                  display: flex;
+                  flex-direction: row;
+                  flex-wrap: nowrap;
+                  justify-content: flex-end;
+                  align-items: center;
+                  height: $headerFirstSectionHeight;
+                  padding: 5px 5px;
+
+                  input{
+                  box-sizing: border-box;
+                  //box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+                  height: 30px;
+                  width: 100%;
+                  font-family: 'DNLTPro-bold';
+                  font-size: 12px;
+                  //font-weight: bold;
+                  font-style: normal;
+                  //line-height: 30px;
+                  text-align: center;
+                  padding: 5px 5px;
+                  margin-right: 5px;
+                  border: solid;
+                  text-decoration: none;
+                  margin-bottom: 10px;
+                  background-color: white;
+                  margin-bottom: 10px;
+                  border-width: 1px;
+                  border-radius: 7px;
+                }
+                input.btn-upvote{
+                  color: greenColorRGBA(0.5);
+                }
+                input.btn-downvote{
+                  color: redColorRGBA(0.5);
+                }
+                input.btn-upvote:hover{
+                  color: greenColorRGBA(1);
+                }
+                input.btn-downvote:hover{
+                  color: redColorRGBA(1);
+                }
+
+              }/*
+              img.reply {
+                grid-column: 2;
+                grid-row: 1;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: flex-end;
+                align-items: center;
+                height: $headerFirstSectionHeight;
+                padding: 5px 5px;
+
+                  box-sizing: border-box;
+                  width: 30px;
+                  height: 30px;
+                  border-radius: 50%;
+                  margin: 0;
+                  border: none;
+                  float: right;
+                  z-index: 1;
+                  margin-bottom: 10px;
+              }*/
+            }
+        }
+
+        footer.wrapper {
+            box-sizing: border-box;
+            grid-row: 3;
+            grid-column: 1;
+            display: block;
+            height: $asideRightFooterHeight;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-top: solid 1px greyBorderColor(0.3);
+        }
+    }
+}

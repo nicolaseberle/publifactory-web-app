@@ -1,0 +1,57 @@
+// All common variables colors for the template
+// ------------------------------------
+
+@function greenColorRGBA($opacity) {
+    @return rgba(0, 164, 89, $opacity);
+}
+@function redColorRGBA($opacity) {
+    @return rgba(249, 38, 30, $opacity);
+}
+@function greyBorderColor($opacity) {
+    @return rgba(92, 115, 141, $opacity);
+}
+$darkGreyColor: #38373D;
+$greyColor: #5c748d;
+$greyColor2: #dee3e8;
+$greyColor3: #F5F5F5;
+$blackColor: #222223;
+$blueColor: #3b82ff;
+$blueColor2: #0279ba;
+$yellowColor: #FAD100;
+$greenColor: #00a459;
+$greenColor2: #76b200;
+
+// Header colors
+// -------------
+
+$headerBackgroundColor: #FFFFFF;
+$headerOSPRColor: #000000;
+$headerFirstSectionLinkColor: #3d4853;
+
+// Main colors
+// -----------
+$mainColor: #f8f8f8;
+
+// Article in main colors
+// --------------
+$redColor: #f9261e;
+$doiColor: rgba(158, 158, 163, 0.5);
+$addressTagColor: #1a1a1a;
+$abstractBorderColor: rgba(61, 72, 83, 0.5);
+
+// Nav in main colors
+// ------------------
+$linkNotSelectedColor: rgba(92, 116, 141, 0.5);
+
+// Footer colors
+// -------------
+$footerLinkColor: #c6bbb0;
+
+// Categorie in Header variables
+// -----------------------------
+$greenCatColor: #46962b;
+$redCatColor: #a71425;
+$blueCatColor: #006bff;
+
+$draftCircle: #666699;
+$draftClearCircle: #EDEDFF;

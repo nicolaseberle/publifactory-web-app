@@ -1,0 +1,34 @@
+// All fonts rules
+// ---------------
+
+// DinNextLTPro fonts
+// ------------------
+
+@font-face {
+    font-family: 'DNLTPro-bold';
+    src: url('/assets/fonts/dinnextltpro/dinnextltpro-bold.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-regular';
+    src: url('/assets/fonts/dinnextltpro/dinnextltpro-regular.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-medium';
+    src: url('/assets/fonts/dinnextltpro/dinnextltpro-medium.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-medium-italic';
+    src: url('/assets/fonts/dinnextltpro/dinnextltpro-medium-italic.otf');
+}
+
+// Droid Serif fonts
+// -----------------
+
+ @font-face {
+     font-family: 'DroidSerif-regular';
+     src: url('/assets/fonts/droid-serif/droid-serif-regular.ttf');
+ }
+ @font-face {
+     font-family: 'DroidSerif-bold';
+     src: url('/assets/fonts/droid-serif/droid-serif-bold.ttf');
+ }

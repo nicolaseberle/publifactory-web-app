@@ -1,0 +1,176 @@
+// Import article content variables
+// -------------------------------
+
+@import 'variables';
+
+// Scss rules
+// ----------
+
+section {
+    width: auto;
+    height: auto;
+    margin: 0 0 31px;
+    padding: 0;
+    font-family: 'DroidSerif-regular';
+    font-size: 12px;
+    line-height: 30px;
+
+    // Import accordion rules
+    // ----------------------
+
+    @import 'accordion';
+
+    section {
+        margin: 0 0 78px;
+    }
+    h1 {
+        margin: 0 0 30px 0;
+        font-family: 'DNLTPro-medium';
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 48px;
+
+        i {
+            font-family: 'DNLTPro-medium-italic';
+            font-style: normal;
+        }
+    }
+    h2 {
+        position: relative;
+        /*display: inline-block;*/
+        font-family: 'DNLTPro-bold';
+        font-size: 20px;
+        line-height: 24px;
+        color: $blackColor;
+        margin: 0 0 20px 0;
+    }
+
+    h3 {
+        position: relative;
+        /*display: inline-block;*/
+        font-family: 'DroidSerif-bold';
+        font-weight: bold;
+        font-size: 16px;
+        line-height: 42px;
+        color: $blackColor;
+        margin: 0 0 13px;
+    }
+
+    h4 {
+        position: relative;
+        /*display: inline-block;*/
+        font-family: 'DroidSerif-regular';
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 30px;
+        color: $blackColor;
+        margin: 0 0 13px;
+    }
+
+    u {
+        text-decoration: underline;
+    }
+
+    ol {
+        counter-reset: index;
+        padding: 0 0 0 20px;
+        margin: 0;
+
+        li {
+            position: relative;
+            list-style-type: none;
+            counter-increment: index;
+            margin-bottom: 30px;
+            font-family: 'DroidSerif-regular';
+            font-size: 12px;
+            line-height: 24px;
+            font-weight: normal;
+            color: $blackColor;
+        }
+
+        li::before {
+            position: absolute;
+            top: 0;
+            left: -20px;
+            content: counter(index) '.';
+            margin-right: 13px;
+            font-family: 'DNLTPro-bold';
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 24px;
+        }
+    }
+
+    p {
+        font-family: 'DroidSerif-regular';
+        font-size: 12px;
+        line-height: 30px;
+        color: black;
+        margin: 0;
+        text-indent: 0;/*$textIdentation;*/
+        text-align-last: $textAlignLast;
+        text-align: $textAlign;
+        word-spacing: $textWordSpacing;
+
+        sup {
+            vertical-align: super;
+            font-size: 8px;
+            color: $redColor;
+        }
+    }
+
+    p + p {
+        margin-top: 30px;
+    }
+
+    figure {
+        box-sizing: border-box;
+        width: auto;
+        height: auto;
+        border: solid 1px $headerFirstSectionLinkColor;
+        margin: 72px 0 65px;
+
+        figcaption {
+            height: 48px;
+            width: auto;
+            background-color: $headerFirstSectionLinkColor;
+            color: white;
+            font-family: 'DNLTPro-bold';
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 48px;
+            padding: 0 40px;
+            margin: 0 0 30px;
+        }
+
+        div.figure {
+            width: auto;
+            height: auto;
+            padding: 0 60px;
+            margin: 0 0 30px;
+
+            img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+        }
+
+        p {
+            font-family: 'DNLTPro-regular';
+            font-size: 12px;
+            font-weight: normal;
+            line-height: 21px;
+            text-indent: 0;
+            text-align: justify;
+            padding: 0 40px 20px;
+        }
+    }
+}
+
+section.abstract, .abstractbox{
+    margin: 0 0 48px;
+    padding: 30px 24px 24px;
+    background-color: greyBorderColor(0.05);
+    border: 1px solid $abstractBorderColor;
+}

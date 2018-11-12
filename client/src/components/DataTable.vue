@@ -3,7 +3,7 @@
     <div v-if="$slots.toolbar" class="toolbar">
       <slot name="toolbar"></slot>
     </div>
-    <div class="data-table flex flex-1" ref="wrapper" :style="{margin:full?'0 -1rem':'0'}">
+    <div class="data-table flex flex-1" ref="wrapper" :style="{margin:full?'1rem -1rem':'0'}">
       <slot></slot>
       <transition name="fade">
         <content-loading :show="pending"></content-loading>
@@ -11,7 +11,7 @@
     </div>
     <pagination v-if="showPagination" :current="page.current"
       :total="page.total||0" @page-change="onPageChange"
-      :style="{margin:full?'0 -1rem -1rem':'.5rem 0'}"></pagination>
+      :style="{margin:full?'2rem -1rem 1rem':'.5rem 0'}"></pagination>
   </div>
 </template>
 <script>

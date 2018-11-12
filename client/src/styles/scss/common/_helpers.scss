@@ -1,0 +1,73 @@
+// Import all helpers
+// --------------------
+@import 'helpers/articleHelpers';
+@import 'helpers/headerHelpers';
+
+// Helpers scss rules
+// ------------------
+
+.grey {
+    color: $greyColor;
+}
+.green {
+    color: $greenColor;
+}
+.red {
+    color: $redColor;
+}
+.black {
+    color: $blackColor;
+}
+.greenCat {
+    background-color: $greenCatColor;
+}
+.redCat {
+    background-color: $redCatColor;
+}
+.blueCat {
+    background-color: $blueCatColor;
+}
+.yellowCat {
+    background-color: $yellowColor;
+}
+.bg-white {
+    background-color: white;
+}
+.bg-grey {
+    background-color: $mainColor;
+}
+.bg-map {
+    background-image:  linear-gradient(to bottom,  rgba(0,0,255,0.5), rgba(0,0,255,0.5));
+    background-image:-moz-linear-gradient(#4800C5, #1D4062); /* Firefox */
+    background-color: white;
+}
+.font-dnltp-regular {
+    font-family: 'DNLTPro-regular';
+}
+.font-dnltp-bold {
+    font-family: 'DNLTPro-bold';
+}
+.font-dnltp-medium {
+    font-family: 'DNLTPro-medium';
+}
+.font-style-normal {
+    font-style: normal;
+}
+.font-style-bold {
+    font-style: bold;
+}
+.reset-margin {
+    margin: 0 0 13px 0 !important;
+}
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+.overflow-y-scroll {
+    // be carefull this overflow is braking ::after and ::before in the nav.header-explore
+    // dropdown-menu-header - waiting for a bug fix
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.noscroll {
+    overflow: hidden;
+}

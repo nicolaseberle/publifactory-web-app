@@ -1,0 +1,125 @@
+// Import main variables
+// ---------------------
+
+@import 'variables';
+
+@import 'landingPage/landingPage';
+
+// Scss rules
+// ----------
+
+main.article {
+    position: relative;
+
+    top: $mainMarginTop;
+    bottom: $mainMarginBottom;
+    left : 50px;
+    width: 80%;
+
+    //padding: $mainMarginTop 40 $mainMarginBottom 40;
+
+
+
+    /**/
+
+
+    //Import nav template
+    // ------------------
+    @import 'nav/nav';
+
+    // Import article template
+    // -----------------------
+    @import 'article/article';
+
+
+
+}
+main.previewarticle {
+    position: relative;
+    top: $mainMarginTop;
+    display: grid;
+    grid-template-columns: 10px 500px;
+    grid-template-rows: auto;
+    height: auto;
+    /**/
+
+
+    //Import nav template
+    // ------------------
+    @import 'nav/nav';
+
+    // Import article template
+    // -----------------------
+    @import 'previewarticle/previewarticle';
+}
+
+main.dashboard {
+    position: relative;
+    padding-top: $mainMarginTop;
+    background-color: $mainColor;
+    height: auto;
+
+    // Import article template
+    // -----------------------
+    @import 'section/section';
+
+}
+
+
+main.mainLandingPage {
+    //Import nav template
+    // ------------------
+    @import 'nav/nav';
+
+    // Import container template
+    // -----------------------
+    @import 'landingPage/landingPage';
+}
+main.mainHomePage {
+
+    //Import nav template
+    // ------------------
+    //@import 'nav/nav';
+
+    // Import container template
+    // -----------------------
+    @import 'homePage/homePage';
+}
+
+main.mainpage {
+    position: relative;
+    top: $mainPageMarginTop;
+    display: grid;
+    grid-template-columns: $mainPageFirstColumn $mainPageSecondColumn;
+    grid-template-rows: auto;
+    height: auto;
+
+
+    background-image: -webkit-linear-gradient(center top, center bottom  , from(#4800C5), to(#1D4062));
+    background-image:    -moz-linear-gradient(to bottom , #4800C5, #1D4062);
+    background-image:     -ms-linear-gradient(to bottom , #4800C5, #1D4062);
+    background-image:      -o-linear-gradient(to bottom , #4800C5, #1D4062);
+
+    //Import nav template
+    // ------------------
+    @import 'nav/nav';
+
+
+}
+
+main.explore {
+    position: relative;
+    //top: $mainMarginTop;
+    padding: $mainMarginTop 0 $mainMarginBottom 0;
+    display: grid;
+    grid-template-columns: $mainFirstColumnExplore 1fr;
+    grid-template-rows: auto;
+    height: auto;
+    overflow-x: hidden;
+    background-color: $mainColor;
+
+    // Import section template
+    // -----------------------
+    @import 'section/section';
+
+}

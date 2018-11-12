@@ -1,0 +1,187 @@
+// Import article header variables
+// -------------------------------
+
+@import 'variables';
+
+// Scss rules
+// ----------
+
+header {
+    width: auto;
+    height: auto;
+    margin: 0 0 85px 0;
+
+    // Fix dropdown-menu z-index
+    // -------------------------
+    z-index: 198;
+    input {
+      border:none;
+      background-color: transparent;
+    }
+    .left {
+      float: left;
+      //width: 60%;
+      text-align: left;
+      margin: 0px 10px 0px 0px;
+
+    }
+    .right {
+        float: right;
+        text-align: right;
+        margin: 0px 10px 0px 10px;
+    }
+    h2 {
+        font-family: 'DNLTPro-bold';
+        font-size: 18px;
+        font-weight: bold;
+        color: $redColor;
+        margin: 0 0 43px 0;
+        padding: 0;
+
+        .category {
+            position: relative;
+            margin-left: calc(#{$lineSeparatorWidth} + 24px);
+            font-family: 'DNLTPro-regular';
+            font-weight: normal;
+        }
+
+        .category::before {
+            content: '';
+            position: absolute;
+            left: calc(-#{$lineSeparatorWidth} - 14px);
+            top: 50%;
+            width: $lineSeparatorWidth;
+            height: 2px;
+            background-color: $blackColor;
+            transform: translateY(-50%);
+        }
+    }
+
+    p.article-doi {
+        margin: 0 0 16px 0;
+        font-family: 'DNLTPro-regular';
+        font-style: normal;
+        font-size: 16px;
+        color: $doiColor;
+    }
+
+    div.article-author {
+        display: block;
+        width: auto;
+        height: 48px;
+        margin: 0 0 20px 0;
+
+        .insert-buttons {
+          float: left;
+           color: grey;
+           background: #fff;
+           width: 32px;
+           height: 32px;
+           box-sizing: border-box;
+           border-radius: 50%;
+           border: 1px solid grey;
+           line-height: 30px;
+           text-align: center;
+           padding: 0;
+           font-size: 20px;
+           -webkit-transform: translate(-60px,10px);
+           -ms-transform: translate(-60px,10px);
+           transform: translate(-60px,10px);
+       }
+
+
+       .insert-buttons
+          span {
+            display: block;
+            margin-top: 0px;
+          }
+
+
+        img {
+            box-sizing: border-box;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin: 0;
+            border: 2px solid white;
+            float: left;
+            z-index: 1;
+            -webkit-transform: translateX(-40px);
+            -ms-transform: translateX(-40px);
+            transform: translateX(-40px);
+        }
+
+        img + img {
+            -webkit-transform: translateX(-40px);
+            -ms-transform: translateX(-40px);
+            transform: translateX(-40px);
+
+            transform: translateX(-50%);
+            z-index: -1;
+
+        }
+
+        p {
+            font-family: 'DNLTPro-regular';
+            font-style: normal;
+            font-size: 16px;
+            line-height: 48px;
+            margin: 0 0 0 25px;
+            -webkit-transform: translateX(-40px);
+            -ms-transform: translateX(-40px);
+            transform: translateX(-40px);
+            a {
+                text-decoration: none;
+                color: $greyColor;
+            }
+        }
+    }
+
+    address {
+        font-family: 'DNLTPro-regular';
+        font-size: 16px;
+        line-height: 18px;
+        font-style: normal;
+        font-weight: normal;
+        margin: 0 0 34px 0;
+    }
+
+    div.article-tag {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        a {
+            width: auto;
+            height: 30px;
+            background-color: $abstractBorderColor;
+            text-decoration: none;
+            padding: 0 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease-out;
+
+            h4 {
+                font-family: 'DNLTPro-medium';
+                font-size: 16px;
+                font-weight: 500;
+                font-style: normal;
+                line-height: 30px;
+                color: white;
+                margin: 0;
+                max-width: $tagMaxWidth;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+        a:hover {
+            background-color: $headerFirstSectionLinkColor;
+        }
+        a:not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+
+
+}

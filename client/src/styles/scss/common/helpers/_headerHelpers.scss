@@ -1,0 +1,421 @@
+section.flex-header {
+    box-sizing: border-box;
+    border-bottom: solid 1px greyBorderColor(0.3);
+    height: #{$headerHeight - $headerFirstSectionHeight};
+    position: relative;
+    z-index: 200;
+    margin: 0;
+    padding: 0;
+    display: block;
+    width: 100%;
+    background-color: $headerBackgroundColor;
+    box-shadow: 0 5px 15px 0 rgba(34, 34, 35, 0.15) inset;
+
+    nav.header-article {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        height: #{$headerHeight - $headerFirstSectionHeight};
+        margin: 0 130px 0 90px;
+
+        div.menu {
+            width: 190px;
+            min-width: 190px;
+            height: #{$headerHeight - $headerFirstSectionHeight};
+            text-align: center;
+
+            a.normal {
+                position: relative;
+                display: block;
+                width: 100%;
+                height: 100%;
+                line-height: #{$headerHeight - $headerFirstSectionHeight};
+                font-family: 'DNLTPro-medium';
+                font-size: 16px;
+                font-weight: 500;
+                text-decoration: none;
+                color: $greyColor;
+
+                img,
+                svg {
+                    margin-right: 15px;
+                    transform: translateY(4px);
+                }
+
+                img.content {
+                    width: 34px;
+                    height: 19px;
+                }
+
+                img.versions {
+                    width: 23px;
+                    height: 20px;
+                }
+
+                img.metrics {
+                    width: 24px;
+                    height: 20px;
+                }
+            }
+
+            div.dropdown-menu-header {
+                position: relative;
+                box-sizing: border-box;
+                width: 190px;
+                height: auto;
+                box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.15);
+                border: solid 1px greyBorderColor(0.3);
+                border-top: none;
+                display: none;
+                flex-wrap: nowrap;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                background-color: white;
+
+                a {
+                    font-family: 'DNLTPro-medium';
+                    font-size: 16px;
+                    font-weight: 500;
+                    width: 100%;
+                    height: 48px;
+                    text-decoration: none;
+                    color: $headerFirstSectionLinkColor;
+                    line-height: 48px;
+                }
+
+                a:nth-of-type(1)::after,
+                a:nth-of-type(1)::before {
+                    bottom: 100%;
+                    left: 50%;
+                    border: solid transparent;
+                    content: '';
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                }
+
+                a:nth-of-type(1)::after {
+                    border-color: rgba(255, 255, 255, 0);
+                    border-bottom-color: #FFFFFF;
+                    border-width: 5px;
+                    margin-left: -5px;
+                }
+
+                a:nth-of-type(1)::before {
+                    border-color: greyBorderColor(0);
+                    border-bottom-color: greyBorderColor(0.3);
+                    border-width: 6px;
+                    margin-left: -6px;
+                }
+
+                a:hover {
+                    background-color: $greyColor2;
+                }
+
+                a:nth-of-type(1):hover::after {
+                    border-color: rgba(222 ,227, 232, 0);
+                    border-bottom-color: $greyColor2;
+                }
+            }
+        }
+
+        div.menu:hover {
+            div.dropdown-menu-header {
+                display: flex;
+            }
+
+            a.normal {
+                color: $blueColor;
+            }
+
+            a.normal svg path {
+                fill: $blueColor !important;
+            }
+
+            a.normal::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 190px;
+                height: 4px;
+                background-color: $blueColor;
+            }
+        }
+
+        a.button {
+            box-sizing: border-box;
+            font-family: 'DNLTPro-regular';
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 36px;
+            height: 36px;
+            width: 280px;
+            min-width: 280px;
+            text-decoration: none;
+            color: #FFFFFF;
+            background-color: $greenColor;
+            box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+
+            div {
+                box-sizing: border-box;
+                display: inline-block;
+                text-align: center;
+                margin: 0;
+            }
+
+            div.download-counter {
+                position: relative;
+                width: 70px;
+                border-right: solid 1px #FFFFFF;
+            }
+
+            div.download-counter::after,
+            div.download-counter::before {
+                left: 100%;
+                top: 50%;
+                border: solid transparent;
+                content: '';
+                height: 0;
+                width: 0;
+                position: absolute;
+                pointer-events: none;
+            }
+
+            div.download-counter::after {
+                color: greenColorRGBA(0);
+                border-left-color: $greenColor;
+                border-width: 5px;
+                margin-top: -5px;
+            }
+
+            div.download-counter::before {
+                border-color: rgba(255, 255, 255, 0);
+                border-left-color: #FFFFFF;
+                border-width: 6px;
+                margin-top: -6px;
+            }
+
+            div.download-content {
+                width: 205px;
+            }
+        }
+    }
+
+    nav.header-explore {
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-end;
+        height: #{$headerHeight - $headerFirstSectionHeight};
+        border-bottom: 1px solid $doiColor;
+        margin: 0 130px 0 230px;
+
+        div.menu {
+            width: 190px;
+            min-width: 190px;
+            height: #{$headerHeight - $headerFirstSectionHeight};
+            font-family: 'DNLTPro-regular';
+            font-size: 16px;
+            font-weight: normal;
+            font-style: normal;
+            line-height: 1;
+            text-align: left;
+
+            div.flex-container {
+                box-sizing: border-box;
+                @include flex-container(nowrap, row, flex-start, flex-end);
+                height: #{$headerHeight - $headerFirstSectionHeight};
+                text-align: left;
+                padding-bottom: 25px;
+
+                a.normal {
+                    display: block;
+                    text-decoration: none;
+                    color: #000000;
+                }
+
+                img,
+                svg {
+                    margin-right: 15px;
+
+                    path {
+                        fill: $blackColor;
+                        opacity: 1;
+                    }
+                }
+
+                .accordion {
+                    width: 5px;
+                    height: 8px;
+                    margin-left: auto;
+                    transform: translateY(-5px) rotateZ(180deg);
+                }
+
+                .search-type {
+                    width: 12px;
+                    height: 16px;
+                }
+                .search-by {
+                    width: 20px;
+                    height: 14px;
+                }
+                .search-in {
+                    width: 15px;
+                    height: 15px
+                }
+            }
+
+            div.dropdown-menu-header {
+                position: relative;
+                box-sizing: border-box;
+                width: 190px;
+                height: auto;
+                max-height: 336px;
+                box-shadow: 0 10px 15px 0 rgba(0, 0, 0, 0.15);
+                border: solid 1px greyBorderColor(0.3);
+                border-radius: 1px;
+                @include flex-container(nowrap, column, flex-start, center);
+                display: none;
+                background-color: white;
+
+                a {
+                    width: 100%;
+                    height: 48px;
+                    min-height: 48px;
+                    text-decoration: none;
+                    line-height: 48px;
+                    color: #000000;
+                    @include flex-container(nowrap, row, flex-start, center);
+
+                    img,
+                    svg {
+                        margin: 0 11px 0 20px;
+
+                        path {
+                            fill: $headerFirstSectionLinkColor;
+                            opacity: 0.5;
+                            transition: all 0.3s ease-out;
+                        }
+                    }
+                    .type {
+                        width: 12px;
+                        height: 16px;
+                    }
+                    .by {
+                        width: 15px;
+                        height: 15px;
+                    }
+                }
+
+                .padded {
+                    padding-left: 25px;
+                    width: calc(100% - 25px);
+                }
+
+                a:hover {
+                    font-weight: bold;
+
+                    img,
+                    svg path {
+                        fill: $blackColor;
+                        opacity: 1;
+                    }
+                }
+
+                a:nth-of-type(1)::after,
+                a:nth-of-type(1)::before {
+                    bottom: 100%;
+                    left: 20%;
+                    border: solid transparent;
+                    content: '';
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                }
+
+                a:nth-of-type(1)::after {
+                    border-color: rgba(255, 255, 255, 0);
+                    border-bottom-color: #FFFFFF;
+                    border-width: 5px;
+                    margin-left: -5px;
+                }
+
+                a:nth-of-type(1)::before {
+                    border-color: greyBorderColor(0);
+                    border-bottom-color: greyBorderColor(0.3);
+                    border-width: 6px;
+                    margin-left: -6px;
+                }
+
+                a:hover {
+                    background-color: $greyColor2;
+                }
+
+                a:nth-of-type(1):hover::after {
+                    border-color: rgba(222 ,227, 232, 0);
+                    border-bottom-color: $greyColor2;
+                }
+            }
+        }
+
+        div.menu:not(:first-child) {
+            margin-left: 40px;
+        }
+
+        div.menu:hover {
+            div.dropdown-menu-header {
+                display: flex;
+            }
+        }
+
+        div.search-explore {
+            box-sizing: border-box;
+            @include flex-container(nowrap, row, flex-start, flex-end);
+            width: 278px;
+            height: #{$headerHeight - $headerFirstSectionHeight};
+            text-align: left;
+            padding-bottom: 25px;
+            margin-left: auto;
+
+            input[type=text] {
+                box-sizing: border-box;
+                width: 260px;
+                height: 32px;
+                border: none;
+                margin: 0 0 -8px;
+                padding: 0;
+                vertical-align: bottom;
+                font-family: 'DNLTPro-regular';
+                font-size: 16px;
+                line-height: 32px;
+                opacity: 0.7;
+            }
+            input:focus, button:focus {
+                outline: none;
+            }
+            button[type=submit] {
+                box-sizing: border-box;
+                width: 18px;
+                height: 16px;
+                border: none;
+                margin: 0;
+                padding: 0;
+                background-color: transparent;
+
+                img, svg {
+                    width: 16px;
+                    height: 16px;
+                    object-fit: contain;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,299 @@
+// Scss rules
+// ----------
+
+article.flux-article,
+article.flux-bookmarks {
+    box-sizing: border-box;
+    width: 680px;
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+    padding: 20px 31px;
+    color: black;
+
+    header {
+        margin-bottom: 15px;
+
+        div.categorie {
+            display: inline-block;
+            box-sizing: border-box;
+            width: auto;
+            height: 32px;
+            box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+            margin: 0 0 21px -41px;
+            padding: 0 20px;
+
+            h3 {
+                font-family: 'DNLTPro-bold';
+                font-size: 18px;
+                line-height: 32px;
+                font-weight: bold;
+                font-style: normal;
+                color: white;
+                margin: 0;
+            }
+        }
+
+        div.flex-container {
+            @include flex-container(wrap, row, flex-start, center);
+            height: 30px;
+            margin: 0 0 15px;
+
+            a {
+                max-width: 94%;
+                height: 30px;
+                text-decoration: none;
+                color: black;
+
+                h1 {
+                    font-family: 'DNLTPro-bold';
+                    font-size: 30px;
+                    line-height: 30px;
+                    font-weight: bold;
+                    font-style: normal;
+                    margin: 0;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    max-width: 100%;
+                    white-space: nowrap;
+                }
+            }
+
+            img,
+            svg {
+                margin-left: 20px;
+                width: 12px;
+                height: 17px;
+                transform: translateY(-2px);
+                cursor: pointer;
+            }
+
+            svg:hover path {
+                fill: $greenColor;
+            }
+            svg.active path{
+                fill: $greenColor;
+            }
+            svg.active:hover path {
+                fill: $headerFirstSectionLinkColor;
+            }
+            .icon {
+                margin-left: 20px;
+                width: 12px;
+                height: 17px;
+                transform: translateY(-2px);
+                background-color: $headerFirstSectionLinkColor;
+                -webkit-mask: url(/assets/images/icons/Bookmark.svg) no-repeat center;
+                mask: url(/assets/images/icons/Bookmark.svg) no-repeat center;
+                cursor: pointer;
+            }
+            .icon_checked {
+                margin-left: 20px;
+                width: 12px;
+                height: 17px;
+                transform: translateY(-2px);
+                background-color: $greenColor;
+                -webkit-mask: url(/assets/images/icons/Bookmark.svg) no-repeat center;
+                mask: url(/assets/images/icons/Bookmark.svg) no-repeat center;
+                cursor: pointer;
+            }
+
+            /* Tooltip container */
+           .tooltip {
+               position: relative;
+               display: inline-block;
+
+           }
+
+           /* Tooltip text */
+           .tooltip .tooltiptext {
+               visibility: hidden;
+               width: 120px;
+               background-color: #555;
+               color: #fff;
+               text-align: center;
+               padding: 5px 0px;
+               border-radius: 6px;
+               font-size: 10px;
+
+               /* Position the tooltip text */
+               position: absolute;
+               z-index: 1;
+               bottom: 175%;
+               left: 50%;
+               margin-left: -50px;
+
+
+
+               /* Fade in tooltip */
+               opacity: 0;
+               transition: opacity 1s;
+           }
+
+           /* Tooltip arrow */
+           .tooltip .tooltiptext::after {
+               content: "";
+               position: absolute;
+               top: 100%;
+               left: 50%;
+               margin-left: -5px;
+               border-width: 5px;
+               border-style: solid;
+               border-color: #555 transparent transparent transparent;
+           }
+
+           /* Show the tooltip text when you mouse over the tooltip container */
+           .tooltip:hover .tooltiptext {
+               visibility: visible;
+               opacity: 1;
+           }
+
+
+
+        }
+    }
+
+    section.summary {
+        margin: 0 0 22px;
+        height: 4.5rem;
+        //white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        hyphens: auto;
+
+
+        p {
+            font-family: 'DroidSerif-regular';
+            font-weight: 500;
+            font-style: normal;
+            margin: 0 auto;
+            width: 100%;
+
+            /* Nécessaires pour text-overflow */
+
+        }
+    }
+
+    footer {
+
+
+        div.authors {
+            margin-bottom: 22px;
+
+            p {
+                font-family: 'DroidSerif-regular';
+                font-weight: 500;
+                font-style: normal;
+                margin: 0;
+                width: 70%;
+                hyphens: auto;
+                @include text-overflow(16px, 16px, 1);
+            }
+        }
+
+        div.tags {
+            @include flex-container(wrap, row, flex-start, center);
+            margin-top: -9px;
+            margin-bottom: 18px;
+
+            a {
+                width: auto;
+                height: 30px;
+                background-color: $abstractBorderColor;
+                text-decoration: none;
+                padding: 0 15px;
+                margin-bottom: 10px;
+                transition: all 0.2s ease-out;
+
+                h4 {
+                    font-family: 'DNLTPro-medium';
+                    font-size: 16px;
+                    font-weight: 500;
+                    font-style: normal;
+                    line-height: 30px;
+                    color: white;
+                    margin: 0;
+                    max-width: 152px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            a:hover {
+                background-color: $headerFirstSectionLinkColor;
+            }
+
+            a:not(:last-child) {
+                margin-right: 10px;
+            }
+        }
+
+        div.info {
+            @include flex-container(nowrap, row, space-between, center);
+            height: 16px;
+            font-family: 'DNLTPro-regular';
+            font-size: 16px;
+            line-height: 16px;
+            font-style: normal;
+            font-weight: normal;
+            opacity: 0.7;
+
+            span,
+            time {
+                position: relative;
+            }
+
+            span::before,
+            time::before {
+                position: absolute;
+                content: '';
+                top: 50%;
+                left: -20px;
+                height: 13px;
+                width: 13px;
+                background-repeat: no-repeat;
+                background-size: contain;
+                transform: translateY(-65%);
+                color: black;
+            }
+
+            span.counter-comment {
+                margin-left: auto;
+            }
+
+            .counter-comment::before {
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13"> <title> Comment </title> <path fill="none" stroke="#5c748d" d="M9.9355485 10.6V13l-2.112071-2.4H1.487265V1h10.5603544v9.6h-2.112071z"/> </svg>');
+            }
+
+            span.counter-star {
+                margin-left: 32px;
+            }
+
+            .counter-star::before {
+                background-image: url('/assets/images/icons/Star.svg');
+            }
+
+            time {
+                margin-left: 20px;
+            }
+
+            time::before {
+                background-image: url('/assets/images/icons/Versions.svg');
+            }
+        }
+    }
+}
+
+article.flux-article:nth-last-child(1),
+article.flux-bookmarks:nth-last-child(1) {
+    margin-bottom: 200px;
+}
+
+article.flux-article {
+    height: 313px;
+}
+
+article.flux-bookmarks {
+    height: 356px;
+}

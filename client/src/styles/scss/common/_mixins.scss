@@ -1,0 +1,36 @@
+// Scss Mixins rules
+@mixin text-overflow($font-size, $line-height, $nb-line) {
+    display: block;
+    display: -webkit-box;
+    font-size: $font-size;
+    line-height: $line-height;
+    height: calc(#{$line-height}*#{$nb-line});
+    -webkit-line-clamp: $nb-line;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@mixin flex-container($wrap, $direction, $align-direction, $align-anti-direction) {
+    display: flex;
+    flex-wrap: $wrap;
+    flex-direction: $direction;
+    justify-content: $align-direction;
+    align-items: $align-anti-direction;
+}
+
+@mixin transform($transforms) {
+	-webkit-transform: $transforms;
+	-moz-transform: $transforms;
+	-ms-transform: $transforms;
+	transform: $transforms;
+}
+
+// Rotate
+@mixin rotate ($deg) {
+	@include transform(rotate(#{$deg}deg));
+}
+
+// Scale
+@mixin scale($scale) {
+	@include transform(scale($scale));
+}

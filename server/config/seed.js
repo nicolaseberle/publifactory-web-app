@@ -13,6 +13,7 @@ const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e 
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
+  
   createArticles(users)
 
 })
@@ -129,10 +130,10 @@ function createUsers() {
         field: 'Biology'
       }, {
         provider: 'local',
-        role: 'user',
-        roles : ['admin'],
+        role: 'editor',
+        roles : ['editor'],
         name: 'Bill',
-        username: 'Bill',
+        username: 'bill',
         firstname: 'Bill',
         lastname: 'Gates',
         laboratory: 'MIT, US',

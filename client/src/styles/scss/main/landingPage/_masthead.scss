@@ -1,0 +1,41 @@
+header.masthead {
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(7rem + 72px);
+  padding-bottom: 7rem;
+  //background-image: linear-gradient(0deg, $secondary 0%, $primary 100%);
+  background-image: url("/assets/images/icons/world_map.svg"), -moz-linear-gradient(#4800C5, #1D4062);
+  height: 600px;
+  background-repeat: no-repeat,no-repeat ;
+  background-position: center center,center center;
+  background-attachment: scroll;
+  background-size: 1100px auto ,cover;
+  font-family: 'DroidSerif-regular';
+
+  .masthead-content {
+    z-index: 1;
+    position: relative;
+    .masthead-heading {
+      font-size: 2.8rem;
+    }
+    .masthead-subheading {
+      font-size: 1.8rem;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  header.masthead {
+    padding-top: calc(8rem + 55px);
+    padding-bottom: 10rem;
+    .masthead-content {
+      .masthead-heading {
+        font-size: 2.8rem;
+        padding: 1rem 1rem;
+      }
+      .masthead-subheading {
+        font-size: 1.8rem;
+      }
+    }
+  }
+}

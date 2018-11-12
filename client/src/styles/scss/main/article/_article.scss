@@ -1,0 +1,27 @@
+// Import nav variables
+// --------------------
+
+@import 'variables';
+
+// Scss rules
+// ----------
+
+article {
+    height: auto;
+    grid-column: 2;
+    grid-row: 1;
+
+    // Import header template
+    // ----------------------
+    @import 'header/header';
+
+    // Import content template
+    // -----------------------
+    @import 'content/content';
+
+    // Import aside template
+    // ---------------------
+    @import 'aside/aside';
+
+    @import 'footer/footer';
+}

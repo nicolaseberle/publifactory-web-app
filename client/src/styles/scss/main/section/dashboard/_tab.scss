@@ -1,0 +1,308 @@
+
+h1 {
+    font-family: 'DNLTPro-regular';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 32px;
+    margin: 0 0 27px;
+    color : rgb(34, 34, 35);
+    padding: 0px 0px 40px;
+}
+
+.tabset > input[type="radio"] {
+  position: absolute;
+  left: -200vw;
+}
+
+.tabset .tab-panel {
+  display: none;
+}
+
+.tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+.tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+.tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+.tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+.tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
+.tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) {
+  display: block;
+}
+
+
+.tabset-menu > input[type="radio"] {
+  position: absolute;
+  left: -200vw;
+}
+
+.tabset-menu .tab-menu-panel {
+  display: none;
+}
+
+.tabset-menu > input:first-child:checked ~ .tab-menu-panels > .tab-menu-panels:first-child,
+.tabset-menu > input:nth-child(3):checked ~ .tab-menu-panels > .tab-menu-panels:nth-child(2),
+.tabset-menu > input:nth-child(5):checked ~ .tab-menu-panels > .tab-menu-panels:nth-child(3),
+.tabset-menu > input:nth-child(7):checked ~ .tab-menu-panels > .tab-menu-panels:nth-child(4),
+.tabset-menu > input:nth-child(9):checked ~ .tab-menu-panels > .tab-menu-panels:nth-child(5),
+.tabset-menu > input:nth-child(11):checked ~ .tab-menu-panels > .tab-menu-panels:nth-child(6) {
+  display: block;
+}
+/*
+ Styling
+*/
+
+.tabset{
+  //border-right: 2px solid  rgba(158, 158, 163, 0.20);
+}
+
+
+.tabset > label {
+  font-family: 'DNLTPro-regular';
+  color : grey;
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  padding: 15px 30px 15px 0px;
+  border: 0px solid transparent;
+  cursor: pointer;
+  .left {
+    float: left;
+    //width: 60%;
+    text-align: left;
+    margin: 0px 10px 0px 0px;
+
+  }
+  .right {
+      float: right;
+      text-align: right;
+      margin: 0px 10px 0px 10px;
+
+    }
+  .numberCircle-blue {
+    border-radius: 50%;
+    //behavior: url(PIE.htc);
+    /* remove if you don't care about IE8 */
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background: $blueCatColor;
+    border: 2px solid $blueCatColor;
+    color: #fff;
+    text-align: center;
+    font-family: 'DNLTPro-bold';
+    font-size: 10px;
+  }
+  .numberCircle-yel {
+    border-radius: 50%;
+    //behavior: url(PIE.htc);
+    /* remove if you don't care about IE8 */
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background: $yellowColor;
+    border: 2px solid $yellowColor;
+    color: #fff;
+    text-align: center;
+    font-family: 'DNLTPro-bold';
+    font-size: 10px;
+  }
+
+}
+
+
+.tabset > label::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  width: 40px;
+  height: 2px;
+  background: transparent;
+}
+
+
+.tabset > input:checked + label::after {
+  background: rgb(34, 34, 35);
+}
+
+.tabset > input:checked + label {
+  font-weight: 600;
+  color: rgb(34, 34, 35);
+}
+
+.tab-panel {
+  padding: 0px 15px 100px 0px;
+
+
+  section{
+    padding: 15px 0px 0px 0px;
+    //border-bottom: 1px solid rgba(158, 158, 163, 0.15);
+
+
+    h2{
+    	font-family : 'DNLTPro-medium';
+    	font-size : 16px;
+    	color : rgb(34, 34, 35);
+      padding: 20px 0px 8px 0px;
+      border-bottom: 1px solid rgba(158, 158, 163, 0.15);
+    }
+
+
+    .left {
+      width: 60%;
+      text-align: left;
+      margin: 10px 0px 0px 20px;
+    }
+
+    .right {
+        text-align: right;
+        margin: 10px 0px 0px 0px;
+      }
+
+    p{
+    	font-family : 'DroidSerif-regular';
+    	font-size : 14px;
+    	color : rgb(34, 34, 35);
+      text-align: justify;
+      word-spacing: normal;
+      margin-bottom: 0.6rem;
+      }
+
+      footer{
+        padding: 0px 0px 15px 0px;
+        .create{
+          font-family : 'DNLTPro-regular';
+        	font-size : 14px;
+        	color : grey;
+          text-align: left;
+        }
+        .update{
+          padding: 0px 10px 0px 0px;
+          font-family : 'DNLTPro-regular';
+        	font-size : 14px;
+        	color : grey;
+          text-align: right;
+        }
+      }
+    }
+}
+
+
+.tabset-menu{
+  //border-right: 2px solid  rgba(158, 158, 163, 0.20);
+}
+
+
+
+.tabset-menu > label {
+  font-family: 'DNLTPro-regular';
+  color: rgb(34, 34, 35);
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px 10px 0px;
+  border-left: 1px solid transparent;
+  width: 100%;
+  cursor: pointer;
+  .left {
+    float: left;
+    text-align: left;
+    margin: 0px 10px 0px 0px;
+
+  }
+  .right {
+      float: right;
+      text-align: right;
+      margin: 0px 10px 0px 10px;
+
+    }
+  .numberCircle-blue {
+    border-radius: 50%;
+    /* remove if you don't care about IE8 */
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background: $blueCatColor;
+    border: 2px solid $blueCatColor;
+    color: #fff;
+    text-align: center;
+    font-family: 'DNLTPro-bold';
+    font-size: 10px;
+  }
+  .numberCircle-yel {
+    border-radius: 50%;
+    /* remove if you don't care about IE8 */
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    background: $yellowColor;
+    border: 2px solid $yellowColor;
+    color: #fff;
+    text-align: center;
+    font-family: 'DNLTPro-bold';
+    font-size: 10px;
+  }
+
+}
+
+
+.tabset-menu > label::after {
+  content: "";
+  position: absolute;
+  /*left: -14px;
+  bottom: 10px;
+  width: 2px;
+  height: 28px;*/
+  left: 0px;
+  bottom: 5px;
+  width: 200px;
+  height: 1px;
+
+  background: transparent;
+
+}
+
+
+.tabset-menu > input:checked + label::after {
+  background: rgb(34, 34, 35);
+}
+
+.tabset-menu > input:checked + label {
+  font-weight: 800;
+  color: rgb(34, 34, 35);
+}
+
+.tab-menu-panel {
+  padding: 0px 15px 10px 0px;
+  width: 100%;
+
+
+/*section{
+    padding: 15px 0px 0px 0px;
+    //border-bottom: 1px solid rgba(158, 158, 163, 0.15);
+*/
+
+
+
+
+    .left {
+      width: 60%;
+      text-align: left;
+      margin: 10px 0px 0px 20px;
+    }
+
+    .right {
+        text-align: right;
+        margin: 10px 0px 0px 0px;
+      }
+
+    p{
+    	font-family : 'DroidSerif-regular';
+    	font-size : 14px;
+    	color : rgb(34, 34, 35);
+      text-align: justify;
+      word-spacing: normal;
+      margin-bottom: 0.6rem;
+      }
+
+
+    //}
+}

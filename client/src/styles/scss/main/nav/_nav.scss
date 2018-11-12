@@ -1,0 +1,106 @@
+// Import nav variables
+// --------------------
+
+@import 'variables';
+
+// Scss rules
+// ----------
+
+nav {
+    position: fixed;
+    grid-column: 1;
+    grid-row: 1;
+    margin-left: $navMarginLeft;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    // Begin To prevent header override by nav
+    z-index: 199;
+    // End To prevent header override by nav
+
+    a {
+        position: relative;
+        text-decoration: none;
+        color: $linkNotSelectedColor;
+        font-family: 'DNLTPro-regular';
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16px;
+        height: 16px;
+        margin-bottom: $navMarginBetweenLink;
+
+        span.circle {
+            box-sizing: border-box;
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background-color: #ffffff;
+            border: solid 1px $greenColor;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    }
+
+    a::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        left: 5px;
+        width: calc(#{$navMarginBetweenLink} + 7px);
+        height: 1px;
+        background-color: greyBorderColor(0.3);
+        transform: rotateZ(90deg);
+        transform-origin: top left 0;
+        pointer-events: none;
+    }
+
+    a:hover {
+        color: $blackColor;
+
+        span.circle {
+            box-shadow: 0 0 4px 2px greenColorRGBA(0.44);
+        }
+    }
+
+    a.active {
+        color: $blackColor;
+
+        span.circle {
+            background-color: $greenColor;
+            box-shadow: 0 0 4px 2px greenColorRGBA(0.44);
+        }
+    }
+
+    a.viewed {
+        span.circle {
+            background-color: $greenColor;
+        }
+        &::after {
+            background-color: greenColorRGBA(0.44);
+        }
+    }
+
+    a:last-child {
+        margin: 0;
+    }
+
+    a:last-child::after {
+        display: none;
+    }
+
+    // a:first-child::before {
+    //     content: '';
+    //     position: absolute;
+    //     top: 2px;
+    //     left: 4px;
+    //     width: 2000px;
+    //     height: 1px;
+    //     background-color: $greenColor;
+    //     transform: rotateZ(-90deg);
+    //     transform-origin: top left 0;
+    //     pointer-events: none;
+    //     z-index: -1;
+    // }
+}

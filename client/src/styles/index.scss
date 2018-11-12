@@ -4,13 +4,15 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
+@import './scss/main.scss';
+@import '../assets/css/editor.css';
 
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: Noto Serif, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
 
 label {
@@ -193,4 +195,10 @@ code {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.editor-container{
+  font-family: Katex;
+  line-height: 1.6;
+  font-size: 0.9rem;
 }

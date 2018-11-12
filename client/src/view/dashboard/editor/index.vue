@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
@@ -69,7 +71,14 @@
         </el-table-column>
       </el-table>
     </data-table>
+  </el-tab-pane>
+  <el-tab-pane label="Submission" name="second">Submission</el-tab-pane>
+  <el-tab-pane label="Review" name="third">Review</el-tab-pane>
+  <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
+  <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
+  </el-tabs>
 </content-module>
+
 </div>
 </template>
 <script>
@@ -82,6 +91,7 @@ export default {
   locales,
   data () {
     return {
+      activeName: 'first',
       options:{
         value:"option 1",
         lable:"option 1"
@@ -107,6 +117,9 @@ export default {
     DataTable
   },
   methods: {
+    handleClick(tab, event) {
+        console.log(tab, event);
+    },
     fetch (current = 1) {
       this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
         this.articles = list.articles

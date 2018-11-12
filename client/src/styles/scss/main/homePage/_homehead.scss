@@ -1,0 +1,150 @@
+body {
+  background: #eee !important;
+}
+
+.wrapper {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.form-signin {
+	font-family: 'DNLTPro-medium';
+  max-width: 380px;
+	font-size: 1rem;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  background-color: #f4f4f4;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border-radius: 10;
+	border-radius: 10;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+	h2{
+		color:#333;
+		font-size: 1.6rem;
+	}
+	h3{
+		font-family: 'DNLTPro-regular';
+		color:$gray-500;
+		font-weight: 200;
+		font-size: 0.8rem;
+	}
+
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 30px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+	margin-top: 15px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 20px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+header.homehead {
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(3rem + 72px);
+  padding-bottom: 7rem;
+	background: linear-gradient(
+                     rgba(20,20,20, .8),
+                     rgba(20,20,20, .8)),
+                     url( /assets/images/figure/hurricane.png);
+	background-size: cover;
+  height: 600px;
+  background-repeat: no-repeat,no-repeat ;
+  background-position: center center,center center;
+  background-attachment: scroll;
+  font-family: 'DroidSerif-regular';
+
+
+	.homehead-sub-button{
+		margin: 10px 0px 0px 0px;
+
+	}
+
+  .homehead-content {
+    z-index: 1;
+    position: relative;
+    .homehead-heading {
+      font-size: 2rem;
+    }
+    .homehead-subheading {
+      font-size: 1.4rem;
+
+    }
+		.homehead-subheading-button{
+			font-family: 'DNLTPro-regular';
+			margin:20px 100px 0px 100px;
+
+		}
+
+		/* The only rule that matters */
+		#video-background {
+		/*  making the video fullscreen  */
+		  position: fixed;
+		  right: 0;
+		  bottom: 0;
+			top: 80px;
+		  min-width: 100%;
+		  min-height: 100%;
+		  width: auto;
+		  height: auto;
+		  z-index: -100;
+		}
+
+  }
+
+
+
+}
+
+@media (min-width: 992px) {
+  header.homehead {
+    padding-top: calc(2rem + 60px);
+    padding-bottom: 1rem;
+		.homehead-sub-button{
+			padding:10px 0px 0px 0px;
+
+		}
+    .homehead-content {
+      .homehead-heading {
+        font-size: 1.6rem;
+        padding: 1rem 1rem;
+				color: $greenColor;
+
+      }
+      .homehead-subheading {
+        font-size: 1.2rem;
+				line-height: 1.6rem;
+				color: $gray-400;
+      }
+			.homehead-subheading-button{
+				padding:50px 0px 0px 0px;
+
+			}
+    }
+  }
+}

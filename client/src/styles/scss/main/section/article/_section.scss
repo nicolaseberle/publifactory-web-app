@@ -1,0 +1,132 @@
+// Scss rules
+// ----------
+
+section.flux-people {
+    box-sizing: border-box;
+    width: 680px;
+    height: 198px;
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+    padding: 31px;
+    color: black;
+
+    div.flex-container {
+        @include flex-container(nowrap, row, flex-start, flex-start);
+        height: 120px;
+
+        img {
+            width: 82px;
+            height: 82;
+            border-radius: 50%;
+        }
+
+        div.content {
+            margin-left: 20px;
+
+            div.title {
+                @include flex-container(nowrap, row, flex-start, center);
+                height: 24px;
+                margin-bottom: 21px;
+
+                h2 {
+                    margin: 0;
+                    font-family: 'DNLTPro-medium';
+                    font-size: 22px;
+                    font-weight: normal;
+                    font-style: normal;
+                }
+
+                img,
+                svg {
+                    width: 20px;
+                    height: 19px;
+                    margin-left: 30px;
+                }
+            }
+
+            div.job-cat {
+                p {
+                    font-family: 'DroidSerif-regular';
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: normal;
+                    line-height: 30px;
+                    margin: 0;
+                }
+            }
+        }
+
+        a.button {
+            box-sizing: border-box;
+            text-decoration: none;
+            display: block;
+            height: 30px;
+            margin-left: auto;
+            padding: 0 15px;
+            font-family: 'DNLTPro-medium';
+            line-height: 30px;
+            font-size: 16px;
+            font-weight: normal;
+            font-style: normal;
+            color: $greenColor;
+            transition: all 0.3s ease-out;
+            border: 1px solid $greenColor;
+        }
+
+        a.button:hover {
+            background-color: $greenColor;
+            color: white;
+        }
+    }
+
+    div.info {
+        margin-top: auto;
+        @include flex-container(nowrap, row, flex-start, center);
+        height: 16px;
+        font-family: 'DNLTPro-regular';
+        font-size: 16px;
+        font-weight: normal;
+        font-style: normal;
+        opacity: 0.3;
+        color: black;
+
+        span {
+            position: relative;
+            margin-left: 60px;
+        }
+
+        span::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            transform: translateY(-60%);
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+
+        span.nb-articles {
+            margin-left: 20px;
+        }
+
+        span.nb-articles::before {
+            width: 10px;
+            height: 13px;
+            background-image: url('/assets/images/icons/Article.svg');
+        }
+
+        span.nb-reviews::before {
+            width: 14px;
+            height: 10px;
+            left: -24px;
+            background-image: url('/assets/images/icons/Book.svg');
+        }
+
+        span.h-index::before {
+            width: 10px;
+            height: 10px;
+            background-image: url('/assets/images/icons/H-index.svg');
+        }
+    }
+}
