@@ -1,32 +1,8 @@
-<!--<template>
-  <div class="components-container">
-    <el-row :gutter="20">
-      <el-col :span="22">
-        <div class="editor-container"  >
-          Titre : {{ postForm.title }}
-        <ul id="example-1">
-          <li v-for="item in postForm.authors">
-            {{ item.firstname }} {{ item.lastname }}
-          </li>
-        </ul>
-          <markdown-editor id="contentEditor" @input="save($event)" v-model="postForm.content" :height="300" :z-index="20"/>
-        </div>
-      </el-col>-->
-      <!--
-      <el-col :span="12">
-        <el-button type="primary" icon="el-icon-document" @click="markdown2Html">Generate PDF</el-button>
-        <div v-html="html"/>
-      </el-col>-->
-<!--
-
-    </el-row>
-  </div>
-</template>
--->
 <template>
   <div class="components-container">
     <main class="article">
         <article>
+          <span id="triggerStartNav"></span>
             <header>
                 <h2>Research article <span class="category grey">Physics</span></h2>
                 <div class="article-info">
@@ -38,9 +14,10 @@
                 <p class="article-doi">DOI: 1200.22/2344</p>
                 <h1>{{ postForm.title }} </i></h1>
                 <div class="article-author">
-                  <li v-for="item in postForm.authors">
-                    {{ item.firstname }} {{ item.lastname }}
-                  </li>
+                  <img v-for="item in postForm.authors" :src="item.avatar"></img>
+                    <p>
+                        <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
+                    </p>
                 </div>
 
                 <div class="article-tag">
@@ -56,12 +33,45 @@
                   <h2 class="accordion-control-left">{{ item.title }}</h2>
                   <div class="accordion-panel">
                     <span v-html="item.content"></span>
-
+                    <iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/hello/" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>
                   </div>
               </section>
             </div>
+            <span id="triggerEndNav"></span>
         </article>
     </main>
+    <aside  class="comments-reviews" >
+        <p>Show comments &amp; reviews</p>
+    </aside>
+    <aside type="button" class="content-comments-reviews" id="triggerAside">
+        <div class="wrapper">
+            <header class="wrapper">
+                <a href="#" title="Check Reviews of the article" class="showreviews active"><img src="/assets/images/icons/Book.svg" class="reviews svg" alt="Reviews of the article">10 reviews</a>
+                <a href="#" title="Check Comments of the article" class="showcomments"><img src="/assets/images/icons/Comment.svg" class="comments svg" alt="Comments of the article">12 comments</a>
+                <a href="#" title="Close this side bar" class="close"><img src="/assets/images/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
+            </header>
+            <section class="content reviews">
+                <article >
+                    <header>
+                        <a href="#" title="OSPR's profile">Nicolas Eberlé</a>
+                        <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">12/05/2018</time></p>
+                    </header>
+                    <section>
+                        <!--<h2>commentaire</h2>-->
+                        <p data-review="EDM-1">
+                            Ceci est un commentaire
+                        </p>
+                    </section>
+                    <footer >
+                      <footer class="grid-header">
+                      </footer>
+                    </footer>
+                </article>
+            </section>
+            <footer class="wrapper">
+            </footer>
+        </div>
+    </aside>
   </div>
 </template>
 <script>
@@ -70,6 +80,7 @@ import MarkdownEditor from '../components/MarkdownEditor'
 import { validateURL } from '../utils/validate'
 import { article as articleRes } from 'resources'
 import axios from 'axios'
+
 
 const defaultForm = {
   status: 'draft',
@@ -139,17 +150,22 @@ export default {
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
-      }
+      },
+      activeNames: ['1']
     }
   },
   computed: {
     ...mapGetters(['sidebar']),
     contentShortLength() {
       return this.postForm.content_short.length
+    },
+    closeSidebar() {
+      this.sidebar.opened = false
     }
   },
   created() {
     if (1) {
+      this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
       this.id = id
       console.log("creation de la page")
@@ -159,6 +175,9 @@ export default {
     }
   },
   methods: {
+    handleChange(val) {
+      console.log(val)
+    },
     fetchData(id) {
       console.log(id)
       articleRes.query({ _id: id }).then(response => {

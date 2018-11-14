@@ -23,18 +23,18 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'dashboard',
   // hidden: true,
-  meta: { title: 'Dashboard', icon: 'dashboard', noCache: true },
+  meta: { title: 'Dashboard', icon: 'nested', noCache: true },
   children: [
     {
       path: '',
       name: 'Articles',
-      meta: { title: 'Articles', icon: 'list', noCache: true },
+      meta: { title: 'Articles', noCache: true },
       component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
       name: 'Journals',
-      meta: { title: 'Journal', icon: 'list', noCache: true }
+      meta: { title: 'Journal', noCache: true }
     },
     {
       path: 'dashboard',

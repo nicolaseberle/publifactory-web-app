@@ -114,9 +114,7 @@ header {
         img + img {
             -webkit-transform: translateX(-40px);
             -ms-transform: translateX(-40px);
-            transform: translateX(-40px);
-
-            transform: translateX(-50%);
+            transform: translateX(-40px) translateX(-50%);
             z-index: -1;
 
         }

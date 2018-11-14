@@ -111,6 +111,22 @@
     min-width: 200px !important;
   }
 
+
+
+  .menu-enter-active {
+    .menu-leave-active {
+      transition: all .5s;
+    }
+    .menu-enter {
+      margin-left: -12.5rem;
+    }
+  }
+  .el-menu-item{
+      margin-left: 50px;
+      .iconfont{
+        margin-right: 30px;
+      }
+  }
   //Adapted to mobile format
   .mobile {
     .main-container {

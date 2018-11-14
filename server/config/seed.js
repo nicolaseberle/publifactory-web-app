@@ -13,7 +13,7 @@ const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e 
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-  
+
   createArticles(users)
 
 })
@@ -100,7 +100,7 @@ function createUsers() {
         laboratory: 'ECM',
         email: 'nicolas@example.com',
         password: 'nicolas',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Nicolas_Eberle.png',
         field: 'Physics'
       }, {
         provider: 'local',
@@ -113,7 +113,7 @@ function createUsers() {
         laboratory: 'Laboratory of Degenerative Processes, Stress and Aging, UMR8251, Université Paris Diderot, Paris 75013, France.',
         email: 'admin@example.com',
         password: 'admin',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Defaut.png',
         field: 'Administrator'
       }, {
         provider: 'local',
@@ -126,7 +126,7 @@ function createUsers() {
         laboratory: 'Laboratory of Degenerative Processes, Stress and Aging, UMR8251, Université Paris Diderot, Paris 75013, France.',
         email: 'michael@example.com',
         password: 'michael',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Michael_Rera.png',
         field: 'Biology'
       }, {
         provider: 'local',
@@ -139,7 +139,7 @@ function createUsers() {
         laboratory: 'MIT, US',
         email: 'bill@example.com',
         password: 'bill',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Bill_Gates.jpeg',
         field: 'Biology'
       }, {
         provider: 'local',
@@ -152,7 +152,7 @@ function createUsers() {
         laboratory: 'Laboratory of Degenerative Processes, Stress and Aging, UMR8251, Université Paris Diderot, Paris 75013, France.',
         email: 'emilie@example.com',
         password: 'emilie',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Emilie_Dambroise_Mugniery.png',
         field: 'Biology'
       }, {
         provider: 'local',
@@ -165,7 +165,7 @@ function createUsers() {
         laboratory: 'Laboratory of Degenerative Processes, Stress and Aging, UMR8251, Université Paris Diderot, Paris 75013, France.',
         email: 'herve@example.com',
         password: 'herve',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/img/Herve_Tricoire.png',
         field: 'Biology'
       },{
         provider: 'local',

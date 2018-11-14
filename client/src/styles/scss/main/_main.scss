@@ -16,11 +16,10 @@ main.article {
     left : 50px;
     width: 80%;
 
-    //padding: $mainMarginTop 40 $mainMarginBottom 40;
-
-
-
-    /**/
+    padding: $mainMarginTop 40 $mainMarginBottom 40;
+    display: grid;
+    grid-template-columns: $mainFirstColumn $mainSecondColumn;
+    grid-template-rows: auto;
 
 
     //Import nav template
