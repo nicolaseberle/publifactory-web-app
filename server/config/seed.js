@@ -8,6 +8,8 @@ var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
+const figure_1 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_2 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -28,6 +30,7 @@ function createArticles(user_tmp) {
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
+            tags:['Aging','death rates','curve fitting'],
             authors: [user_tmp[5]._id,user_tmp[2]._id],
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],
             published: true,
@@ -35,14 +38,17 @@ function createArticles(user_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
+                            path_figure: figure_1
                           },
                           {
                             title:"Results",
                             content: gen_text,
+                            path_figure: figure_2
                           },
                           {
                             title:"Conclusion",
                             content: gen_text,
+                            path_figure: ''
                           }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
@@ -54,17 +60,21 @@ function createArticles(user_tmp) {
             reviewers : [user_tmp[2]._id,user_tmp[4]._id],
             published: true,
             content: gen_text,
+            tags:['Aging','death rates','curve fitting'],
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
+                            path_figure: ''
                           },
                           {
                             title:"Results",
                             content: gen_text,
+                            path_figure: ''
                           },
                           {
                             title:"Conclusion",
                             content: gen_text,
+                            path_figure: ''
                           }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',
@@ -76,6 +86,18 @@ function createArticles(user_tmp) {
             published: true,
             content: gen_text,
             status: 'Draft',
+            tags:['Aging','death rates','curve fitting'],
+            doi: '',
+
+          },
+          {
+            title: 'Article 4',
+            abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
+            authors: [user_tmp[5]._id,user_tmp[6]._id],
+            published: true,
+            content: gen_text,
+            status: 'submited',
+            tags:['Aging','death rates','curve fitting'],
             doi: '',
 
           });

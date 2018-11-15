@@ -11,7 +11,7 @@
                     <p class="font-dnltp-bold font-style-bold">20 Reads</p>
                     <p class="font-dnltp-bold font-style-bold">Cited 200 times</p>
                 </div>
-                <p class="article-doi">DOI: 1200.22/2344</p>
+                <p class="article-doi">{{postForm.doi}}</p>
                 <h1>{{ postForm.title }} </i></h1>
                 <div class="article-author">
                   <img v-for="item in postForm.authors" :src="item.avatar"></img>
@@ -21,22 +21,24 @@
                 </div>
 
                 <div class="article-tag">
-                    <a href="#" title="Search more articles with this tag" ><h4>Aging</h4></a>
+                    <a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
                 </div>
             </header>
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 {{postForm.abstract}}
             </section>
+
             <div v-for="(item,key) in postForm.arr_content">
               <section id="item.title">
                   <h2 class="accordion-control-left">{{ item.title }}</h2>
                   <div class="accordion-panel">
                     <span v-html="item.content"></span>
-                    <iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/hello/" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>
+                    <span v-html="item.path_figure"></span>
                   </div>
               </section>
             </div>
+
             <span id="triggerEndNav"></span>
         </article>
     </main>

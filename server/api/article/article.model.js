@@ -22,7 +22,8 @@ const ArticleSchema = new Schema({
   },
   arr_content:[{
     title:String,
-    content:String
+    content:String,
+    path_figure: String
   }],
   published: {
     type: Boolean,
@@ -49,6 +50,9 @@ const ArticleSchema = new Schema({
   reviewers: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
+  }],
+  tags:[{
+    type: String,
   }]
 });
 
