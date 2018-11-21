@@ -60,6 +60,7 @@
                     </form>
                     <span v-html="item.path_figure"></span>
                   </div>
+                  </transition>
                   <footer>
       						<div class='section-footer-left'>
       								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event)"><span>+</span></button>
@@ -69,7 +70,7 @@
 
       					</div>
       					</footer>
-              </transition>
+
               </section>
             </div>
 
