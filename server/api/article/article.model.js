@@ -23,7 +23,12 @@ const ArticleSchema = new Schema({
   arr_content:[{
     title:String,
     content:String,
-    path_figure: String
+    path_figure: String,
+    display: {
+      type: Boolean,
+      default: true
+    }
+
   }],
   published: {
     type: Boolean,

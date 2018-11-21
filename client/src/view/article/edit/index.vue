@@ -44,28 +44,35 @@
                 </form>
             </section>
 
+
             <div v-for="(item,key) in postForm.arr_content">
+
               <section id="item.title">
-                  <h2 class="accordion-control-left">
-                  <input type="text" v-model="item.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
+
+                  <h2>
+                    <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
+                    <input type="text" v-model="item.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
                   </h2>
-                  <div class="accordion-panel">
+                  <transition v-on:enter="enter" v-on:leave="leave">
+                  <div class="accordion-panel" v-show="item.display">
                     <form name="abstract_form">
-                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)"/>
+                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
                     </form>
                     <span v-html="item.path_figure"></span>
                   </div>
                   <footer>
       						<div class='section-footer-left'>
-      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow()"><span>+</span></button>
+      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event)"><span>+</span></button>
       						</div>
       						<div class='section-footer-right'>
-                    <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow(key)"circle/>
+                    <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
 
       					</div>
       					</footer>
+              </transition>
               </section>
             </div>
+
 
             <span id="triggerEndNav"></span>
         </article>
@@ -111,6 +118,7 @@ import MarkdownEditor from '../../../components/MarkdownEditor'
 import { validateURL } from '../../../utils/validate'
 import { article as articleRes } from 'resources'
 import axios from 'axios'
+import velocity from 'velocity-animate'
 
 
 const defaultForm = {
@@ -195,6 +203,7 @@ export default {
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       activeNames: ['1'],
+      activeNames_section: ['1'],
       options: options
     }
   },
@@ -214,11 +223,24 @@ export default {
       this.id = id
       console.log("creation de la page")
       this.fetchData(id)
+
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
   },
   methods: {
+    openItem: function(item){
+        item.isopen = !  item.isopen
+    },
+    handleChange_section(val) {
+            console.log(val);
+    },
+    setClass: function(item){
+        if (item.isopen == true ) {
+          return 'open'
+        }
+        return 'close'
+    },
     handleChange(val) {
       console.log(val)
     },
@@ -232,6 +254,23 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    openItem: function (item) {
+      item.display = !item.display
+    },
+    setClass: function (item) {
+      if (item.display === true) {
+        return 'open'
+      }
+      return 'close'
+    },
+    enter: function (el, done) {
+      velocity(el, 'slideDown', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
+    },
+    leave: function (el, done) {
+      velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
     },
     save (event) {
       axios.put('http://localhost:4000/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
@@ -250,14 +289,16 @@ export default {
         this.save(ev)
       }
     },
-    addNewRow () {
+    addNewRow (ev) {
       var length = this.postForm.arr_content.length;
       var num_current_section = length + 1;
       var title_name = "Title " + (num_current_section);
       this.postForm.arr_content.push({name: title_name,title: null,title_placeholder:title_name,content:"Type the text",display:true});
+      this.save(ev)
     },
-    removeRow (key) {
+    removeRow (ev,key) {
       this.postForm.arr_content.splice(key, 1);
+      this.save(ev)
     },/*
     save(event) {
         console.log('hello on enregristre')

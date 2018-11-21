@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="20" viewBox="0 0 30 20" version="1">
+    <title>Inbox</title>
+    <g style="fill-rule:evenodd;fill:none">
+        <g fill="#3D4853"><path d="M0 0L30 0 30 20 0 20 0 0ZM15 12.5L30 2.5 0 2.5 15 12.5ZM0 0L30 0 30 2.5 0 2.5 0 0Z"/><polygon transform="translate(15 5)rotate(180)translate(-15 -5)" points="15 0 30 10 0 10"/></g>
+    </g>
+</svg>
