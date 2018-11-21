@@ -93,18 +93,69 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
     const title = req.body.title.trim();
     const abstract = req.body.abstract.trim();
-    const content = req.body.content;
+    const arr_content = req.body.arr_content;
     const published = req.body.published;
     const article = await Article
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { title, abstract, content, published } },
+        { $set: { title, abstract, arr_content, published } },
         { new: true }
       );
 
     if (!article) return res.sendStatus(404);
 
     return res.status(200).json(article);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+
+/**
+ * @function createArticle
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.createArticle = async (req, res, next) => {
+  try {
+    //req.check(ArticleValidator.checkArticleData);
+    //const validationResult = await req.getValidationResult();
+    /*if (!validationResult.isEmpty()) {
+      return res.status(400).json({ errors: validationResult.array() });
+    }*/
+
+    const title = req.body.title.trim();
+    //console.log(title);
+    const abstract = req.body.abstract.trim();
+    //console.log(abstract);
+    const arr_content = req.body.arr_content;
+    //console.log(arr_content);
+
+    //console.log(content);
+    const published = req.body.published;
+    //console.log(published);
+
+    const newArticle = new Article({ title, abstract,arr_content,published});
+
+    //Add category to the Article
+    //Catch the good category
+    //const category = await Category.findOne({ name: req.body.category }).lean();
+    //console.log(JSON.stringify(category, null, "\t"));
+    //newArticle.categories[0] = category;
+    //const article = await newArticle.save();
+    //console.log(JSON.stringify(category, null, "\t"));
+    console.log(JSON.stringify(req.body.id_author, null, "\t"));
+    //Add Author to the Article
+    const author = await User.findById( req.body.id_author ).exec();
+    // console.log(JSON.stringify(author, null, "\t"));
+    newArticle.authors[0] = author;
+    const article = await newArticle.save();
+
+    console.log(JSON.stringify(article._id, null, "\t"));
+
+    return res.status(200).json(article._id);
   } catch (err) {
     return next(err);
   }

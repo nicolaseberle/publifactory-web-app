@@ -52,7 +52,7 @@ export const constantRouterMap = [{
       name: 'Article',
       meta: { title: 'Articles', icon: 'edit', noCache: true },
       component: (resolve) => {
-        import('../view/ArticleList.vue').then(resolve)
+        import('../view/article/index.vue').then(resolve)
       }
     }]
 },

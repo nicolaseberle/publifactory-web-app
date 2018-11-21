@@ -13,7 +13,7 @@ export default [ /* {
     path: '/articles/:id',
     meta: { title: 'Article', noCache: true },
     component: (resolve) => {
-      import('../view/ArticleList.vue').then(resolve)
+      import('../view/article/index.vue').then(resolve)
     },
     hidden: true
   }

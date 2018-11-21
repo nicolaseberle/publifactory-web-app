@@ -12,8 +12,21 @@
                     <p class="font-dnltp-bold font-style-bold">Cited 200 times</p>
                 </div>
                 <p class="article-doi">{{postForm.doi}}</p>
-                <h1>{{ postForm.title }} </i></h1>
+                <!--<h1>{{ postForm.title }} </i></h1>-->
+                <h1>
+                  <form name="article_title_form">
+                    <!--<el-input
+                      type="textarea"
+                      :autosize="{ minRows: 1, maxRows: 5}"
+                      v-model="postForm.title"
+                      placeholder="Article Title" @input="save($event)"
+                      >
+                    </el-input>-->
+                    <input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
+                  </form>
+               </h1>
                 <div class="article-author">
+                  <button class="insert-buttons" title="Invite another author" ><span>+</span></button>
                   <img v-for="item in postForm.authors" :src="item.avatar"></img>
                     <p>
                         <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
@@ -26,16 +39,31 @@
             </header>
             <section  class="abstract">
                 <h2>Abstract</h2><br>
-                {{postForm.abstract}}
+                <form name="abstract_form">
+                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="save($event)"/>
+                </form>
             </section>
 
             <div v-for="(item,key) in postForm.arr_content">
               <section id="item.title">
-                  <h2 class="accordion-control-left">{{ item.title }}</h2>
+                  <h2 class="accordion-control-left">
+                  <input type="text" v-model="item.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
+                  </h2>
                   <div class="accordion-panel">
-                    <span v-html="item.content"></span>
+                    <form name="abstract_form">
+                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)"/>
+                    </form>
                     <span v-html="item.path_figure"></span>
                   </div>
+                  <footer>
+      						<div class='section-footer-left'>
+      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow()"><span>+</span></button>
+      						</div>
+      						<div class='section-footer-right'>
+                    <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow(key)"circle/>
+
+      					</div>
+      					</footer>
               </section>
             </div>
 
@@ -77,9 +105,10 @@
   </div>
 </template>
 <script>
+import editor from 'vue2-medium-editor'
 import { mapGetters } from 'vuex'
-import MarkdownEditor from '../components/MarkdownEditor'
-import { validateURL } from '../utils/validate'
+import MarkdownEditor from '../../../components/MarkdownEditor'
+import { validateURL } from '../../../utils/validate'
 import { article as articleRes } from 'resources'
 import axios from 'axios'
 
@@ -105,10 +134,22 @@ const defaultForm = {
   importance: 0
 }
 
+const options = {
+  toolbar: {
+    buttons: [
+      'bold',
+      'italic',
+      'underline',
+      'anchor',
+      'quote',
+      'image'
+    ]
+  }
+}
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor },
+  components: { MarkdownEditor, 'medium-editor': editor},
   props: {
     isEdit: {
       type: Boolean,
@@ -153,7 +194,8 @@ export default {
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      activeNames: ['1']
+      activeNames: ['1'],
+      options: options
     }
   },
   computed: {
@@ -192,13 +234,30 @@ export default {
       })
     },
     save (event) {
-      axios.put('http://localhost:4000/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"published": true })
+      axios.put('http://localhost:4000/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
       .then(response => {
         console.log("save successfully")
       })
       .catch(e => {
         console.log(e)
       })
+    },
+    applyTextEdit (ev,key) {
+      console.log(ev)
+      if (ev.event.target) {
+        console.log(ev.event.target.innerHTML)
+        this.postForm.arr_content[key].content = ev.event.target.innerHTML
+        this.save(ev)
+      }
+    },
+    addNewRow () {
+      var length = this.postForm.arr_content.length;
+      var num_current_section = length + 1;
+      var title_name = "Title " + (num_current_section);
+      this.postForm.arr_content.push({name: title_name,title: null,title_placeholder:title_name,content:"Type the text",display:true});
+    },
+    removeRow (key) {
+      this.postForm.arr_content.splice(key, 1);
     },/*
     save(event) {
         console.log('hello on enregristre')

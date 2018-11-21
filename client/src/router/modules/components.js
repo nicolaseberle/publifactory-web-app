@@ -14,10 +14,10 @@ const componentsRouter = {
   },
   children: [
     {
-      path: 'ArticleList',
-      component: () => import('../../view/ArticleList.vue'),
-      name: 'ArticleList',
-      meta: { title: 'ArticleEdit' }
+      path: 'Article',
+      component: () => import('../../view/article/index.vue'),
+      name: 'Article',
+      meta: { title: 'Article' }
     }
   ]
 }

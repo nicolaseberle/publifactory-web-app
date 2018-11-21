@@ -7,7 +7,7 @@ var auth = require('../../auth/auth.service')
 
 var router = express.Router()
 
-
+router.post('/', articlesController.createArticle);
 router.get('/', articlesController.getArticles);
 router.get('/:id', articlesController.findArticleById);
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);

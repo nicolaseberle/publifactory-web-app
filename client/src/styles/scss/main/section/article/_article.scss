@@ -56,6 +56,10 @@ article.flux-bookmarks {
                     overflow: hidden;
                     max-width: 100%;
                     white-space: nowrap;
+                    el-textarea {
+                      border:none;
+                      background-color: transparent;
+                    }
                 }
             }
 

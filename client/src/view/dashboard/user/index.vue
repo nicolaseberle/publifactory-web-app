@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <el-button round v-on:click="createArticle()">Create Article</el-button>
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
@@ -70,13 +71,27 @@
       </el-table>
     </data-table>
 </content-module>
+<!--
+<el-dialog :title="Titre" :visible.sync="formVisible">
+  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form-item :label="$t('article.title')">
+        <el-input v-model="temp.title"/>
+      </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
+    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
+  </span>
+</el-dialog>-->
 </div>
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
 import { article as articleRes } from '../../../resources'
 import locales from '../../../locales/article'
+import axios from 'axios'
 
 export default {
   locales,
@@ -103,6 +118,11 @@ export default {
       articles: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   components: {
     DataTable
   },
@@ -116,7 +136,34 @@ export default {
       })
     },
     createArticle () {
-      this.formVisible = true
+
+      //this.formVisible = true
+      const newArticle = {
+          title: String('Article title'),
+          abstract:  String('abstract'),
+          arr_content: [{
+                          name:"titre_1",
+                          title:"Titre 1",
+                          title_placeholder:"Titre 1",
+                          content:"Type the text",
+                          display:true
+                        }],
+          category : String('physics'),
+          id_author : this.userId,
+          published: true
+        };
+        axios.post('http://localhost:4000/api/articles/', newArticle)
+        .then(response => {
+          let new_article_id = response.data
+          console.log("create successfully ")
+          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
+    closeCreationDialog () {
+      this.formVisible = false
     },
     cancelForm () {
       this.form.title = ''
