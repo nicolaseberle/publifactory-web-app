@@ -63,11 +63,10 @@
                   </transition>
                   <footer>
       						<div class='section-footer-left'>
-      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event)"><span>+</span></button>
+      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)"><span>+</span></button>
       						</div>
       						<div class='section-footer-right'>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
-
       					</div>
       					</footer>
 
@@ -84,9 +83,9 @@
     <aside type="button" class="content-comments-reviews" id="triggerAside">
         <div class="wrapper">
             <header class="wrapper">
-                <a href="#" title="Check Reviews of the article" class="showreviews active"><img src="/assets/images/icons/Book.svg" class="reviews svg" alt="Reviews of the article">10 reviews</a>
-                <a href="#" title="Check Comments of the article" class="showcomments"><img src="/assets/images/icons/Comment.svg" class="comments svg" alt="Comments of the article">12 comments</a>
-                <a href="#" title="Close this side bar" class="close"><img src="/assets/images/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
+                <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/>10 reviews</a>
+                <a href="#" title="Check Comments of the article" class="showcomments"><img src="/static/icons/Comment.svg" class="comments svg" alt="Comments of the article">12 comments</a>
+                <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
             </header>
             <section class="content reviews">
                 <article >
@@ -120,7 +119,7 @@ import { validateURL } from '../../../utils/validate'
 import { article as articleRes } from 'resources'
 import axios from 'axios'
 import velocity from 'velocity-animate'
-
+import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 
 const defaultForm = {
   status: 'draft',
@@ -229,18 +228,12 @@ export default {
       this.postForm = Object.assign({}, defaultForm)
     }
   },
+  mounted() {
+      asideRightAnimation()
+  },
   methods: {
-    openItem: function(item){
-        item.isopen = !  item.isopen
-    },
     handleChange_section(val) {
             console.log(val);
-    },
-    setClass: function(item){
-        if (item.isopen == true ) {
-          return 'open'
-        }
-        return 'close'
     },
     handleChange(val) {
       console.log(val)
@@ -256,8 +249,8 @@ export default {
         console.log(err)
       })
     },
-    openItem: function (item) {
-      item.display = !item.display
+    openItem: function(item){
+      item.display = !  item.display
     },
     setClass: function (item) {
       if (item.display === true) {
@@ -290,11 +283,16 @@ export default {
         this.save(ev)
       }
     },
-    addNewRow (ev) {
-      var length = this.postForm.arr_content.length;
-      var num_current_section = length + 1;
-      var title_name = "Title " + (num_current_section);
-      this.postForm.arr_content.push({name: title_name,title: null,title_placeholder:title_name,content:"Type the text",display:true});
+    addNewRow (ev,key) {
+      var new_content = {
+        name:"titre_1",
+        title:"Titre 1",
+        title_placeholder:"Titre 1",
+        content:"Type the text",
+        display:true
+      }
+      //var new_content = {name: title_name,title: null,display:false,title_placeholder:title_name,content:"Type the text"}
+      this.postForm.arr_content.splice(key+1,0, new_content);
       this.save(ev)
     },
     removeRow (ev,key) {
