@@ -109,10 +109,10 @@ export default {
       let C
       const R = range.s.r
       /* start in the first row */
-      for (C = range.s.c; C <= range.e.c; ++C) { /* walk every column in the range */
+      for (C = range.s.c; C < range.e.c + 1; ++C) { 
         const cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })]
         /* find the cell in the first row */
-        let hdr = 'UNKNOWN ' + C // <-- replace with your desired default
+        let hdr = 'UNKNOWN ' + C
         if (cell && cell.t) hdr = XLSX.utils.format_cell(cell)
         headers.push(hdr)
       }

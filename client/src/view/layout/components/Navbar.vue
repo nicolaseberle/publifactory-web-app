@@ -29,6 +29,9 @@
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
+            <el-dropdown-item>
+              {{ $t('navbar.settings') }}
+            </el-dropdown-item>
           <!--</router-link>-->
           <el-dropdown-item @click.native="doLogout">{{$t('navbar.logout')}}</el-dropdown-item>
         </el-dropdown-menu>

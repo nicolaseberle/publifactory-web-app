@@ -69,7 +69,8 @@
     "vue-router": "^3.0.1",
     "vue2-medium-editor": "^1.1.6",
     "vuex": "^3.0.1",
-    "vuex-router-sync": "^4.1.2"
+    "vuex-router-sync": "^4.1.2",
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",

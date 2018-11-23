@@ -1,6 +1,8 @@
 <template>
   <div class="components-container">
-    <main class="article">
+    <el-tabs type="border-card" stretch='true'  v-model="activeName_tab" @tab-click="handleClick">
+      <el-tab-pane label="Article" name="article">
+      <main class="article">
         <article>
           <span id="triggerStartNav"></span>
             <header>
@@ -109,6 +111,13 @@
             </footer>
         </div>
     </aside>
+  </el-tab-pane>
+  <el-tab-pane label="Data" name="data">
+    <component :is="datatable"/>
+  </el-tab-pane>
+  <el-tab-pane label="Figures" name="figures">
+  </el-tab-pane>
+</el-tabs>
   </div>
 </template>
 <script>
@@ -120,6 +129,8 @@ import { article as articleRes } from 'resources'
 import axios from 'axios'
 import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
+import datatable from './data'
+import uploadExcel from './uploadExcel'
 
 const defaultForm = {
   status: 'draft',
@@ -157,7 +168,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel},
   props: {
     isEdit: {
       type: Boolean,
@@ -204,7 +215,9 @@ export default {
       },
       activeNames: ['1'],
       activeNames_section: ['1'],
-      options: options
+      options: options,
+      activeName_tab: 'article',
+      datatable: 'uploadExcel'
     }
   },
   computed: {
@@ -232,8 +245,11 @@ export default {
       asideRightAnimation()
   },
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
     handleChange_section(val) {
-            console.log(val);
+      console.log(val);
     },
     handleChange(val) {
       console.log(val)
