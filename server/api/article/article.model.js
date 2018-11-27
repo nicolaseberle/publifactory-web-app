@@ -23,12 +23,11 @@ const ArticleSchema = new Schema({
   arr_content:[{
     title:String,
     content:String,
-    path_figure: String,
+    path_figure: String,//add the path of script object
     display: {
       type: Boolean,
       default: true
     }
-
   }],
   published: {
     type: Boolean,
@@ -48,6 +47,10 @@ const ArticleSchema = new Schema({
     unique: true,
     slug: 'title',
   },
+  arr_data: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Data',
+  }],
   authors: [{
     type: Schema.Types.ObjectId,
     ref: 'User',

@@ -20,6 +20,7 @@
 </template>
 <script>
 import UploadExcelComponent from '../../../components/UploadExcel/index.vue'
+import axios from 'axios'
 
 export default {
   name: 'UploadExcel',
@@ -28,16 +29,20 @@ export default {
     return {
       tableData: [],
       tableHeader: [],
-      tableFiles:[
-        {file: 'Fichier_1'},
-        {file: 'Fichier_2'},
-        {file: 'Fichier_3'}]
+      tableFiles:[]
     }
+  },
+  created() {
+    const id = this.$route.params && this.$route.params.id
+    this.id = id
+    // get data of the articles
+    console.log(id)
+    this.loadData(id)
   },
   methods: {
     beforeUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 1
-
+      console.log(file.name)
       if (isLt1M) {
         return true
       }
@@ -48,9 +53,34 @@ export default {
       })
       return false
     },
-    handleSuccess({ results, header }) {
+    handleSuccess({name, results, header }) {
       this.tableData = results
       this.tableHeader = header
+      this.name = name
+      this.tableFiles.push({file: JSON.stringify(name)})
+      this.save(name, header, results)
+    },
+    save(name, header, results) {
+      console.log(JSON.stringify(this.id))
+      axios.post('http://localhost:4000/api/data/', { "id": this.id, "name": name,"header": header,"content": results })
+      .then(response => {
+        console.log("save successfully")
+      })
+      .catch(e => {
+        console.log(e)
+      })
+    },
+    loadData(id) {
+      axios.get(`http://localhost:4000/api/data/${this.id}`)
+      .then(response => {
+        this.tableData = JSON.parse(response.data.content)
+        this.tableHeader = JSON.parse(response.data.header)
+        this.tableFiles.push( {file: JSON.parse(response.data.name)})
+        console.log("save successfully")
+      })
+      .catch(e => {
+        console.log(e)
+      })
     }
   }
 }

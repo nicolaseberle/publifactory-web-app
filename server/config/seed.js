@@ -15,7 +15,6 @@ const figure_2 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazon
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-
   createArticles(users)
 
 })
@@ -83,6 +82,7 @@ function createArticles(user_tmp) {
             title: 'New Article 3',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
             authors: [user_tmp[5]._id,user_tmp[3]._id],
+            arr_content: [],
             published: true,
             content: gen_text,
             status: 'Draft',
@@ -164,6 +164,20 @@ function createUsers() {
         avatar: '/static/img/Bill_Gates.jpeg',
         field: 'Biology'
       }, {
+        provider: 'local',
+        role: 'user',
+        roles : ['user'],
+        name: 'Caterina',
+        username: 'caterina',
+        firstname: 'Caterina',
+        lastname: 'Cicognani',
+        laboratory: 'Universita Aldo Rossi, Italy',
+        email: 'caterina@example.com',
+        password: 'caterina',
+        avatar: '/static/img/Defaut.png',
+        field: 'Architecture'
+      },
+       {
         provider: 'local',
         role: 'user',
         roles : ['admin'],

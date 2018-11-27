@@ -1,7 +1,7 @@
 footer{
-    padding:10px 10px 0px 0;
+    padding:10px 10px 30px 0;
     border-top: 1px solid rgba(92, 115, 141, 0.15);
-    margin-top: 12px;
+    margin-top: 25px;
 
   .section-footer-right{
     float: right;
@@ -23,25 +23,25 @@ footer{
 
       .insert-buttons {
         //float: left;
-         color: greyBorderColor(0.5);
-         background: #fff;
-         width: 32px;
-         height: 32px;
-         box-sizing: border-box;
-         border-radius: 50%;
-         border: 1px solid greyBorderColor(0.5);
-         line-height: 30px;
-         text-align: center;
-         padding: 0;
-         font-size: 20px;
+         //color: greyBorderColor(0.5);
+         //background: #fff;
+         //width: 32px;
+         //height: 32px;
+         //box-sizing: border-box;
+         //border-radius: 50%;
+         //border: 1px solid greyBorderColor(0.5);
+         //line-height: 30px;
+         //text-align: center;
+         //padding: 0;
+         //font-size: 20px;
          -webkit-transform: translate(-60px,0px);
          -ms-transform: translate(-60px,0px);
          transform: translate(-60px,0px);
        }
 
        .insert-buttons:hover {
-         color: greyBorderColor(0.8);
-         border: 1px solid greyBorderColor(0.8);
+         //color: greyBorderColor(0.8);
+         //border: 1px solid greyBorderColor(0.8);
        }
 
       .insert-buttons

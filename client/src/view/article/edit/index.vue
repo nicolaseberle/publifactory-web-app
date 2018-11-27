@@ -1,19 +1,19 @@
 <template>
   <div class="components-container">
-    <el-tabs type="border-card" stretch='true'  v-model="activeName_tab" @tab-click="handleClick">
+    <el-tabs type="border-card" stretch=True  v-model="activeName_tab" @tab-click="handleClick">
       <el-tab-pane label="Article" name="article">
       <main class="article">
         <article>
           <span id="triggerStartNav"></span>
             <header>
-                <h2>Research article <span class="category grey">Physics</span></h2>
-                <div class="article-info">
+                <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
+                <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
                     <p class="font-dnltp-bold font-style-bold">20 Reads</p>
                     <p class="font-dnltp-bold font-style-bold">Cited 200 times</p>
-                </div>
-                <p class="article-doi">{{postForm.doi}}</p>
+                </div>-->
+                <p class="article-doi">DOI : {{postForm.doi}}</p>
                 <!--<h1>{{ postForm.title }} </i></h1>-->
                 <h1>
                   <form name="article_title_form">
@@ -28,7 +28,7 @@
                   </form>
                </h1>
                 <div class="article-author">
-                  <button class="insert-buttons" title="Invite another author" ><span>+</span></button>
+                  <el-button icon="el-icon-plus" class="insert-buttons" @click="dialogTableVisible = true" title="Invite another author" circle></el-button>
                   <img v-for="item in postForm.authors" :src="item.avatar"></img>
                     <p>
                         <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
@@ -65,7 +65,7 @@
                   </transition>
                   <footer>
       						<div class='section-footer-left'>
-      								<button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)"><span>+</span></button>
+      								<el-button  icon="el-icon-plus"  class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>
       						</div>
       						<div class='section-footer-right'>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
@@ -116,6 +116,7 @@
     <component :is="datatable"/>
   </el-tab-pane>
   <el-tab-pane label="Figures" name="figures">
+
   </el-tab-pane>
 </el-tabs>
   </div>
@@ -217,7 +218,8 @@ export default {
       activeNames_section: ['1'],
       options: options,
       activeName_tab: 'article',
-      datatable: 'uploadExcel'
+      datatable: 'uploadExcel',
+      dialogTableVisible: false,
     }
   },
   computed: {

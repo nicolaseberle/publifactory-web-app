@@ -20,6 +20,7 @@ export default {
     return {
       loading: false,
       excelData: {
+        name: null,
         header: null,
         results: null
       }
@@ -46,6 +47,7 @@ export default {
         this.$message.error('Only supports upload .xlsx, .xls, .csv suffix files')
         return false
       }
+      this.excelData.name = rawFile.name
       this.upload(rawFile)
       e.stopPropagation()
       e.preventDefault()
@@ -60,6 +62,7 @@ export default {
     },
     handleClick(e) {
       const files = e.target.files
+
       const rawFile = files[0] // only use files[0]
       if (!rawFile) return
       this.upload(rawFile)
@@ -109,7 +112,7 @@ export default {
       let C
       const R = range.s.r
       /* start in the first row */
-      for (C = range.s.c; C < range.e.c + 1; ++C) { 
+      for (C = range.s.c; C < range.e.c + 1; ++C) {
         const cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })]
         /* find the cell in the first row */
         let hdr = 'UNKNOWN ' + C

@@ -2,6 +2,7 @@
 
 var User = require('../user/user.model');
 var Article = require('./article.model');
+var Data = require('../data/data.model');
 
 var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
