@@ -1,5 +1,23 @@
 <template>
   <div class="components-container">
+    <el-dialog title="Add Authors" :visible.sync="dialogFormVisible">
+    <el-form :model="form">
+      <el-form-item label="Name" :label-width="formLabelWidth">
+        <el-input v-model="form.name" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="Surname" :label-width="formLabelWidth">
+        <el-input v-model="form.surname" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="mail" :label-width="formLabelWidth">
+        <el-input v-model="form.mail" autocomplete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">Cancel</el-button>
+      <el-button type="primary" @click="dialogFormVisible = false">Confirm</el-button>
+    </span>
+    </el-dialog>
+
     <el-tabs type="border-card" stretch=True  v-model="activeName_tab" @tab-click="handleClick">
       <el-tab-pane label="Article" name="article">
       <main class="article">
@@ -116,10 +134,11 @@
     <component :is="datatable"/>
   </el-tab-pane>
   <el-tab-pane label="Figures" name="figures">
-
+    <component :is="scriptview"/>
   </el-tab-pane>
 </el-tabs>
   </div>
+
 </template>
 <script>
 import editor from 'vue2-medium-editor'
@@ -132,6 +151,7 @@ import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 import datatable from './data'
 import uploadExcel from './uploadExcel'
+import scriptView from './scriptView'
 
 const defaultForm = {
   status: 'draft',
@@ -169,7 +189,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView},
   props: {
     isEdit: {
       type: Boolean,
@@ -219,7 +239,15 @@ export default {
       options: options,
       activeName_tab: 'article',
       datatable: 'uploadExcel',
+      scriptview: 'scriptView',
       dialogTableVisible: false,
+      dialogFormVisible: false,
+      formLabelWidth: '120px',
+      form: {
+          name: '',
+          surname: '',
+          mail: ''
+        }
     }
   },
   computed: {
