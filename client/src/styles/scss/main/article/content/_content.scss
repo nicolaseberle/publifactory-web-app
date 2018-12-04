@@ -29,8 +29,8 @@ section {
         position: relative;
         display: inline-block;
         font-family: 'DNLTPro-bold';
-        font-size: 24px;
-        line-height: 24px;
+        font-size: 1.4rem;
+        line-height: 1.2rem;
         color: $blackColor;
         margin: 0 0 20px;
 
@@ -45,8 +45,8 @@ section {
         display: inline-block;
         font-family: 'DroidSerif-bold';
         font-weight: bold;
-        font-size: 20px;
-        line-height: 42px;
+        font-size: 1.3rem;
+        line-height: 2rem;
         color: $blackColor;
         margin: 0 0 13px;
     }
@@ -56,8 +56,8 @@ section {
         display: inline-block;
         font-family: 'DroidSerif-regular';
         font-weight: normal;
-        font-size: 20px;
-        line-height: 30px;
+        font-size: 1.3rem;
+        line-height: 2rem;
         color: $blackColor;
         margin: 0 0 13px;
     }
@@ -77,8 +77,8 @@ section {
             counter-increment: index;
             margin-bottom: 30px;
             font-family: 'DroidSerif-regular';
-            font-size: 16px;
-            line-height: 24px;
+            font-size: 1rem;
+            line-height: 1.2rem;
             font-weight: normal;
             color: $blackColor;
         }
@@ -90,15 +90,15 @@ section {
             content: counter(index) '.';
             margin-right: 13px;
             font-family: 'DNLTPro-bold';
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: bold;
-            line-height: 24px;
+            line-height: 1.5rem;
         }
     }
 
     p {
         font-family: 'DroidSerif-regular';
-        font-size: 16px;
+        font-size: 1rem;
         line-height: 30px;
         color: black;
         margin: 0;

@@ -43,7 +43,7 @@ export default {
       items: [
         { title: 'Deviation',
           children:[
-            {title: 'Histogram', id: 'classname_3',type: 'dev',src: '/static/img/line-simple.png' },
+            {title: 'Chg from baseline', id: 'classname_3',type: 'dev',src: '/static/img/line-simple.png' },
             {title: 'Waterfall',id: 'classname_2',type: 'dev',src: '/static/img/waterfall-simple-3.png' }
           ]
         },
@@ -55,8 +55,8 @@ export default {
         },
         { title: 'Ranking',
           children:[
-            {title: 'Dot Plot', id: 'classname_6',type: 'rank',src: '/static/img/scatter-simple.png' },
-            {title: 'Horizontal bar',id: 'classname_7',type: 'rank',src: '/static/img/horizontal-bar-chart.png' }
+            {title: 'Horizontal bar',id: 'classname_7',type: 'rank',src: '/static/img/horizontal-bar-chart.png' },
+            {title: 'Dot Plot', id: 'classname_6',type: 'rank',src: '/static/img/scatter-simple.png' }
           ]
          },
         { title: 'Distribution',

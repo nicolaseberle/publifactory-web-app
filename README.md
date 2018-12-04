@@ -1,11 +1,16 @@
 # publifactory-project
-This is a MVP implementation of a intuitive editorial workflow.
+This is a MVP implementation of an open source editorial workflow. This open science plateform allows to:
+1. open peer reviewing (anonymous or identified)
+2. data visualization (FAIR principles) - shinyR
+
+Based on VueJS / NodeJs / MongoDB / Express
 
 Join us: contact@publifactory.co
 
 ## Before dev
 1. Install `mongodb` follow [official manual](https://docs.mongodb.com/manual/installation/). It's recommend to use [MongoChef](3t.io/mongochef/) as the db client.
 2. NodeJs installed.
+3. Launch a container with mongodb `sudo docker run -p 27017:27017 --name afs-mongo -d mongo`
 
 ## Dev step
 1. Open terminal and run `npm install`, if you don't choose i18n when initialization, you need to run `npm run remove:i18n` here manually
