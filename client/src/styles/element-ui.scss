@@ -121,7 +121,18 @@
   }
 }
 
+.el-card{
 .el-card__header{
   background-color: #EEF4F2;
   color: #333333;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+.header{
+  margin: 10 0 10 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 }

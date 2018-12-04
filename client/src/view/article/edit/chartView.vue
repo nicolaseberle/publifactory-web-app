@@ -1,26 +1,29 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
+
       <div  v-for="item in items">
-      <el-col :span="6">
-        <el-card class="box-card" :style="{ margin: '0 0 20px 0' }">
+        <el-col :lg="6" :md="6" :sm="12" :xs='24'>
+
+        <el-card class="box-card grid-content" :style="{ margin: '0 0 20px 0' , height: '580px'}"  >
           <div slot="header" class="clearfix">
             <span> {{ item.title }}</span>
           </div>
           <div  v-for="subitem in item.children">
           <el-card class="box-card" shadow="never" :style="{ margin: '0 0 10px 0' }">
 
-
-
+              <div class='header'>
+                <span> {{ subitem.title }}</span>
+              </div>
               <img v-bind:src="subitem.src" width="100%"  height="100%"></img>
-              <span> {{ subitem.title }}</span>
+
           </el-card>
+
           </div>
         </el-card>
-      </el-col>
-      </div>
 
-
+    </el-col>
+  </div>
     </el-row>
 </div>
 </template>
@@ -57,15 +60,35 @@ export default {
           ]
          },
         { title: 'Distribution',
-        children:[
-          {title: 'Histogram', id: 'classname_0',type: 'hist',src: '/static/img/hist-simple.png' },
-          {title: 'Box Plot',id: 'classname_1',type: 'hist',src: '/static/img/box-simple.png' }
-          ]
+          children:[
+            {title: 'Histogram', id: 'classname_0',type: 'hist',src: '/static/img/hist-simple.png' },
+            {title: 'Box Plot',id: 'classname_1',type: 'hist',src: '/static/img/box-simple.png' }
+            ]
         },
-        { title: 'Evolution',id: 'classname_3',type: 'basicline' },
-        { title: 'Part-to-whole',id: 'classname_4',type: 'partofwhole' },
-        { title: 'Magnitude',id: 'classname_5',type: 'magnitude_1' },
-        { title: 'Magnitude',id: 'classname_7',type: 'magnitude_2' }
+        { title: 'Evolution',
+          children:[
+            {title: 'Kaplan Meier', id: 'classname_8',type: 'evol',src: '/static/img/line-simple.png' },
+            {title: 'Line Plot',id: 'classname_9',type: 'evol',src: '/static/img/line-simple.png' }
+            ]
+        },
+        { title: 'Part-to-whole',
+          children:[
+            {title: 'Stacked bar', id: 'classname_10',type: 'ptw',src: '/static/img/hist-simple.png' },
+            {title: 'Tree map',id: 'classname_11',type: 'ptw',src: '/static/img/tree-simple.png' }
+            ]
+        },
+        { title: 'Magnitude',
+          children:[
+            {title: 'vertical bar', id: 'classname_10',type: 'magn',src: '/static/img/hist-simple.png' },
+            {title: 'Forest plot',id: 'classname_11',type: 'magn',src: '/static/img/box-simple.png' }
+            ]
+          },
+          { title: 'Custom',
+            children:[
+              {title: 'R script', id: 'classname_12',type: 'customR',src: '/static/img/R_logo.png'},
+              {title: 'Python script', id: 'classname_13',type: 'customP',src: '/static/img/python-logo.png'  }
+              ]
+            }
         ]
       }
   },
