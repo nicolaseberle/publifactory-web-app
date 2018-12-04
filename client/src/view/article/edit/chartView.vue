@@ -8,11 +8,12 @@
             <span> {{ item.title }}</span>
           </div>
           <div  v-for="subitem in item.children">
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span> {{ subitem.title }}</span>
-            </div>
+          <el-card class="box-card" shadow="never" :style="{ margin: '0 0 10px 0' }">
+
+
+
               <img v-bind:src="subitem.src" width="100%"  height="100%"></img>
+              <span> {{ subitem.title }}</span>
           </el-card>
           </div>
         </el-card>
@@ -39,12 +40,22 @@ export default {
       items: [
         { title: 'Deviation',
           children:[
-            {title: 'Histogram', id: 'classname_3',type: 'dev',src: '/static/img/hist-simple.png' },
-            {title: 'Waterfall',id: 'classname_2',type: 'dev',src: '/static/img/box-simple.png' }
+            {title: 'Histogram', id: 'classname_3',type: 'dev',src: '/static/img/line-simple.png' },
+            {title: 'Waterfall',id: 'classname_2',type: 'dev',src: '/static/img/waterfall-simple-3.png' }
           ]
         },
-        { title: 'Correlation',id: 'classname_1',type: 'basicline' },
-        { title: 'Ranking',id: 'classname_5',type: 'scatter' },
+        { title: 'Correlation',
+          children:[
+            {title: 'Scatter Plot', id: 'classname_4',type: 'corr',src: '/static/img/scatter-simple.png' },
+            {title: 'Heatmap',id: 'classname_5',type: 'corr',src: '/static/img/heatmap-simple.png' }
+          ]
+        },
+        { title: 'Ranking',
+          children:[
+            {title: 'Dot Plot', id: 'classname_6',type: 'rank',src: '/static/img/scatter-simple.png' },
+            {title: 'Horizontal bar',id: 'classname_7',type: 'rank',src: '/static/img/horizontal-bar-chart.png' }
+          ]
+         },
         { title: 'Distribution',
         children:[
           {title: 'Histogram', id: 'classname_0',type: 'hist',src: '/static/img/hist-simple.png' },
