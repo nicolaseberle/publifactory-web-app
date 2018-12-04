@@ -38,7 +38,33 @@ export const constantRouterMap = [{
     },
     {
       path: 'dashboard',
+      hidden: true,
       component: () => import('../view/dashboard/index.vue')
+    }
+  ]
+},
+{
+  path: '/applications',
+  component: Layout,
+  redirect: 'applications',
+  // hidden: true,
+  meta: { title: 'Applications', icon: 'component', noCache: true },
+  children: [
+    {
+      path: 'reviewermatcher',
+      name: 'Matcher',
+      meta: { title: 'reviewermatcher', noCache: true },
+      component: () => import('../view/applications/reviewermatcher/index.vue')
+    },
+    {
+      path: 'preprintsearch',
+      name: 'Radar',
+      meta: { title: 'preprintsearch', noCache: true },
+      component: () => import('../view/applications/preprintsearch/index.vue')
+    },
+    {
+      path: 'applications',
+      component: () => import('../view/applications/index.vue')
     }
   ]
 },

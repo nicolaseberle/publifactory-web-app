@@ -1,23 +1,5 @@
 <template>
   <div class="components-container">
-    <el-dialog title="Add Authors" :visible.sync="dialogFormVisible">
-    <el-form :model="form">
-      <el-form-item label="Name" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="Surname" :label-width="formLabelWidth">
-        <el-input v-model="form.surname" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="mail" :label-width="formLabelWidth">
-        <el-input v-model="form.mail" autocomplete="off"></el-input>
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">Cancel</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false">Confirm</el-button>
-    </span>
-    </el-dialog>
-
     <el-tabs type="border-card" stretch=True  v-model="activeName_tab" @tab-click="handleClick">
       <el-tab-pane label="Article" name="article">
       <main class="article">
@@ -134,7 +116,7 @@
     <component :is="datatable"/>
   </el-tab-pane>
   <el-tab-pane label="Figures" name="figures">
-    <component :is="scriptview"/>
+    <component :is="mixchart"/>
   </el-tab-pane>
 </el-tabs>
   </div>
@@ -152,6 +134,7 @@ import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 import datatable from './data'
 import uploadExcel from './uploadExcel'
 import scriptView from './scriptView'
+import chartView from './chartView'
 
 const defaultForm = {
   status: 'draft',
@@ -189,7 +172,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView},
   props: {
     isEdit: {
       type: Boolean,
@@ -240,6 +223,7 @@ export default {
       activeName_tab: 'article',
       datatable: 'uploadExcel',
       scriptview: 'scriptView',
+      mixchart: 'chartView',
       dialogTableVisible: false,
       dialogFormVisible: false,
       formLabelWidth: '120px',

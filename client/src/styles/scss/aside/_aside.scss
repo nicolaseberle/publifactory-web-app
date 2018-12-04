@@ -123,6 +123,15 @@ aside.related {
     }
 }
 
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 aside.comments-reviews {
     box-sizing: border-box;
     position: fixed;
@@ -138,6 +147,12 @@ aside.comments-reviews {
     padding-top: 20px;
     z-index: 205;
     cursor: pointer;
+
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
 
     p {
         position: relative;
@@ -163,15 +178,37 @@ aside.comments-reviews {
     }
 }
 
+
+@-webkit-keyframes slide {
+    100% { right: 0; }
+}
+
+@keyframes slide {
+    100% { right: 0; }
+}
+
+@-webkit-keyframes slideback {
+    100% { right: -$asideRightWidth; }
+}
+
+@keyframes slideback {
+    100% { right: -$asideRightWidth; }
+}
+
 aside.content-comments-reviews {
     position: fixed;
-    right: 0;
+    right: -$asideRightWidth;
     top: $headerHeight;
     width: $asideRightWidth;
     height: calc(100% - #{$headerHeight});
     z-index: 206;
     background-color: white;
     display: none;
+
+    -webkit-animation: slide 0.5s forwards;
+    -webkit-animation-delay: 2s;
+    animation: slide 0.5s forwards;
+    animation-delay: 0s;
 
     div.wrapper {
         display: grid;

@@ -36,8 +36,10 @@ function asideRightAnimation () {
   function majScrollPosition () {
     if (asideRight.comments.css('display') === 'block') {
       asideRight.scroll.comments = asideRight.comments.scrollTop()
+      console.log(asideRight.scroll.comments)
     } else {
       asideRight.scroll.reviews = asideRight.reviews.scrollTop()
+      console.log(asideRight.scroll.reviews)
     }
   }
 
@@ -60,6 +62,7 @@ function asideRightAnimation () {
     // Show the pannel on click
     // ------------------------
   asideRight.button.on('click', function () {
+    console.log('asideRight_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
   })
@@ -67,6 +70,7 @@ function asideRightAnimation () {
   // Close the pannel on click
   // -------------------------
   asideRight.pannel.close.on('click', function () {
+    console.log('asideRight_pannel_close')
     majScrollPosition()
     hideCommentsReviewsPannel()
   })

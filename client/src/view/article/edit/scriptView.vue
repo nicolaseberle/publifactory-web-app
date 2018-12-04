@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <el-col :span="8">
+      <el-col :span="6">
 
       </el-col>
-      <el-col :span="16">
 
+<!--
         <no-ssr placeholder="Codemirror Loading...">
             <codemirror ref="myCm"
                         :value="code"
@@ -15,8 +15,8 @@
                         @input="onCmCodeChange">
             </codemirror>
           </no-ssr>
+-->
 
-  </el-col>
   </el-row>
   </div>
 </template>

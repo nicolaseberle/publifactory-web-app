@@ -29,6 +29,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.15.2",
+    "chart.js": "^2.7.3",
     "clipboard": "1.7.1",
     "codemirror": "^5.42.0",
     "composable-middleware": "^0.3.0",
@@ -36,6 +37,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "crypto": "0.0.3",
+    "echarts": "^4.2.0-rc.2",
     "ejs": "^2.5.2",
     "element-ui": "2.4.6",
     "express": "^4.14.0",
@@ -64,6 +66,7 @@
     "socketio-jwt": "^4.5.0",
     "velocity-animate": "^1.5.2",
     "vue": "^2.5.17",
+    "vue-chartjs": "^3.4.0",
     "vue-codemirror": "^4.0.6",
     "vue-i18n": "^5.0.3",
     "vue-moment": "^4.0.0",
