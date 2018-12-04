@@ -1,5 +1,5 @@
 # publifactory-project
-This is a MVP implementation of an open source editorial workflow. This open science plateform allows to:
+This is a MVP implementation of an open source editorial workflow. This open science project provides :
 1. open peer reviewing (anonymous or identified)
 2. data visualization (FAIR principles) - shinyR
 
