@@ -21,6 +21,14 @@ import './icons'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+
+import 'vue-awesome/icons/flag'
+import 'vue-awesome/icons'
+
+import Icon from 'vue-awesome/components/Icon'
+
+Vue.component('v-icon', Icon)
+
 // Vue.use(ElementUI)
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium', // set element-ui default size

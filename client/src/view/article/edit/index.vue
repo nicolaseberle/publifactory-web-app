@@ -68,6 +68,7 @@
       								<el-button  icon="el-icon-plus"  class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>
       						</div>
       						<div class='section-footer-right'>
+                    <el-button  type="primary" v-on:click="dialogVisible = true" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
       					</div>
       					</footer>
@@ -119,7 +120,24 @@
     <component :is="mixchart"/>
   </el-tab-pane>
 </el-tabs>
+
+
+    <el-dialog
+      title="Tips"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :before-close="handleClose">
+      <span>This is a message</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
+
   </div>
+
+
+
 
 </template>
 <script>
@@ -226,6 +244,7 @@ export default {
       mixchart: 'chartView',
       dialogTableVisible: false,
       dialogFormVisible: false,
+      dialogVisible: false,
       formLabelWidth: '120px',
       form: {
           name: '',
@@ -259,6 +278,13 @@ export default {
       asideRightAnimation()
   },
   methods: {
+    handleClose(done) {
+        this.$confirm('Are you sure to close this dialog?')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     handleClick(tab, event) {
       console.log(tab, event);
     },
