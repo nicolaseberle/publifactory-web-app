@@ -78,11 +78,25 @@
  }
 
  .el-dialog {
+
+
+   font-family: 'DNLTPro-regular';
    transform: none;
    left: 0;
    position: relative;
    text-align: center;
    margin: 0 auto;
+   .el-dialog__header{
+     background-color: #1E4363;
+     .el-dialog__title{
+       // font-family: 'DroidSerif-regular';
+       font-family: 'DNLTPro-regular';
+       font-size: 1.4rem;
+       left: 0;
+       color: #F8F8F8;
+       font-weight: bold;
+      }
+    }
  }
  .action-col{
    .cell {

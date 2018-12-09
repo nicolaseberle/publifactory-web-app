@@ -68,7 +68,9 @@
       								<el-button  icon="el-icon-plus"  class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>
       						</div>
       						<div class='section-footer-right'>
-                    <el-button  type="primary" v-on:click="dialogVisible = true" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
+                    <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start" open-delay='200'>
+                      <el-button  type="primary" v-on:click="dialogVisible = true" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
+                    </el-tooltip>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
       					</div>
       					</footer>
@@ -123,14 +125,21 @@
 
 
     <el-dialog
-      title="Tips"
+      title="Insert a figure"
       :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose">
-      <span>This is a message</span>
+      width="85%">
+      <el-steps align-center :active="dialogStepActive" finish-status="success">
+      <el-step title="Upload your data" description="Import or drop your .xls or .csv file..."></el-step>
+      <el-step title="Select a chart" description="Choose among a set or standard charts"></el-step>
+      <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
+      </el-steps>
+      <component :is="datatable" v-if='dialogStepActive==0'/>
+      <component :is="mixchart" v-if='dialogStepActive==1'/>
+      <component :is="setupchart" v-if='dialogStepActive==2'/>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+        <el-button @click="previousStep">Previous step</el-button>
+            <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>
+        <!--<el-button type="primary" plain @click="dialogVisible = false">Confirm</el-button>-->
       </span>
     </el-dialog>
 
@@ -153,6 +162,7 @@ import datatable from './data'
 import uploadExcel from './uploadExcel'
 import scriptView from './scriptView'
 import chartView from './chartView'
+import setupChart from './setupChart'
 
 const defaultForm = {
   status: 'draft',
@@ -190,7 +200,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart},
   props: {
     isEdit: {
       type: Boolean,
@@ -242,10 +252,13 @@ export default {
       datatable: 'uploadExcel',
       scriptview: 'scriptView',
       mixchart: 'chartView',
+      setupchart: 'setupChart',
+
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogVisible: false,
       formLabelWidth: '120px',
+      dialogStepActive: 0,
       form: {
           name: '',
           surname: '',
@@ -278,6 +291,13 @@ export default {
       asideRightAnimation()
   },
   methods: {
+    nextStep() {
+        if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
+    },
+    previousStep() {
+        if (this.dialogStepActive-- < 0 ) this.dialogStepActive = 0;
+    },
+
     handleClose(done) {
         this.$confirm('Are you sure to close this dialog?')
           .then(_ => {

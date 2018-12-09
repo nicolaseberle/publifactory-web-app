@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <el-row :gutter="10">
-      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload"/>
       <el-col :span="8">
         <el-table :data="tableFiles" border highlight-current-row style="width: 100%;margin-top:20px;">
           <el-table-column
@@ -9,6 +8,7 @@
             label="Files">
           </el-table-column>
         </el-table>
+        <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload"/>
       </el-col>
       <el-col :span="16">
         <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">

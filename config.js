@@ -75,8 +75,8 @@ var production = {
     port: process.env.APP_PORT || process.env.PORT,
     // MongoDB connection options
     mongo: {
-      uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI ||
-           'mongodb://localhost:27017/mevn'
+      uri: 'mongodb://admin:admin@ds129904.mlab.com:29904/publifactory-project'
+      // uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI
     },
 
     // frontend folder

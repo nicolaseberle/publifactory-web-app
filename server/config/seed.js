@@ -10,6 +10,8 @@ var Article = require('../api/article/article.model');
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
 const figure_1 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 const figure_2 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -63,17 +65,17 @@ function createArticles(user_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
-                            path_figure: ''
+                            path_figure: figure_3
                           },
                           {
                             title:"Results",
                             content: gen_text,
-                            path_figure: ''
+                            path_figure: figure_4
                           },
                           {
                             title:"Conclusion",
                             content: gen_text,
-                            path_figure: ''
+                            path_figure: ""
                           }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110',

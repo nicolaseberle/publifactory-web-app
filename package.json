@@ -19,6 +19,7 @@
   "author": "nicolaseberle <nicolas.eberle.09@gmail.com>",
   "private": false,
   "scripts": {
+    "start": "npm run server",
     "client": "node client/build/dev-server.js",
     "server": "./node_modules/.bin/nodemon --watch server server/app.js",
     "dev": "npm run client|npm run server",
