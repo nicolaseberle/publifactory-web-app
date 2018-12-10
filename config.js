@@ -56,7 +56,7 @@ var production = {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
     cssSourceMap: true,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
@@ -68,14 +68,18 @@ var production = {
   backend: _.merge({}, backendBase, {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
-    serverFrontend: true,
+    // serverFrontend: true,
+
     // Server IP
-    ip: process.env.APP_HOST || process.env.APP_IP || process.env.HOST || process.env.IP,
+    ip: process.env.OPENSHIFT_NODEJS_IP
+      || process.env.ip
+      || undefined,
+    // ip: process.env.APP_HOST || process.env.APP_IP || process.env.HOST || process.env.IP,
     // Server port
-    port: process.env.APP_PORT || process.env.PORT,
+    port: process.env.APP_PORT || process.env.PORT || 8080,
     // MongoDB connection options
     mongo: {
-      uri: 'mongodb://admin:admin@ds129904.mlab.com:29904/publifactory-project'
+      uri: 'mongodb://admin:admin42@ds129904.mlab.com:29904/publifactory-project'
       // uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI
     },
 

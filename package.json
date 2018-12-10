@@ -1,6 +1,7 @@
 {
   "name": "publifactory-project",
   "version": "0.0.1",
+  "main": "server/app.js",
   "keywords": [
     "vue",
     "vuejs",
@@ -132,7 +133,7 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": "6.4.0",
-    "npm": "3.10.6"
+    "node": "9.2.1",
+    "npm": "5.5.1"
   }
 }
