@@ -72,9 +72,8 @@ gulp.task('copy:package', function(done) {
 
 gulp.task('webpack:dist', run('node ./client/build/build.js'))
 
-
 gulp.task('chgt:rep',function(done){
-  process.cwd('./heroku-app');
+  process.chdir('./heroku-app');
   done();
 })
 gulp.task('git:add',run('git add .'))
