@@ -72,9 +72,11 @@ gulp.task('copy:package', function(done) {
 
 gulp.task('webpack:dist', run('node ./client/build/build.js'))
 
-gulp.task('git:add',run('git add .',cwd = process.cwd('./heroku-app')))
-gulp.task('git:commit',run("git commit -m 'new commit'",cwd = process.cwd('./heroku-app')))
-gulp.task('heroku:push',run("git push heroku master",cwd = process.cwd('./heroku-app')))
+process.cwd('heroku-app')
+
+gulp.task('git:add',run('git add .'))
+gulp.task('git:commit',run("git commit -m 'new commit'"))
+gulp.task('heroku:push',run("git push heroku master"))
 
 gulp.task('deploy:prod',gulp.series('git:add','git:commit','heroku:push', function(done){
   done();
