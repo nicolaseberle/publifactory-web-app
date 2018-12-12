@@ -17,14 +17,7 @@
                 <!--<h1>{{ postForm.title }} </i></h1>-->
                 <h1>
                   <form name="article_title_form">
-                    <!--<el-input
-                      type="textarea"
-                      :autosize="{ minRows: 1, maxRows: 5}"
-                      v-model="postForm.title"
-                      placeholder="Article Title" @input="save($event)"
-                      >
-                    </el-input>-->
-                    <input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
+                    <input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)"/><br>
                   </form>
                </h1>
                 <div class="article-author">

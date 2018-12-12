@@ -9,15 +9,21 @@
 header {
     width: auto;
     height: auto;
-    margin: 0 0 85px 0;
+    margin: 0 0 65px 0;
 
     // Fix dropdown-menu z-index
     // -------------------------
     z-index: 198;
-    input {
+    textarea{
       border:none;
       background-color: transparent;
     }
+    input {
+      border:none;
+      background-color: transparent;
+      width: 80%;
+    }
+
     .left {
       float: left;
       //width: 60%;

@@ -27,7 +27,8 @@ var webpackConfig = merge(baseWebpackConfig, {
       jQuery: 'jquery'
     }),
     new webpack.DefinePlugin({
-      'process.env': '"production"'
+      'process.env': '"production"',
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,

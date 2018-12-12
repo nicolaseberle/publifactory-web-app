@@ -20,6 +20,9 @@
         <el-button class="login-button" :class="{error: loginError}" type="success"
           native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
       </el-form-item>
+      <el-form-item>
+          <el-button class="login-button"   type="primary" native-type="submit" :loading="loading">Login with your ORCID</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
