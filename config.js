@@ -55,7 +55,7 @@ var production = {
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
-    assetsSubDirectory: '/static',
+    assetsSubDirectory: 'static',
     assetsPublicPath: '',
     cssSourceMap: true,
     // Gzip off by default as many popular static hosts such as
