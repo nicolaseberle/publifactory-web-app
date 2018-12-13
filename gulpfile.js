@@ -7,17 +7,12 @@ var run = require('gulp-run-command').default;
 
 var gulpLoadPlugins = require('gulp-load-plugins');
 var env = require('gulp-env');
-// var buildscript = require('./client/build/build');
 
-
-var environments = require('gulp-environments');
 var runSequence = require('run-sequence').use(gulp);
 var config;
 
 var plugins = gulpLoadPlugins();
 
-var development = environments.development;
-var production = environments.production;
 
 const clientPath = 'client';
 const serverPath = 'server';
@@ -47,13 +42,13 @@ gulp.task('env:prod', function(done) {
 });
 
 gulp.task('copy:dist', function(done){
-  gulp.src(`${paths.dist}/*`)
+  gulp.src(`${paths.dist}/**/*`)
         .pipe(gulp.dest(`${paths.heroku_app}/client/dist/`));
   done()
 });
 
 gulp.task('copy:server', function(done){
-  gulp.src(`${paths.server}/*`)
+  gulp.src(`${paths.server}/**/*`)
         .pipe(gulp.dest(`${paths.heroku_app}/server`));
   done()
 });
@@ -72,7 +67,12 @@ gulp.task('copy:package', function(done) {
 
 gulp.task('webpack:dist', run('node ./client/build/build.js'))
 
-gulp.task('chgt:rep',function(done){
+// Main task to build/copy elements in heroku-app
+gulp.task('build:prod', gulp.series('env:prod','webpack:dist','copy:dist','copy:server', 'copy:config','copy:package', function (done) {
+    done();
+}));
+
+/*gulp.task('chgt:rep',function(done){
   process.chdir('./heroku-app');
   done();
 })
@@ -83,9 +83,5 @@ gulp.task('heroku:push',run("git push heroku master"))
 gulp.task('deploy:prod',gulp.series('chgt:rep','git:add','git:commit','heroku:push', function(done){
   done();
 }))
-
+*/
 // Similarly Tasks 3 and 4 Code here
-
-gulp.task('build:prod', gulp.series('env:prod','webpack:dist','copy:dist','copy:server', 'copy:config','copy:package', function (done) {
-    done();
-}));

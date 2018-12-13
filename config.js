@@ -55,8 +55,8 @@ var production = {
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsSubDirectory: '/static',
+    assetsPublicPath: '',
     cssSourceMap: true,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
@@ -68,7 +68,7 @@ var production = {
   backend: _.merge({}, backendBase, {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
-    // serverFrontend: true,
+    serverFrontend: true,
 
     // Server IP
     ip: process.env.OPENSHIFT_NODEJS_IP
