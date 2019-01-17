@@ -9,6 +9,7 @@ var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
+const gen_text_2 = '<p>Haec et huius modi quaedam innumerabilia ultrix facinorum impiorum bonorumque praemiatrix aliquotiens operatur Adrastia atque utinam semper quam vocabulo duplici etiam Nemesim appellamus: ius quoddam sublime numinis efficacis, humanarum mentium opinione lunari circulo superpositum, vel ut definiunt alii, substantialis tutela generali potentia partilibus praesidens fatis, quam theologi veteres fingentes Iustitiae filiam ex abdita quadam aeternitate tradunt omnia despectare terrena.</p><p>Iis igitur est difficilius satis facere, qui se Latina scripta dicunt contemnere. in quibus hoc primum est in quo admirer, cur in gravissimis rebus non delectet eos sermo patrius, cum idem fabellas Latinas ad verbum e Graecis expressas non inviti legant. quis enim tam inimicus paene nomini Romano est, qui Ennii Medeam aut Antiopam Pacuvii spernat aut reiciat, quod se isdem Euripidis fabulis delectari dicat, Latinas litteras oderit?</p>';
 const figure_1 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
@@ -69,7 +70,7 @@ function createArticles(user_tmp,comment_tmp) {
                           },
                           {
                             title:"Results",
-                            content: gen_text,
+                            content: gen_text_2,
                             path_figure: figure_4
                           },
                           {
@@ -90,7 +91,7 @@ function createArticles(user_tmp,comment_tmp) {
             tags:['Aging','death rates','curve fitting'],
             arr_content: [{
                             title:"Introduction",
-                            content: gen_text,
+                            content: gen_text_2,
                             path_figure: figure_1
                           },
                           {
@@ -112,7 +113,7 @@ function createArticles(user_tmp,comment_tmp) {
             authors: [user_tmp[5]._id,user_tmp[2]._id],
             arr_content: [{
                             title:"Introduction",
-                            content: gen_text,
+                            content: gen_text_2,
                             path_figure: figure_3
                           }],
             published: true,

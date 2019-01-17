@@ -6,7 +6,11 @@
         <article>
           <span id="triggerStartNav"></span>
             <header>
+                <el-row>
+                    <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; weight:700; border-style: none;'>{{postForm.status}} in progress</el-button>
+                </el-row>
                 <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
+
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -51,6 +55,10 @@
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
+
+
+
+
                     <form name="abstract_form">
                       <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
                     </form>

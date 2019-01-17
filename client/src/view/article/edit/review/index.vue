@@ -21,6 +21,11 @@
               <footer >
                 <!--<footer class="grid-header">
                 </footer>-->
+
+                <el-button type="success" icon="el-icon-arrow-up" circle></el-button>
+                <el-button type="info"  icon="el-icon-arrow-down" circle></el-button>
+                <el-button  icon="el-icon-share" style='float:right;' circle></el-button>
+
               </footer>
           </article>
           <el-row type="flex" class="row-bg" justify="center">
@@ -32,7 +37,7 @@
           </el-input>
           </el-row>
           <el-row type="flex" class="row-bg" justify="end">
-            <el-button type="primary" style="margin-top: 2%;"  @click="createReport()">Submit your report</el-button>
+            <el-button type="primary" style="margin-top: 2%;"  @click="createReport()" round>Submit your report</el-button>
           </el-row>
       </section>
       <footer class="wrapper">
