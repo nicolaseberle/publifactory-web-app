@@ -1,5 +1,5 @@
 export default {
-  title: 'Springer Editorial Manager',
+  title: 'SU Editorial Manager',
   constant: {
     name: 'Name',
     desc: 'Description'

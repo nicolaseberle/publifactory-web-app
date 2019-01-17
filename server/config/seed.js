@@ -6,10 +6,11 @@
 
 var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
+var Comments = require('../api/comment/comment.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
-const figure_1 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
-const figure_2 = '<iframe src="http://ec2-18-220-172-58.us-east-2.compute.amazonaws.com:3838/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_1 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
 
@@ -17,16 +18,41 @@ const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-  createArticles(users)
+  createComment(users);
+  createArticles(users);
 
 })
 
+function createComment(user_tmp) {
+  Comments.find({}).remove()
+    .then(() => {
+      let comments = Comments.create(
+      {
+        userId: [user_tmp[1]._id],
+        content: 'ceci est un commentaire'
+      },
+      {
+        userId: [user_tmp[1]._id],
+        content: 'ceci est un autre commentaire'
+      });
+  })
+  .then(() => {console.log('finished populating comments');})
+  .catch(err => console.log('error populating comments', err));
 
+}
 
-function createArticles(user_tmp) {
+function createArticles(user_tmp,comment_tmp) {
     Article.find({}).remove()
         .then(() => {
-
+          let comments = Comments.create(
+          {
+            userId: [user_tmp[1]._id],
+            content: 'ceci est un commentaire'
+          },
+          {
+            userId: [user_tmp[1]._id],
+            content: 'ceci est un autre commentaire'
+          });
           let article = Article.create(
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
@@ -39,12 +65,12 @@ function createArticles(user_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
-                            path_figure: figure_1
+                            path_figure: figure_3
                           },
                           {
                             title:"Results",
                             content: gen_text,
-                            path_figure: figure_2
+                            path_figure: figure_4
                           },
                           {
                             title:"Conclusion",
@@ -65,12 +91,12 @@ function createArticles(user_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
-                            path_figure: figure_3
+                            path_figure: figure_1
                           },
                           {
                             title:"Results",
                             content: gen_text,
-                            path_figure: figure_4
+                            path_figure: figure_2
                           },
                           {
                             title:"Conclusion",
@@ -83,7 +109,7 @@ function createArticles(user_tmp) {
           }, {
             title: 'Bayesian decision theoretic design of two-founder experimental crosses given diallel data',
             abstract: "In designing experimental crosses of inbred strains of model organisms, researchers must make a number of decisions. These include the selection of the appropriate strains, the cross design (F2 intercross), and the number of progeny to collect (sample size). These decisions strongly influence the potential for a successful quantitative trait locus (QTL) mapping experiment; good design decisions will lead to efficient and effective science. Thus experimental design deserves careful consideration and planning. Experimental outcomes can be quantified through utility functions using a Bayesian decision theoretic approaches. For QTL mapping experiments, the power to map a QTL is an appealing utility function to maximize. Using any utility function to aid in experimental design will be dependent on assumptions, such as the QTL effect size in the case of power. Rather than arbitrarily selecting QTL effect size values, they can be estimated from pilot data using a Bayesian hierarchical model. The information in the pilot data can be propagated to the utility function, using Markov Chain Monte Carlo (MCMC) to sample from the posterior distribution. Key features of this approach include: 1) distributional summaries of utility, which are preferable to point estimates, and 2) a comprehensive search of the experimental space of crosses of inbred lines for well-designed experiments. We evaluate this Bayesian theoretic approach using diallel crosses as the pilot data. We present results from simulations as well as present examples from both Mendelian and complex traits in the founder strains of the mouse Collaborative Cross. All analyses were performed using our R package, DIDACT (Diallel-Informed Decision theoretic Approach for Crosses Tool), developed to perform Bayesian cross selection based on diallel pilot data.",
-            authors: [user_tmp[5]._id,user_tmp[3]._id],
+            authors: [user_tmp[5]._id,user_tmp[2]._id],
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
@@ -99,7 +125,7 @@ function createArticles(user_tmp) {
           {
             title: 'The Elongator Complex is Required to Maintain Locomotor Healthspan in Caenorhabditis elegans',
             abstract: "An inherited mutation is not always immediately toxic. Some mutations cause symptoms during youth, while other mutations cause symptoms during adulthood. Mutant animals that show delayed onset of disease symptoms may provide insights into mechanisms that maintain functional capacities during adulthood. Here, we take advantage of the relatively short lifespan of the nematode Caenorhabditis elegans and develop a novel screening procedure to collect mutants with locomotor deficits that become apparent in adulthood. After ethyl methanesulfonate mutagenesis, we isolated five C. elegans mutant strains that progressively lose adult locomotor activity. In one of the mutant strains, a nonsense mutation in Elongator Complex Protein Component 2 (elpc-2) causes a progressive decline in locomotor function. Other C. elegans elpc mutants were also unable to maintain locomotor function during adulthood, indicating that the Elongator complex plays a critical role in maintaining locomotor healthspan in C. elegans.",
-            authors: [user_tmp[5]._id,user_tmp[6]._id],
+            authors: [user_tmp[5]._id,user_tmp[2]._id],
             published: true,
             content: gen_text,
             arr_content: [{

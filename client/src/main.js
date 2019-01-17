@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 // read localStorage stored data
 import './stored'
 // locale
-import './locales'
+// import './locales'
 import './icons'
 import './errorLog' // error log
 
@@ -14,7 +14,7 @@ import router, { hook as routerHook } from './router'
 import { sync } from 'vuex-router-sync'
 sync(store, router)
 
-import i18n from './lang' // Internationalization
+// import i18n from './lang' // Internationalization
 import './locales'
 import './icons'
 // ui library
@@ -31,8 +31,8 @@ Vue.component('v-icon', Icon)
 
 // Vue.use(ElementUI)
 Vue.use(ElementUI, {
-  size: Cookies.get('size') || 'medium', // set element-ui default size
-  i18n: (key, value) => i18n.t(key, value)
+  size: Cookies.get('size') || 'medium'// set element-ui default size
+  // i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(require('vue-moment'))
 
@@ -60,7 +60,7 @@ userPromise.then(() => {
   const app = new Vue({
     router,
     store,
-    i18n,
+    // i18n,
     ...App // Object spread copying everything from App.vue
   })
   // actually mount to DOM

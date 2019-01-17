@@ -59,6 +59,10 @@ const ArticleSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
   tags:[{
     type: String,
   }]

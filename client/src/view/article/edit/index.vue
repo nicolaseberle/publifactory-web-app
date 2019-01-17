@@ -17,7 +17,9 @@
                 <!--<h1>{{ postForm.title }} </i></h1>-->
                 <h1>
                   <form name="article_title_form">
-                    <input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)"/><br>
+                    <textarea name="Text1" v-model="postForm.title" cols="35" rows="3"></textarea>
+                    <!--<input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)"/>-->
+                    <br>
                   </form>
                </h1>
                 <div class="article-author">
@@ -43,7 +45,6 @@
             <div v-for="(item,key) in postForm.arr_content">
 
               <section id="item.title">
-
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
                     <input type="text" v-model="item.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
@@ -79,34 +80,9 @@
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-        <div class="wrapper">
-            <header class="wrapper">
-                <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/>10 reviews</a>
-                <a href="#" title="Check Comments of the article" class="showcomments"><img src="/static/icons/Comment.svg" class="comments svg" alt="Comments of the article">12 comments</a>
-                <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
-            </header>
-            <section class="content reviews">
-                <article >
-                    <header>
-                        <a href="#" title="OSPR's profile">Nicolas Eberlé</a>
-                        <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">12/05/2018</time></p>
-                    </header>
-                    <section>
-                        <!--<h2>commentaire</h2>-->
-                        <p data-review="EDM-1">
-                            Ceci est un commentaire
-                        </p>
-                    </section>
-                    <footer >
-                      <footer class="grid-header">
-                      </footer>
-                    </footer>
-                </article>
-            </section>
-            <footer class="wrapper">
-            </footer>
-        </div>
+          <component :is="reviewComponent"/>
     </aside>
+
   </el-tab-pane>
   <el-tab-pane label="Data" name="data">
     <component :is="datatable"/>
@@ -157,6 +133,8 @@ import scriptView from './scriptView'
 import chartView from './chartView'
 import setupChart from './setupChart'
 
+import reviewComponent from './review'
+
 const defaultForm = {
   status: 'draft',
   title: '',
@@ -193,7 +171,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart, reviewComponent},
   props: {
     isEdit: {
       type: Boolean,
@@ -246,7 +224,7 @@ export default {
       scriptview: 'scriptView',
       mixchart: 'chartView',
       setupchart: 'setupChart',
-
+      reviewComponent: 'reviewComponent',
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogVisible: false,
