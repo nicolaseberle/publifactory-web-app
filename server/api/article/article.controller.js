@@ -93,7 +93,7 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     }*/
     console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
     const title = req.body.title.trim();
-    const abstract = req.body.abstract.trim();
+    const abstract = req.body.abstract;
     const arr_content = req.body.arr_content;
     const published = req.body.published;
     const article = await Article

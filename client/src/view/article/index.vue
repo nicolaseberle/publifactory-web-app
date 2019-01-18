@@ -11,6 +11,7 @@ import { article as articleRes } from 'resources'
 const defaultForm = {
   status: 'draft',
   title: '',
+  abstract: '',
   content: '',
   arr_content: [{
                   name:"titre_1",

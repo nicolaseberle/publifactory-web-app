@@ -11,11 +11,11 @@ const ArticleSchema = new Schema({
   creationDate: { type: Date, default: Date.now },
   title: {
     type: String,
-    required: true,
+    required: true
   },
   abstract: {
     type: String,
-    required: true,
+    required: true
   },
   content: {
     type: String
@@ -32,11 +32,11 @@ const ArticleSchema = new Schema({
   published: {
     type: Boolean,
     required: true,
-    default: false,
+    default: false
   },
   status: {
     type: String,
-    default: 'draft',
+    default: 'draft'
   },
   doi: {
     type: String,

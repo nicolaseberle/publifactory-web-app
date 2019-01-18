@@ -6,11 +6,13 @@
         <article>
           <span id="triggerStartNav"></span>
             <header>
-                <el-row>
-                    <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; weight:700; border-style: none;'>{{postForm.status}} in progress</el-button>
-                </el-row>
-                <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
 
+                <el-row v-if="postForm.status == 'Reviewing'">
+                    <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; weight:bold; margin:0px 0px 10px 0px; border-style: none;'>{{postForm.status}} in progress</el-button>
+                </el-row>
+                <el-row v-else>
+                  <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
+                </el-row>
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -40,8 +42,8 @@
             </header>
             <section  class="abstract">
                 <h2>Abstract</h2><br>
-                <form name="abstract_form">
-                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="save($event)"/>
+                <form name="abstract_form_2">
+                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
                 </form>
             </section>
 
@@ -149,12 +151,14 @@ import reviewComponent from '../../../components/Review'
 const defaultForm = {
   status: 'draft',
   title: '',
+  abstract: '',
   content: '',
   arr_content: [{
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
                   content:"Type the text",
+                  path_figure: "",
                   display:true
                 }],
   content_short: '',
@@ -323,6 +327,7 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
+
     save (ev) {
       axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
       .then(response => {
@@ -331,6 +336,12 @@ export default {
       .catch(e => {
         console.log(e)
       })
+    },
+    applyAbstractEdit (ev) {
+      if (ev.event.target) {
+        this.postForm.abstract = ev.event.target.innerHTML
+        this.save(ev);
+      }
     },
     applyTextEdit (ev,key) {
       if (ev.event.target) {
