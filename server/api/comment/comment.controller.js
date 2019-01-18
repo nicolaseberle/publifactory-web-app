@@ -79,16 +79,7 @@ module.exports.createArticleComment = async (req, res, next) => {
     const userId = await User.findById( req.body.userId ).exec();
     const newComment = new Comment({ userId , content, commentFlag });
     const comment = await newComment.save();
-    // if it's a review
-    /*if(commentFlag == false) {
-      article.nbReviews = article.nbReviews + 1;
-      await article.save();
 
-    }// else it's a comment
-    else {
-      article.nbComments = article.nbComments + 1;
-      await article.save();
-    }*/
     //console.log('newComment : ' + comment);
     // article.comments.push(comment);
     // await article.save();
@@ -96,6 +87,17 @@ module.exports.createArticleComment = async (req, res, next) => {
       { _id: req.params.id },
       { $push: { comments: comment._id } }
     );
+    // if it's a review
+    if(commentFlag == false) {
+      article.nbReviews = article.nbReviews + 1;
+      await article.save();
+
+    }// else it's a comment
+    else {
+      article.nbComments = article.nbComments + 1;
+      await article.save();
+    }
+    
     return res.status(200).json(comment);
   } catch (err) {
     return next(err);

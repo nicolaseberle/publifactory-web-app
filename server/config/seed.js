@@ -10,10 +10,12 @@ var Comments = require('../api/comment/comment.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
 const gen_text_2 = '<p>Haec et huius modi quaedam innumerabilia ultrix facinorum impiorum bonorumque praemiatrix aliquotiens operatur Adrastia atque utinam semper quam vocabulo duplici etiam Nemesim appellamus: ius quoddam sublime numinis efficacis, humanarum mentium opinione lunari circulo superpositum, vel ut definiunt alii, substantialis tutela generali potentia partilibus praesidens fatis, quam theologi veteres fingentes Iustitiae filiam ex abdita quadam aeternitate tradunt omnia despectare terrena.</p><p>Iis igitur est difficilius satis facere, qui se Latina scripta dicunt contemnere. in quibus hoc primum est in quo admirer, cur in gravissimis rebus non delectet eos sermo patrius, cum idem fabellas Latinas ad verbum e Graecis expressas non inviti legant. quis enim tam inimicus paene nomini Romano est, qui Ennii Medeam aut Antiopam Pacuvii spernat aut reiciat, quod se isdem Euripidis fabulis delectari dicat, Latinas litteras oderit?</p>';
-const figure_1 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
-const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
-const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
-const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:450px;"></iframe>'
+const figure_1 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px; margin:10px 10px 10px 10px;"></iframe>'
+const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
+const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
+const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
+const figure_5 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
+
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -57,21 +59,21 @@ function createArticles(user_tmp,comment_tmp) {
           let article = Article.create(
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
-            abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
+            abstract: "Aging is characterized by <span data-review='EDM-1'> a growing risk of disease and death</span>, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
             tags:['Aging','death rates','curve fitting'],
-            authors: [user_tmp[5]._id,user_tmp[2]._id],
+            authors: [user_tmp[8]._id,user_tmp[2]._id],
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],
             published: true,
             content: gen_text,
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
-                            path_figure: figure_3
+                            path_figure: ''
                           },
                           {
                             title:"Results",
                             content: gen_text_2,
-                            path_figure: figure_4
+                            path_figure: ''
                           },
                           {
                             title:"Conclusion",

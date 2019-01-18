@@ -108,6 +108,7 @@ aside.related {
                         transform: translateY(-75%);
                     }
 
+
                     .counter-comment::before {
                         /* serve this img cause fill / stroke probleme for another element with same SVG
                            ----------------------------------------------------------------------------- */
@@ -137,7 +138,7 @@ aside.comments-reviews {
     position: fixed;
     right: 0;
     top: 50%;
-    height: 270px;
+    height: 290px;
     width: 54px;
     background-color: $greenColor;
     color: white;
@@ -171,7 +172,7 @@ aside.comments-reviews {
         left: 50%;
         content: '';
         width: 20px;
-        height: 14px;
+        height: 20px;
         background-color: white;
         mask: url('/static/icons/Book.svg') no-repeat;
         transform: rotateZ(-180deg) translateX(50%);
@@ -332,6 +333,8 @@ aside.content-comments-reviews {
                 padding: 10px;
                 width: 100%;
                 margin-bottom: 20px;
+                //overflow-x:scroll;
+                //max-height: 300px;
 
                 header {
                     height: 68px;

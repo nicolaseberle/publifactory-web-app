@@ -65,7 +65,15 @@ const ArticleSchema = new Schema({
   }],
   tags:[{
     type: String,
-  }]
+  }],
+  nbComments: {
+      type: Number,
+      default: 0
+  },
+  nbReviews: {
+        type: Number,
+        default: 0
+  }
 });
 
 ArticleSchema.plugin(mongooseDelete, { deletedAt: true });

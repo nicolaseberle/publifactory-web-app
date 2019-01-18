@@ -21,7 +21,7 @@
                 <!--<h1>{{ postForm.title }} </i></h1>-->
                 <h1>
                   <form name="article_title_form">
-                    <textarea name="Text1" v-model="postForm.title" cols="35" rows="3"></textarea>
+                    <textarea name="Text1" v-model="postForm.title" cols="35" rows="3"  @input="save($event)"></textarea>
                     <!--<input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)"/>-->
                     <br>
                   </form>
@@ -62,7 +62,9 @@
                     <form name="abstract_form">
                       <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
                     </form>
+
                     <span v-html="item.path_figure"></span>
+
                   </div>
                   </transition>
                   <footer>
@@ -71,7 +73,7 @@
       						</div>
       						<div class='section-footer-right'>
                     <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start" open-delay='200'>
-                      <el-button  type="primary" v-on:click="dialogVisible = true" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
+                      <el-button  type="primary" v-on:click="openEditFigure($event,key)" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
                     </el-tooltip>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
       					</div>
@@ -88,15 +90,15 @@
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <component :is="reviewComponent"/>
+          <reviewComponent />
     </aside>
 
   </el-tab-pane>
   <el-tab-pane label="Data" name="data">
-    <component :is="datatable"/>
+    <datatable/>
   </el-tab-pane>
   <el-tab-pane label="Figures" name="figures">
-    <component :is="mixchart"/>
+    <mixchart/>
   </el-tab-pane>
 </el-tabs>
 
@@ -104,19 +106,20 @@
     <el-dialog
       title="Insert a figure"
       :visible.sync="dialogVisible"
-      width="85%">
+      width="50%">
       <el-steps align-center :active="dialogStepActive" finish-status="success">
       <el-step title="Upload your data" description="Import or drop your .xls or .csv file..."></el-step>
       <el-step title="Select a chart" description="Choose among a set or standard charts"></el-step>
       <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
-      </el-steps>
+    </el-steps><!--
       <component :is="datatable" v-if='dialogStepActive==0'/>
       <component :is="mixchart" v-if='dialogStepActive==1'/>
-      <component :is="setupchart" v-if='dialogStepActive==2'/>
+      <component :is="setupchart" v-if='dialogStepActive==2'/>-->
+      <!--<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>-->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="previousStep">Previous step</el-button>
-            <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>
-        <!--<el-button type="primary" plain @click="dialogVisible = false">Confirm</el-button>-->
+        <!--<el-button @click="previousStep">Previous step</el-button>
+            <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
+        <el-button type="primary" v-on:click="addNewFigure($event)" >Insert</el-button>
       </span>
     </el-dialog>
 
@@ -179,7 +182,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart, reviewComponent},
+  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart, reviewComponent, datatable},
   props: {
     isEdit: {
       type: Boolean,
@@ -228,16 +231,14 @@ export default {
       activeNames_section: ['1'],
       options: options,
       activeName_tab: 'article',
-      datatable: 'uploadExcel',
       scriptview: 'scriptView',
-      mixchart: 'chartView',
       setupchart: 'setupChart',
-      reviewComponent: 'reviewComponent',
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogVisible: false,
       formLabelWidth: '120px',
       dialogStepActive: 0,
+      addFigureInBlock: 0,
       form: {
           name: '',
           surname: '',
@@ -344,6 +345,7 @@ export default {
         title:"Titre 1",
         title_placeholder:"Titre 1",
         content:"Type the text",
+        path_figure: "",
         display:true
       }
       //var new_content = {name: title_name,title: null,display:false,title_placeholder:title_name,content:"Type the text"}
@@ -353,6 +355,15 @@ export default {
     removeRow (ev,key) {
       this.postForm.arr_content.splice(key, 1);
       this.save(ev)
+    },
+    openEditFigure (ev,key) {
+      this.dialogVisible = true;
+      this.addFigureInBlock = key;
+    },
+    addNewFigure (ev){
+      this.dialogVisible = false;
+      this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>';
+      this.save(ev);
     },/*
     save(event) {
         console.log('hello on enregristre')
