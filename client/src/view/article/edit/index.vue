@@ -144,7 +144,7 @@ import scriptView from './scriptView'
 import chartView from './chartView'
 import setupChart from './setupChart'
 
-import reviewComponent from './review'
+import reviewComponent from '../../../components/Review'
 
 const defaultForm = {
   status: 'draft',
@@ -239,6 +239,7 @@ export default {
       formLabelWidth: '120px',
       dialogStepActive: 0,
       addFigureInBlock: 0,
+      id: 0,
       form: {
           name: '',
           surname: '',
@@ -322,7 +323,7 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
-    save (event) {
+    save (ev) {
       axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
       .then(response => {
         console.log("save successfully")
@@ -332,9 +333,7 @@ export default {
       })
     },
     applyTextEdit (ev,key) {
-      console.log(ev)
       if (ev.event.target) {
-        console.log(ev.event.target.innerHTML)
         this.postForm.arr_content[key].content = ev.event.target.innerHTML
         this.save(ev)
       }

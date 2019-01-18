@@ -30,6 +30,12 @@ import NavMenu from './components/NavMenu'
 import NProgress from './components/NProgress'
 import ContentModule from './components/ContentModule'
 import { mapGetters } from 'vuex'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCoffee)
+
 Vue.component('ContentModule', ContentModule)
 export default {
   name: 'App',
@@ -39,7 +45,8 @@ export default {
   components: {
     XHeader,
     NavMenu,
-    NProgress
+    NProgress,
+    'font-awesome-icon': FontAwesomeIcon
   }
 }
 </script>

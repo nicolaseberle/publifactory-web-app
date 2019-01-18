@@ -18,13 +18,14 @@
                       {{ report.content}}
                   </p>
               </section>
-              <footer >
+              <footer style='text-align: right'>
                 <!--<footer class="grid-header">
                 </footer>-->
-
+                <!--<el-button circle><font-awesome-icon icon="coffee" /></el-button>-->
                 <el-button type="success" icon="el-icon-arrow-up" circle></el-button>
                 <el-button type="info"  icon="el-icon-arrow-down" circle></el-button>
                 <el-button  icon="el-icon-share" style='float:right;' circle></el-button>
+                <el-button circle><font-awesome-icon icon="reply" /></el-button>
 
               </footer>
           </article>
@@ -39,7 +40,7 @@
                       {{ report.content}}
                   </p>
               </section>
-              <footer >
+              <footer style='text-align: right'>
                 <!--<footer class="grid-header">
                 </footer>-->
 
@@ -67,16 +68,23 @@
 
 </template>
 <script>
-import locales from '../../../../locales/article'
+import locales from '../../locales/article'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 import { report as reportRes } from 'resources'
 import { article as articleRes } from 'resources'
 import { user as userRes } from 'resources'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCoffee,faReply)
+
 export default {
   name: 'reportComponent',
   locales,
+  components: {'font-awesome-icon': FontAwesomeIcon},
   data () {
     return {
       activeName: 'first',

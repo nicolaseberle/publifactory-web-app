@@ -1,5 +1,5 @@
 export default {
-  title: 'SU Editorial Manager',
+  title: 'Editorial Manager',
   constant: {
     name: 'Name',
     desc: 'Description'

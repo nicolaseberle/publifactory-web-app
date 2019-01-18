@@ -46,43 +46,21 @@
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-        <div class="wrapper">
-            <header class="wrapper">
-                <a href="#" title="Check Reviews of the article" class="showreviews active"><img src="/assets/images/icons/Book.svg" class="reviews svg" alt="Reviews of the article">10 reviews</a>
-                <a href="#" title="Check Comments of the article" class="showcomments"><img src="/assets/images/icons/Comment.svg" class="comments svg" alt="Comments of the article">12 comments</a>
-                <a href="#" title="Close this side bar" class="close"><img src="/assets/images/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
-            </header>
-            <section class="content reviews">
-                <article >
-                    <header>
-                        <a href="#" title="OSPR's profile">Nicolas Eberlé</a>
-                        <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">12/05/2018</time></p>
-                    </header>
-                    <section>
-                        <!--<h2>commentaire</h2>-->
-                        <p data-review="EDM-1">
-                            Ceci est un commentaire
-                        </p>
-                    </section>
-                    <footer >
-                      <footer class="grid-header">
-                      </footer>
-                    </footer>
-                </article>
-            </section>
-            <footer class="wrapper">
-            </footer>
-        </div>
+          <reviewComponent/>
     </aside>
   </div>
 </template>
 <script>
+import editor from 'vue2-medium-editor'
 import { mapGetters } from 'vuex'
 import MarkdownEditor from '../../../components/MarkdownEditor'
 import { validateURL } from '../../../utils/validate'
 import { article as articleRes } from 'resources'
 import axios from 'axios'
+import velocity from 'velocity-animate'
+import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 
+import reviewComponent from '../../../components/Review'
 
 const defaultForm = {
   status: 'draft',
@@ -108,7 +86,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor },
+  components: { MarkdownEditor,reviewComponent },
   props: {
     isEdit: {
       type: Boolean,
@@ -175,6 +153,9 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+  },
+  mounted() {
+      asideRightAnimation()
   },
   methods: {
     handleChange(val) {
