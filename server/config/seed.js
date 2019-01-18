@@ -59,7 +59,7 @@ function createArticles(user_tmp,comment_tmp) {
           let article = Article.create(
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
-            abstract: "Aging is characterized by <span data-review='EDM-1'> a growing risk of disease and death</span>, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
+            abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
             tags:['Aging','death rates','curve fitting'],
             authors: [user_tmp[8]._id,user_tmp[2]._id],
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],

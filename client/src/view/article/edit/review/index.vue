@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     fetchReport(id) {
-      axios.get('http://localhost:4000/api/comments/'  + id + '/comments').then(response => {
+      axios.get('/api/comments/'  + id + '/comments').then(response => {
         this.reports = response.data
         this.errors.message = 'fetchReport success ';
       }).catch(err => {
@@ -140,7 +140,7 @@ export default {
         this.editReport = '';
       }
       // this.$http.post(`/api/comment/${this.id}/comments`, newComment)
-      axios.post('http://localhost:4000/api/comments/'  + this.id + '/comments', newComment)
+      axios.post('/api/comments/'  + this.id + '/comments', newComment)
       .then(response => {
         response__ = response.data;
         this.errors.message = 'createReport success ';

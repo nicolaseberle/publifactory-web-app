@@ -323,7 +323,7 @@ export default {
         { complete: done })
     },
     save (event) {
-      axios.put('http://localhost:4000/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
       .then(response => {
         console.log("save successfully")
       })
