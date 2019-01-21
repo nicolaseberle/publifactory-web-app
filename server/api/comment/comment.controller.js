@@ -75,9 +75,10 @@ module.exports.createArticleComment = async (req, res, next) => {
     */
     console.log('createArticleComment');
     const commentFlag = req.body.commentFlag;
+    const reviewRequest = req.body.reviewRequest;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const newComment = new Comment({ userId , content, commentFlag });
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag });
     const comment = await newComment.save();
 
     //console.log('newComment : ' + comment);
@@ -97,7 +98,7 @@ module.exports.createArticleComment = async (req, res, next) => {
       article.nbComments = article.nbComments + 1;
       await article.save();
     }
-    
+
     return res.status(200).json(comment);
   } catch (err) {
     return next(err);

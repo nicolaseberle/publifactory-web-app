@@ -21,7 +21,11 @@ var CommentSchema = new Schema({
   },
   content: {
     type: String,
-    required: true,
+    required: true
+  },
+  reviewRequest: {
+    type: String,
+    required: 'True'
   },
   scores: {
     voterId:[{
