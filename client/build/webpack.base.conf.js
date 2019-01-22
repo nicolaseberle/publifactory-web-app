@@ -2,6 +2,7 @@ var path = require('path')
 var config = require('../../config').frontend
 var vueLoaderConfig = require('./vue-loader.conf')
 var utils = require('./utils')
+// var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)

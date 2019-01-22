@@ -16,8 +16,8 @@ const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazo
 const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_5 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
-const figure_6 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/boxplot/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
-
+const figure_6 = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/boxplot/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
+ 
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -52,11 +52,13 @@ function createArticles(user_tmp,comment_tmp) {
           let comments = Comments.create(
           {
             userId: [user_tmp[1]._id],
-            content: 'ceci est un commentaire'
+            content: 'I agree with this part',
+            reviewRequest: 'No Revision'
           },
           {
             userId: [user_tmp[1]._id],
-            content: 'ceci est un autre commentaire'
+            content: 'Need precision',
+            reviewRequest: 'Minor revision'
           });
           let article = Article.create(
           {
@@ -83,7 +85,7 @@ function createArticles(user_tmp,comment_tmp) {
                             path_figure: ''
                           }],
             status: 'Reviewing',
-            doi: '10.1073/pnas.1215849110',
+            doi: '10.1073/pnas.1215849110'
 
           }, {
             title: 'Genetic variation within genes associated with mitochondrial function is significantly associated with later age at onset of Parkinson disease and contributes to disease risk',
@@ -109,7 +111,7 @@ function createArticles(user_tmp,comment_tmp) {
                             path_figure: ""
                           }],
             status: 'Reviewing',
-            doi: '10.1073/pnas.1215849110',
+            doi: '10.1073/pnas.1215849110'
 
           }, {
             title: 'Bayesian decision theoretic design of two-founder experimental crosses given diallel data',
@@ -124,7 +126,7 @@ function createArticles(user_tmp,comment_tmp) {
             content: gen_text,
             status: 'Draft',
             tags:['Aging','death rates','curve fitting'],
-            doi: '',
+            doi: ''
 
           },
           {

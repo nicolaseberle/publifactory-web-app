@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
       <header class="wrapper">
-          <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/> {{article.nbReviews}} reviews</a>
-          <a href="#" title="Check Comments of the article" class="showcomments"><img src="/static/icons/Comment.svg" class="comments svg" alt="Comments of the article"> {{article.nbComments}} comments</a>
+          <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/> {{article.nbReviews}} partial reviews</a>
+          <a href="#" title="Check Comments of the article" class="showcomments"><img src="/static/icons/Comment.svg" class="comments svg" alt="Comments of the article" style="font-size:1.5rem;"><strong> {{article.nbComments}} global reviews</strong></a>
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
@@ -11,10 +11,10 @@
               <header>
                   <a href="#" title="OSPR's profile">{{ report.userId.firstname  }} {{ report.userId.lastname }}</a>
                   <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ report.creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
-                  <el-tag style="background-color:green; color:#f3f3f3" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:orange; color:#f3f3f3" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:red; color:#f3f3f3" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:black; color:#f3f3f3" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:green; color:#f3f3f3; font-weight: normal;" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:orange; color:#f3f3f3; font-weight: normal;" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:red; color:#f3f3f3; font-weight: normal;" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:black; color:#f3f3f3; font-weight: normal;" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
               </header>
               <section>
 
@@ -38,10 +38,10 @@
               <header>
                   <a href="#" title="OSPR's profile">{{ username }}</a>
                   <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-                  <el-tag v-if="report.reviewRequest == 'No Revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag v-if="report.reviewRequest == 'Minor Revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag v-if="report.reviewRequest == 'Major Revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:green; color:#f3f3f3" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:orange; color:#f3f3f3" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:red; color:#f3f3f3" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag style="background-color:black; color:#f3f3f3" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
               </header>
               <section>
 
@@ -125,6 +125,9 @@ export default {
         }, {
           value: 'Rejection',
           label: 'Rejection'
+        }, {
+          value: 'Simple comment',
+          label: 'Simple comment'
         }],
         reviewRequest: ''
     }

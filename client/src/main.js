@@ -26,8 +26,10 @@ import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 
 import Icon from 'vue-awesome/components/Icon'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 Vue.component('v-icon', Icon)
+Vue.use(CKEditor)
 
 // Vue.use(ElementUI)
 Vue.use(ElementUI, {

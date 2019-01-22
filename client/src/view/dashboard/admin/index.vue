@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <el-button round v-on:click="createArticle()">Create Article</el-button>
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
@@ -116,7 +117,31 @@ export default {
       })
     },
     createArticle () {
-      this.formVisible = true
+
+      //this.formVisible = true
+      const newArticle = {
+          title: String('Article title'),
+          abstract:  String('abstract'),
+          arr_content: [{
+                          name:"titre_1",
+                          title:"Titre 1",
+                          title_placeholder:"Titre 1",
+                          content:"Type the text",
+                          display:true
+                        }],
+          category : String('physics'),
+          id_author : this.userId,
+          published: true
+        };
+        axios.post('/api/articles/', newArticle)
+        .then(response => {
+          let new_article_id = response.data
+          console.log("create successfully ")
+          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
+        })
+        .catch(e => {
+          console.log(e)
+        })
     },
     cancelForm () {
       this.form.title = ''

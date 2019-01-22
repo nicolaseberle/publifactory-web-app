@@ -152,7 +152,7 @@ export default {
           id_author : this.userId,
           published: true
         };
-        axios.post('http://localhost:4000/api/articles/', newArticle)
+        axios.post('/api/articles/', newArticle)
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")

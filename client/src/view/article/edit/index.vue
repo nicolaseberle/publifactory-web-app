@@ -1,7 +1,17 @@
 <template>
   <div class="components-container">
+    <el-row style="height: 40px;">
+      <el-switch
+        style="display: block"
+        v-model="editorType"
+        active-color="#13ce66"
+        inactive-color="#4949FF"
+        active-text="Latex"
+        inactive-text="Editor">
+      </el-switch>
+  </el-row>
     <el-tabs type="border-card" stretch=True  v-model="activeName_tab" @tab-click="handleClick">
-      <el-tab-pane label="Article" name="article">
+      <el-tab-pane label="" name="article">
       <main class="article">
         <article>
           <span id="triggerStartNav"></span>
@@ -43,10 +53,11 @@
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
-                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
+                  <!--<medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
+                  <ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>
                 </form>
-            </section>
 
+            </section>
 
             <div v-for="(item,key) in postForm.arr_content">
 
@@ -62,10 +73,12 @@
 
 
                     <form name="abstract_form">
-                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
+                      <ckeditor :editor="editor" v-model="item.content" :config="editorConfig" v-on:edit="applyTextEdit($event,key)"></ckeditor>
+                      <!--<medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />-->
                     </form>
 
                     <span v-html="item.path_figure"></span>
+
 
                   </div>
                   </transition>
@@ -88,22 +101,14 @@
             <span id="triggerEndNav"></span>
         </article>
     </main>
+  </el-tab-pane>
+</el-tabs>
     <aside  class="comments-reviews" >
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
           <reviewComponent />
     </aside>
-
-  </el-tab-pane>
-  <el-tab-pane label="Data" name="data">
-    <datatable/>
-  </el-tab-pane>
-  <el-tab-pane label="Figures" name="figures">
-    <mixchart/>
-  </el-tab-pane>
-</el-tabs>
-
 
     <el-dialog
       title="Insert a figure"
@@ -140,13 +145,16 @@ import { article as articleRes } from 'resources'
 import axios from 'axios'
 import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
-import datatable from './data'
-import uploadExcel from './uploadExcel'
-import scriptView from './scriptView'
-import chartView from './chartView'
-import setupChart from './setupChart'
+// import datatable from './data'
+// import uploadExcel from './uploadExcel'
+// import scriptView from './scriptView'
+// import chartView from './chartView'
+// import setupChart from './setupChart'
 
 import reviewComponent from '../../../components/Review'
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+
 
 const defaultForm = {
   status: 'draft',
@@ -186,7 +194,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor, uploadExcel, scriptView, chartView , setupChart, reviewComponent, datatable},
+  components: { MarkdownEditor, 'medium-editor': editor , reviewComponent},
   props: {
     isEdit: {
       type: Boolean,
@@ -221,6 +229,10 @@ export default {
       }
     }
     return {
+      editorConfig: {
+            // The configuration of the editor.
+      },
+      editor: InlineEditor,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
@@ -235,14 +247,13 @@ export default {
       activeNames_section: ['1'],
       options: options,
       activeName_tab: 'article',
-      scriptview: 'scriptView',
-      setupchart: 'setupChart',
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogVisible: false,
       formLabelWidth: '120px',
       dialogStepActive: 0,
       addFigureInBlock: 0,
+      editorType: false,
       id: 0,
       form: {
           name: '',
@@ -271,6 +282,7 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+
   },
   mounted() {
       asideRightAnimation()
@@ -337,6 +349,7 @@ export default {
         console.log(e)
       })
     },
+
     applyAbstractEdit (ev) {
       if (ev.event.target) {
         this.postForm.abstract = ev.event.target.innerHTML
@@ -365,6 +378,19 @@ export default {
     removeRow (ev,key) {
       this.postForm.arr_content.splice(key, 1);
       this.save(ev)
+      if(this.postForm.arr_content == ''){
+        var new_content = {
+          name:"titre_1",
+          title:"Titre 1",
+          title_placeholder:"Titre 1",
+          content:"Type the text",
+          path_figure: "",
+          display:true
+        }
+        this.postForm.arr_content.splice(key+1,0, new_content);
+        this.save(ev)
+      }
+
     },
     openEditFigure (ev,key) {
       this.dialogVisible = true;
@@ -372,8 +398,8 @@ export default {
     },
     addNewFigure (ev){
       this.dialogVisible = false;
-      this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>';
       this.save(ev);
+      this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>'
     },/*
     save(event) {
         console.log('hello on enregristre')

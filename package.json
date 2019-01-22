@@ -29,6 +29,12 @@
     "svgo": "svgo -f ./client/src/icons/svg --config=./client/src/icons/svgo.yml"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^11.2.0",
+    "@ckeditor/ckeditor5-build-inline": "^11.2.0",
+    "@ckeditor/ckeditor5-dev-utils": "^11.0.1",
+    "@ckeditor/ckeditor5-dev-webpack-plugin": "^7.0.1",
+    "@ckeditor/ckeditor5-editor-inline": "^11.0.2",
+    "@ckeditor/ckeditor5-vue": "^1.0.0-beta.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.12",
     "@fortawesome/free-solid-svg-icons": "^5.6.3",
     "@fortawesome/vue-fontawesome": "^0.1.5",
@@ -51,6 +57,7 @@
     "font-awesome": "4.7.0",
     "gsap": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
+    "iframe-resizer": "^3.6.4",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
     "jsonwebtoken": "^7.1.9",
@@ -136,6 +143,7 @@
     "stylus-loader": "^3.0.1",
     "svg-sprite-loader": "3.8.0",
     "svgo": "1.0.5",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "url-loader": "^0.5.7",
     "vue-loader": "^11.0.0",
     "vue-style-loader": "^4.1.2",
