@@ -53,8 +53,8 @@
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
-                  <!--<medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>
+                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
+                  <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
 
             </section>
@@ -73,8 +73,8 @@
 
 
                     <form name="abstract_form">
-                      <ckeditor :editor="editor" v-model="item.content" :config="editorConfig" v-on:edit="applyTextEdit($event,key)"></ckeditor>
-                      <!--<medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />-->
+                      <!--<ckeditor :editor="editor" v-model="item.content" :config="editorConfig" v-on:edit="applyTextEdit($event,key)"></ckeditor>-->
+                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
                     </form>
 
                     <span v-html="item.path_figure"></span>
@@ -153,7 +153,7 @@ import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 
 import reviewComponent from '../../../components/Review'
 // import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+// import InlineEditor from '@ckeditor/ckeditor5-build-inline';
 
 
 const defaultForm = {
@@ -229,10 +229,10 @@ export default {
       }
     }
     return {
-      editorConfig: {
+      /* editorConfig: {
             // The configuration of the editor.
-      },
-      editor: InlineEditor,
+      },*/
+      // editor: InlineEditor,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
