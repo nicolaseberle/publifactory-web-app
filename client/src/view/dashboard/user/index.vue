@@ -89,7 +89,6 @@
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
-import { article as articleRes } from '../../../resources'
 import locales from '../../../locales/article'
 import axios from 'axios'
 
@@ -128,9 +127,9 @@ export default {
   },
   methods: {
     fetch (current = 1) {
-      this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-        this.articles = list.articles
-        console.log(list)
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.get('/api/articles/').then(list => {
+        this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
       })

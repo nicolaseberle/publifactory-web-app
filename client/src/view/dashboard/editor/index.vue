@@ -84,9 +84,10 @@
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
-import { article as articleRes } from '../../../resources'
 import locales from '../../../locales/article'
+import axios from 'axios'
 
 export default {
   locales,
@@ -114,16 +115,14 @@ export default {
       articles: []
     }
   },
-  components: {
-    DataTable
-  },
   methods: {
     handleClick(tab, event) {
         console.log(tab, event);
     },
     fetch (current = 1) {
-      this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-        this.articles = list.articles
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.get('/api/articles/').then(list => {
+        this.articles = list.data.articles
         console.log(list)
       }).catch(err => {
         console.error(err)

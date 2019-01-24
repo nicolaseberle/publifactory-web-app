@@ -1,31 +1,16 @@
 <template>
   <div id="app">
-    <router-view/>
+    <div :class="{active: loggedIn}">
+      <router-view/>
+      <!--<n-progress parent=".app-wrapper"></n-progress>-->
+    </div>
   </div>
 </template>
 
-<!--<script>
-export default{
-  name: 'App'
-}
-</script>-->
-
-<!--<template>
-  <div id="app-main">
-    <nav-menu ></nav-menu>
-    <div class="app-wrapper">
-      <x-header></x-header>
-      <div class="app-container" :class="{active: loggedIn}">
-        <router-loading></router-loading>
-        <router-view></router-view>
-      </div>
-      <n-progress parent=".app-wrapper"></n-progress>
-    </div>
-  </div>
-</template>-->
 <script>
 import Vue from 'vue'
 import XHeader from './components/Header'
+import NProgress from './components/NProgress'
 import { mapGetters } from 'vuex'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
@@ -40,7 +25,8 @@ export default {
   },
   components: {
     XHeader,
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
+    'n-progress': NProgress
   }
 }
 </script>

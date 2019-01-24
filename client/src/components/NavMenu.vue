@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <transition name="menu">
     <div v-if="loggedIn" id="app-menu">
       <router-link class="logo-wrapper" to="/" exact>PubliFactory</router-link>
@@ -55,3 +55,4 @@ export default {
     .iconfont
       margin-right 10px
 </style>
+-->

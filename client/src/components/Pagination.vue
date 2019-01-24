@@ -52,36 +52,3 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-@import "../assets/css/variable"
-.ui-pagination
-  display flex
-  justify-content space-between
-  align-items center
-  padding .75rem 1rem
-  border-top 1px solid $color-gray
-  background-color #fff
-  .navs
-    > a
-      float left
-      width 2rem
-      height 1.75rem
-      line-height @height
-      text-align center
-      border-right 1px solid $color-gray
-      background-color $color-white
-      color $color-black-exact-light
-      border 1px solid $color-gray
-      border-right none
-      cursor pointer
-      &:last-child
-        border-right 1px solid $color-gray
-      &[disabled]
-        color $color-silver-exact-light
-        cursor not-allowed
-        background-color $color-gray-exact-light
-      &:hover
-        background-color $color-primary
-        color $color-white
-        border-color $color-primary
-</style>

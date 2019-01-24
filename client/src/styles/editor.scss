@@ -2,19 +2,19 @@
 
 @font-face {
     font-family: 'DNLTPro-bold';
-    src: url('../fonts/dinnextltpro/dinnextltpro-bold.otf');
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-bold.otf');
 }
 @font-face {
     font-family: 'DNLTPro-regular';
-    src: url('../fonts/dinnextltpro/dinnextltpro-regular.otf');
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-regular.otf');
 }
 @font-face {
     font-family: 'DNLTPro-medium';
-    src: url('../fonts/dinnextltpro/dinnextltpro-medium.otf');
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-medium.otf');
 }
 @font-face {
     font-family: 'DNLTPro-medium-italic';
-    src: url('../fonts/dinnextltpro/dinnextltpro-medium-italic.otf');
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-medium-italic.otf');
 }
 
 // Droid Serif fonts
@@ -22,28 +22,13 @@
 
  @font-face {
      font-family: 'DroidSerif-regular';
-     src: url('../fonts/droid-serif/droid-serif-regular.ttf');
+     src: url('../assets/fonts/droid-serif/droid-serif-regular.ttf');
  }
  @font-face {
      font-family: 'DroidSerif-bold';
-     src: url('../fonts/droid-serif/droid-serif-bold.ttf');
+     src: url('../assets/fonts/droid-serif/droid-serif-bold.ttf');
  }
 
-/*body.document-editor {
-    width: 15.8cm;
-    min-height: 21cm;
-    padding: 1cm 2cm 2cm;
-    margin: 0.5cm auto;
-    border: 1px #D3D3D3 solid;
-    border-radius: 5px;
-    background: white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-size: 16px;
-    line-height: 30px;
-    font-family: 'DroidSerif-regular';
-}*/
 body.document-editor {
     font-size: 16px;
     font-family: 'DroidSerif-regular';

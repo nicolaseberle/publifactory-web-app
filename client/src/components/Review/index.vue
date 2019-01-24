@@ -91,10 +91,6 @@
 import locales from '../../locales/article'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
-import { report as reportRes } from 'resources'
-import { article as articleRes } from 'resources'
-import { user as userRes } from 'resources'
-
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -156,12 +152,8 @@ export default {
       })
     },
     fetchArticle(id) {
-      console.log(id)
-      articleRes.query({ _id: id }).then(response => {
+      axios.get('/api/articles/' + id ).then(response => {
         this.article = response.data
-        // Just for test
-        //this.postForm.title += `   Article Id:${this.postForm.id}`
-        //this.postForm.content_short += `   Article Id:${this.postForm.id}`
       }).catch(err => {
         console.log(err)
       })

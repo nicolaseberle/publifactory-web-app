@@ -141,15 +141,9 @@ import editor from 'vue2-medium-editor'
 import { mapGetters } from 'vuex'
 import MarkdownEditor from '../../../components/MarkdownEditor'
 import { validateURL } from '../../../utils/validate'
-import { article as articleRes } from 'resources'
 import axios from 'axios'
 import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
-// import datatable from './data'
-// import uploadExcel from './uploadExcel'
-// import scriptView from './scriptView'
-// import chartView from './chartView'
-// import setupChart from './setupChart'
 
 import reviewComponent from '../../../components/Review'
 // import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -313,11 +307,8 @@ export default {
     },
     fetchData(id) {
       console.log(id)
-      articleRes.query({ _id: id }).then(response => {
+      axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
-        // Just for test
-        //this.postForm.title += `   Article Id:${this.postForm.id}`
-        //this.postForm.content_short += `   Article Id:${this.postForm.id}`
       }).catch(err => {
         console.log(err)
       })
