@@ -79,7 +79,18 @@
   <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
   </el-tabs>
 </content-module>
-
+<!--
+<el-dialog :title="Titre" :visible.sync="formVisible">
+  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form-item :label="$t('article.title')">
+        <el-input v-model="temp.title"/>
+      </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
+    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
+  </span>
+</el-dialog>-->
 </div>
 </template>
 <script>
@@ -115,6 +126,14 @@ export default {
       articles: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
+  components: {
+    DataTable
+  },
   methods: {
     handleClick(tab, event) {
         console.log(tab, event);
@@ -123,7 +142,6 @@ export default {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/articles/').then(list => {
         this.articles = list.data.articles
-        console.log(list)
       }).catch(err => {
         console.error(err)
       })
@@ -154,6 +172,9 @@ export default {
         .catch(e => {
           console.log(e)
         })
+    },
+    closeCreationDialog () {
+      this.formVisible = false
     },
     cancelForm () {
       this.form.title = ''

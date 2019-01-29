@@ -21,12 +21,13 @@ import './icons'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+// import CKEditor from '@ckeditor/ckeditor5-vue';
+// import VueQuill from 'vue-quill'
 
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 
 import Icon from 'vue-awesome/components/Icon'
-
 Vue.component('v-icon', Icon)
 
 // Vue.use(ElementUI)
@@ -50,6 +51,7 @@ routerHook(userPromise)
 import App from './App'
 
 import './socket'
+// Vue.use( CKEditor );
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {

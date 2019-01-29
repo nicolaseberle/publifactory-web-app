@@ -6,7 +6,7 @@
 import { mapGetters } from 'vuex'
 import editComponent from './edit'
 import readComponent from './read'
-import { article as articleRes } from 'resources'
+import axios from 'axios'
 
 const defaultForm = {
   status: 'draft',
@@ -62,8 +62,7 @@ export default {
   },
   methods: {
     fetchData(id) {
-      console.log(id)
-      articleRes.query({ _id: id }).then(response => {
+      axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
         var self = this;
         // we check if article author is the current user to give him the righ to edit the document

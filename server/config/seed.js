@@ -9,7 +9,7 @@ var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
-const gen_text_2 = '<p>Haec et huius modi quaedam innumerabilia ultrix facinorum impiorum bonorumque praemiatrix aliquotiens operatur Adrastia atque utinam semper quam vocabulo duplici etiam Nemesim appellamus: ius quoddam sublime numinis efficacis, humanarum mentium opinione lunari circulo superpositum, vel ut definiunt alii, substantialis tutela generali potentia partilibus praesidens fatis, quam theologi veteres fingentes Iustitiae filiam ex abdita quadam aeternitate tradunt omnia despectare terrena.</p><p>Iis igitur est difficilius satis facere, qui se Latina scripta dicunt contemnere. in quibus hoc primum est in quo admirer, cur in gravissimis rebus non delectet eos sermo patrius, cum idem fabellas Latinas ad verbum e Graecis expressas non inviti legant. quis enim tam inimicus paene nomini Romano est, qui Ennii Medeam aut Antiopam Pacuvii spernat aut reiciat, quod se isdem Euripidis fabulis delectari dicat, Latinas litteras oderit?</p>';
+const gen_text_2 = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p><p><span class=\"ql-formula\" data-value=\"f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2 \\pi i \\xi x}\\,d\\xi\">﻿<span contenteditable=\"false\"><span class=\"katex\"><span class=\"katex-mathml\"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant=\"normal\">∞</mi></mrow><mi mathvariant=\"normal\">∞</mi></msubsup><mover accent=\"true\"><mi>f</mi><mo>^</mo></mover><mo>(</mo><mi>ξ</mi><mo>)</mo>&amp;ThinSpace;<msup><mi>e</mi><mrow><mn>2</mn><mi>π</mi><mi>i</mi><mi>ξ</mi><mi>x</mi></mrow></msup>&amp;ThinSpace;<mi>d</mi><mi>ξ</mi></mrow><annotation encoding=\"application/x-tex\">f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2 \\pi i \\xi x}\\,d\\xi</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height: 1em; vertical-align: -0.25em;\"></span><span style=\"margin-right: 0.10764em;\" class=\"mord mathdefault\">f</span><span class=\"mopen\">(</span><span class=\"mord mathdefault\">x</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.277778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right: 0.277778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height: 1.37203em; vertical-align: -0.414151em;\"></span><span class=\"mop\"><span style=\"margin-right: 0.19445em; position: relative; top: -0.00056em;\" class=\"mop op-symbol small-op\">∫</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.859292em;\"><span class=\"\" style=\"top: -2.34418em; margin-left: -0.19445em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">−</span><span class=\"mord mtight\">∞</span></span></span></span><span class=\"\" style=\"top: -3.2579em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">∞</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.414151em;\"><span class=\"\"></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord accent\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.95788em;\"><span class=\"\" style=\"top: -3em;\"><span class=\"pstrut\" style=\"height: 3em;\"></span><span style=\"margin-right: 0.10764em;\" class=\"mord mathdefault\">f</span></span><span class=\"\" style=\"top: -3.26344em;\"><span class=\"pstrut\" style=\"height: 3em;\"></span><span class=\"accent-body\" style=\"left: -0.08333em;\">^</span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.19444em;\"><span class=\"\"></span></span></span></span></span><span class=\"mopen\">(</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault\">ξ</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord\"><span class=\"mord mathdefault\">e</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.849108em;\"><span class=\"\" style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">2</span><span style=\"margin-right: 0.03588em;\" class=\"mord mathdefault mtight\">π</span><span class=\"mord mathdefault mtight\">i</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault mtight\">ξ</span><span class=\"mord mathdefault mtight\">x</span></span></span></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord mathdefault\">d</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault\">ξ</span></span></span></span></span>﻿</span>  (1)</p><p><br></p>';
 const gen_text_3 = '<p> When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$</p>';
 const figure_1 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/kmean/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px; margin:10px 10px 10px 10px;"></iframe>'
 const figure_2 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/hello/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
@@ -17,7 +17,7 @@ const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px
 const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_5 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_6 = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/boxplot/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
- 
+
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -157,8 +157,8 @@ function createUsers() {
     .then(() => {
       let users = User.create({
         provider: 'local',
-        role: 'admin',
-        roles : 'admin',
+        role: 'user',
+        roles : ['user'],
         name: 'Nicolas',
         username: 'nicolas',
         firstname: 'Nicolas',
@@ -224,7 +224,7 @@ function createUsers() {
        {
         provider: 'local',
         role: 'user',
-        roles : ['admin'],
+        roles : ['user'],
         name: 'Emilie',
         username: 'Dambroise Mugniery',
         firstname: 'Emilie',
@@ -237,7 +237,7 @@ function createUsers() {
       }, {
         provider: 'local',
         role: 'user',
-        roles : ['admin'],
+        roles : ['user'],
         name: 'Hervé',
         username: 'Hervé',
         firstname: 'Hervé',
@@ -250,7 +250,7 @@ function createUsers() {
       },{
         provider: 'local',
         role: 'user',
-        roles : 'admin',
+        roles : 'user',
         name: 'corentin',
         username: 'Corentin',
         firstname: 'Corentin',
@@ -263,7 +263,7 @@ function createUsers() {
       },{
         provider: 'local',
         role: 'user',
-        roles : ['admin'],
+        roles : ['user'],
         name: 'alexandre',
         firstname: 'Alexandre',
         username: 'Alexandre',
@@ -276,7 +276,7 @@ function createUsers() {
       },{
         provider: 'local',
         role: 'user',
-        roles : ['admin'],
+        roles : ['user'],
         name: 'anne-laure',
         firstname: 'Anne-Laure',
         username: 'Anne-Laure',

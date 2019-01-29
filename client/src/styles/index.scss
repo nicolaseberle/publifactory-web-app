@@ -116,6 +116,7 @@ code {
   }
 }
 
+
 .warn-content{
   background: rgba(66,185,131,.1);
   border-radius: 2px;
@@ -226,7 +227,9 @@ code {
 
 }
 
-
+.ck.ck-block-toolbar-button {
+    transform: translateX( -10px );
+}
 
 .components-container {
   margin: 30px 50px;

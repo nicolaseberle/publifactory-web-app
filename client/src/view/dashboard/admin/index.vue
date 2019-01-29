@@ -71,13 +71,26 @@
       </el-table>
     </data-table>
 </content-module>
+<!--
+<el-dialog :title="Titre" :visible.sync="formVisible">
+  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form-item :label="$t('article.title')">
+        <el-input v-model="temp.title"/>
+      </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
+    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
+  </span>
+</el-dialog>-->
 </div>
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
-import { article as articleRes } from '../../../resources'
 import locales from '../../../locales/article'
+import axios from 'axios'
 
 export default {
   locales,
@@ -104,14 +117,19 @@ export default {
       articles: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   components: {
     DataTable
   },
   methods: {
     fetch (current = 1) {
-      this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-        this.articles = list.articles
-        console.log(list)
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.get('/api/articles/').then(list => {
+        this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
       })
@@ -142,6 +160,9 @@ export default {
         .catch(e => {
           console.log(e)
         })
+    },
+    closeCreationDialog () {
+      this.formVisible = false
     },
     cancelForm () {
       this.form.title = ''

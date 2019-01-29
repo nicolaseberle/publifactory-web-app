@@ -1,17 +1,27 @@
 <template>
   <div class="components-container">
-    <el-row style="height: 40px;">
-      <el-switch
-        style="display: block"
-        v-model="editorType"
-        active-color="#13ce66"
-        inactive-color="#4949FF"
-        active-text="Latex"
-        inactive-text="Editor">
-      </el-switch>
-  </el-row>
-    <el-tabs type="border-card" stretch=True  v-model="activeName_tab" @tab-click="handleClick">
-      <el-tab-pane label="" name="article">
+
+
+
+
+
+<el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;">
+  <el-col :span="4"><el-switch
+    style="text-align:center;"
+    v-model="editorType"
+    active-color="#13ce66"
+    inactive-color="#4949FF"
+    active-text="Latex"
+    inactive-text="Editor">
+  </el-switch></el-col>
+  <el-col v-if="postForm.status == 'Draft'" :span="4" :offset="0"><el-button type="primary">Submit your article</el-button></el-col>
+  <el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="0"><el-button type="warning">Edit this version</el-button></el-col>
+</el-row>
+
+
+
+  <el-tabs type="border-card" stretch  v-model="activeName_tab" @tab-click="handleClick">
+    <el-tab-pane label="" name="article">
       <main class="article">
         <article>
           <span id="triggerStartNav"></span>
@@ -20,6 +30,7 @@
                 <el-row v-if="postForm.status == 'Reviewing'">
                     <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; weight:bold; margin:0px 0px 10px 0px; border-style: none;'>{{postForm.status}} in progress</el-button>
                 </el-row>
+
                 <el-row v-else>
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
@@ -53,11 +64,12 @@
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
-                  <medium-editor :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
+                  <medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
-
+                <div style="font-size:0.7rem; float:right">{{counterAbstract}} / 500 max</div>
             </section>
+
 
             <div v-for="(item,key) in postForm.arr_content">
 
@@ -68,18 +80,11 @@
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
-
-
-
-
                     <form name="abstract_form">
-                      <!--<ckeditor :editor="editor" v-model="item.content" :config="editorConfig" v-on:edit="applyTextEdit($event,key)"></ckeditor>-->
-                      <medium-editor  :text='item.content' :options='options' v-on:edit="applyTextEdit($event,key)" />
+                      <quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit_3'></quill-editor>
                     </form>
 
                     <span v-html="item.path_figure"></span>
-
-
                   </div>
                   </transition>
                   <footer>
@@ -87,7 +92,7 @@
       								<el-button  icon="el-icon-plus"  class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>
       						</div>
       						<div class='section-footer-right'>
-                    <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start" open-delay='200'>
+                    <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start">
                       <el-button  type="primary" v-on:click="openEditFigure($event,key)" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
                     </el-tooltip>
                     <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
@@ -96,13 +101,12 @@
 
               </section>
             </div>
-
-
             <span id="triggerEndNav"></span>
         </article>
     </main>
-  </el-tab-pane>
-</el-tabs>
+          </el-tab-pane>
+        </el-tabs>
+
     <aside  class="comments-reviews" >
         <p>Show comments &amp; reviews</p>
     </aside>
@@ -132,9 +136,6 @@
 
   </div>
 
-
-
-
 </template>
 <script>
 import editor from 'vue2-medium-editor'
@@ -146,9 +147,11 @@ import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 
 import reviewComponent from '../../../components/Review'
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+import quilleditor from '../../../components/QuillEditor'
 
+var Countable = require('countable');
+var Quill = require('quill');
+var uuidv4 = require('uuid/v4');
 
 const defaultForm = {
   status: 'draft',
@@ -159,7 +162,7 @@ const defaultForm = {
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
-                  content:"Type the text",
+                  content:"Type your text",
                   path_figure: "",
                   display:true
                 }],
@@ -188,7 +191,7 @@ const options = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor, 'medium-editor': editor , reviewComponent},
+  components: { MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor},
   props: {
     isEdit: {
       type: Boolean,
@@ -223,15 +226,11 @@ export default {
       }
     }
     return {
-      /* editorConfig: {
-            // The configuration of the editor.
-      },*/
-      // editor: InlineEditor,
-      postForm: Object.assign({}, defaultForm),
+      // postForm: Object.assign({}, defaultForm),
+      postForm: {},
       loading: false,
       userListOptions: [],
       html: '',
-      content: "content",
       rules: {
         title: [{ validator: validateRequire }],
         content: [{ validator: validateRequire }],
@@ -248,6 +247,7 @@ export default {
       dialogStepActive: 0,
       addFigureInBlock: 0,
       editorType: false,
+      counterAbstract : 0,
       id: 0,
       form: {
           name: '',
@@ -270,16 +270,19 @@ export default {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
       this.id = id
-      console.log("creation de la page")
       this.fetchData(id)
 
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
 
+
   },
   mounted() {
       asideRightAnimation()
+      const area = document.getElementById('abstract')
+      const callback = counter =>  {this.counterAbstract = counter.words;}
+      Countable.on(area, callback)
   },
   methods: {
     nextStep() {
@@ -297,16 +300,9 @@ export default {
           .catch(_ => {});
       },
     handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    handleChange_section(val) {
-      console.log(val);
-    },
-    handleChange(val) {
-      console.log(val)
+
     },
     fetchData(id) {
-      console.log(id)
       axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
       }).catch(err => {
@@ -334,7 +330,7 @@ export default {
     save (ev) {
       axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
       .then(response => {
-        console.log("save successfully")
+        console.log("article saved")
       })
       .catch(e => {
         console.log(e)
@@ -353,16 +349,26 @@ export default {
         this.save(ev)
       }
     },
+    applyTextEdit_2 (content,key) {
+      this.postForm.arr_content[key].content = content.ops[0].insert
+      this.save(this.$event)
+    },
+    applyTextEdit_3 (editor, delta, source,key) {
+      this.postForm.arr_content[key].content = editor.root.innerHTML
+
+      this.save(this.$event)
+    },
     addNewRow (ev,key) {
+      var uuid_ = String(uuidv4())
       var new_content = {
         name:"titre_1",
+        uuid: uuid_,
         title:"Titre 1",
         title_placeholder:"Titre 1",
         content:"Type the text",
         path_figure: "",
         display:true
       }
-      //var new_content = {name: title_name,title: null,display:false,title_placeholder:title_name,content:"Type the text"}
       this.postForm.arr_content.splice(key+1,0, new_content);
       this.save(ev)
     },
@@ -384,6 +390,7 @@ export default {
 
     },
     openEditFigure (ev,key) {
+
       this.dialogVisible = true;
       this.addFigureInBlock = key;
     },
