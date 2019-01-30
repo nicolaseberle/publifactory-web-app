@@ -1,10 +1,5 @@
 <template>
   <div class="components-container">
-
-
-
-
-
 <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;">
   <el-col :span="4"><el-switch
     style="text-align:center;"
@@ -17,9 +12,6 @@
   <el-col v-if="postForm.status == 'Draft'" :span="4" :offset="0"><el-button type="primary">Submit your article</el-button></el-col>
   <el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="0"><el-button type="warning">Edit this version</el-button></el-col>
 </el-row>
-
-
-
   <el-tabs type="border-card" stretch  v-model="activeName_tab" @tab-click="handleClick">
     <el-tab-pane label="" name="article">
       <main class="article">
@@ -67,12 +59,8 @@
                   <medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
-                <div style="font-size:0.7rem; float:right">{{counterAbstract}} / 500 max</div>
             </section>
-
-
             <div v-for="(item,key) in postForm.arr_content">
-
               <section id="item.title">
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
@@ -149,7 +137,6 @@ import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
 import reviewComponent from '../../../components/Review'
 import quilleditor from '../../../components/QuillEditor'
 
-var Countable = require('countable');
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
@@ -247,7 +234,6 @@ export default {
       dialogStepActive: 0,
       addFigureInBlock: 0,
       editorType: false,
-      counterAbstract : 0,
       id: 0,
       form: {
           name: '',
@@ -280,9 +266,6 @@ export default {
   },
   mounted() {
       asideRightAnimation()
-      const area = document.getElementById('abstract')
-      const callback = counter =>  {this.counterAbstract = counter.words;}
-      Countable.on(area, callback)
   },
   methods: {
     nextStep() {

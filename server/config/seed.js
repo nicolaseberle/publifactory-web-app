@@ -7,6 +7,7 @@
 var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
+var Journals = require('../api/journal/journal.model');
 
 const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
 const gen_text_2 = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p><p><span class=\"ql-formula\" data-value=\"f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2 \\pi i \\xi x}\\,d\\xi\">﻿<span contenteditable=\"false\"><span class=\"katex\"><span class=\"katex-mathml\"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant=\"normal\">∞</mi></mrow><mi mathvariant=\"normal\">∞</mi></msubsup><mover accent=\"true\"><mi>f</mi><mo>^</mo></mover><mo>(</mo><mi>ξ</mi><mo>)</mo>&amp;ThinSpace;<msup><mi>e</mi><mrow><mn>2</mn><mi>π</mi><mi>i</mi><mi>ξ</mi><mi>x</mi></mrow></msup>&amp;ThinSpace;<mi>d</mi><mi>ξ</mi></mrow><annotation encoding=\"application/x-tex\">f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2 \\pi i \\xi x}\\,d\\xi</annotation></semantics></math></span><span class=\"katex-html\" aria-hidden=\"true\"><span class=\"base\"><span class=\"strut\" style=\"height: 1em; vertical-align: -0.25em;\"></span><span style=\"margin-right: 0.10764em;\" class=\"mord mathdefault\">f</span><span class=\"mopen\">(</span><span class=\"mord mathdefault\">x</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.277778em;\"></span><span class=\"mrel\">=</span><span class=\"mspace\" style=\"margin-right: 0.277778em;\"></span></span><span class=\"base\"><span class=\"strut\" style=\"height: 1.37203em; vertical-align: -0.414151em;\"></span><span class=\"mop\"><span style=\"margin-right: 0.19445em; position: relative; top: -0.00056em;\" class=\"mop op-symbol small-op\">∫</span><span class=\"msupsub\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.859292em;\"><span class=\"\" style=\"top: -2.34418em; margin-left: -0.19445em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">−</span><span class=\"mord mtight\">∞</span></span></span></span><span class=\"\" style=\"top: -3.2579em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\">∞</span></span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.414151em;\"><span class=\"\"></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord accent\"><span class=\"vlist-t vlist-t2\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.95788em;\"><span class=\"\" style=\"top: -3em;\"><span class=\"pstrut\" style=\"height: 3em;\"></span><span style=\"margin-right: 0.10764em;\" class=\"mord mathdefault\">f</span></span><span class=\"\" style=\"top: -3.26344em;\"><span class=\"pstrut\" style=\"height: 3em;\"></span><span class=\"accent-body\" style=\"left: -0.08333em;\">^</span></span></span><span class=\"vlist-s\">​</span></span><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.19444em;\"><span class=\"\"></span></span></span></span></span><span class=\"mopen\">(</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault\">ξ</span><span class=\"mclose\">)</span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord\"><span class=\"mord mathdefault\">e</span><span class=\"msupsub\"><span class=\"vlist-t\"><span class=\"vlist-r\"><span class=\"vlist\" style=\"height: 0.849108em;\"><span class=\"\" style=\"top: -3.063em; margin-right: 0.05em;\"><span class=\"pstrut\" style=\"height: 2.7em;\"></span><span class=\"sizing reset-size6 size3 mtight\"><span class=\"mord mtight\"><span class=\"mord mtight\">2</span><span style=\"margin-right: 0.03588em;\" class=\"mord mathdefault mtight\">π</span><span class=\"mord mathdefault mtight\">i</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault mtight\">ξ</span><span class=\"mord mathdefault mtight\">x</span></span></span></span></span></span></span></span></span><span class=\"mspace\" style=\"margin-right: 0.166667em;\"></span><span class=\"mord mathdefault\">d</span><span style=\"margin-right: 0.04601em;\" class=\"mord mathdefault\">ξ</span></span></span></span></span>﻿</span>  (1)</p><p><br></p>';
@@ -25,6 +26,7 @@ User.find({}, function (err, users) {
   if(!users){users = createUsers()}
   createComment(users);
   createArticles(users);
+  createJournals(users);
 
 })
 
@@ -43,6 +45,44 @@ function createComment(user_tmp) {
   })
   .then(() => {console.log('finished populating comments');})
   .catch(err => console.log('error populating comments', err));
+
+}
+
+function createJournals(user_tmp) {
+  Journals.find({}).remove()
+    .then(() => {
+      let journals = Journals.create(
+      {
+        title: 'Developmental Biology',
+        abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
+        tags:['Aging','death rates','curve fitting'],
+        color_1: '#B9DAAC',
+        color_2: '#B9DA90',
+        editor: [user_tmp[2]._id],
+        published: true
+      },
+      {
+        title: 'Genetics',
+        abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
+        tags:['Genetics','DNA'],
+        color_1: "#F2DFA6",
+        color_2: "#E0CF5C",
+        editor: [user_tmp[4]._id],
+        published: true
+      },
+      {
+        title: 'Biochemistry',
+        abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
+        tags:['Chemistry','Biology'],
+        color_1: "#A1DBFF",
+        color_2: "#89BAD9",
+        editor: [user_tmp[6]._id],
+        published: true
+      });
+      return journals
+  })
+  .then(() => {console.log('finished populating journals');})
+  .catch(err => console.log('error populating journals', err));
 
 }
 

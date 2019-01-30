@@ -13,6 +13,7 @@ module.exports = function (app) {
   app.use('/api/things', require('./api/thing'))
   app.use('/api/users', require('./api/user'))
   app.use('/api/articles', require('./api/article'))
+  app.use('/api/journals', require('./api/journal'))
   app.use('/api/comments', require('./api/comment'))
   app.use('/api/data', require('./api/data'))
   app.use('/api/auth', require('./auth'))

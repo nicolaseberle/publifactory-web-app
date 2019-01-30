@@ -145,7 +145,6 @@ export default {
     fetchReport(id) {
       axios.get('/api/comments/'  + id + '/comments').then(response => {
         this.reports = response.data
-        this.errors.message = 'fetchReport success ';
       }).catch(err => {
         console.log(err)
         this.errors.message = 'fetchReport fails';

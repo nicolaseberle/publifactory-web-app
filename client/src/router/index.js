@@ -34,7 +34,8 @@ export const constantRouterMap = [{
     {
       path: '/journal',
       name: 'Journals',
-      meta: { title: 'Journal', noCache: true }
+      meta: { title: 'Journals', noCache: true },
+      component: () => import('../view/journals/index.vue')
     },
     {
       path: 'dashboard',
