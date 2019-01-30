@@ -25,16 +25,20 @@
             </defs>
             <rect width="120" height="150" class="GradientBorder" :style="{'fill': 'url(#'+ journal._id + ')'}" />
             <rect x="10" y="10" width="100" height="130"  style="fill:url(#grad1);stroke-width:1;stroke:rgb(51,51,51)" />
-            <text x="20" y="30" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" ></text>
-            <text x="60" y="50" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" ></text>
+            <text x="20" y="30" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" >{{journal.title.split(" ")[0]}}</text>
+            <text x="60" y="50" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" >{{journal.title.split(" ")[1]}}</text>
             </g>
           </svg>
           </el-col>
           <el-col :span="12">
             <span style="margin-left: 5em;">{{journal.abstract}}</span>
+
+
+
           </el-col>
           <el-col :span="6" :offset="2">
-            <strong>Editor-In-Chief:</strong> <a v-for="item in journal.editor" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
+            <strong>Created on : </strong>{{ journal.creationDate | moment("DD/MM/YYYY") }}
+            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.editor" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
             <p><strong>Associate Editor:</strong> </p>
           </el-col>
         </el-row>

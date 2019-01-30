@@ -74,8 +74,8 @@ function createJournals(user_tmp) {
         title: 'Biochemistry',
         abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
         tags:['Chemistry','Biology'],
-        color_1: "#A1DBFF",
-        color_2: "#89BAD9",
+        color_1: "#FEECD4",
+        color_2: "#FAD2BE",
         editor: [user_tmp[6]._id],
         published: true
       });
