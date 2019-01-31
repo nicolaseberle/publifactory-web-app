@@ -62,7 +62,8 @@ export default {
       autoDownloadFontAwesome: false,
       autofocus: this.autofocus,
       toolbar: this.toolbar.length > 0 ? this.toolbar : undefined,
-      spellChecker: false,
+      spellChecker: true,
+      lineWrapping: true,
       insertTexts: {
         link: ['[', ']( )']
       },
@@ -95,8 +96,7 @@ export default {
 
 .simplemde-container>>>.CodeMirror-scroll {
   min-height: 150px;
-  overflow-y: auto;
-  overflow-x: hidden;
+
 }
 
 .simplemde-container>>>.CodeMirror-code {

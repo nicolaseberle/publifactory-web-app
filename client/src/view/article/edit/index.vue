@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="components-container">
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white">
       <el-col :span="4"><el-switch
@@ -10,12 +11,13 @@
         inactive-text="LightEditor"
         @input='changeEditor'>
       </el-switch></el-col>
-          <el-col v-if="true" :span="4" :offset="17"><el-button type="primary">Submit your article</el-button></el-col>
+          <el-col v-if="true" :span="4" :offset="18"><el-button type="primary">Submit your article</el-button></el-col>
           <!--<el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="18"><el-button type="warning">Edit this version</el-button></el-col>-->
     </el-row>
-    <div>
-        <component v-bind:is="currentEditor"/>
-    </div>
+  </div>
+  <div>
+      <component v-bind:is="currentEditor"/>
+  </div>
   </div>
 
 </template>
