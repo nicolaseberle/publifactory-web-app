@@ -87,6 +87,7 @@ export default {
 </script>
 
 <style scoped>
+
 .simplemde-container>>>.CodeMirror {
   min-height: 150px;
   line-height: 20px;
@@ -94,6 +95,8 @@ export default {
 
 .simplemde-container>>>.CodeMirror-scroll {
   min-height: 150px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .simplemde-container>>>.CodeMirror-code {
