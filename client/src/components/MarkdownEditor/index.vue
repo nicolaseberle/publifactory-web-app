@@ -1,6 +1,6 @@
 <template>
   <div :style="{height:height+'px',zIndex:zIndex}" class="simplemde-container">
-    <textarea :id="id"/>
+    <textarea :id="id" style="{overflow:hidden}"/>
   </div>
 </template>
 
@@ -63,7 +63,6 @@ export default {
       autofocus: this.autofocus,
       toolbar: this.toolbar.length > 0 ? this.toolbar : undefined,
       spellChecker: true,
-      lineWrapping: true,
       insertTexts: {
         link: ['[', ']( )']
       },
@@ -90,13 +89,16 @@ export default {
 <style scoped>
 
 .simplemde-container>>>.CodeMirror {
-  min-height: 150px;
+  min-height: 200px;
+  height: 200px;
   line-height: 20px;
+  overflow:hidden;
 }
 
 .simplemde-container>>>.CodeMirror-scroll {
-  min-height: 150px;
-
+  min-height: 200px;
+  height: 200px;
+  overflow:hidden;
 }
 
 .simplemde-container>>>.CodeMirror-code {

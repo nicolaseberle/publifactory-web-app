@@ -23,8 +23,16 @@
                 <!--<h1>{{ postForm.title }} </i></h1>-->
                 <h1>
                   <form name="article_title_form">
-                    <textarea name="Text1" v-model="postForm.title" cols="35" rows="3"  @input="save($event)"></textarea>
-                    <!--<input type="text" v-model="postForm.title" name="title" placeholder="Article Title" @input="save($event)"/>-->
+                    <textarea-autosize
+                      placeholder="Article Title"
+                      ref="TitleTextArea"
+                      v-model="postForm.title"
+                      :min-height="30"
+                      :cols="35"
+                      :max-height="350"
+                      @blur.native="onBlurTextarea"
+                      @input="save($event)"
+                    ></textarea-autosize>
                     <br>
                   </form>
                </h1>

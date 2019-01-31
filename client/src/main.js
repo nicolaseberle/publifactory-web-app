@@ -21,6 +21,7 @@ import './icons'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+
 // import CKEditor from '@ckeditor/ckeditor5-vue';
 // import VueQuill from 'vue-quill'
 
@@ -30,6 +31,9 @@ import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('v-icon', Icon)
 
+import VueTextareaAutosize from 'vue-textarea-autosize'
+Vue.use(VueTextareaAutosize)
+
 // Vue.use(ElementUI)
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium'// set element-ui default size
@@ -38,7 +42,7 @@ Vue.use(ElementUI, {
 Vue.use(require('vue-moment'))
 
 import './styles/index.scss' // global css
-
+import 'codemirror/lib/codemirror.css'
 // ajax
 import './http'
 

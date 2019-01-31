@@ -2,14 +2,21 @@
   <div class="components-container">
     <el-row :gutter="40">
       <el-col v-if='hidePDF==1' :span="24">
-        <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="300" :z-index="20" @input='markdown2Html'/>
-
+        <form>
+          <textarea id="code" name="code">
+            {{content}}
+          </textarea>
+        </form>
       </el-col>
 
       <el-col v-if='hidePDF==0' :span="14">
 
 
-          <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="300" :z-index="20" @input='markdown2Html'/>
+        <form>
+          <textarea id="code" name="code">
+            {{content}}
+          </textarea>
+        </form>
 
       </el-col>
       <el-col v-if='hidePDF==0' :span="10">
@@ -24,10 +31,11 @@
 </template>
 
 <script>
-import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
-
+import CodeMirror from 'codemirror'
+import 'codemirror/mode/stex/stex.js'
+import 'codemirror/lib/codemirror.css'
 
 const defaultForm = {
   status: 'draft',
@@ -53,32 +61,33 @@ const defaultForm = {
 }
 
 const content = `
-# Article Title
+\\documentclass[12pt]{article}
+\\begin{document}
 
-## Abstract
+\\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
+\\vspace{.5pc}
+\\centerline{\\sc Stupid Stuff I Wish Someone Had Told Me Four Years Ago}
+\\centerline{\\it (Read the .tex file along with this or it won't
+            make much sense)}
+\\vspace{2pc}
 
-Firstly, an abstract of your article.
+The first thing to realize about \\LaTeX\\ is that it is not  WYSIWYG.
+In other words, it isn't a word processor; what you type into your
+.tex file is not what you'll see in your .dvi file.
 
-## Title 1
-### Title 2
-
-This is a paragraph
-
-List example:
-* First element
-* Second element
-* Third element
+\\end{document}
 `
 
 export default {
-  name: 'MarkdownDemo',
-  components: { MarkdownEditor },
+  name: 'LatexComponent',
+  components: {  },
   props: {
     hidePDF: Number
   },
   data() {
     return {
       postForm: {},
+      editor: {},
       content: content,
       html: ''
     }
@@ -92,21 +101,19 @@ export default {
   created () {
     this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    this.fetchData(this.id)
+    // this.fetchData(this.id)
   },
   mounted () {
-    import('showdown').then(showdown => {
-      const converter = new showdown.Converter()
-      this.html = converter.makeHtml(this.content)
-    })
+      this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        value: content,
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        mode: "text/x-stex"
+     });
+
   },
   methods: {
-    markdown2Html(event) {
-      import('showdown').then(showdown => {
-        const converter = new showdown.Converter()
-        this.html = converter.makeHtml(this.content)
-      })
-    },
     fetchData(id) {
       axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data

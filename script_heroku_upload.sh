@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd heroku_app
+cd heroku-app
 git add .
 git commit -m "next"
 git push heroku master
