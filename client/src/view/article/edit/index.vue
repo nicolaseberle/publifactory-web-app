@@ -6,18 +6,18 @@
         <el-button-group>
           <el-button v-if="valueTypeEditor==1" type="primary" round @click="changeEditor('LightEditor')">Light Editor</el-button>
           <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
-          <el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
-          <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
+          <el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
+          <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
           <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latex</el-button>
           <el-button v-if="valueTypeEditor!=3" type="" round @click="changeEditor('LatexEditor')">Latex</el-button>
         </el-button-group>
       </el-col>
           <el-col :span="10">
             <el-button-group>
-              <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="primary" @click="handleHidePDF()"  round>Hide PDF</el-button>
+              <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
               <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
-              <el-button type="primary" round>Download the article</el-button>
-              <el-button type="primary" round>Submit your article</el-button>
+              <el-button type="" round disabled>Download the article</el-button>
+              <el-button type="" round disabled>Submit your article</el-button>
             </el-button-group>
           </el-col>
           <!--<el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="18"><el-button type="warning">Edit this version</el-button></el-col>-->

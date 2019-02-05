@@ -1,24 +1,18 @@
 <template>
   <div class="components-container">
     <el-row :gutter="40">
-      <el-col v-if='hidePDF==1' :span="24">
-        <form>
+      <form>
+        <el-col v-if='hidePDF==1' :span="24">
           <textarea id="code" name="code">
             {{content}}
           </textarea>
-        </form>
-      </el-col>
-
-      <el-col v-if='hidePDF==0' :span="14">
-
-
-        <form>
+        </el-col>
+        <el-col v-if='hidePDF==0' :span="14">
           <textarea id="code" name="code">
             {{content}}
           </textarea>
-        </form>
-
-      </el-col>
+        </el-col>
+      </form>
       <el-col v-if='hidePDF==0' :span="10">
         <el-card class="box-card">
           <div v-html="html"/>
@@ -36,6 +30,14 @@ import axios from 'axios'
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/stex/stex.js'
 import 'codemirror/lib/codemirror.css'
+
+const source = `
+\\documentclass{article}
+\\begin{document}
+Hello World!
+\\end{document}
+`
+
 
 const defaultForm = {
   status: 'draft',
@@ -59,6 +61,13 @@ const defaultForm = {
   comment_disabled: false,
   importance: 0
 }
+
+const latex_code = "" +
+  "\\documentclass{article}" +
+  "\\begin{document}" +
+  "\\LaTeX is great!" +
+  "$E = mc^2$" +
+  "\\end{document}";
 
 const content = `
 \\documentclass[12pt]{article}
@@ -105,12 +114,13 @@ export default {
   },
   mounted () {
       this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        value: content,
+        value: latex_code,
         lineNumbers: true,
         styleActiveLine: true,
         matchBrackets: true,
         mode: "text/x-stex"
      });
+     // const pdf = pdflatex(source);
 
   },
   methods: {

@@ -1,7 +1,14 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
-      <el-button round v-on:click="createArticle()">Create Article</el-button>
+      <el-row :gutter="20">
+        <el-col :span='6'>
+          <el-button-group>
+          <el-button round v-on:click="createArticle()">Create Article</el-button>
+          <el-button round v-on:click="importArticle()">Import</el-button>
+        </el-button-group>
+        </el-col>
+      </el-row>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">

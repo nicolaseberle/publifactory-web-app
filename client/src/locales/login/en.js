@@ -1,8 +1,11 @@
 export default {
   login: {
+    email: 'Email',
     username: 'Please input the username',
-    password: 'Please input the password',
-    button: 'Log in',
-    authFail: 'Username or password is not correct'
+    password: 'Password',
+    button: 'Log in with your email',
+    authFail: 'Username or password is not correct',
+    googleButton: 'Log in with Google',
+    orcidButton: 'Log in with your ORCID'
   }
 }

@@ -6,10 +6,11 @@
         <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px;">Create A Journal</el-button>
       </div>
     </el-col>
-    <el-col :span="20" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
+    <el-col :span="18" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <span>{{journal.title}}</span>
+          <i class="ai ai-open-access ai-2x"></i>
           <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
         </div>
         <div class="body">

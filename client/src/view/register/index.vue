@@ -3,7 +3,7 @@
     <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
 
-    <h1>{{$t('title')}}</h1>
+    <h1>{{$t('registerTitle')}}</h1>
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <el-form-item>
@@ -12,26 +12,22 @@
             :label="lang.label" :value="lang.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="username">
-        <el-input v-model="form.username" :placeholder="$t('login.username')"></el-input>
+      <el-form-item prop="email">
+        <el-input v-model="form.email" :placeholder="$t('register.email')"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="form.password" type="password" :placeholder="$t('login.password')"></el-input>
+        <el-input v-model="form.password" type="password" :placeholder="$t('register.password')"></el-input>
       </el-form-item>
-      <div class='register'>
-        <a href='/register' style="text-align:end">Create an account</a>
-      </div>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
-          native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
+          native-type="submit" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
-
       <el-form-item>
-          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.googleButton')}}</el-button>
+          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.googleButton')}}</el-button>
       </el-form-item>
       <el-form-item>
-          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.orcidButton')}}</el-button>
+        <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.orcidButton')}}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -39,7 +35,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/login'
+import locales from 'locales/register'
 export default {
   locales,
   data () {
@@ -50,10 +46,10 @@ export default {
       },
       rules: {
         username: [{
-          required: true, message: this.$t('login.username'), trigger: 'blur'
+          required: true, message: this.$t('register.email'), trigger: 'blur'
         }],
         password: [{
-          required: true, message: this.$t('login.password'), trigger: 'blur'
+          required: true, message: this.$t('register.password'), trigger: 'blur'
         }]
       },
       loading: false,
@@ -78,7 +74,7 @@ export default {
           }).catch((err) => {
             this.$notify({
               title: this.$t('message.error'),
-              message: err.message || this.$t('login.authFail'),
+              message: err.message || this.$t('register.authFail'),
               type: 'error',
               duration: 1500
             })

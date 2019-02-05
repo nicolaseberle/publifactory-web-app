@@ -28,13 +28,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 
+import VueSplit from 'vue-split-panel'
+Vue.use(VueSplit)
+
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('v-icon', Icon)
 
 import VueTextareaAutosize from 'vue-textarea-autosize'
 Vue.use(VueTextareaAutosize)
 
-// Vue.use(ElementUI)
 Vue.use(ElementUI, {
   size: Cookies.get('size') || 'medium'// set element-ui default size
   // i18n: (key, value) => i18n.t(key, value)

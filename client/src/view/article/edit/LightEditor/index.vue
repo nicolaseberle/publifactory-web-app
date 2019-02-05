@@ -37,7 +37,7 @@
                   </form>
                </h1>
                 <div class="article-author">
-                  <el-button icon="el-icon-plus" class="insert-buttons" @click="dialogTableVisible = true" title="Invite another author" circle></el-button>
+                  <el-button icon="el-icon-plus" class="insert-buttons" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
                   <img v-for="item in postForm.authors" :src="item.avatar"></img>
                     <p>
                         <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
@@ -116,7 +116,38 @@
         <el-button type="primary" v-on:click="addNewFigure($event)" >Insert</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="Add one or many authors"
+      :visible.sync="diagAuthorVisible"
+      width="50%">
 
+      <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+            <el-form-item
+              v-for="(email, index) in dynamicValidateForm.email"
+              label="Email"
+              :key="email.key"
+              :prop="'email.' + index + '.value'"
+              :rules="[
+                { required: true, message: 'Please input email address', trigger: 'blur' },
+                { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+              ]"
+            >
+              <el-row :gutter="10">
+                <el-col :span="14">
+                  <el-input v-model="email.value"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click.prevent="removeDomain(domain)">Delete</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type=""  @click="diagAuthorVisible=false" >Cancel</el-button>
+        <el-button type="primary" @click="diagAuthorVisible=false" >Send Invitation</el-button>
+      </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -203,8 +234,15 @@ export default {
     }
     return {
       // postForm: Object.assign({}, defaultForm),
+      dynamicValidateForm: {
+          email: [{
+            key: 1,
+            value: ''
+          }]
+        },
       postForm: {},
       loading: false,
+      diagAuthorVisible : false,
       userListOptions: [],
       html: '',
       rules: {

@@ -18,7 +18,17 @@ export const constantRouterMap = [{
   meta: {
     skipAuth: true
   }
-}, {
+},
+{
+  path: '/register',
+  component: (resolve) => {
+    import('../view/register/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',

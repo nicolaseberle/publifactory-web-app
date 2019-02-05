@@ -116,7 +116,7 @@ function createArticles(user_tmp,comment_tmp) {
                           },
                           {
                             title:"Results",
-                            content: gen_text_2,
+                            content: gen_text,
                             path_figure: figure_6
                           },
                           {
@@ -137,7 +137,7 @@ function createArticles(user_tmp,comment_tmp) {
             tags:['Aging','death rates','curve fitting'],
             arr_content: [{
                             title:"Introduction",
-                            content: gen_text_2,
+                            content: gen_text,
                             path_figure: figure_1
                           },
                           {
@@ -159,7 +159,7 @@ function createArticles(user_tmp,comment_tmp) {
             authors: [user_tmp[5]._id,user_tmp[2]._id],
             arr_content: [{
                             title:"Introduction",
-                            content: gen_text_2,
+                            content: gen_text,
                             path_figure: ''
                           }],
             published: true,

@@ -1,10 +1,10 @@
 @import '../../_variable';
-
-.login-wrapper {
-  align-self: center;
+.login-main{
+  text-align: center;
 }
-.login-wrapper .bg {
+.bg {
   position: absolute;
+  z-index: -1;
   left: 0;
   right: 0;
   top: 0;
@@ -15,17 +15,43 @@
   background-position: 100%;
   background-image: url("../assets/images/login-bg-2.jpg");
 }
+
+.login-main .login-wrapper {
+  align-self: center;
+  display: inline-block;
+  margin: 5% 0 0 0;
+  padding: 2.5rem 5rem 2rem 5rem;
+  background-color: rgba(240, 240, 240 , 1);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .login-wrapper > h1 {
   position: relative;
-  margin: 0rem 0 1rem;
-  padding: 10rem 0 0 0;
+  margin: 0rem 0 1.5rem;
   text-align: center;
   font-size: 1.4rem;
   z-index: 1;
 }
-.login-wrapper > form {
+.login-wrapper .login-form {
   width: 15rem;
   margin: 0 auto;
+  text-align: center;
+  h2 {
+    font-size: 0.8rem;
+    color: $color-black;
+    z-index: 1;
+    margin: 0 0 1rem 0;
+  }
+  .register {
+    margin: -1.5rem 0 2rem 0;
+    text-align: right;
+  }
+  .register > a{
+    color: $color-black;
+    text-decoration: underline;
+    font-size: 0.8rem;
+    z-index: 1;
+  }
 }
 .login-wrapper > form .el-input__inner {
   color: $color-black-exact-light;
@@ -38,7 +64,27 @@
 }
 .login-wrapper .login-button {
   width: 100%;
+  font-weight: bolder;
 }
 .login-wrapper .login-button.error {
   animation: shake 0.5s;
+}
+
+.login-wrapper  .login-form  hr {
+	display: block;
+	clear: both;
+	height: 0;
+	margin: 10px 0 10px;
+	padding: 0;
+	border: 0;
+	font-family: arial;
+	text-align: center;
+	font-size: 1rem;
+	line-height: 1;
+}
+.login-wrapper  .login-form  hr:after {
+	content: "\2756 \2756 \2756";
+	height: 0;
+	letter-spacing: 1em;
+	color: #000;
 }

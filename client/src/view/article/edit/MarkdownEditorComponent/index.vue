@@ -1,8 +1,20 @@
 <template>
   <div class="components-container">
     <el-row :gutter="40">
+      <Split style="height: 1000px; overflow:hidden">
+      <SplitArea :size="75">
+           <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="800" :z-index="20" @input='markdown2Html'/>
+        </SplitArea>
+        <SplitArea :size="25" style="background-color: #f3f3f3">
+          <el-card class="box-card" style="margin: 10px 10px 10px 10px;">
+            <div v-html="html"/>
+          </el-card>
+        </SplitArea>
+    </Split>
+<!--
+
       <el-col v-if='hidePDF==1' :span="24">
-        <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="300" :z-index="20" @input='markdown2Html'/>
+
 
       </el-col>
 
@@ -16,7 +28,7 @@
         <el-card class="box-card">
           <div v-html="html"/>
         </el-card>
-      </el-col>
+      </el-col>-->
     </el-row>
 
 
@@ -117,3 +129,10 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+
+.gutter.gutter-vertical {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
+}
+
+</style>

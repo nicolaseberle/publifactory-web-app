@@ -1,7 +1,14 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
-      <el-button round v-on:click="createArticle()">Create Article</el-button>
+      <el-row :gutter="20">
+        <el-col :span='6'>
+          <el-button-group>
+          <el-button round v-on:click="createArticle()">Create Article</el-button>
+          <el-button round v-on:click="importArticle()">Import</el-button>
+        </el-button-group>
+        </el-col>
+      </el-row>
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">

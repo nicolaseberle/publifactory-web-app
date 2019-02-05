@@ -57,9 +57,18 @@ export default {
     }
   },
   mounted() {
+    var md = require('markdown-it')(),
+    mk = require('markdown-it-katex');
+
+    md.use(mk);
+
     this.simplemde = new SimpleMDE({
       element: document.getElementById(this.id),
       autoDownloadFontAwesome: false,
+      math: {
+		      inlineMathDouble: true,
+      },
+      previewRender: md,
       autofocus: this.autofocus,
       toolbar: this.toolbar.length > 0 ? this.toolbar : undefined,
       spellChecker: true,
