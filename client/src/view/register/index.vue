@@ -36,16 +36,18 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/register'
+import axios from 'axios'
+
 export default {
   locales,
   data () {
     return {
       form: {
-        username: '',
+        email: '',
         password: ''
       },
       rules: {
-        username: [{
+        email: [{
           required: true, message: this.$t('register.email'), trigger: 'blur'
         }],
         password: [{
@@ -64,13 +66,10 @@ export default {
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.login({
-            username: this.form.username,
-            password: this.form.password
-          }).then((data) => {
-            this.loading = false
-            this.$router.push(this.$route.query.redirect || '/')
+            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password})
+            .then(response => {
+              console.log("welcome new user")
+              this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
             this.$notify({
               title: this.$t('message.error'),

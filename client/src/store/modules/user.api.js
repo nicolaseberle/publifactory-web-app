@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import { authSocket } from '../../socket'
 
-export function login (username, password) {
+export function login (email, password) {
   return Vue.http.post('auth/local', {
-    username,
+    email,
     password
   }).then(res => res.json())
 }

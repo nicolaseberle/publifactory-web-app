@@ -12,8 +12,8 @@
             :label="lang.label" :value="lang.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="username">
-        <el-input v-model="form.username" :placeholder="$t('login.username')"></el-input>
+      <el-form-item prop="email">
+        <el-input v-model="form.email" :placeholder="$t('login.email')"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input v-model="form.password" type="password" :placeholder="$t('login.password')"></el-input>
@@ -45,12 +45,12 @@ export default {
   data () {
     return {
       form: {
-        username: '',
+        email: '',
         password: ''
       },
       rules: {
-        username: [{
-          required: true, message: this.$t('login.username'), trigger: 'blur'
+        email: [{
+          required: true, message: this.$t('login.email'), trigger: 'blur'
         }],
         password: [{
           required: true, message: this.$t('login.password'), trigger: 'blur'
@@ -70,7 +70,7 @@ export default {
         if (valid) {
           this.loading = true
           this.login({
-            username: this.form.username,
+            email: this.form.email,
             password: this.form.password
           }).then((data) => {
             this.loading = false
