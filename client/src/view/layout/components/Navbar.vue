@@ -29,11 +29,13 @@
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click.native="doSettings">
               {{ $t('navbar.settings') }}
             </el-dropdown-item>
-          <!--</router-link>-->
-          <el-dropdown-item @click.native="doLogout">{{$t('navbar.logout')}}</el-dropdown-item>
+            <!--</router-link>-->
+            <el-dropdown-item @click.native="doLogout">
+              {{$t('navbar.logout')}}
+            </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -80,6 +82,9 @@ export default {
       this.logout().then(() => {
         this.$router.push('/login')
       })
+    },
+    doSettings () {
+        this.$router.push('/settings')
     },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')

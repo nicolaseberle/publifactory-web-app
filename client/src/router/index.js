@@ -48,6 +48,11 @@ export const constantRouterMap = [{
       component: () => import('../view/journals/index.vue')
     },
     {
+      path: 'settings',
+      hidden: true,
+      component: () => import('../view/settings/index.vue')
+    },
+    {
       path: 'dashboard',
       hidden: true,
       component: () => import('../view/dashboard/index.vue')
