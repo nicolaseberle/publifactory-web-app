@@ -227,6 +227,43 @@ code {
 
 }
 
+.app-container .article-tag {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    a {
+        width: auto;
+        height: 30px;
+        background-color: rgba(61, 72, 83, 0.5);
+        text-decoration: none;
+        padding: 0 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-out;
+
+        h4 {
+            font-family: 'DNLTPro-medium';
+            font-size: 16px;
+            font-weight: 500;
+            font-style: normal;
+            line-height: 30px;
+            color: white;
+            margin: 0;
+            max-width: 15rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+    a:hover {
+        background-color: rgba(61, 72, 83, 0.8);
+    }
+    a:not(:last-child) {
+        margin-right: 10px;
+    }
+}
+
 .ck.ck-block-toolbar-button {
     transform: translateX( -10px );
 }

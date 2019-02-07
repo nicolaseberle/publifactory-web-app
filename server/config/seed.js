@@ -233,7 +233,8 @@ function createUsers() {
         email: 'michael@example.com',
         password: 'michael',
         avatar: '/static/img/Michael_Rera.png',
-        field: 'Biology'
+        field: 'Biology',
+        tags: ['Developmental Biology','Agging','Drosophila']
       }, {
         provider: 'local',
         role: 'editor',
@@ -246,7 +247,8 @@ function createUsers() {
         email: 'bill@example.com',
         password: 'bill',
         avatar: '/static/img/Bill_Gates.jpeg',
-        field: 'Biology'
+        field: 'Computer Science',
+        tags: ['Computer science','software','SaaS']
       }, {
         provider: 'local',
         role: 'user',

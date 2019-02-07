@@ -100,12 +100,21 @@
     <el-dialog
       title="Insert a figure"
       :visible.sync="dialogVisible"
-      width="50%">
+      width="70%">
       <el-steps align-center :active="dialogStepActive" finish-status="success">
-      <el-step title="Upload your data" description="Import or drop your .xls or .csv file..."></el-step>
+      <el-step title="Import your data" description="Upload or drop your .xls or .csv file..."></el-step>
       <el-step title="Select a chart" description="Choose among a set or standard charts"></el-step>
       <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
-    </el-steps><!--
+    </el-steps>
+    <h2 style="text-align:left;">Import</h2>
+    <el-tabs type="border-card">
+      <el-tab-pane label="Upload"><datatable></datatable></el-tab-pane>
+
+      <el-tab-pane label="by URL">by URL</el-tab-pane>
+      <el-tab-pane label="SQL">SQL</el-tab-pane>
+      <el-tab-pane label="Example">Example</el-tab-pane>
+    </el-tabs>
+    <!--
       <component :is="datatable" v-if='dialogStepActive==0'/>
       <component :is="mixchart" v-if='dialogStepActive==1'/>
       <component :is="setupchart" v-if='dialogStepActive==2'/>-->
@@ -148,6 +157,21 @@
         <el-button type="primary" @click="diagAuthorVisible=false" >Send Invitation</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="Insert Figure"
+      top="0"
+      :visible.sync="diagInsertFigureVisible"
+      width="100%"
+      center=false>
+      <figureFactory/>
+
+      <span slot="footer" class="dialog-footer">
+        <div style='text-align:right'>
+          <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
+        </div>
+      </span>
+    </el-dialog>
   </div>
 
 </template>
@@ -158,6 +182,7 @@ import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { validateURL } from '../../../../utils/validate'
 import axios from 'axios'
 import velocity from 'velocity-animate'
+import datatable from '../../../../components/UploadExcel'
 import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
 
 import reviewComponent from '../../../../components/Review'
@@ -165,6 +190,10 @@ import quilleditor from '../../../../components/QuillEditor'
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
+
+
+
+import figureFactory from '../../../../components/Charts'
 
 const defaultForm = {
   status: 'draft',
@@ -204,7 +233,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: { MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor},
+  components: {figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, datatable},
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -233,7 +262,18 @@ export default {
       }
     }
     return {
-      // postForm: Object.assign({}, defaultForm),
+      data: [{
+        x:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
+        y: [90, 40, 60, 80, 75, 92, 87, 73],
+        type: 'bar',
+        orientation: 'v'
+      }],
+      layout: {
+        title: 'Surname occurence',
+        showlegend: false
+      },
+      options: {},
+
       dynamicValidateForm: {
           email: [{
             key: 1,
@@ -243,6 +283,7 @@ export default {
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
+      diagInsertFigureVisible: false,
       userListOptions: [],
       html: '',
       rules: {
@@ -266,7 +307,35 @@ export default {
           name: '',
           surname: '',
           mail: ''
-        }
+        },
+    chartOption : {
+      name:'Figure_01',
+      type: 'bar',
+      direction:'horizontal'
+    },
+    optionsChartType: [{
+     value: 'bar',
+     label: 'Bar'
+   }, {
+     value: 'scatter',
+     label: 'Scatter',
+     disabled: true
+   }, {
+     value: 'pie',
+     label: 'Pie',
+     disabled: true
+   }, {
+     value: 'heatmap',
+     label: 'Heatmap',
+     disabled: true
+   }],
+   optionsChartDirection: [{
+    value: 'horizontal',
+    label: 'Horizontal'
+  }, {
+    value: 'vertical',
+    label: 'Vertical'
+  }]
     }
   },
   computed: {
@@ -406,8 +475,9 @@ export default {
     },
     addNewFigure (ev){
       this.dialogVisible = false;
-      this.save(ev);
-      this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>'
+      this.diagInsertFigureVisible = true;
+      //this.save(ev);
+      //this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>'
     },/*
     save(event) {
         console.log('hello on enregristre')
@@ -469,3 +539,11 @@ export default {
   }
 }
 </script>
+<style>
+.el-dialog--center .el-dialog__body{
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+
+}
+
+</style>

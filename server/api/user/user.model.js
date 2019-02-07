@@ -36,6 +36,9 @@ var UserSchema = new Schema({
     type: String,
     default: 'None'
   },
+  tags: [{
+    type: String,
+  }],
   avatar: {
     type: String,
     default: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',

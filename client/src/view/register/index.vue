@@ -68,14 +68,17 @@ export default {
         if (valid) {
             axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password})
             .then(response => {
-              console.log("welcome new user")
+              this.$message({
+                title: this.$t('message.created'),
+                message: this.$t('message.created'),
+                type: 'success'
+              })
               this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
-            this.$notify({
+            this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('register.authFail'),
-              type: 'error',
-              duration: 1500
+              type: 'error'
             })
             this.loading = false
             this.loginError = true

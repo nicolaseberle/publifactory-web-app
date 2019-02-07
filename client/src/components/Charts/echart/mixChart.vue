@@ -19,11 +19,11 @@ export default {
     },
     width: {
       type: String,
-      default: '200px'
+      default: '100%'
     },
     height: {
       type: String,
-      default: '200px'
+      default: '500px'
     }
   },
   data() {
@@ -52,7 +52,7 @@ export default {
         return data
       }())
       this.chart.setOption({
-        backgroundColor: '#344b58',
+        // backgroundColor: '#344b58',
         title: {
           text: 'statistics',
           x: '20',
@@ -97,7 +97,7 @@ export default {
           type: 'category',
           axisLine: {
             lineStyle: {
-              color: '#90979c'
+              color: '#000'
             }
           },
           splitLine: {
@@ -122,7 +122,7 @@ export default {
           },
           axisLine: {
             lineStyle: {
-              color: '#90979c'
+              color: '#000'
             }
           },
           axisTick: {
@@ -237,7 +237,7 @@ export default {
           symbol: 'circle',
           itemStyle: {
             normal: {
-              color: 'rgba(252,230,48,1)',
+              color: 'rgba(51,51,51,1)',
               barBorderRadius: 0,
               label: {
                 show: true,

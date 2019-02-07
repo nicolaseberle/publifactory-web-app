@@ -7,6 +7,7 @@ export default {
     password: 'Password',
     button: 'Register using your email',
     googleButton: 'Register using Google',
-    orcidButton: 'Register using ORCID'
+    orcidButton: 'Register using ORCID',
+    successedRegister: 'Please log in '
   }
 }

@@ -76,11 +76,11 @@ export default {
             this.loading = false
             this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
-            this.$notify({
+            const h = this.$createElement;
+            this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('login.authFail'),
-              type: 'error',
-              duration: 1500
+              type: 'error'
             })
             this.loading = false
             this.loginError = true
