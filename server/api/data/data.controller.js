@@ -8,6 +8,7 @@ var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
+var mongoose = require('mongoose');
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -43,11 +44,16 @@ exports.getData = async (req, res, next) => {
 
 
   try {
-    console.log("getData")
+    let data = [];
+    console.log("getData");
     const articleId = req.params.id.trim()
     const article = await Article.findById(articleId).populate('arr_data').lean();
-    const data = await Data.findById(article.arr_data[0]).lean();
-    console.log(JSON.stringify(data, null, "\t"))
+    if (article.arr_data === undefined || article.arr_data.length == 0) {
+      data = []  // array empty or does not exist
+    }else{
+      data = await Data.find({'_id': { $in: article.arr_data}}).lean();
+    }
+
     return res.status(200).json(data);
   } catch (err) {
     return next(err);

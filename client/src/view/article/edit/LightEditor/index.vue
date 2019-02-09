@@ -100,20 +100,95 @@
     <el-dialog
       title="Insert a figure"
       :visible.sync="dialogVisible"
-      width="70%">
+      width="80%"
+      top="0">
       <el-steps align-center :active="dialogStepActive" finish-status="success">
-      <el-step title="Import your data" description="Upload or drop your .xls or .csv file..."></el-step>
-      <el-step title="Select a chart" description="Choose among a set or standard charts"></el-step>
+      <el-step title="Import your data" description="Upload or drop your .xls or .csv file...">
+
+      </el-step>
+      <el-step title="Select a method" description="How to manage your data">
+
+      </el-step>
       <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
     </el-steps>
-    <h2 style="text-align:left;">Import</h2>
-    <el-tabs type="border-card">
-      <el-tab-pane label="Upload"><datatable></datatable></el-tab-pane>
-
-      <el-tab-pane label="by URL">by URL</el-tab-pane>
-      <el-tab-pane label="SQL">SQL</el-tab-pane>
-      <el-tab-pane label="Example">Example</el-tab-pane>
-    </el-tabs>
+    <div v-if='dialogStepActive==0'>
+      <h2 style="text-align:left;">Import</h2>
+      <el-tabs type="border-card">
+        <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
+        <el-tab-pane label="by URL">(not yet)</el-tab-pane>
+        <el-tab-pane label="SQL">(not yet)</el-tab-pane>
+        <el-tab-pane label="Example">
+          <el-row>
+            <el-col :span="2">
+              <el-checkbox v-model="checkedExData1">Exemple 1</el-checkbox>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="2">
+              <el-checkbox v-model="checkedExData2">Exemple 2</el-checkbox>
+            </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="2">
+            <el-checkbox v-model="checkedExData3">Exemple 3</el-checkbox>
+          </el-col>
+        </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div v-if='dialogStepActive==1'>
+      <el-row :gutter="20" style='margin-top:3rem'>
+        <el-col :span="4">
+          <el-card shadow="hover">
+            <img src="/../../static/img/plotly-logo.png" style="width: 70%;" alt="Chart Manager" v-on:click="addNewFigure($event)">
+          </el-card>
+        </el-col>
+        <el-col :span="20">
+          <el-card shadow="hover">
+            <div slot="header" class="clearfix" style='text-align:left'>
+              <span>Light Chart Editor</span>
+            </div>
+            <div style='text-align:left'>
+              The easy way to create a simple chart. Intergate it in the text.
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style='margin-top:1rem'>
+        <el-col :span="4">
+          <el-card shadow="hover">
+            <img src="/../../static/img/Python_logo.png" style="width: 70%;" alt="Python_script">
+          </el-card>
+        </el-col>
+        <el-col :span="20">
+          <el-card shadow="hover">
+            <div slot="header" class="clearfix" style='text-align:left'>
+              <span>Expert - Python script </span>
+            </div>
+            <div style='text-align:left'>
+              Write your script in Python, generate your figure and integrate it in the text
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style='margin-top:1rem'>
+        <el-col :span="4">
+          <el-card shadow="hover">
+            <img src="/../../static/img/R_logo.png" style="width: 70%;" alt="R_script">
+          </el-card>
+        </el-col>
+        <el-col :span="20">
+          <el-card shadow="hover">
+            <div slot="header" class="clearfix" style='text-align:left'>
+              <span>Expert - R script </span>
+            </div>
+            <div style='text-align:left'>
+              Write your script in R, generate your figure and integrate it in the text
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
     <!--
       <component :is="datatable" v-if='dialogStepActive==0'/>
       <component :is="mixchart" v-if='dialogStepActive==1'/>
@@ -122,7 +197,7 @@
       <span slot="footer" class="dialog-footer">
         <!--<el-button @click="previousStep">Previous step</el-button>
             <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
-        <el-button type="primary" v-on:click="addNewFigure($event)" >Insert</el-button>
+        <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigure($event)">Next</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -146,7 +221,15 @@
                   <el-input v-model="email.value"></el-input>
                 </el-col>
                 <el-col :span="6">
-                  <el-button @click.prevent="removeDomain(domain)">Delete</el-button>
+                  <el-select v-model="defaultPermission" placeholder="Permission">
+                    <el-option
+                      v-for="item in optionsPermissions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                  <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
                 </el-col>
               </el-row>
             </el-form-item>
@@ -158,18 +241,23 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="Insert Figure"
+      show-close
       top="0"
       :visible.sync="diagInsertFigureVisible"
       width="100%"
-      center=false>
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="" >Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
+        </div>
+      </span>
+
       <figureFactory/>
 
       <span slot="footer" class="dialog-footer">
-        <div style='text-align:right'>
-          <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
-        </div>
       </span>
     </el-dialog>
   </div>
@@ -182,7 +270,7 @@ import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { validateURL } from '../../../../utils/validate'
 import axios from 'axios'
 import velocity from 'velocity-animate'
-import datatable from '../../../../components/UploadExcel'
+import uploadData from './uploadData'
 import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
 
 import reviewComponent from '../../../../components/Review'
@@ -233,7 +321,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, datatable},
+  components: {figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -302,6 +390,9 @@ export default {
       dialogStepActive: 0,
       addFigureInBlock: 0,
       editorType: false,
+      checkedExData1: false,
+      checkedExData2: false,
+      checkedExData3: false,
       id: 0,
       form: {
           name: '',
@@ -330,12 +421,23 @@ export default {
      disabled: true
    }],
    optionsChartDirection: [{
-    value: 'horizontal',
-    label: 'Horizontal'
-  }, {
-    value: 'vertical',
-    label: 'Vertical'
-  }]
+      value: 'horizontal',
+      label: 'Horizontal'
+    }, {
+      value: 'vertical',
+      label: 'Vertical'
+    }],
+    optionsPermissions: [{
+          value: 'edit',
+          label: 'Edit'
+        }, {
+          value: 'view',
+          label: 'View'
+        }, {
+          value: 'admin',
+          label: 'Admin'
+        }],
+        defaultPermission: 'edit'
     }
   },
   computed: {
@@ -474,8 +576,12 @@ export default {
       this.addFigureInBlock = key;
     },
     addNewFigure (ev){
-      this.dialogVisible = false;
-      this.diagInsertFigureVisible = true;
+      this.dialogStepActive++;
+      if(this.dialogStepActive == 2){
+        this.dialogVisible = false;
+        this.diagInsertFigureVisible = true;
+        this.dialogStepActive = 0;
+      }
       //this.save(ev);
       //this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>'
     },/*

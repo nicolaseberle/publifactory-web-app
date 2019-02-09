@@ -1,10 +1,10 @@
 <template>
   <div>
   <div style='margin: 10px 5px 10px 0px; text-align:right'>
-    <el-button type='primary'>Add Trace</el-button>
+    <el-button type='primary' icon="el-icon-plus">Add Trace</el-button>
   </div>
   <el-card class="box-card" style='margin-top:1rem'>
-  <div slot="header" class="clearfix">
+  <div slot="header" class="clearfix" style='text-align:left'>
     <span>Trace 1</span>
     <el-button style="float: right; padding: 3px 0" type="text"><i class="el-icon-delete"></i></el-button>
   </div>
@@ -12,10 +12,10 @@
       @submit.native.prevent="onSubmit">
       <el-form-item prop="type">
         <el-row style='padding-top:2rem'>
-          <el-col :span="6">
+          <el-col :span="8">
             {{$t('charts.type')}}
           </el-col>
-          <el-col :span="18">
+          <el-col :span="16">
             <el-select v-model="chartOption.type" placeholder="Select">
               <el-option
                 v-for="item in optionsChartType"

@@ -98,6 +98,7 @@ export default {
     this.editor.on('text-change', (delta, source) => {
         this.$emit('edit', this.editor, delta, source,this.numBlock)
     });
+    
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();

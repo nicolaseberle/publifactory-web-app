@@ -1,20 +1,23 @@
 <template>
   <div>
-  
-      <el-card style='margin-top:2rem'>
+      <el-card class="box-card" style='margin-top:1rem'>
+        <div slot="header" class="clearfix" style='text-align:left'>
+          <span>General</span>
+        </div>
         <el-form  ref="form" :model="chartOption" :rules="rules"
           @submit.native.prevent="onSubmit">
-          <el-form-item prop="name">
+          <el-form-item prop="title">
             <el-row style='padding-top:2rem'>
               <el-col :span="6">
-                {{$t('charts.name')}}
+                {{$t('charts.title')}}
               </el-col>
               <el-col :span="12">
-                <el-input v-model="chartOption.name" :placeholder="$t('charts.name')"></el-input>
+                <input :placeholder="$t('charts.title')" v-bind:value="value" @input="$emit('input', $event.target.value)"></input>
               </el-col>
             </el-row>
           </el-form-item>
         </el-form>
+
       </el-card>
   </div>
 </template>
@@ -25,14 +28,21 @@ export default {
   name: 'generalMenu',
   locales,
   components: {},
+  props: ['value'],
   data () {
     return {
-      chartOption: {name: 'Figure_01'},
+      chartOption: {title: 'Figure_01'},
+      value: this.value,
       rules: {
-        name: [{
+        title: [{
           required: true, message: this.$t('charts.warningName'), trigger: 'blur'
         }]
       }
+    }
+  },
+  methods: {
+    updateModel (event) {
+      this.$emit('input', event.target.value)
     }
   }
 }

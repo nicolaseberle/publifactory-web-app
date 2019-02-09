@@ -45,7 +45,7 @@ exports.getArticles = async (req, res, next) => {
 
   try {
     const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors reviewers',lean: true });
-    console.log(JSON.stringify(articles, null, "\t"))
+    // console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
 
     return res.status(200).json(articles);
@@ -65,9 +65,9 @@ exports.getArticles = async (req, res, next) => {
  */
 module.exports.findArticleById = async (req, res, next) => {
   try {
-    console.log(JSON.stringify("findArticleById", null, "\t"))
+    // console.log(JSON.stringify("findArticleById", null, "\t"))
     const article = await Article.findById(req.params.id).populate('authors reviewers').lean();
-    console.log(JSON.stringify(article, null, "\t"))
+    // console.log(JSON.stringify(article, null, "\t"))
     if (!article) return res.sendStatus(404);
 
     return res.status(200).json(article);
@@ -91,7 +91,7 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     if (!validationResult.isEmpty()) {
       return res.status(400).json({ errors: validationResult.array() });
     }*/
-    console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
+    // console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
     const title = req.body.title.trim();
     const abstract = req.body.abstract;
     const arr_content = req.body.arr_content;
