@@ -44,16 +44,13 @@
       </el-col>
       <el-col :span="6">
         <transition name="slide-fade">
-          <generalMenu v-model="user"  v-if='visibleGeneralMenu'/>
+          <generalMenu v-model="parentTitleChart"  v-if='visibleGeneralMenu'/>
           <tracesMenu v-if='visibleTracesMenu' />
           <styletracesMenu v-if='visibleStyleTracesMenu' />
         </transition>
-
-
       </el-col>
       <el-col :span="15">
         <el-row>
-          <!--{{user}}-->
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
         </el-row>
         <el-row>
@@ -67,47 +64,76 @@
               <span v-html="item.content"></span>
             </el-tab-pane>
           </el-tabs>
-
-          <div id="tabFactory" style='margin-left: 20px, height:150px,width:1000px,display: flex '>
-            <!--<hot-table :settings="settings"></hot-table>-->
-          </div>
+          <hot-table ref="hotTableComponent" :settings="settings3"></hot-table>
+          <!--<div id="tabFactory" style='margin-left: 20px, height:150px,width:1000px,display: flex '></div>-->
+          <!--<hot-table :settings="settings"></hot-table>-->
         </el-row>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
+import Vue from 'vue';
 import locales from 'locales/charts'
 import VuePlotly from '@statnett/vue-plotly'
 import tracesMenu from '../../components/Charts/Menu/TracesMenu'
 import generalMenu from '../../components/Charts/Menu/GeneralMenu'
 import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
+import { HotTable } from '@handsontable/vue';
+
 import axios from 'axios'
 
-var Handsontable = require('handsontable');
+//var Handsontable = require('handsontable');
 
 export default {
   name: 'chartFactory',
   locales,
-  components: {VuePlotly,tracesMenu,generalMenu,styletracesMenu},
+  components: {VuePlotly,tracesMenu,generalMenu,styletracesMenu,HotTable},
   data () {
     return {
       editableTabsValue: '1',
         editableTabs: [{
-          title: 'Tab 1',
+          title: 'Sample 1',
           name: '1',
           content: "<p class='data-doi'>DOI : 10.1037/rmh0000108</p>"
+        },
+        {
+          title: 'Sample 2',
+          name: '2',
+          content: "<p class='data-doi'>DOI : 10.1037/rmh0000109</p>"
         }],
       tabIndex: 1,
-      user: 'Ary',
+      parentTitleChart: 'Title',
       options: {},
       layout: {
-        title: 'Surname occurence',
+        title: 'Title',
         showlegend: false
       },
+      settings3: {
+          data: [
+            ["", "Ford", "Volvo", "Toyota", "Honda"],
+            ["2016", 10, 11, 12, 13],
+            ["2017", 20, 11, 14, 13],
+            ["2018", 30, 15, 12, 13]
+          ],
+          colHeaders: true,
+          rowHeaders: true,
+          contextMenu: true,
+          afterChange: () => {
+            console.log("afterChange")
+            if (this.hotRef) {
+              var __data = this.hotRef.getSourceData()
+              console.log(__data)
+              console.log(__data[0])
+              console.log(__data[1].map(Number))
+              this.currentData[0].x = __data[0]
+              this.currentData[0].y = __data[1].map(Number)
+            }
+          }
+        },
       currentData: [{
-            x:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
-            y: [90, 40, 60, 80, 75, 92, 87, 73],
+            x: ['Sample A','Sample B','Sample C','Sample D'],
+            y: [ 10, 9, 12, 13],
             type: 'bar',
             orientation: 'v'
       }],
@@ -116,35 +142,35 @@ export default {
       visibleStyleTracesMenu: false,
       settings: {
           data: [['Sample A','Sample B','Sample C','Sample D'],
-                 [ 10, 9, 12, 13]
-                ],
-          colHeaders: true,
-          // colWidths: [45, 80, 100, 60, 80, 80, 80 ,80],
-
-          minCols: 18
-        },
-        id: '',
-        keyCurrentTableData: [],
-        tableData: [],
-        tableFiles: [],
-        tableHeader: []
+                 [ 1, 2, 3, 4]]
+      },
+      id: '',
+      keyCurrentTableData: [],
+      tableData: [],
+      tableFiles: [],
+      tableHeader: [],
+      hotRef: null
     }
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
     this.loadData()
   },
-  mounted () {
-    var data = function () {
-      return Handsontable.helper.createSpreadsheetData(10, 10);
-    };
-    var container = document.getElementById('tabFactory');
-    var settings3 = {
+  mounted() {
+        this.hotRef = this.$refs.hotTableComponent.hotInstance;
+
+
+    // var container = document.getElementById('tabFactory');
+    /*
+    this.settings3 = {
       data: this.settings.data,
       rowHeaders: true,
       colHeaders: this.settings.data[0],
       outsideClickDeselects: false,
       minCols: 20,
+      contextMenu: true
+    };*/
+    /*,
       contextMenu: {
             callback: function (key, selection, clickEvent) {
               // Common callback for all options
@@ -234,23 +260,39 @@ export default {
                 name: 'Click to add row below' // Set custom text for predefined option
               }
             }
-          }
-        };
-    var hot = new Handsontable(container, settings3);
-    let vm = this
+          }*/
+      //};
+    // this.hot = new Handsontable(container, settings3);
 
-    hot.addHook('afterChange', function(changes, src) {
 
-        vm.currentData[0].y = this.getDataAtRow(0)
-        console.log(changes, src)
-        console.log(vm.currentData[0].y)
-      });
+/*
+    hot.addHook('afterInit', function(changes, src) {
+        this.loadData(new Array([this.tableHeader[0],this.tableData]))
+        console.log('afterInit')
+
+        console.log(this.tableHeader[0])
+        /*this.colHeaders = this.tableHeader
+        vm.currentData[0].x = this.tableHeader[0]
+        vm.currentData[0].y = [10, 6 , 4 ,5]*/
+
+  //    });
+    /*this.hot.addHook('afterChange', function(changes, src) {
+        /*vm.currentData[0].x = this.getDataAtRow(0)
+        vm.currentData[0].y = this.getDataAtRow(1)*/
+      //});
 
 
   },
+  watch:{
+    parentTitleChart () {
+      this.layout = {'title': this.parentTitleChart}
+    },
+    settings3 () {
+      console.log(this.settings3)
+    }
+  },
   methods: {
     loadData() {
-      console.log(this.currentData)
       axios.get(`/api/data/${this.id}`)
       .then(response => {
         if(response.data.length!=0)
@@ -260,7 +302,13 @@ export default {
           this.tableData = new Array(JSON.parse(response.data[0].content))
           this.tableHeader = new Array(JSON.parse(response.data[0].header))
           this.currentData[0].x = this.tableHeader[0]
+          console.log("loadData")
+          console.log(this.currentData[0].x)
           this.currentData[0].y = [10, 6 , 4 ,5]
+          console.log(this.currentData[0].y)
+          this.settings.data = new Array(this.currentData[0].x,this.currentData[0].y)
+          this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
+
           // console.log(this.tableData[0].Date)
           response.data.forEach(function(el){
             vm.tableFiles.push( {file: JSON.parse(el.name)})
@@ -300,7 +348,35 @@ export default {
     save () {
         JSON.stringify({data: this.getData()})
     },
-    onSubmit (){}
+    onSubmit (){},
+    handleTabsEdit(targetName, action) {
+        if (action === 'add') {
+          let newTabName = ++this.tabIndex + '';
+          this.editableTabs.push({
+            title: 'New Tab',
+            name: newTabName,
+            content: 'New Tab content'
+          });
+          this.editableTabsValue = newTabName;
+        }
+        if (action === 'remove') {
+          let tabs = this.editableTabs;
+          let activeName = this.editableTabsValue;
+          if (activeName === targetName) {
+            tabs.forEach((tab, index) => {
+              if (tab.name === targetName) {
+                let nextTab = tabs[index + 1] || tabs[index - 1];
+                if (nextTab) {
+                  activeName = nextTab.name;
+                }
+              }
+            });
+          }
+
+          this.editableTabsValue = activeName;
+          this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+        }
+      }
   }
 }
 </script>

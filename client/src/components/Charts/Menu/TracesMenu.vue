@@ -52,7 +52,7 @@
             {{$t('charts.xCol')}}
           </el-col>
           <el-col :span="16">
-            <el-select v-model="chartOption.x_col" placeholder="Select">
+            <el-select v-model="chartOption.xAxis" placeholder="Select">
               <el-option
                 v-for="item in optionsChartDataCol"
                 :key="item.value"
@@ -70,7 +70,7 @@
             {{$t('charts.yCol')}}
           </el-col>
           <el-col :span="16">
-            <el-select v-model="chartOption.y_col" placeholder="Select">
+            <el-select v-model="chartOption.yAxis" placeholder="Select">
               <el-option
                 v-for="item in optionsChartDataCol"
                 :key="item.value"
@@ -97,8 +97,8 @@ export default {
       chartOption: {
         type: 'bar',
         direction: 'horizontal',
-        xCol: 'col_A',
-        yCol: 'col_B'
+        xAxis: 'row_1',
+        yAxis: 'row_2'
       },
       optionsChartType: [{
        value: 'bar',
@@ -125,13 +125,21 @@ export default {
         label: 'Vertical'
       }],
       optionsChartDataCol: [{
-        value: 'col 1',
-        label: 'COL_A'
+          value: 'col A',
+          label: 'COL_A'
         },
         {
-        value: 'col_B',
-        label: 'COL_B'
-      }],
+          value: 'col_B',
+          label: 'COL_B'
+        },
+        {
+          value: 'row 1',
+          label: 'ROW_1'
+        },
+        {
+          value: 'row 2',
+          label: 'ROW_2'
+        }],
       rules: {
         name: [{
           required: true, message: this.$t('charts.warningName'), trigger: 'blur'

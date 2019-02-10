@@ -32,7 +32,6 @@ export default {
   data () {
     return {
       chartOption: {title: 'Figure_01'},
-      value: this.value,
       rules: {
         title: [{
           required: true, message: this.$t('charts.warningName'), trigger: 'blur'
