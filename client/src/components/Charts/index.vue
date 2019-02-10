@@ -119,6 +119,7 @@ export default {
           colHeaders: true,
           rowHeaders: true,
           contextMenu: true,
+          minCols: 20,
           afterChange: () => {
             console.log("afterChange")
             if (this.hotRef) {

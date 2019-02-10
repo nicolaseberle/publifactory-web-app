@@ -217,10 +217,21 @@
               ]"
             >
               <el-row :gutter="10">
-                <el-col :span="14">
+                <el-col :span="10">
                   <el-input v-model="email.value"></el-input>
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="5">
+                  <el-select v-model="defaultEditRole" placeholder="Permission">
+                    <el-option
+                      v-for="item in optionsEditRole"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                  <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
+                </el-col>
+                <el-col :span="5">
                   <el-select v-model="defaultPermission" placeholder="Permission">
                     <el-option
                       v-for="item in optionsPermissions"
@@ -427,6 +438,19 @@ export default {
       value: 'vertical',
       label: 'Vertical'
     }],
+    optionsEditRole: [{
+      value: 'MainAuthor',
+      label: 'Main Author'
+    },
+    {
+      value: 'coAuthor',
+      label: 'Co-Author'
+    },
+    {
+      value: 'SeniorAuthor',
+      label: 'Senior Author'
+    }],
+    defaultEditRole: 'Co-Author',
     optionsPermissions: [{
           value: 'edit',
           label: 'Edit'
