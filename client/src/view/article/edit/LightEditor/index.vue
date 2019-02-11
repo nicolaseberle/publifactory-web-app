@@ -59,7 +59,16 @@
               <section id="item.title">
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
-                    <input type="text" v-model="item.title" name="title" placeholder="Article Title" @input="save($event)" ><br>
+                    <!--<textarea-autosize
+                      class = 'textarea-autosize'
+                      placeholder="Title"
+                      v-model="item.title"
+                      :cols="80"
+                      :min-height="20"
+                      @blur.native="onBlurTextarea"
+                      @input="save($event)"
+                    ></textarea-autosize><br>-->
+                    <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="save($event)" ><br>
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">

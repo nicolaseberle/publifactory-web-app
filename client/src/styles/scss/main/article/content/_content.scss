@@ -33,10 +33,22 @@ section {
         line-height: 1.2rem;
         color: $blackColor;
         margin: 0 0 20px;
-
+        width:100%;
         input {
           border:none;
           background-color: transparent;
+          width:90%;
+        }
+        .textarea-autosize {
+          padding-top: 20px;
+          line-height: 25px;
+          color: black;
+          text-align-last: $textAlignLast;
+          text-align: $textAlign;
+          word-spacing: $textWordSpacing;
+          //border:none;
+          background-color: transparent;
+          width: 90%;
         }
     }
 

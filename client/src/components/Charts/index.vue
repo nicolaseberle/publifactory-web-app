@@ -129,6 +129,7 @@ export default {
               console.log(__data[1].map(Number))
               this.currentData[0].x = __data[0]
               this.currentData[0].y = __data[1].map(Number)
+              this.saveFigure()
             }
           }
         },
@@ -293,6 +294,9 @@ export default {
     }
   },
   methods: {
+    saveFigure () {
+
+    },
     loadData() {
       axios.get(`/api/data/${this.id}`)
       .then(response => {

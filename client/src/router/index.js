@@ -33,18 +33,18 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'dashboard',
   // hidden: true,
-  meta: { title: 'Dashboard', icon: 'nested', noCache: true },
+  meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
   children: [
     {
       path: '',
       name: 'Articles',
-      meta: { title: 'Articles', noCache: true },
+      meta: { title: 'Articles', icon: 'edit', noCache: true },
       component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
       name: 'Journals',
-      meta: { title: 'Journals', noCache: true },
+      meta: { title: 'Journals', icon: 'book', noCache: true },
       component: () => import('../view/journals/index.vue')
     },
     {
@@ -69,13 +69,13 @@ export const constantRouterMap = [{
     {
       path: 'reviewermatcher',
       name: 'Matcher',
-      meta: { title: 'reviewermatcher', noCache: true },
+      meta: { title: 'Reviewer Matcher', icon: 'network', noCache: true },
       component: () => import('../view/applications/reviewermatcher/index.vue')
     },
     {
       path: 'preprintsearch',
       name: 'Radar',
-      meta: { title: 'preprintsearch', noCache: true },
+      meta: { title: 'Preprint Search', icon: 'search', noCache: true },
       component: () => import('../view/applications/preprintsearch/index.vue')
     },
     {

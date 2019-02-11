@@ -25,18 +25,18 @@
     .scrollbar-wrapper {
       overflow-x: hidden!important;
       background-color: $menuBg;
-      padding-top: 20px;
+      padding-top: 10px;
       .el-scrollbar__view {
         height: 100%;
       }
       .logo-wrapper {
         display: block;
         padding-left: 1rem;
-        padding-bottom: 100px;
+        padding-bottom: 110px;
         height: 40px;
         line-height: 30px;
         color: #fff;
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: 800;
         background-color: #304156;
       }
@@ -98,11 +98,14 @@
       }
     }
   }
+
   .sidebar-container .nest-menu .el-submenu>.el-submenu__title,
   .sidebar-container .el-submenu .el-menu-item {
 
     min-width: 200px !important;
     background-color: $subMenuBg !important;
+
+
     &:hover {
       background-color: $menuHover !important;
     }
@@ -110,7 +113,6 @@
   .el-menu--collapse .el-menu .el-submenu {
     min-width: 200px !important;
   }
-
 
 
   .menu-enter-active {
@@ -122,11 +124,15 @@
     }
   }
   .el-menu-item{
-      margin-left: 50px;
+      margin-left: 5px;
+      .svg-icon{
+        margin-left: 0px;
+      }
       .iconfont{
-        margin-right: 30px;
+        margin-right: 10px;
       }
   }
+
   //Adapted to mobile format
   .mobile {
     .main-container {
