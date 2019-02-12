@@ -50,10 +50,8 @@
 <script>
 import defaultsDeep from 'lodash.defaultsdeep'
 import 'quill'
-// import 'katex'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
-// import 'katex/dist/katex.min.css'
 
 var Quill = require('quill');
 var Font = Quill.import('formats/font');
@@ -98,7 +96,6 @@ export default {
     this.editor.on('text-change', (delta, source) => {
         this.$emit('edit', this.editor, delta, source,this.numBlock)
     });
-    
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();

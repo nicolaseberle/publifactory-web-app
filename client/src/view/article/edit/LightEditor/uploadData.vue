@@ -10,6 +10,10 @@
               label="Files">
             </el-table-column>
             <el-table-column
+              prop="size"
+              label="Size (Bytes)">
+            </el-table-column>
+            <el-table-column
               label="Operations">
               <template slot-scope="scope">
                 <el-button
@@ -42,6 +46,8 @@ export default {
       tableData: [],
       tableHeader: [],
       tableFiles:[],
+      name : '',
+      size: '',
       keyCurrentTableData: 0
     }
   },
@@ -67,16 +73,17 @@ export default {
       })
       return false
     },
-    handleSuccess({name, results, header }) {
+    handleSuccess({name, results, header, size }) {
       this.tableData = results
       this.tableHeader = header
       this.name = name
-      this.tableFiles.push({file: JSON.stringify(name)})
-      this.save(name, header, results)
+      this.size = size
+      this.tableFiles.push({file: JSON.stringify(name),size: JSON.stringify(size)})
+      this.save(name, header, results, size)
     },
-    save(name, header, results) {
+    save(name, header, results,size) {
       // console.log(JSON.stringify(this.id))
-      axios.post('/api/data/', { "id": this.id, "name": name,"header": header,"content": results })
+      axios.post('/api/data/', { "id": this.id, "name": name,"header": header,"content": results, "size": size })
       .then(response => {
         console.log("save successfully")
       })
@@ -90,11 +97,13 @@ export default {
         if(response.data.length!=0)
         {
           this.keyCurrentTableData = 0
+          // on n'affiche que le premier fichier
           this.tableData = JSON.parse(response.data[0].content)
           this.tableHeader = JSON.parse(response.data[0].header)
           let vm = this
+          // en revanche on charge tous les noms et tailles de fichiers de données
           response.data.forEach(function(el){
-            vm.tableFiles.push( {file: JSON.parse(el.name)})
+            vm.tableFiles.push( {file: JSON.parse(el.name), size:  JSON.parse(el.size)})
           })
         }
       })

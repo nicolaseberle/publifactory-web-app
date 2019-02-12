@@ -77,6 +77,8 @@
                     </form>
 
                     <span v-html="item.path_figure"></span>
+
+                    <vue-plotly :data="chartData" :layout="chartLayout" :options="chartOptions"/>
                   </div>
                   </transition>
                   <footer>
@@ -122,9 +124,17 @@
     </el-steps>
     <div v-if='dialogStepActive==0'>
       <h2 style="text-align:left;">Import</h2>
-      <el-tabs type="border-card">
+      <el-tabs stretch type="border-card" style='vertical-align:middle'>
         <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
         <el-tab-pane label="by URL">(not yet)</el-tab-pane>
+        <!--<el-tab-pane>
+          <span slot="label">by Drive<img src='/static/icons/drive.svg' style='width:20px'></img></span>
+          (not yet)
+        </el-tab-pane>
+        <el-tab-pane>
+          <span slot="label">by Dropbox<img src='/static/icons/dropbox.svg' style='width:20px'></img></span>
+          (not yet)
+        </el-tab-pane>-->
         <el-tab-pane label="SQL">(not yet)</el-tab-pane>
         <el-tab-pane label="Example">
           <el-row>
@@ -296,10 +306,10 @@ import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
 import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
 
+import VuePlotly from '@statnett/vue-plotly'
+
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
-
-
 
 import figureFactory from '../../../../components/Charts'
 
@@ -308,6 +318,17 @@ const defaultForm = {
   title: '',
   abstract: '',
   content: '',
+  currentData: [{
+        x: ['Sample A','Sample B','Sample C','Sample D'],
+        y: [ 10, 9, 12, 13],
+        type: 'bar',
+        orientation: 'v'
+  }],
+  options: {},
+  layout: {
+    title: 'Title',
+    showlegend: false
+  },
   arr_content: [{
                   name:"titre_1",
                   title:"Titre 1",
@@ -341,7 +362,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -370,17 +391,17 @@ export default {
       }
     }
     return {
-      data: [{
-        x:['Marc', 'Henrietta', 'Jean', 'Claude', 'Jeffrey', 'Jonathan', 'Jennifer', 'Zacharias'],
-        y: [90, 40, 60, 80, 75, 92, 87, 73],
+      chartData: [{
+        x:['Exp. A11','Exp. A12','Exp. A21','Exp. A22','Exp. B1','Exp. B2','Exp. C1','Exp. C2', 'Exp. CRTL'],
+        y: [30, 60, 90, 40, 110, 36, 78, 30, 60],
         type: 'bar',
         orientation: 'v'
       }],
-      layout: {
-        title: 'Surname occurence',
+      chartLayout: {
+        title: 'number of samples',
         showlegend: false
       },
-      options: {},
+      chartOptions: {},
 
       dynamicValidateForm: {
           email: [{
@@ -683,6 +704,9 @@ export default {
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
 
+}
+.icon-in-tab-pane{
+  transform: translate(0px,5px);
 }
 
 </style>

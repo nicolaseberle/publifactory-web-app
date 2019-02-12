@@ -152,6 +152,41 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+
+    // var bartab = new Toolbar('.bar-tab')
+/*
+    bartab.on('select', function(item) {
+      console.log("ici")
+      // item is the .tab-label innerText
+    })
+*/
+    // function to highlight the text to comment
+    /*
+    $(function(){
+    $(document.body).bind('mouseup', function(e){
+        var selection;
+
+        if (window.getSelection) {
+          selection = window.getSelection();
+          var range = selection.getRangeAt(0);
+          var newNode = document.createElement("span");
+          newNode.setAttribute("style", "background-color: #FFD34E;");
+          range.surroundContents(newNode);
+        } else if (document.selection) {
+          selection = document.selection.createRange();
+        }
+
+        // selection.toString() !== '' && alert('"' + selection.toString() + '" was selected at ' + e.pageX + '/' + e.pageY);
+      });
+    });*/
+/*
+    var selection = window.getSelection();
+    var range = selection.getRangeAt(0);
+    var newNode = $(document).createElement("span");
+    newNode.setAttribute("style", "background-color: pink;");
+    range.surroundContents(newNode);
+    */
+
   },
   mounted() {
       asideRightAnimation()
