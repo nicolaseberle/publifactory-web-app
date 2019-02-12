@@ -51,7 +51,7 @@ export const constantRouterMap = [{
       path: '/data',
       name: 'Data',
       meta: { title: 'Data', icon: 'database', noCache: true },
-      component: () => import('../view/journals/index.vue')
+      component: () => import('../view/data/index.vue')
     },
     {
       path: 'settings',

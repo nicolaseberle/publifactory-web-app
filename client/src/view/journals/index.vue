@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-journal">
   <el-row :gutter="10" @page-change="fetch">
     <el-col :span="20">
       <div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-  <div class="components-container">
+  <div class="components-container-article">
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white" :gutter="40">
       <el-col :span="14">
         <el-button-group>

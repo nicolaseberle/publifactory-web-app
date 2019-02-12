@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-article">
     <el-row :gutter="40" >
       <form>
         <el-col v-if='hidePDF==1' :span="24">

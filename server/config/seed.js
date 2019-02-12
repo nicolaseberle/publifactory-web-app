@@ -18,7 +18,7 @@ const figure_3 = '<iframe src="http://localhost:3838/app_1/"  style="border: 1px
 const figure_4 = '<iframe src="http://localhost:3838/app_2/"  style="border: 1px solid #AAA; width:100%; height:540px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_5 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_6 = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/boxplot/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
-
+const figure_7 = 'true'
 
 // search for admin user, if no, create one
 User.find({}, function (err, users) {
@@ -112,7 +112,7 @@ function createArticles(user_tmp,comment_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text ,
-                            path_figure: ''
+                            path_figure: figure_7
                           },
                           {
                             title:"Results",

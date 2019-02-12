@@ -268,8 +268,18 @@ code {
     transform: translateX( -10px );
 }
 
-.components-container {
+.components-container-dashboard {
+  margin: 30px 20px;
+  position: relative;
+}
+
+.components-container-article {
   margin: 30px 50px;
+  position: relative;
+}
+
+.components-container-journal {
+  margin: 30px 20px;
   position: relative;
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="components-container">
+    <div class="components-container-dashboard">
     <content-module name="articles">
       <el-row :gutter="20">
         <el-col :span='24'>

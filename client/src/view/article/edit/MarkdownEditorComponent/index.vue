@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-article">
     <el-row :gutter="40" style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
       <Split style="height: 1000px; overflow:hidden">
       <SplitArea :size="75">

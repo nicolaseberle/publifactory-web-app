@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-article">
     <main class="article">
         <article>
           <span id="triggerStartNav"></span>

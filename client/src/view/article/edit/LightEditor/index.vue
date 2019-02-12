@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-article">
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
       <main class="article">
         <article>
@@ -75,9 +75,17 @@
                       <quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit_3'></quill-editor>
                     </form>
 
-                    <span v-html="item.path_figure"></span>
-
-                    <vue-plotly :data="chartData" :layout="chartLayout" :options="chartOptions"/>
+                    <!--<span v-html="item.path_figure"></span>-->
+                    <el-row :gutter='20'>
+                      <el-col :span='12'>
+                        <span v-html="item.content"></span>
+                        <span v-html="item.content"></span>
+                      </el-col>
+                      <el-col :span='12'>
+                        <figureComponent v-if="item.path_figure"/>
+                      </el-col>
+                    </el-row>
+                    <!--<vue-plotly :data="chartData" :layout="chartLayout" :options="chartOptions"/>-->
                   </div>
                   </transition>
                   <footer>
@@ -305,6 +313,7 @@ import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
 
 import VuePlotly from '@statnett/vue-plotly'
+import figureComponent from '../../../../components/Figure'
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -360,7 +369,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {

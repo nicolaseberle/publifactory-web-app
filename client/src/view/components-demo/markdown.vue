@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="components-container-article">
     <div class="editor-container">
       <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="300" :z-index="20"/>
     </div>
