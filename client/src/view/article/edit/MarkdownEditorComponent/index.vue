@@ -1,6 +1,6 @@
 <template>
   <div class="components-container">
-    <el-row :gutter="40">
+    <el-row :gutter="40" style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
       <Split style="height: 1000px; overflow:hidden">
       <SplitArea :size="75">
            <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="800" :z-index="20" @input='markdown2Html'/>
@@ -30,8 +30,6 @@
         </el-card>
       </el-col>-->
     </el-row>
-
-
   </div>
 </template>
 

@@ -48,6 +48,12 @@ export const constantRouterMap = [{
       component: () => import('../view/journals/index.vue')
     },
     {
+      path: '/data',
+      name: 'Data',
+      meta: { title: 'Data', icon: 'database', noCache: true },
+      component: () => import('../view/journals/index.vue')
+    },
+    {
       path: 'settings',
       hidden: true,
       component: () => import('../view/settings/index.vue')
@@ -64,7 +70,7 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'applications',
   // hidden: true,
-  meta: { title: 'Applications', icon: 'component', noCache: true },
+  meta: { title: 'Services', icon: 'puzzle-piece-plugin', noCache: true },
   children: [
     {
       path: 'reviewermatcher',

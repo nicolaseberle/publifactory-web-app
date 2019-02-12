@@ -1,7 +1,6 @@
 <template>
   <div class="components-container">
-  <el-tabs type="border-card" stretch  v-model="activeName_tab" @tab-click="handleClick">
-    <el-tab-pane label="" name="article">
+  <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
       <main class="article">
         <article>
           <span id="triggerStartNav"></span>
@@ -98,9 +97,8 @@
             <span id="triggerEndNav"></span>
         </article>
     </main>
-          </el-tab-pane>
-        </el-tabs>
 
+      </el-card>
     <aside  class="comments-reviews" >
         <p>Show comments &amp; reviews</p>
     </aside>

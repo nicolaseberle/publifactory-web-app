@@ -1,6 +1,6 @@
 <template>
   <div class="components-container">
-    <el-row :gutter="40">
+    <el-row :gutter="40" >
       <form>
         <el-col v-if='hidePDF==1' :span="24">
           <textarea id="code" name="code">

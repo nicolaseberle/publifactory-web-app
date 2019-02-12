@@ -1,12 +1,12 @@
 <template>
-  <div style="margin: 40px 20px 20px 20px;">
+  <div class="components-container">
   <el-row :gutter="10" @page-change="fetch">
     <el-col :span="20">
       <div>
         <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px;">Create A Journal</el-button>
       </div>
     </el-col>
-    <el-col :span="18" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
+    <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <span>{{journal.title}}</span>
