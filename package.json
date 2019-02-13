@@ -167,6 +167,7 @@
     "stylus-loader": "^3.0.1",
     "svg-sprite-loader": "3.8.0",
     "svgo": "1.0.5",
+    "toolbar": "0.0.5",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "url-loader": "^1.1.2",
     "vue-loader": "^11.0.0",

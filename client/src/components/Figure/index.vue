@@ -13,6 +13,7 @@ export default {
   name: 'figureComponent',
   locales,
   components: {VuePlotly},
+  props: ["value","id-figure"],
   data () {
     return {
       options: {},
@@ -20,7 +21,13 @@ export default {
         title: 'Title',
         showlegend: false
       },
-      currentData: [{
+      currentData1: [{
+            x: ['Goden Open Access','Green Open Access','Daimond Open Access','Subscription'],
+            y: [ 12, 6, 3, 40],
+            type: 'bar',
+            orientation: 'v'
+      }],
+      currentData2: [{
             x: ['Sample A','Sample B','Sample C','Sample D'],
             y: [ 10, 9, 12, 13],
             type: 'bar',
@@ -30,7 +37,12 @@ export default {
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
-
+    if (this.value===2){
+      this.currentData = this.currentData1
+    }
+    else{
+      this.currentData = this.currentData2
+    }
   }
 }
 </script>

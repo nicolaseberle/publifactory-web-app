@@ -58,46 +58,76 @@
               <section id="item.title">
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
-                    <!--<textarea-autosize
-                      class = 'textarea-autosize'
-                      placeholder="Title"
-                      v-model="item.title"
-                      :cols="80"
-                      :min-height="20"
-                      @blur.native="onBlurTextarea"
-                      @input="save($event)"
-                    ></textarea-autosize><br>-->
                     <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="save($event)" ><br>
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
-                    <form name="abstract_form">
-                      <quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit_3'></quill-editor>
-                    </form>
-
-                    <!--<span v-html="item.path_figure"></span>-->
+                    <!--<form name="abstract_form">-->
+                    <quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit'></quill-editor>
+                    <!--</form>-->
                     <el-row :gutter='20'>
                       <el-col :span='12'>
-                        <span v-html="item.content"></span>
-                        <span v-html="item.content"></span>
+                        <span v-html='item.content'/>
                       </el-col>
                       <el-col :span='12'>
-                        <figureComponent v-if="item.path_figure"/>
+                        <figureComponent v-if="item.path_figure" :value="2" :id-figure="0"/>
                       </el-col>
                     </el-row>
-                    <!--<vue-plotly :data="chartData" :layout="chartLayout" :options="chartOptions"/>-->
+                    <el-row :gutter='20' v-if="false">
+                      <el-col :span='12'>
+                        <el-card shadow="never" style='text-align: center'>
+                          <div class= 'section-block'>
+                            <div class="btn-group">
+                              <el-button title="Add text" v-on:click="" circle><svg-icon icon-class='align-to-left'/></el-button>
+                              <el-button title="Add chart" v-on:click="" circle><svg-icon icon-class="chart-of-columns"/></el-button>
+                              <el-button title="Add picture" v-on:click="" circle><svg-icon icon-class="picture"/></el-button>
+                            </div>
+                          </div>
+                        </el-card>
+                      </el-col>
+                      <el-col :span='12'>
+                        <el-card shadow="never" style='text-align: center'>
+                          <div class= 'section-block'>
+                            <div class="btn-group">
+                              <el-button title="Add text" v-on:click="" circle><svg-icon icon-class='align-to-left'/></el-button>
+                              <el-button title="Add chart" v-on:click="" circle><svg-icon icon-class="chart-of-columns"/></el-button>
+                              <el-button title="Add picture" v-on:click="" circle><svg-icon icon-class="picture"/></el-button>
+                            </div>
+                          </div>
+                        </el-card>
+                      </el-col>
+                    </el-row>
+                    <el-row :gutter='20'>
+                      <el-col :span='24'>
+                        <el-card shadow="never" style='text-align: center'>
+                          <div class= 'section-block'>
+                            <div class="btn-group">
+                              <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add Text or Chart" circle></el-button></div>
+                              <div id="second-icon"><el-button class="insert-buttons"   title="Add text" v-on:click="addTextBlock($event,key)" circle><svg-icon icon-class='align-to-left'/></el-button></div>
+                              <div id="second-icon"><el-button class="insert-buttons"   title="Add chart" v-on:click="addChartBlock($event,key)" circle><svg-icon icon-class='chart-of-columns'/></el-button></div>
+                            </div>
+                          </div>
+                        </el-card>
+                      </el-col>
+                    </el-row>
                   </div>
                   </transition>
                   <footer>
+                    <div class='section-footer-right'>
+                      <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start">
+                        <!--<el-button  type="primary" v-on:click="openEditFigure($event,key)" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>-->
+                      </el-tooltip>
+                      <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
+        					</div>
       						<div class='section-footer-left'>
-      								<el-button  icon="el-icon-plus"  class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>
+                    <div class="btn-group">
+                      <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons"   title="Add 1 column" v-on:click="addOneBlock($event,key)" circle><svg-icon icon-class='layout-one-column'/></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons"   title="Add 2 columns" v-on:click="addTwoBlocks($event,key)" circle><svg-icon icon-class='layout-two-columns'/></el-button></div>
+                    </div>
+                      <!--<el-button  icon="el-icon-picture" class="insert-menu-buttons"  title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>-->
       						</div>
-      						<div class='section-footer-right'>
-                    <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start">
-                      <el-button  type="primary" v-on:click="openEditFigure($event,key)" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>
-                    </el-tooltip>
-                    <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
-      					</div>
+
       					</footer>
 
               </section>
@@ -296,6 +326,7 @@
       <span slot="footer" class="dialog-footer">
       </span>
     </el-dialog>
+
   </div>
 
 </template>
@@ -314,11 +345,11 @@ import quilleditor from '../../../../components/QuillEditor'
 
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
+import figureFactory from '../../../../components/Charts'
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-import figureFactory from '../../../../components/Charts'
 
 const defaultForm = {
   status: 'draft',
@@ -340,6 +371,7 @@ const defaultForm = {
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
+                  block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
                   content:"Type your text",
                   path_figure: "",
                   display:true
@@ -511,6 +543,8 @@ export default {
     }
   },
   created() {
+
+
     if (1) {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
@@ -521,12 +555,23 @@ export default {
       this.postForm = Object.assign({}, defaultForm)
     }
 
-
   },
   mounted() {
       asideRightAnimation()
   },
   methods: {
+    addTextBlock (ev,key) {
+
+    },
+    addChartBlock (ev,key) {
+
+    },
+    addOneBlock (ev,key) {
+
+    },
+    addTwoBlocks (ev,key) {
+
+    },
     nextStep() {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
@@ -585,29 +630,21 @@ export default {
         this.save(ev);
       }
     },
-    applyTextEdit (ev,key) {
-      if (ev.event.target) {
-        this.postForm.arr_content[key].content = ev.event.target.innerHTML
-        this.save(ev)
-      }
-    },
-    applyTextEdit_2 (content,key) {
-      this.postForm.arr_content[key].content = content.ops[0].insert
-      this.save(this.$event)
-    },
-    applyTextEdit_3 (editor, delta, source,key) {
+    applyTextEdit (editor, delta, source,key) {
       this.postForm.arr_content[key].content = editor.root.innerHTML
 
       this.save(this.$event)
     },
     addNewRow (ev,key) {
       var uuid_ = String(uuidv4())
+      var uuid_block = String(uuidv4())
       var new_content = {
         name:"titre_1",
         uuid: uuid_,
         title:"Titre 1",
         title_placeholder:"Titre 1",
         content:"Type the text",
+        block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
         path_figure: "",
         display:true
       }
@@ -643,8 +680,6 @@ export default {
         this.diagInsertFigureVisible = true;
         this.dialogStepActive = 0;
       }
-      //this.save(ev);
-      //this.postForm.arr_content[this.addFigureInBlock].path_figure = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>'
     },/*
     save(event) {
         console.log('hello on enregristre')
