@@ -109,18 +109,26 @@ function createArticles(user_tmp,comment_tmp) {
             reviewers : [user_tmp[4]._id,user_tmp[5]._id],
             published: true,
             content: gen_text,
+
             arr_content: [{
                             title:"Introduction",
                             content: gen_text ,
+                            block: [
+                              [{ type: 'text', uuid: 'AA', content: gen_text},
+                              { type: 'chart', uuid: 'AB', content: 'New figure'}],
+                              [{ type: 'text', uuid: 'BA', content: gen_text},
+                              { type: 'chart', uuid: 'BB', content: 'New figure'}]],
                             path_figure: figure_7
                           },
                           {
                             title:"Results",
                             content: gen_text,
+                            block: [{ type: 'text',uuid: 'CA',content: gen_text}],
                             path_figure: figure_6
                           },
                           {
                             title:"Conclusion",
+                            block: [{ type: 'tbd',uuid: 'DA',content: ''}],
                             content: gen_text,
                             path_figure: ''
                           }],

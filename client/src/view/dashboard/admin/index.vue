@@ -99,6 +99,8 @@ import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
 import axios from 'axios'
 
+var uuidv4 = require('uuid/v4');
+
 export default {
   locales,
   data () {
@@ -142,11 +144,12 @@ export default {
       })
     },
     createArticle () {
-
+      var uuid_block = String(uuidv4())
       //this.formVisible = true
       const newArticle = {
           title: String('Article title'),
           abstract:  String('abstract'),
+          status:  String('Draft'),
           arr_content: [{
                           name:"titre_1",
                           title:"Titre 1",

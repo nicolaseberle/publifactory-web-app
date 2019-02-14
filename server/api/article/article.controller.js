@@ -45,7 +45,7 @@ exports.getArticles = async (req, res, next) => {
 
   try {
     const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors reviewers',lean: true });
-    // console.log(JSON.stringify(articles, null, "\t"))
+    console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
 
     return res.status(200).json(articles);
@@ -133,12 +133,11 @@ module.exports.createArticle = async (req, res, next) => {
     //console.log(abstract);
     const arr_content = req.body.arr_content;
     //console.log(arr_content);
-
+    const status = req.body.status;
     //console.log(content);
     const published = req.body.published;
     //console.log(published);
-
-    const newArticle = new Article({ title, abstract,arr_content,published});
+    const newArticle = new Article({ title, abstract, arr_content, status, published});
 
     //Add category to the Article
     //Catch the good category

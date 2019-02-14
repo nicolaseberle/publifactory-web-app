@@ -1,6 +1,6 @@
 <template>
   <div class="components-container-article">
-  <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
+  <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
       <main class="article">
         <article>
           <span id="triggerStartNav"></span>
@@ -62,17 +62,61 @@
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
+
+                    <div v-for='(subblock,subkey) in item.block' v-bind:data="subblock" v-bind:key="subkey">
+                      <el-row :gutter='20' v-if='subblock.length==2' style='margin-bottom:10px'>
+
+                        <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
+
+                          <quill-editor v-show="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
+                          <figureComponent v-show="subitem.type=='chart'" :value="2" :id-figure="0"/>
+                          <el-card v-show="subitem.type=='tbd'" shadow="never" style='text-align: center'>
+                            <div class= 'section-block'>
+                              <div class="btn-group">
+                                <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)"  circle><svg-icon icon-class='align-to-left'/></el-button>
+                                <el-button title="Add chart" v-on:click="addChartBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="chart-of-columns"/></el-button>
+                                <el-button title="Add picture" v-on:click="addPictureBlock($event,key,subkey,subsubkey)"  circle><svg-icon icon-class="picture"/></el-button>
+                              </div>
+                            </div>
+                          </el-card>
+                        </el-col>
+                      </el-row>
+                      <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
+                        <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
+                          <quill-editor v-show="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
+                          <figureComponent v-show="subitem.type=='chart'" :value="2" :id-figure="0"/>
+                          <el-card v-show="subitem.type=='tbd'" shadow="never" style='text-align: center'>
+                            <div class= 'section-block'>
+                              <div class="btn-group">
+                                  <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class='align-to-left'/></el-button>
+                                  <el-button title="Add chart" v-on:click="addChartBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="chart-of-columns"/></el-button>
+                                  <el-button title="Add picture" v-on:click="addPictureBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="picture"/></el-button>
+                                <!--
+                                <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add Text or Chart" circle></el-button></div>
+                                <div id="second-icon"><el-button class="insert-buttons"   title="Add text" v-on:click="addTextBlock($event,key)" circle><svg-icon icon-class='align-to-left'/></el-button></div>
+                                <div id="second-icon"><el-button class="insert-buttons"   title="Add chart" v-on:click="addChartBlock($event,key)" circle><svg-icon icon-class='chart-of-columns'/></el-button></div>
+                                <div id="second-icon"><el-button class="insert-buttons"   title="Add picture" v-on:click="addPictureBlock($event,key)" circle><svg-icon icon-class="picture"/></el-button></div>
+                              -->
+                              </div>
+                            </div>
+                          </el-card>
+                        </el-col>
+
+                      </el-row>
+                    </div>
                     <!--<form name="abstract_form">-->
-                    <quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit'></quill-editor>
+                    <!--<quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit'></quill-editor>-->
                     <!--</form>-->
-                    <el-row :gutter='20'>
+
+                    <!--<el-row :gutter='20'>
                       <el-col :span='12'>
                         <span v-html='item.content'/>
                       </el-col>
                       <el-col :span='12'>
                         <figureComponent v-if="item.path_figure" :value="2" :id-figure="0"/>
                       </el-col>
-                    </el-row>
+                    </el-row>-->
+                    <!--
                     <el-row :gutter='20' v-if="false">
                       <el-col :span='12'>
                         <el-card shadow="never" style='text-align: center'>
@@ -109,7 +153,7 @@
                           </div>
                         </el-card>
                       </el-col>
-                    </el-row>
+                    </el-row>-->
                   </div>
                   </transition>
                   <footer>
@@ -543,8 +587,6 @@ export default {
     }
   },
   created() {
-
-
     if (1) {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
@@ -560,18 +602,7 @@ export default {
       asideRightAnimation()
   },
   methods: {
-    addTextBlock (ev,key) {
 
-    },
-    addChartBlock (ev,key) {
-
-    },
-    addOneBlock (ev,key) {
-
-    },
-    addTwoBlocks (ev,key) {
-
-    },
     nextStep() {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
@@ -630,9 +661,9 @@ export default {
         this.save(ev);
       }
     },
-    applyTextEdit (editor, delta, source,key) {
-      this.postForm.arr_content[key].content = editor.root.innerHTML
-
+    applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
+      // this.postForm.arr_content[key].content =   editor.root.innerHTML
+      this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
       this.save(this.$event)
     },
     addNewRow (ev,key) {
@@ -644,11 +675,38 @@ export default {
         title:"Titre 1",
         title_placeholder:"Titre 1",
         content:"Type the text",
-        block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
+        block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
         path_figure: "",
         display:true
       }
       this.postForm.arr_content.splice(key+1,0, new_content);
+      this.save(ev)
+    },
+    addTextBlock (ev,key,subkey,subsubkey) {
+      var uuid_block = String(uuidv4())
+      var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'}
+      //console.log(uuid_block,key,subkey,subsubkey)
+      //console.log(new_block)
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      this.save(ev)
+    },
+    addChartBlock (ev,key,subkey,subsubkey) {
+      var uuid_block = String(uuidv4())
+      var new_block = { type: 'chart', uuid: uuid_block,content: ''}
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      this.openEditFigure(ev,key,subkey,subsubkey)
+    },
+    addOneBlock (ev,key) {
+      var uuid_block = String(uuidv4())
+      var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}]
+      this.postForm.arr_content[key].block.push(new_block);
+      this.save(ev)
+    },
+    addTwoBlocks (ev,key) {
+      var uuid_block_1 = String(uuidv4())
+      var uuid_block_2 = String(uuidv4())
+      var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}]
+      this.postForm.arr_content[key].block.push(new_block);
       this.save(ev)
     },
     removeRow (ev,key) {
@@ -668,10 +726,8 @@ export default {
       }
 
     },
-    openEditFigure (ev,key) {
-
+    openEditFigure (ev,key,subkey,subsubkey) {
       this.dialogVisible = true;
-      this.addFigureInBlock = key;
     },
     addNewFigure (ev){
       this.dialogStepActive++;
@@ -680,52 +736,7 @@ export default {
         this.diagInsertFigureVisible = true;
         this.dialogStepActive = 0;
       }
-    },/*
-    save(event) {
-        console.log('hello on enregristre')
-        articleRes.saveChange({ "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.content,"published": true }).then(res => {
-          this.postForm = response.data
-       //this.$notify.success(this.$t('message.save.ok'))
-     }).catch(err => {
-       console.log(err)
-     })
     },
-    submitForm() {
-      this.postForm.display_time = parseInt(this.display_time / 1000)
-      console.log(this.postForm)
-      this.$refs.postForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$notify({
-            title: 'success',
-            message: 'Article successfully submited',
-            type: 'success',
-            duration: 2000
-          })
-          this.postForm.status = 'published'
-          this.loading = false
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    draftForm() {
-      if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
-        this.$message({
-          message: 'Please fill in the necessary title and content',
-          type: 'warning'
-        })
-        return
-      }
-      this.$message({
-        message: 'Saved successfully',
-        type: 'success',
-        showClose: true,
-        duration: 1000
-      })
-      this.postForm.status = 'draft'
-    },*/
     markdown2Html() {
       import('showdown').then(showdown => {
         const converter = new showdown.Converter()

@@ -1,5 +1,4 @@
 <template>
-
   <div>
     <div v-bind:id="idToolBar">
       <span class="ql-formats">
@@ -13,23 +12,14 @@
         <select class="ql-background"></select>
       </span>
         <span class="ql-formats">
-        <button class="ql-script" value="sub"></button>
-        <button class="ql-script" value="super"></button>
-      </span>
-        <span class="ql-formats">
-        <button class="ql-header" value="1"></button>
-        <button class="ql-header" value="2"></button>
         <button class="ql-blockquote"></button>
-        <button class="ql-code-block"></button>
       </span>
       <span class="ql-formats">
-        <button class="ql-list" value="ordered"></button>
         <button class="ql-list" value="bullet"></button>
         <button class="ql-indent" value="-1"></button>
         <button class="ql-indent" value="+1"></button>
       </span>
         <span class="ql-formats">
-        <button class="ql-direction" value="rtl"></button>
         <select class="ql-align"></select>
       </span>
       <span class="ql-formats">
@@ -43,7 +33,6 @@
       </span>
     </div>
   <div v-bind:id="idEditor"><span v-html="content"></span></div>
-
 </div>
 
 </template>
@@ -65,6 +54,8 @@ export default {
     content: [String],
     uuid: [String],
     numBlock: {},
+    numSubBlock: {},
+    numSubSubBlock: {},
     output: {
         default : 'delta'
     },
@@ -95,7 +86,7 @@ export default {
     });
     this.editor = quill
     this.editor.on('text-change', (delta, source) => {
-        this.$emit('edit', this.editor, delta, source,this.numBlock)
+        this.$emit('edit', this.editor, delta, source,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
@@ -115,18 +106,18 @@ export default {
   methods:{
     setIdEditor () {
       if(this.uuid==''){
-        return 'editor-container-' + this.numBlock  ;
+        return 'editor-container-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock  ;
       }
       else{
-        return 'editor-container-' + this.uuid + '-' + this.numBlock  ;
+        return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
       }
     },
     setIdToolBar () {
       if(this.uuid==''){
-        return 'toolbar-container-' + this.numBlock  ;
+        return 'toolbar-container-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
       }
       else{
-        return 'toolbar-container-' + this.uuid + '-' + this.numBlock  ;
+        return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
       }
     }
   }

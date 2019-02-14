@@ -27,7 +27,21 @@ const ArticleSchema = new Schema({
     display: {
       type: Boolean,
       default: true
-    }
+    },
+    block:[[{
+      type:{
+        type: String,
+        default: 'text'
+      },
+      content:{
+        type: String,
+        default: 'Type your text'
+      },
+      uuid: {
+        type: String,
+        default: ''
+      }
+    }]]
   }],
   published: {
     type: Boolean,
