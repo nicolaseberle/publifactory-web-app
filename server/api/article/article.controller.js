@@ -45,7 +45,7 @@ exports.getArticles = async (req, res, next) => {
 
   try {
     const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors reviewers',lean: true });
-    console.log(JSON.stringify(articles, null, "\t"))
+    //console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
 
     return res.status(200).json(articles);

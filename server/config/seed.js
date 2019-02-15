@@ -24,6 +24,7 @@ const figure_7 = 'true'
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
+
   createComment(users);
   createArticles(users);
   createJournals(users);
@@ -67,7 +68,7 @@ function createJournals(user_tmp) {
         tags:['Genetics','DNA'],
         color_1: "#F2DFA6",
         color_2: "#E0CF5C",
-        editor: [user_tmp[4]._id],
+        editor: [user_tmp[3]._id],
         published: true
       },
       {
@@ -76,7 +77,7 @@ function createJournals(user_tmp) {
         tags:['Chemistry','Biology'],
         color_1: "#FEECD4",
         color_2: "#FAD2BE",
-        editor: [user_tmp[6]._id],
+        editor: [user_tmp[1]._id],
         published: true
       });
       return journals
@@ -105,8 +106,8 @@ function createArticles(user_tmp,comment_tmp) {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
             tags:['Aging','death rates','curve fitting'],
-            authors: [user_tmp[8]._id,user_tmp[2]._id],
-            reviewers : [user_tmp[4]._id,user_tmp[5]._id],
+            authors: [user_tmp[1]._id,user_tmp[2]._id],
+            reviewers : [user_tmp[3]._id,user_tmp[4]._id],
             published: true,
             content: gen_text,
 
@@ -138,8 +139,8 @@ function createArticles(user_tmp,comment_tmp) {
           }, {
             title: 'Genetic variation within genes associated with mitochondrial function is significantly associated with later age at onset of Parkinson disease and contributes to disease risk',
             abstract: "Aging is characterized by a growing risk of disease and death, yet the underlying pathophysiology is poorly understood. Indeed, little is known about how the functional decline of individual...",
-            authors: [user_tmp[6]._id,user_tmp[8]._id],
-            reviewers : [user_tmp[2]._id,user_tmp[4]._id],
+            authors: [user_tmp[3]._id,user_tmp[5]._id],
+            reviewers : [user_tmp[1]._id,user_tmp[6]._id],
             published: true,
             content: gen_text,
             tags:['Aging','death rates','curve fitting'],
@@ -164,7 +165,7 @@ function createArticles(user_tmp,comment_tmp) {
           }, {
             title: 'Bayesian decision theoretic design of two-founder experimental crosses given diallel data',
             abstract: "In designing experimental crosses of inbred strains of model organisms, researchers must make a number of decisions. These include the selection of the appropriate strains, the cross design (F2 intercross), and the number of progeny to collect (sample size). These decisions strongly influence the potential for a successful quantitative trait locus (QTL) mapping experiment; good design decisions will lead to efficient and effective science. Thus experimental design deserves careful consideration and planning. Experimental outcomes can be quantified through utility functions using a Bayesian decision theoretic approaches. For QTL mapping experiments, the power to map a QTL is an appealing utility function to maximize. Using any utility function to aid in experimental design will be dependent on assumptions, such as the QTL effect size in the case of power. Rather than arbitrarily selecting QTL effect size values, they can be estimated from pilot data using a Bayesian hierarchical model. The information in the pilot data can be propagated to the utility function, using Markov Chain Monte Carlo (MCMC) to sample from the posterior distribution. Key features of this approach include: 1) distributional summaries of utility, which are preferable to point estimates, and 2) a comprehensive search of the experimental space of crosses of inbred lines for well-designed experiments. We evaluate this Bayesian theoretic approach using diallel crosses as the pilot data. We present results from simulations as well as present examples from both Mendelian and complex traits in the founder strains of the mouse Collaborative Cross. All analyses were performed using our R package, DIDACT (Diallel-Informed Decision theoretic Approach for Crosses Tool), developed to perform Bayesian cross selection based on diallel pilot data.",
-            authors: [user_tmp[5]._id,user_tmp[2]._id],
+            authors: [user_tmp[0]._id,user_tmp[1]._id],
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
@@ -216,7 +217,7 @@ function createUsers() {
         password: 'nicolas',
         avatar: '/static/img/Nicolas_Eberle.png',
         field: 'Physics'
-      }, {
+      },/* {
         provider: 'local',
         role: 'admin',
         roles : ['admin'],
@@ -229,7 +230,7 @@ function createUsers() {
         password: 'admin',
         avatar: '/static/img/Defaut.png',
         field: 'Administrator'
-      }, {
+      },*/ {
         provider: 'local',
         role: 'user',
         roles : ['user'],
@@ -257,21 +258,7 @@ function createUsers() {
         avatar: '/static/img/Bill_Gates.jpeg',
         field: 'Computer Science',
         tags: ['Computer science','software','SaaS']
-      }, {
-        provider: 'local',
-        role: 'user',
-        roles : ['user'],
-        name: 'Caterina',
-        username: 'caterina',
-        firstname: 'Caterina',
-        lastname: 'Cicognani',
-        laboratory: 'Universita Aldo Rossi, Italy',
-        email: 'caterina@example.com',
-        password: 'caterina',
-        avatar: '/static/img/Defaut.png',
-        field: 'Architecture'
-      },
-       {
+      },{
         provider: 'local',
         role: 'user',
         roles : ['user'],
@@ -300,19 +287,6 @@ function createUsers() {
       },{
         provider: 'local',
         role: 'user',
-        roles : 'user',
-        name: 'corentin',
-        username: 'Corentin',
-        firstname: 'Corentin',
-        lastname: 'Herbert',
-        laboratory: 'ENS Lyon',
-        email: 'corentin@example.com',
-        password: 'corentin',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
-        field: 'Climatology'
-      },{
-        provider: 'local',
-        role: 'user',
         roles : ['user'],
         name: 'alexandre',
         firstname: 'Alexandre',
@@ -321,7 +295,7 @@ function createUsers() {
         laboratory: '',
         email: 'alex@example.com',
         password: 'alex',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/Default.png',
         field: 'Physics'
       },{
         provider: 'local',
@@ -334,7 +308,7 @@ function createUsers() {
         laboratory: 'Faculté de Bordeaux',
         email: 'annelaure@example.com',
         password: 'annelaure',
-        avatar: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+        avatar: '/static/Default.png',
         field: 'Spanish'
       });
       return users;

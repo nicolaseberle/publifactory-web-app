@@ -36,8 +36,8 @@
                   </form>
                </h1>
                 <div class="article-author">
-                  <el-button icon="el-icon-plus" class="insert-buttons" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
-                  <img v-for="item in postForm.authors" :src="item.avatar"></img>
+                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
+                  <img  v-for="item in postForm.authors" :src="item.avatar"></img>
                     <p>
                         <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
                     </p>
@@ -69,7 +69,7 @@
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
                           <quill-editor v-show="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
-                          <figureComponent v-show="subitem.type=='chart'" :value="2" :id-figure="0"/>
+                          <figureComponent v-show="subitem.type=='chart'" :value="2" :idfigure="0"/>
                           <el-card v-show="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -300,7 +300,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="Add one or many authors"
+      title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="50%">
 
@@ -761,5 +761,7 @@ export default {
 .icon-in-tab-pane{
   transform: translate(0px,5px);
 }
+.vue-plotly{
 
+}
 </style>

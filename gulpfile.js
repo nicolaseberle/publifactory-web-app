@@ -70,7 +70,7 @@ gulp.task('webpack:dist', run('node ./client/build/build.js'))
 gulp.task('heroku', run('./script_heroku_upload.sh'))
 
 // Main task to build/copy elements in heroku-app
-gulp.task('build:prod', gulp.series('env:prod','webpack:dist','copy:dist','copy:server', 'copy:config','copy:package','heroku', function (done) {
+gulp.task('build:prod', gulp.series('env:prod','webpack:dist','copy:dist','copy:server', 'copy:config','copy:package', function (done) {
     done();
 }));
 

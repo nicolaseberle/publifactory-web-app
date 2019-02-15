@@ -13,7 +13,7 @@ export default {
   name: 'figureComponent',
   locales,
   components: {VuePlotly},
-  props: ["value","id-figure"],
+  props: ["value","idfigure"],
   data () {
     return {
       options: {},
@@ -43,6 +43,7 @@ export default {
     else{
       this.currentData = this.currentData2
     }
+    console.log('Figure Component : ' + this.idfigure)
   }
 }
 </script>

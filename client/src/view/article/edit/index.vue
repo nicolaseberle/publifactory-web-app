@@ -17,7 +17,7 @@
               <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
               <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
               <el-button type="" round disabled>Download the article</el-button>
-              <el-button type="" round disabled>Submit your article</el-button>
+              <el-button type="" round >Submit your article</el-button>
             </el-button-group>
           </el-col>
           <!--<el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="18"><el-button type="warning">Edit this version</el-button></el-col>-->
