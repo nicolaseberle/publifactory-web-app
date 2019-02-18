@@ -20,9 +20,11 @@ footer{
 
 
     .section-footer-left{
-      height:20px;
-      width:30px;
+      // height:20px;
+      // width:30px;
       .btn-group .insert-buttons {
+        // text-align: center;
+        display: inline-block;//block
           // display: block; /* Make the buttons appear below each other */
           margin: 0px 0px 0px 0px;
           -webkit-transform: translate(-60px,0);
@@ -34,10 +36,11 @@ footer{
         }
         .btn-group {
           #main-icon {
-            display: block;
+            display: inline-block;//block
           }
           #second-icon {
               opacity: 0;
+              display: inline-block;
               -webkit-transition: opacity 3s ease-in-out;
               -moz-transition: opacity 3s ease-in-out;
               -ms-transition: opacity 3s ease-in-out;
@@ -48,7 +51,7 @@ footer{
 
         .btn-group:hover {
           #main-icon {
-            display: block;
+            // display: block;
           }
           #second-icon {
               //display: block;

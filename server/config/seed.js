@@ -116,20 +116,18 @@ function createArticles(user_tmp,comment_tmp) {
                             content: gen_text ,
                             block: [
                               [{ type: 'text', uuid: 'AA', content: gen_text},
-                              { type: 'chart', uuid: 'AB', content: 'New figure'}],
-                              [{ type: 'text', uuid: 'BA', content: gen_text},
-                              { type: 'chart', uuid: 'BB', content: 'New figure'}]],
+                              { type: 'chart', uuid: 'AB', content: 'New figure'}]],
                             path_figure: figure_7
                           },
                           {
                             title:"Results",
                             content: gen_text,
-                            block: [{ type: 'text',uuid: 'CA',content: gen_text}],
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             path_figure: figure_6
                           },
                           {
                             title:"Conclusion",
-                            block: [{ type: 'tbd',uuid: 'DA',content: ''}],
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             content: gen_text,
                             path_figure: ''
                           }],
@@ -147,16 +145,21 @@ function createArticles(user_tmp,comment_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
+                            block: [
+                              [{ type: 'text', uuid: 'AA', content: gen_text},
+                              { type: 'chart', uuid: 'AB', content: 'New figure'}]],
                             path_figure: figure_1
                           },
                           {
                             title:"Results",
                             content: gen_text,
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             path_figure: figure_2
                           },
                           {
                             title:"Conclusion",
                             content: gen_text,
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             path_figure: ""
                           }],
             status: 'Reviewing',
@@ -169,6 +172,7 @@ function createArticles(user_tmp,comment_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             path_figure: ''
                           }],
             published: true,
@@ -187,6 +191,7 @@ function createArticles(user_tmp,comment_tmp) {
             arr_content: [{
                             title:"Introduction",
                             content: gen_text,
+                            block: [{ type: 'tbd',uuid: '',content: ''}],
                             path_figure: ''
                           }],
             status: 'Submited',

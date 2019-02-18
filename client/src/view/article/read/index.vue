@@ -5,12 +5,15 @@
           <span id="triggerStartNav"></span>
             <header>
                 <h2>Research article <span class="category grey">Physics</span></h2>
-                <div class="article-info">
-                    <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
-                    <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
-                    <p class="font-dnltp-bold font-style-bold">20 Reads</p>
-                    <p class="font-dnltp-bold font-style-bold">Cited 200 times</p>
-                </div>
+
+                <el-row ::guter='20'>
+                  <div class="article-info">
+                      <div class="article-info-item font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></div>
+                      <div class="article-info-item green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></div>
+                      <div class="article-info-item font-dnltp-bold font-style-bold">20 Reads</div>
+                      <div class="article-info-item font-dnltp-bold font-style-bold">Cited 200 times</div>
+                  </div>
+                </el-row>
                 <p class="article-doi">{{postForm.doi}}</p>
                 <h1>{{ postForm.title }} </i></h1>
                 <div class="article-author">

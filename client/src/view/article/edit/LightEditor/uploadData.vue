@@ -5,13 +5,13 @@
       <el-col :span="10">
         <el-upload
           class="upload-demo"
+          action="/api/figure"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
           :before-remove="beforeRemove"
-          multiple
           :limit="10"
+          multiple
           :on-exceed="handleExceed"
-          :headers="headerInfo"
           :file-list="tableFiles">
           <div slot="tip" class="el-upload__tip">xls/xlsx/csv files with a size less than 5000kb</div>
         </el-upload>
@@ -140,10 +140,6 @@ export default {
 }
 </script>
 <style>
-/*.uploadData .el-table .cell {
-}*/
-/*cursor: pointer;
-text-align: center;*/
 .upload-demo {
   text-align: left;
 }

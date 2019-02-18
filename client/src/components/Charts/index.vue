@@ -89,6 +89,7 @@ export default {
   name: 'chartFactory',
   locales,
   components: {VuePlotly,tracesMenu,generalMenu,styletracesMenu,HotTable},
+  props: ['idfigure'],
   data () {
     return {
       editableTabsValue: '1',
@@ -295,6 +296,13 @@ export default {
   },
   methods: {
     saveFigure () {
+      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
+      .then(response => {
+        console.log("figure saved")
+      })
+      .catch(e => {
+        console.log(e)
+      })
 
     },
     loadData() {

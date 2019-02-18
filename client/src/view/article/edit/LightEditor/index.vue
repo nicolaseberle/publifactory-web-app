@@ -68,9 +68,9 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-show="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
-                          <figureComponent v-show="subitem.type=='chart'" :value="2" :idfigure="0"/>
-                          <el-card v-show="subitem.type=='tbd'" shadow="never" style='text-align: center'>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
                                 <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)"  circle><svg-icon icon-class='align-to-left'/></el-button>
@@ -83,83 +83,25 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-show="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
-                          <figureComponent v-show="subitem.type=='chart'" :value="2" :id-figure="0"/>
-                          <el-card v-show="subitem.type=='tbd'" shadow="never" style='text-align: center'>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
                                   <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class='align-to-left'/></el-button>
                                   <el-button title="Add chart" v-on:click="addChartBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="chart-of-columns"/></el-button>
                                   <el-button title="Add picture" v-on:click="addPictureBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="picture"/></el-button>
-                                <!--
-                                <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add Text or Chart" circle></el-button></div>
-                                <div id="second-icon"><el-button class="insert-buttons"   title="Add text" v-on:click="addTextBlock($event,key)" circle><svg-icon icon-class='align-to-left'/></el-button></div>
-                                <div id="second-icon"><el-button class="insert-buttons"   title="Add chart" v-on:click="addChartBlock($event,key)" circle><svg-icon icon-class='chart-of-columns'/></el-button></div>
-                                <div id="second-icon"><el-button class="insert-buttons"   title="Add picture" v-on:click="addPictureBlock($event,key)" circle><svg-icon icon-class="picture"/></el-button></div>
-                              -->
                               </div>
                             </div>
                           </el-card>
                         </el-col>
-
                       </el-row>
                     </div>
-                    <!--<form name="abstract_form">-->
-                    <!--<quill-editor v-bind:numBlock='key' v-bind:uuid='item.uuid' v-bind:content="item.content" v-on:edit='applyTextEdit'></quill-editor>-->
-                    <!--</form>-->
-
-                    <!--<el-row :gutter='20'>
-                      <el-col :span='12'>
-                        <span v-html='item.content'/>
-                      </el-col>
-                      <el-col :span='12'>
-                        <figureComponent v-if="item.path_figure" :value="2" :id-figure="0"/>
-                      </el-col>
-                    </el-row>-->
-                    <!--
-                    <el-row :gutter='20' v-if="false">
-                      <el-col :span='12'>
-                        <el-card shadow="never" style='text-align: center'>
-                          <div class= 'section-block'>
-                            <div class="btn-group">
-                              <el-button title="Add text" v-on:click="" circle><svg-icon icon-class='align-to-left'/></el-button>
-                              <el-button title="Add chart" v-on:click="" circle><svg-icon icon-class="chart-of-columns"/></el-button>
-                              <el-button title="Add picture" v-on:click="" circle><svg-icon icon-class="picture"/></el-button>
-                            </div>
-                          </div>
-                        </el-card>
-                      </el-col>
-                      <el-col :span='12'>
-                        <el-card shadow="never" style='text-align: center'>
-                          <div class= 'section-block'>
-                            <div class="btn-group">
-                              <el-button title="Add text" v-on:click="" circle><svg-icon icon-class='align-to-left'/></el-button>
-                              <el-button title="Add chart" v-on:click="" circle><svg-icon icon-class="chart-of-columns"/></el-button>
-                              <el-button title="Add picture" v-on:click="" circle><svg-icon icon-class="picture"/></el-button>
-                            </div>
-                          </div>
-                        </el-card>
-                      </el-col>
-                    </el-row>
-                    <el-row :gutter='20'>
-                      <el-col :span='24'>
-                        <el-card shadow="never" style='text-align: center'>
-                          <div class= 'section-block'>
-                            <div class="btn-group">
-                              <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add Text or Chart" circle></el-button></div>
-                              <div id="second-icon"><el-button class="insert-buttons"   title="Add text" v-on:click="addTextBlock($event,key)" circle><svg-icon icon-class='align-to-left'/></el-button></div>
-                              <div id="second-icon"><el-button class="insert-buttons"   title="Add chart" v-on:click="addChartBlock($event,key)" circle><svg-icon icon-class='chart-of-columns'/></el-button></div>
-                            </div>
-                          </div>
-                        </el-card>
-                      </el-col>
-                    </el-row>-->
                   </div>
                   </transition>
                   <footer>
                     <div class='section-footer-right'>
                       <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start">
-                        <!--<el-button  type="primary" v-on:click="openEditFigure($event,key)" plain circle> <v-icon name="chart-bar" scale="1"/></el-button>-->
                       </el-tooltip>
                       <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
         					</div>
@@ -169,7 +111,6 @@
                       <div id="second-icon"><el-button class="insert-buttons"   title="Add 1 column" v-on:click="addOneBlock($event,key)" circle><svg-icon icon-class='layout-one-column'/></el-button></div>
                       <div id="second-icon"><el-button class="insert-buttons"   title="Add 2 columns" v-on:click="addTwoBlocks($event,key)" circle><svg-icon icon-class='layout-two-columns'/></el-button></div>
                     </div>
-                      <!--<el-button  icon="el-icon-picture" class="insert-menu-buttons"  title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button>-->
       						</div>
 
       					</footer>
@@ -298,58 +239,15 @@
             <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
         <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigure($event)">Next</el-button>
       </span>
+
     </el-dialog>
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="50%">
-
-      <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
-            <el-form-item
-              v-for="(email, index) in dynamicValidateForm.email"
-              label="Email"
-              :key="email.key"
-              :prop="'email.' + index + '.value'"
-              :rules="[
-                { required: true, message: 'Please input email address', trigger: 'blur' },
-                { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
-              ]"
-            >
-              <el-row :gutter="10">
-                <el-col :span="10">
-                  <el-input v-model="email.value"></el-input>
-                </el-col>
-                <el-col :span="5">
-                  <el-select v-model="defaultEditRole" placeholder="Permission">
-                    <el-option
-                      v-for="item in optionsEditRole"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
-                </el-col>
-                <el-col :span="5">
-                  <el-select v-model="defaultPermission" placeholder="Permission">
-                    <el-option
-                      v-for="item in optionsPermissions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
-                </el-col>
-              </el-row>
-            </el-form-item>
-          </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button type=""  @click="diagAuthorVisible=false" >Cancel</el-button>
-        <el-button type="primary" @click="diagAuthorVisible=false" >Send Invitation</el-button>
-      </span>
+    <addCollaborator/>
     </el-dialog>
+
     <el-dialog
       show-close
       top="0"
@@ -360,15 +258,11 @@
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
           <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="" >Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureVisible=false" >Preview</el-button>
           <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
         </div>
       </span>
-
-      <figureFactory/>
-
-      <span slot="footer" class="dialog-footer">
-      </span>
+      <figureFactory :idfigure='editidfigure'/>
     </el-dialog>
 
   </div>
@@ -390,6 +284,7 @@ import quilleditor from '../../../../components/QuillEditor'
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
 import figureFactory from '../../../../components/Charts'
+import addCollaborator from '../../../../components/Collaborator'
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -445,7 +340,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {addCollaborator,figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     const validateRequire = (rule, value, callback) => {
       if (value === '') {
@@ -474,6 +369,8 @@ export default {
       }
     }
     return {
+      editidfigure: 0,
+      poseditfigure: [0, 0, 0],
       chartData: [{
         x:['Exp. A11','Exp. A12','Exp. A21','Exp. A22','Exp. B1','Exp. B2','Exp. C1','Exp. C2', 'Exp. CRTL'],
         y: [30, 60, 90, 40, 110, 36, 78, 30, 60],
@@ -485,13 +382,6 @@ export default {
         showlegend: false
       },
       chartOptions: {},
-
-      dynamicValidateForm: {
-          email: [{
-            key: 1,
-            value: ''
-          }]
-        },
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
@@ -550,31 +440,7 @@ export default {
     }, {
       value: 'vertical',
       label: 'Vertical'
-    }],
-    optionsEditRole: [{
-      value: 'MainAuthor',
-      label: 'Main Author'
-    },
-    {
-      value: 'coAuthor',
-      label: 'Co-Author'
-    },
-    {
-      value: 'SeniorAuthor',
-      label: 'Senior Author'
-    }],
-    defaultEditRole: 'Co-Author',
-    optionsPermissions: [{
-          value: 'edit',
-          label: 'Edit'
-        }, {
-          value: 'view',
-          label: 'View'
-        }, {
-          value: 'admin',
-          label: 'Admin'
-        }],
-        defaultPermission: 'edit'
+    }]
     }
   },
   computed: {
@@ -600,6 +466,15 @@ export default {
   },
   mounted() {
       asideRightAnimation()
+  },
+  watch: {
+    diagInsertFigureVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+      }
+    }
   },
   methods: {
 
@@ -685,16 +560,27 @@ export default {
     addTextBlock (ev,key,subkey,subsubkey) {
       var uuid_block = String(uuidv4())
       var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'}
-      //console.log(uuid_block,key,subkey,subsubkey)
-      //console.log(new_block)
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       this.save(ev)
     },
     addChartBlock (ev,key,subkey,subsubkey) {
-      var uuid_block = String(uuidv4())
-      var new_block = { type: 'chart', uuid: uuid_block,content: ''}
-      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+    var self = this
+      this.createFigure().then(idFigure => {
+        console.log("addChartBlock::idFigure: " + idFigure)
+        var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure',nbEdit:0}
+        self.editidfigure = idFigure
+        self.poseditfigure = [key, subkey, subsubkey]
+        self.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      })
       this.openEditFigure(ev,key,subkey,subsubkey)
+
+
+    },
+    editChartBlock () {
+
+    },
+    forceRerenderBlock (key,subkey,subsubkey) {
+
     },
     addOneBlock (ev,key) {
       var uuid_block = String(uuidv4())
@@ -729,13 +615,38 @@ export default {
     openEditFigure (ev,key,subkey,subsubkey) {
       this.dialogVisible = true;
     },
-    addNewFigure (ev){
+    addNewFigure (ev,key,subkey,subsubkey){
       this.dialogStepActive++;
       if(this.dialogStepActive == 2){
         this.dialogVisible = false;
         this.diagInsertFigureVisible = true;
         this.dialogStepActive = 0;
       }
+    },
+    createFigure () {
+      const newFigure = {
+        data : [{
+                x: ['Sample A','Sample B','Sample C','Sample D'],
+                y: [ 10, 9, 12, 13],
+                type: 'bar',
+                orientation: 'v'
+        }],
+        option : {},
+        layout: {
+          title: 'Title',
+          showlegend: false
+        }
+      };
+
+      return axios.post('/api/figure/', newFigure)
+      .then(response => {
+        let _idFigure = response.data;
+        console.log("createFigure::idFigure: " + _idFigure)
+        return _idFigure
+      })
+      .catch(err => {
+
+      })
     },
     markdown2Html() {
       import('showdown').then(showdown => {

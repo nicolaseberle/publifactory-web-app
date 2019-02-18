@@ -40,6 +40,10 @@ const ArticleSchema = new Schema({
       uuid: {
         type: String,
         default: ''
+      },
+      nbEdit:{
+        type: Number,
+        default: 0
       }
     }]]
   }],

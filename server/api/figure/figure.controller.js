@@ -47,54 +47,72 @@ exports.getFigure = async (req, res, next) => {
   try {
     let data = [];
     console.log("getFigure");
-    const articleId = req.params.id.trim()
-    const article = await Article.findById(articleId).populate('arr_data').lean();
-    if (article.arr_data === undefined || article.arr_data.length == 0) {
-      data = []  // array empty or does not exist
-    }else{
-      data = await Data.find({'_id': { $in: article.arr_data}}).lean();
+    const figureId = req.params.id.trim()
+    const figure = await Figure.findById(figureId).lean();
+    if (figure === undefined) {
+      figure = []
     }
-
-    return res.status(200).json(data);
+    return res.status(200).json(figure);
   } catch (err) {
+
     return next(err);
   }
 };
 
 /**
- * @function createData
- * @memberof module:controllers/data
+ * @function createFigure
+ * @memberof module:controllers/figure
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
 module.exports.createFigure = async (req, res, next) => {
   try {
-    //req.check(ArticleValidator.checkArticleData);
-    //const validationResult = await req.getValidationResult();
-    /*if (!validationResult.isEmpty()) {
-      return res.status(400).json({ errors: validationResult.array() });
-    }*/
-
     const data = req.body.data;
     const layout = req.body.layout;
     const option = req.body.option;
+    console.log("createFigure");
+    const newFigure = new Figure({ "data": JSON.stringify(data),
+                                  "layout": JSON.stringify(layout),
+                                  "option": JSON.stringify(option)
+                                });
 
-    const newFigure = new Figure({ "data": JSON.stringify(data), "layout": JSON.stringify(layout),"option": JSON.stringify(option)});
-
-    const article = await Article.findById(req.body.id).populate('arr_data').lean();
-    console.log(JSON.stringify(article, null, "\t"));
+    //const article = await Article.findById(req.body.id).populate('arr_data').lean();
+    //console.log(JSON.stringify(article, null, "\t"));
     const figure = await newFigure.save();
     console.log(JSON.stringify(figure._id, null, "\t"));
 
-    // article.arr_data.push(data);
-    // article.save();
-    Article.findByIdAndUpdate(req.body.id, {
-      $push: { arr_data:  data._id}
-    }, { 'new': false}).exec()
-    // console.log(JSON.stringify(article._id, null, "\t"));
+    return res.status(200).json(figure._id);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-    return res.status(200).json(data._id);
+/**
+ * @function upDateFigure
+ * @memberof module:controllers/figure
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.updateFigure = async (req, res, next) => {
+  try {
+    const data = req.body.data;
+    const layout = req.body.layout;
+    const option = req.body.option;
+    console.log("updateFigure");
+    const updatedFigure = await Figure
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $set: { data, layout, option} },
+        { new: true }
+      );
+
+    if (!updatedFigure) return res.sendStatus(404);
+
+    console.log(JSON.stringify(updatedFigure._id, null, "\t"));
+
+    return res.status(200).json(updatedFigure._id);
   } catch (err) {
     return next(err);
   }

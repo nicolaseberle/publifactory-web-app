@@ -13,7 +13,7 @@ export default {
   name: 'figureComponent',
   locales,
   components: {VuePlotly},
-  props: ["value","idfigure"],
+  props: ["idfigure"],
   data () {
     return {
       options: {},
@@ -37,13 +37,27 @@ export default {
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
-    if (this.value===2){
-      this.currentData = this.currentData1
+    console.log("FigureComponent:: idfigure : " + this.idfigure)
+
+    this.currentData = this.currentData1
+
+    this.fetchFigure(this.idfigure)
+  },
+  mounted () {
+    this.fetchFigure(this.idfigure)
+  },
+  methods: {
+    fetchFigure(id) {
+      var self = this
+      axios.get('/api/figure/' + id ).then(response => {
+        self.currentData = response.data.data
+        self.layout = response.data.layout
+        self.option = response.data.option
+
+      }).catch(err => {
+        console.log(err)
+      })
     }
-    else{
-      this.currentData = this.currentData2
-    }
-    console.log('Figure Component : ' + this.idfigure)
   }
 }
 </script>
