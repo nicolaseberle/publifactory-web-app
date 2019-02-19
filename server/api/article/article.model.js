@@ -63,26 +63,26 @@ const ArticleSchema = new Schema({
   slug: {
     type: String,
     unique: true,
-    slug: 'title',
+    slug: 'title'
   },
   arr_data: [{
     type: Schema.Types.ObjectId,
-    ref: 'Data',
+    ref: 'Data'
   }],
   authors: [{
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User'
   }],
   reviewers: [{
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User'
   }],
   comments: [{
     type: Schema.Types.ObjectId,
-    ref: 'Comment',
+    ref: 'Comment'
   }],
   tags:[{
-    type: String,
+    type: String
   }],
   nbComments: {
       type: Number,

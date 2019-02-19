@@ -76,6 +76,7 @@
                                 <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)"  circle><svg-icon icon-class='align-to-left'/></el-button>
                                 <el-button title="Add chart" v-on:click="addChartBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="chart-of-columns"/></el-button>
                                 <el-button title="Add picture" v-on:click="addPictureBlock($event,key,subkey,subsubkey)"  circle><svg-icon icon-class="picture"/></el-button>
+                                <el-button  type="warning" plain  icon="el-icon-delete" v-on:click="removeBlock($event,key,subkey,subsubkey)"circle/>
                               </div>
                             </div>
                           </el-card>
@@ -91,6 +92,7 @@
                                   <el-button title="Add text" v-on:click="addTextBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class='align-to-left'/></el-button>
                                   <el-button title="Add chart" v-on:click="addChartBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="chart-of-columns"/></el-button>
                                   <el-button title="Add picture" v-on:click="addPictureBlock($event,key,subkey,subsubkey)" circle><svg-icon icon-class="picture"/></el-button>
+                                  <el-button  type="warning" plain  icon="el-icon-delete" v-on:click="removeBlock($event,key,subkey,subsubkey)"circle/>
                               </div>
                             </div>
                           </el-card>
@@ -573,8 +575,10 @@ export default {
         self.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       })
       this.openEditFigure(ev,key,subkey,subsubkey)
-
-
+    },
+    removeBlock (ev,key,subkey,subsubkey) {
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      this.save(ev)
     },
     editChartBlock () {
 

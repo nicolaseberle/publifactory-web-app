@@ -13,35 +13,16 @@
             ]"
           >
             <el-row :gutter="10">
-              <el-col :span="10">
+              <el-col :span="18">
                 <el-input v-model="email.value"></el-input>
               </el-col>
-              <el-col :span="5">
-                <el-select v-model="defaultEditRole" placeholder="Permission">
-                  <el-option
-                    v-for="item in optionsEditRole"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-                <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
-              </el-col>
-              <el-col :span="5">
-                <el-select v-model="defaultPermission" placeholder="Permission">
-                  <el-option
-                    v-for="item in optionsPermissions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-                <!--<el-button @click.prevent="removeDomain(domain)">Delete</el-button>-->
+              <el-col :span='4'>
+                <el-button type="primary" @click="$emit('close')" >Add</el-button>
               </el-col>
             </el-row>
           </el-form-item>
         </el-form>
-        <div style='margin-top:20px;margin-bottom:20px'>
+        <div style='margin-top:60px;margin-bottom:40px'>
         <el-table v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row style="width: 100%" align="left">
 
           <el-table-column align="left" label="ID" width="65">
@@ -60,10 +41,17 @@
               <span>{{ scope.row.lastname }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="left" min-width="65px" label="Role">
+          <el-table-column align="center" label="Role" width="140">
             <template slot-scope="scope">
-              <span>{{ scope.row.role }}</span>
-            </template>
+            <el-select v-model="scope.row.role">
+              <el-option
+                v-for="item in optionsEditRole"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
           </el-table-column>
           <el-table-column align="center" label="Drag" width="80">
             <template slot-scope="scope">
@@ -72,11 +60,11 @@
           </el-table-column>
         </el-table>
       </div>
-
-    <span slot="footer" class="dialog-footer" style='text-align:right'>
-      <el-button type=""  @click="$emit('close')" >Cancel</el-button>
-      <el-button type="primary" @click="$emit('close')" >Send Invitation</el-button>
-    </span>
+    <div style='text-align:right'>
+      <span slot="footer" class="dialog-footer">
+        <el-button type=""  @click="$emit('close')" >Cancel</el-button>
+      </span>
+    </div>
   </div>
 </template>
 <script>
@@ -173,7 +161,7 @@ export default {
           // for show the changes, you can delete in you code
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
-          
+
         }
       })
     }

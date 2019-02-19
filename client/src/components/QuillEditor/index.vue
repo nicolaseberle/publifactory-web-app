@@ -32,9 +32,13 @@
         <button class="ql-clean"></button>
       </span>
     </div>
-    <div  class='pre' lang='en'>
-  <div  v-bind:id="idEditor"><span style="white-space: nowrap" v-html="content" ></span></div>
-</div>
+    <div class='pre' lang='en'>
+      <div v-bind:id="idEditor">
+        <div class='justify'>
+          <p><span  v-html="content" ></span></p>
+        </div>
+      </div>
+    </div>
 </div>
 
 </template>
@@ -126,24 +130,28 @@ export default {
 }
 </script>
 <style>
-pre {
+.pre {
   margin: 0 auto;
   width: 100%;
   text-align: justify;
-  text-justify: inter-word;
+  text-justify: newspaper;
+
 }
-p,p span {
-    
+div.justify {
+  width: 100%;
+  text-align: justify;
+  text-justify: newspaper;
 
-    width:100%;
-    white-space: normal;
-    margin: 0;
-    padding:0;
+}
+p {
+  text-align: justify;
+  text-justify: newspaper;
 
-    -webkit-hyphens: auto;
+
+    /*-webkit-hyphens: auto;
     -moz-hyphens: auto;
     -ms-hyphens: auto;
-    hyphens: auto;
+    hyphens: auto;*/
 }
 
 </style>
