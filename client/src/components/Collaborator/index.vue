@@ -73,9 +73,9 @@
         </el-table>
       </div>
 
-    <span slot="footer" class="dialog-footer">
-      <el-button type=""  @click="diagAuthorVisible=false" >Cancel</el-button>
-      <el-button type="primary" @click="diagAuthorVisible=false" >Send Invitation</el-button>
+    <span slot="footer" class="dialog-footer" style='text-align:right'>
+      <el-button type=""  @click="$emit('close')" >Cancel</el-button>
+      <el-button type="primary" @click="$emit('close')" >Send Invitation</el-button>
     </span>
   </div>
 </template>
@@ -132,8 +132,13 @@ export default {
     this.idArticle = this.$route.params && this.$route.params.id
     this.total = 2
     this.getList(this.idArticle).then((listAuthors)=>{
-      this.list = listAuthors
-      //this.list = [{title: "Michael"},{title: "Nicolas"}]
+      this.list = listAuthors.map((item,key)=>{
+        const container = item;
+        container.id = key+1;
+        return container;
+      })
+
+      // this.list = [{id:1, firstname: "Michael",lastname: "Rera"},{id:2,firstname: "Nicolas",lastname: 'Eberle'}]
       this.oldList = this.list.map(v => v.id)
       this.newList = this.oldList.slice()
       this.$nextTick(() => {
@@ -168,6 +173,7 @@ export default {
           // for show the changes, you can delete in you code
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
+          
         }
       })
     }

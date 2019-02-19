@@ -245,7 +245,7 @@
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="50%">
-    <addCollaborator/>
+    <addCollaborator v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
