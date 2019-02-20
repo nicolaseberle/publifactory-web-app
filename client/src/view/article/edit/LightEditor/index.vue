@@ -69,7 +69,7 @@
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
                           <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
-                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -85,7 +85,7 @@
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
-                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -260,7 +260,7 @@
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
           <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="diagInsertFigureVisible=false" >Preview</el-button>
+          <el-button type="primary" @click="" >Preview</el-button>
           <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
         </div>
       </span>
@@ -580,9 +580,10 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    editChartBlock (ev,key,subkey,subsubkey) {
-      self.editidfigure = idFigure
-      this.openEditFigure(ev,key,subkey,subsubkey)
+    editChartBlock (ev,key,subkey,subsubkey,idFigure) {
+      this.editidfigure = idFigure
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.diagInsertFigureVisible = true;
     },
     forceRerenderBlock (key,subkey,subsubkey) {
 

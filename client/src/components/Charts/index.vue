@@ -161,7 +161,7 @@ export default {
   },
   mounted() {
         this.hotRef = this.$refs.hotTableComponent.hotInstance;
-
+        console.log(this.idfigure)
 
     // var container = document.getElementById('tabFactory');
     /*
@@ -296,6 +296,7 @@ export default {
   },
   methods: {
     saveFigure () {
+      console.log(this.idfigure)
       axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
       .then(response => {
         console.log("figure saved")
