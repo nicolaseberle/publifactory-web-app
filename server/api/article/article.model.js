@@ -70,9 +70,10 @@ const ArticleSchema = new Schema({
     ref: 'Data'
   }],
   authors: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }],
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
   reviewers: [{
     type: Schema.Types.ObjectId,
     ref: 'User'

@@ -9,6 +9,7 @@
         </el-button-group>
         </el-col>
       </el-row>
+      <div class='dashboard-tab'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
@@ -85,6 +86,7 @@
   <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
   <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
   </el-tabs>
+  </div>
 </content-module>
 <!--
 <el-dialog :title="Titre" :visible.sync="formVisible">
@@ -232,3 +234,8 @@ export default {
   }
 }
 </script>
+<style>
+.dashboard-tab{
+  padding-top:20px
+}
+</style>
