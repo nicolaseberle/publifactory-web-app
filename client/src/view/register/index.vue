@@ -13,10 +13,10 @@
         </el-select>
       </el-form-item>
       <el-form-item prop="email">
-        <el-input v-model="form.email" :placeholder="$t('register.email')"></el-input>
+        <el-input v-model="form.email" :placeholder="$t('register.email')" disabled></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="form.password" type="password" :placeholder="$t('register.password')"></el-input>
+        <el-input v-model="form.password" type="password" :placeholder="$t('register.password')" ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"

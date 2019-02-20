@@ -264,7 +264,7 @@
           <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
         </div>
       </span>
-      <figureFactory :idfigure='editidfigure'/>
+      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigureVisible"/>
     </el-dialog>
 
   </div>

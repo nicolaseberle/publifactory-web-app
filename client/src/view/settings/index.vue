@@ -1,7 +1,17 @@
 <template>
   <div class="app-container"  v-show="loggedIn">
-    <el-row :gutter='12'>
-      <el-col :span="12">
+    <div style='margin:20px'>
+      <el-alert
+      title="All the information comes from your ORCID account and google scholar profil. Why do you need it ? Read the FAQ"
+      type="info"
+      show-icon
+      center>
+      </el-alert>
+    </div>
+    <el-tabs type="card">
+    <el-tab-pane label="Profil">
+      <div style='margin:20px'>
+    <el-row>
     <el-form  ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <h2>{{$t('settings.title')}}</h2>
@@ -31,7 +41,7 @@
             {{$t('settings.email')}}
           </el-col>
           <el-col :span="12">
-            <el-input v-model="form.email" :placeholder="$t('settings.email')"></el-input>
+            <el-input v-model="form.email" :placeholder="$t('settings.email')" disabled></el-input>
           </el-col>
         </el-row>
       </el-form-item>
@@ -104,38 +114,42 @@
         </el-col>
       </el-row>
     </el-form>
-  </el-col>
-  <el-col :span="12">
-    <el-row>
-      <h2>Bibliography</h2>
-    </el-row>
-    <el-row>
-      <div class="article-tag">
-        <a v-for="item in tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
-          <!--<a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>-->
-      </div>
-    </el-row>
-    <el-row>
-
-      <el-table
-      :data="tableData"
-      style="width: 100%"
-      :row-class-name="tableRowClassName">
-      <el-table-column
-        prop="title"
-        label="Title"
-        width="500">
-      </el-table-column>
-      <el-table-column
-        prop="date"
-        label="Date"
-        width="150">
-      </el-table-column>
-    </el-table>
-    </el-row>
-  </el-col>
-
   </el-row>
+  </div>
+  </el-tab-pane>
+  <el-tab-pane label="Biblio">
+    <div style='margin:20px'>
+    <h2>Bibliography</h2>
+      <el-row>
+        <el-col :span='12'>
+        <div class="article-tag">
+          <a v-for="item in tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
+            <!--<a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>-->
+        </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span='24'>
+          <el-table
+          :data="tableData"
+          style="width: 100%"
+          :row-class-name="tableRowClassName">
+            <el-table-column
+              prop="title"
+              label="Title"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="date"
+              label="Date"
+              >
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+      </div>
+     </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>

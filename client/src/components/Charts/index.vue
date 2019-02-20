@@ -113,9 +113,7 @@ export default {
       settings3: {
           data: [
             ["", "Ford", "Volvo", "Toyota", "Honda"],
-            ["2016", 10, 11, 12, 13],
-            ["2017", 20, 11, 14, 13],
-            ["2018", 30, 15, 12, 13]
+            ["2016", 10, 11, 12, 13]
           ],
           colHeaders: true,
           rowHeaders: true,
@@ -162,6 +160,7 @@ export default {
   mounted() {
         this.hotRef = this.$refs.hotTableComponent.hotInstance;
         console.log(this.idfigure)
+
 
     // var container = document.getElementById('tabFactory');
     /*
@@ -294,9 +293,11 @@ export default {
       console.log(this.settings3)
     }
   },
+  watch: {
+
+  },
   methods: {
     saveFigure () {
-      console.log(this.idfigure)
       axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
       .then(response => {
         console.log("figure saved")
@@ -304,7 +305,17 @@ export default {
       .catch(e => {
         console.log(e)
       })
+    },
+    fetchFigure(id) {
+      var self = this
+      axios.get('/api/figure/' + id ).then(response => {
+        self.currentData = response.data.data
+        self.layout = response.data.layout
+        self.option = response.data.option
 
+      }).catch(err => {
+        console.log(err)
+      })
     },
     loadData() {
       axios.get(`/api/data/${this.id}`)
@@ -323,18 +334,9 @@ export default {
           this.settings.data = new Array(this.currentData[0].x,this.currentData[0].y)
           this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
 
-          // console.log(this.tableData[0].Date)
           response.data.forEach(function(el){
             vm.tableFiles.push( {file: JSON.parse(el.name)})
           })
-
-          /*
-          this.currentData[0].x.forEach(function(el)
-          {console.log(el.Date )}
-          )
-          */
-          //console.log(this.tableData)
-
           return this.tableData
         }
       })
