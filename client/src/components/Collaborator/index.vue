@@ -1,26 +1,36 @@
 
 <template>
   <div>
-    <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
-          <el-form-item
-            v-for="(email, index) in dynamicValidateForm.email"
-            label="Email"
-            :key="email.key"
-            :prop="'email.' + index + '.value'"
-            :rules="[
-              { required: true, message: 'Please input email address', trigger: 'blur' },
-              { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
-            ]"
-          >
-            <el-row :gutter="10">
-              <el-col :span="18">
-                <el-input v-model="email.value"></el-input>
-              </el-col>
-              <el-col :span='4'>
-                <el-button type="primary" @click="$emit('close')" >Add</el-button>
-              </el-col>
-            </el-row>
+    <el-form :model="dynamicValidateForm" :rules="rules" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+      <el-row :gutter="5">
+        <el-col :span="6">
+          <el-form-item label="Firstname" prop="firstname">
+            <el-input v-model="dynamicValidateForm.firstname"></el-input>
           </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="Lastname" prop="lastname">
+            <el-input v-model="dynamicValidateForm.lastname"></el-input>
+          </el-form-item>
+        </el-col>
+      <el-col :span="8">
+        <el-form-item
+          prop="email"
+          label="Email"
+          :rules="[
+            { required: true, message: 'Please input email address', trigger: 'blur' },
+            { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+          ]"
+        >
+        <el-input v-model="dynamicValidateForm.email">
+        </el-input>
+        </el-form-item>
+        </el-col>
+        <el-col :span='4'>
+          <el-button type="primary" @click="$emit('close')" >Add</el-button>
+        </el-col>
+      </el-row>
+
         </el-form>
         <div style='margin-top:60px;margin-bottom:40px'>
         <el-table v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row style="width: 100%" align="left">
@@ -63,6 +73,7 @@
     <div style='text-align:right'>
       <span slot="footer" class="dialog-footer">
         <el-button type=""  @click="$emit('close')" >Cancel</el-button>
+        <el-button type="primary"  @click="$emit('close')" >OK</el-button>
       </span>
     </div>
   </div>
@@ -84,36 +95,47 @@ export default {
       oldList: [],
       newList: [],
       dynamicValidateForm: {
-          email: [{
-            key: 1,
-            value: ''
-          }]
-        },
-        optionsEditRole: [{
-          value: 'MainAuthor',
-          label: 'Main Author'
-        },
-        {
-          value: 'coAuthor',
-          label: 'Co-Author'
-        },
-        {
-          value: 'SeniorAuthor',
-          label: 'Senior Author'
-        }],
-        defaultEditRole: 'Co-Author',
-        optionsPermissions: [{
-              value: 'edit',
-              label: 'Edit'
-            }, {
-              value: 'view',
-              label: 'View'
-            }, {
-              value: 'admin',
-              label: 'Admin'
-            }],
-        defaultPermission: 'edit',
-        idArticle : ''
+          email: '',
+          firstname: '',
+          lastname: ''
+      },
+      optionsEditRole: [{
+        value: 'MainAuthor',
+        label: 'Main Author'
+      },
+      {
+        value: 'coAuthor',
+        label: 'Co-Author'
+      },
+      {
+        value: 'SeniorAuthor',
+        label: 'Senior Author'
+      }],
+      defaultEditRole: 'Co-Author',
+      optionsPermissions: [{
+            value: 'edit',
+            label: 'Edit'
+          }, {
+            value: 'view',
+            label: 'View'
+          }, {
+            value: 'admin',
+            label: 'Admin'
+          }],
+      defaultPermission: 'edit',
+      idArticle : '',
+      rules: {
+        email: [
+          { required: true, message: 'Please input email address', trigger: 'blur' },
+          { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+        ],
+        firstname: [
+          { required: true, message: 'Please input firstname', trigger: 'blur' }
+        ],
+        lastname: [
+          { required: true, message: 'Please input lastname', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {

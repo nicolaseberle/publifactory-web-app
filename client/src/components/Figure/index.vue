@@ -1,9 +1,9 @@
 <template>
   <div>
       <vue-plotly :data="currentData" :layout="layout" :options="options"/>
-      <div style='text-align:right'>
-        <el-button icon="el-icon-edit" class="add-collaborator-buttons" type="primary" plain @click="" title="Edit chart" circle v-on:click=""></el-button>
-        <el-button icon="el-icon-delete" class="add-collaborator-buttons" type="warning" plain @click="" title="delete chart" circle v-on:click=""></el-button>
+      <div class='action-button'>
+        <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
+        <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
       </div>
   </div>
 </template>
@@ -65,3 +65,10 @@ export default {
   }
 }
 </script>
+<style>
+.action-button{
+  text-align:right;
+  margin-top:10px;
+  margin-bottom:10px;
+}
+</style>

@@ -157,7 +157,7 @@ export default {
                           name:"titre_1",
                           title:"Titre 1",
                           title_placeholder:"Titre 1",
-                          block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
+                          block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
                           content:"Type the text",
                           display:true
                         }],

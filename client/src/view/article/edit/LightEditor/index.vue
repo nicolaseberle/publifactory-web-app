@@ -68,8 +68,8 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
-                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -84,8 +84,8 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit'></quill-editor>
-                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
+                          <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -103,15 +103,15 @@
                   </transition>
                   <footer>
                     <div class='section-footer-right'>
-                      <el-tooltip class="item" effect="dark" content="Insert figures" placement="top-start">
-                      </el-tooltip>
-                      <el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>
+                      <!--<el-button  type="info"  icon="el-icon-delete" v-on:click="removeRow($event,key)"circle/>-->
         					</div>
       						<div class='section-footer-left'>
                     <div class="btn-group">
-                      <div id="main-icon" href='#'><el-button class="insert-buttons"   icon="el-icon-plus "  title="Add a section" v-on:click="addNewRow($event,key)" circle></el-button></div>
-                      <div id="second-icon"><el-button class="insert-buttons"   title="Add 1 column" v-on:click="addOneBlock($event,key)" circle><svg-icon icon-class='layout-one-column'/></el-button></div>
-                      <div id="second-icon"><el-button class="insert-buttons"   title="Add 2 columns" v-on:click="addTwoBlocks($event,key)" circle><svg-icon icon-class='layout-two-columns'/></el-button></div>
+                      <div id="main-icon" href='#'><el-button class="insert-buttons" icon="el-icon-plus "  title="Add a section" v-on:click="" circle></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle><svg-icon icon-class='font'/></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons" title="Add 1 column" v-on:click="addOneBlock($event,key)" circle><svg-icon icon-class='layout-one-column'/></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons" title="Add 2 columns" v-on:click="addTwoBlocks($event,key)" circle><svg-icon icon-class='layout-two-columns'/></el-button></div>
+                      <div id="second-icon"><el-button class="insert-buttons" type="warning"  icon="el-icon-delete" title='Delete all the section' v-on:click="removeRow($event,key)"circle/></div>
                     </div>
       						</div>
 
@@ -180,9 +180,9 @@
     </div>
     <div v-if='dialogStepActive==1'>
       <el-row :gutter="20" style='margin-top:3rem'>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/plotly-logo.png" style="width: 70%;" alt="Chart Manager" v-on:click="addNewFigure($event)">
+            <img src="/../../static/img/plotly-logo.png" style="width: 90%;" alt="Chart Manager" v-on:click="addNewFigure($event)">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -197,9 +197,9 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/Python_logo.png" style="width: 70%;" alt="Python_script">
+            <img src="/../../static/img/Python_logo.png" style="width: 90%;" alt="Python_script">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -214,9 +214,9 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/R_logo.png" style="width: 70%;" alt="R_script">
+            <img src="/../../static/img/R_logo.png" style="width: 90%;" alt="R_script">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -246,7 +246,7 @@
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
-      width="50%">
+      width="70%">
     <addCollaborator v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
@@ -552,7 +552,7 @@ export default {
         title:"Titre 1",
         title_placeholder:"Titre 1",
         content:"Type the text",
-        block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
+        block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
         path_figure: "",
         display:true
       }
@@ -580,8 +580,9 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    editChartBlock () {
-
+    editChartBlock (ev,key,subkey,subsubkey) {
+      self.editidfigure = idFigure
+      this.openEditFigure(ev,key,subkey,subsubkey)
     },
     forceRerenderBlock (key,subkey,subsubkey) {
 
@@ -603,10 +604,12 @@ export default {
       this.postForm.arr_content.splice(key, 1);
       this.save(ev)
       if(this.postForm.arr_content == ''){
+        var uuid_block_1 = String(uuidv4())
         var new_content = {
           name:"titre_1",
           title:"Titre 1",
           title_placeholder:"Titre 1",
+          block: [[{ type: 'tbd',uuid: uuid_block_1,content: ''}]],
           content:"Type the text",
           path_figure: "",
           display:true
