@@ -27,28 +27,25 @@
         </el-form-item>
         </el-col>
         <el-col :span='4'>
-          <el-button type="primary" @click="$emit('close')" >Add</el-button>
+          <el-button type="primary" @click="addAuthor" >Add</el-button>
         </el-col>
       </el-row>
 
         </el-form>
         <div style='margin-top:60px;margin-bottom:40px'>
-        <el-table v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row style="width: 100%" align="left">
+        <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" align="left" :default-sort = "{prop: 'rank', order: 'ascending'}">
 
-          <el-table-column align="left" label="ID" width="65">
-            <template slot-scope="scope">
-              <span>{{ scope.row.id }}</span>
-            </template>
+          <el-table-column prop='rank' align="left" label="Rank" width="65" >
           </el-table-column>
 
           <el-table-column align="left" min-width="140px" label="Firstname">
             <template slot-scope="scope">
-              <span>{{ scope.row.firstname }}</span>
+              <span>{{ scope.row.author.firstname }}</span>
             </template>
           </el-table-column>
           <el-table-column align="left" min-width="140px" label="Lastname">
             <template slot-scope="scope">
-              <span>{{ scope.row.lastname }}</span>
+              <span>{{ scope.row.author.lastname }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" label="Role" width="140">
@@ -100,12 +97,12 @@ export default {
           lastname: ''
       },
       optionsEditRole: [{
-        value: 'MainAuthor',
-        label: 'Main Author'
+        value: 'FirstAuthor',
+        label: 'First Author'
       },
       {
-        value: 'coAuthor',
-        label: 'Co-Author'
+        value: 'Author',
+        label: 'Author'
       },
       {
         value: 'SeniorAuthor',
@@ -144,18 +141,22 @@ export default {
     this.getList(this.idArticle).then((listAuthors)=>{
       this.list = listAuthors.map((item,key)=>{
         const container = item;
-        container.id = key+1;
+        console.log(item.rank)
+        container.rank = Number(container.rank);
         return container;
       })
 
-      // this.list = [{id:1, firstname: "Michael",lastname: "Rera"},{id:2,firstname: "Nicolas",lastname: 'Eberle'}]
-      this.oldList = this.list.map(v => v.id)
+      // this.list = [{rank:1, firstname: "Michael",lastname: "Rera"},{rank:2,firstname: "Nicolas",lastname: 'Eberle'}]
+      this.oldList = this.list.map(v => Number(v.rank))
       this.newList = this.oldList.slice()
       this.$nextTick(() => {
         this.setSort()
       })
     })
 
+
+  },
+  watch: {
 
   },
   methods: {
@@ -173,19 +174,39 @@ export default {
         ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
         setData: function(dataTransfer) {
           dataTransfer.setData('Text', '')
-          // to avoid Firefox bug
-          // Detail see : https://github.com/RubaXa/Sortable/issues/1012
         },
         onEnd: evt => {
-          const targetRow = this.list.splice(evt.oldIndex, 1)[0]
-          this.list.splice(evt.newIndex, 0, targetRow)
-
-          // for show the changes, you can delete in you code
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
 
+          this.newList.forEach((id_rank,key)=>{
+            this.list[key].rank = Number(id_rank)
+          })
         }
       })
+    },
+    addAuthor () {
+      var nbAuthors = this.list.length+1;
+      var newAuthor = {
+                          rank: nbAuthors,
+                          role: 'Author',
+                          author:{
+                            email: this.dynamicValidateForm.email,
+                            firstname: this.dynamicValidateForm.firstname,
+                            lastname: this.dynamicValidateForm.lastname
+                          }
+                        }
+      // warning. it's temporarly.
+      this.list.push(newAuthor)
+      this.newList = this.list.map(v => Number(v.rank))
+
+      this.$forceUpdate()
+      this.cleanForm()
+    },
+    cleanForm () {
+      this.dynamicValidateForm.email = ''
+      this.dynamicValidateForm.firstname = ''
+      this.dynamicValidateForm.lastname = ''
     }
   }
 }

@@ -134,14 +134,26 @@
           :data="tableData"
           style="width: 100%"
           :row-class-name="tableRowClassName">
+          <el-table-column
+            prop="date"
+            label="Date"
+            width="60"
+            >
+            </el-table-column>
             <el-table-column
               prop="title"
               label="Title"
               >
             </el-table-column>
             <el-table-column
-              prop="date"
-              label="Date"
+              prop="journal"
+              label="Journal"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="cited"
+              label="Cited"
+              width="80"
               >
             </el-table-column>
           </el-table>
@@ -207,24 +219,30 @@ export default {
         tableData: [{
             date: '2011',
             title: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog',
-            journal: ' Cell metabolism'
+            journal: ' Cell metabolism',
+            cited: '100'
           }, {
             date: '2012',
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
-            journal: 'Proceedings of the National Academy of Sciences'
+            journal: 'Proceedings of the National Academy of Sciences',
+            cited: '130'
           }, {
             date: '2015',
             title: 'Parkin overexpression during aging reduces proteotoxicity, alters mitochondrial dynamics, and extends lifespan',
-            journal: 'Proceedings of the National Academy of Sciences '
+            journal: 'Proceedings of the National Academy of Sciences ',
+            cited: '90'
           }, {
             date: '2015',
             title: 'Distinct shifts in microbiota composition during Drosophila aging impair intestinal function and drive mortality',
-            journal: 'Cell reports'
+            journal: 'Cell reports',
+            cited: '110'
+
           },
           {
             date: '2012',
             title: 'AMPK modulates tissue and organismal aging in a non-cell-autonomous manner',
-            journal: 'Cell reports'
+            journal: 'Cell reports',
+            cited: '180'
           }]
     }
   },

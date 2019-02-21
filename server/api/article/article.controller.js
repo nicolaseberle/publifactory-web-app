@@ -44,8 +44,8 @@ exports.getArticles = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
   try {
-    const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors reviewers',lean: true });
-    //console.log(JSON.stringify(articles, null, "\t"))
+    const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors.author reviewers',lean: true });
+    console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
 
     return res.status(200).json(articles);
@@ -66,7 +66,7 @@ exports.getArticles = async (req, res, next) => {
 module.exports.findArticleById = async (req, res, next) => {
   try {
     // console.log(JSON.stringify("findArticleById", null, "\t"))
-    const article = await Article.findById(req.params.id).populate('authors reviewers').lean();
+    const article = await Article.findById(req.params.id).populate('authors.author reviewers').lean();
     // console.log(JSON.stringify(article, null, "\t"))
     if (!article) return res.sendStatus(404);
 
@@ -100,6 +100,39 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
       .findOneAndUpdate(
         { _id: req.params.id },
         { $set: { title, abstract, arr_content, published } },
+        { new: true }
+      );
+
+    if (!article) return res.sendStatus(404);
+
+    return res.status(200).json(article);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * @function updateAuthorOfArticle
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.updateAuthorOfArticle = async (req, res, next) => {
+  try {
+    /*req.check(ArticleValidator.checkArticleData);
+    const validationResult = await req.getValidationResult();
+    if (!validationResult.isEmpty()) {
+      return res.status(400).json({ errors: validationResult.array() });
+    }*/
+    // console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
+
+    const authors = req.body.authors;
+
+    const article = await Article
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $set: { authors } },
         { new: true }
       );
 
@@ -150,7 +183,7 @@ module.exports.createArticle = async (req, res, next) => {
     //Add Author to the Article
     const author = await User.findById( req.body.id_author ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
-    newArticle.authors[0] = author;
+    newArticle.authors[0] = {"rank":1,"role":"Lead","author":author};
     const article = await newArticle.save();
 
     console.log(JSON.stringify(article._id, null, "\t"));

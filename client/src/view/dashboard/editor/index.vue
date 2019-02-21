@@ -28,8 +28,8 @@
         </el-table-column>
         <el-table-column class-name="author-col" width="120px"  label="Author">
           <template slot-scope="articles">
-            <div v-for="author in articles.row.authors">
-              {{ author.firstname[0] }}. {{ author.lastname }}
+            <div v-for="item_author in articles.row.authors">
+              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
             </div>
           </template>
         </el-table-column>

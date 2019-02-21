@@ -6,7 +6,7 @@
           <span id="triggerStartNav"></span>
             <header>
                 <el-row v-if="postForm.status == 'Reviewing'">
-                    <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; weight:bold; margin:0px 0px 10px 0px; border-style: none;'>{{postForm.status}} in progress</el-button>
+                    <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; font-family:Arial; font-size:1.2rem;font-weight:bold; margin:0px 0px 10px 0px; border-style: none;'>{{postForm.status}} in progress</el-button>
                 </el-row>
 
                 <el-row v-else>
@@ -37,10 +37,11 @@
                </h1>
                 <div class="article-author">
                   <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
-                  <img  v-for="item in postForm.authors" :src="item.avatar"></img>
+                  <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
-                        <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
+                        <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
+
                 </div>
 
                 <div class="article-tag">

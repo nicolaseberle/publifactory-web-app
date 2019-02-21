@@ -17,9 +17,9 @@
                 <p class="article-doi">{{postForm.doi}}</p>
                 <h1>{{ postForm.title }} </i></h1>
                 <div class="article-author">
-                  <img v-for="item in postForm.authors" :src="item.avatar"></img>
+                  <img v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
-                        <a v-for="item in postForm.authors" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a>
+                        <a v-for="item in postForm.authors" href="#" title="author">{{item.author.firstname}} {{item.author.lastname}}, </a>
                     </p>
                 </div>
 

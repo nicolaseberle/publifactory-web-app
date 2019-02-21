@@ -66,8 +66,8 @@ export default {
         this.postForm = response.data
         var self = this;
         // we check if article author is the current user to give him the righ to edit the document
-        this.postForm.authors.forEach(function(author) {
-          if (author._id == self.userId) {
+        this.postForm.authors.forEach(function(item) {
+          if (item.author._id == self.userId) {
             self.currentRole = 'editComponent'
           }
         });
