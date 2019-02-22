@@ -5,6 +5,7 @@ export default {
     logout: 'Logout',
     langSetting: 'Lang',
     screenfull: 'fullscreen',
+    nightmode: 'nightmode',
     dashboard: 'Dashboard',
     pageLimit: 'Data count limit per page',
     size: 'size',

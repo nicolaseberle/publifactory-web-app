@@ -44,6 +44,17 @@
     .international{
       vertical-align: top;
     }
+    .nightmode-svg {
+      display: inline-block;
+      cursor: pointer;
+      fill: #5a5e66;;
+      width: 20px;
+      height: 20px;
+      vertical-align: 14px;
+    }
+    .nightmode {
+      height: 20px;
+    }
     .avatar-container {
       height: 50px;
       margin-right: 30px;

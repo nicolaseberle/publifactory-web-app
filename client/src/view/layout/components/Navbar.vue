@@ -8,6 +8,10 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
 
+        <el-tooltip :content="$t('navbar.nightmode')" effect="dark" placement="bottom">
+          <nightmode class="nightmode right-menu-item"/>
+        </el-tooltip>
+
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
@@ -48,6 +52,7 @@ import Breadcrumb from '../../../components/Breadcrumb'
 import Hamburger from '../../../components/Hamburger'
 import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
+import Nightmode from '../../../components/Nightmode'
 // import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
 import locales from  '../../../locales/navbar'
@@ -57,6 +62,7 @@ export default {
   locales,
   // locales2,
   components: {
+    Nightmode,
     Breadcrumb,
     Hamburger,
     ErrorLog,
