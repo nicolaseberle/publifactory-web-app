@@ -37,6 +37,11 @@ footer{
         .btn-group {
           #main-icon {
             display: inline-block;//block
+             button{
+              background-color: #00a459;
+              color: white;
+              border-color: transparent;
+            }
           }
           #second-icon {
               opacity: 0;

@@ -112,7 +112,7 @@
                       <div id="second-icon"><el-button class="insert-buttons" title="Add a section" v-on:click="addNewRow($event,key)" circle><svg-icon icon-class='font'/></el-button></div>
                       <div id="second-icon"><el-button class="insert-buttons" title="Add 1 column" v-on:click="addOneBlock($event,key)" circle><svg-icon icon-class='layout-one-column'/></el-button></div>
                       <div id="second-icon"><el-button class="insert-buttons" title="Add 2 columns" v-on:click="addTwoBlocks($event,key)" circle><svg-icon icon-class='layout-two-columns'/></el-button></div>
-                      <div id="second-icon"><el-button class="insert-buttons" type="warning"  icon="el-icon-delete" title='Delete all the section' v-on:click="removeRow($event,key)"circle/></div>
+                      <div id="second-icon"><el-button class="insert-buttons" type="warning" plain  icon="el-icon-delete" title='Delete all the section' v-on:click="removeRow($event,key)"circle/></div>
                     </div>
       						</div>
 
