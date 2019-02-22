@@ -138,7 +138,7 @@ section {
         width: auto;
         height: auto;
         border: solid 1px $headerFirstSectionLinkColor;
-        margin: 72px 0 65px;
+        margin: 20px 0 20px;
 
         figcaption {
             height: 48px;
@@ -150,20 +150,24 @@ section {
             font-weight: bold;
             line-height: 48px;
             padding: 0 40px;
-            margin: 0 0 30px;
+            margin: 0 0 10px;
         }
 
         div.figure {
-            width: auto;
+            width: 100%;
             height: auto;
-            padding: 0 60px;
-            margin: 0 0 30px;
-
+            margin: 0 5px;
             img {
                 width: 100%;
                 height: auto;
                 object-fit: contain;
             }
+        }
+
+        div.action-button{
+          text-align:right;
+          margin-bottom:10px;
+          margin-right:40px;
         }
 
         p {
