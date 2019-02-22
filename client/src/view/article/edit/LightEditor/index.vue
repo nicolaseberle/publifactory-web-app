@@ -476,6 +476,7 @@ export default {
         var idfigure = this.editidfigure
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
       }
     }
   },

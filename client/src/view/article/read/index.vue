@@ -1,50 +1,74 @@
 <template>
   <div class="components-container-article">
-    <main class="article">
-        <article>
-          <span id="triggerStartNav"></span>
-            <header>
-                <h2>Research article <span class="category grey">Physics</span></h2>
-
-                <el-row ::guter='20'>
-                  <div class="article-info">
-                      <div class="article-info-item font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></div>
-                      <div class="article-info-item green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></div>
-                      <div class="article-info-item font-dnltp-bold font-style-bold">20 Reads</div>
-                      <div class="article-info-item font-dnltp-bold font-style-bold">Cited 200 times</div>
+    <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
+      <main class="article">
+          <article>
+            <span id="triggerStartNav"></span>
+              <header>
+                  <!--<h2>Research article <span class="category grey">Physics</span></h2>-->
+                  <el-row v-if="postForm.status == 'Reviewing'">
+                      <el-button style=' width:100%; background-color:#FFEEAD; height:4rem; text-align:center; color:#333333; font-family:Arial; font-size:1.2rem;font-weight:bold; margin:0px 0px 10px 0px; border-style: none;'>{{postForm.status}} in progress</el-button>
+                  </el-row>
+                  <el-row v-else>
+                    <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
+                  </el-row>
+                  <el-row ::guter='20'>
+                    <div class="article-info">
+                        <div class="article-info-item font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></div>
+                        <div class="article-info-item green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></div>
+                        <div class="article-info-item font-dnltp-bold font-style-bold">20 Reads</div>
+                        <div class="article-info-item font-dnltp-bold font-style-bold">Cited 200 times</div>
+                    </div>
+                  </el-row>
+                  <p class="article-doi">{{postForm.doi}}</p>
+                  <h1>{{ postForm.title }} </i></h1>
+                  <div class="article-author">
+                    <img v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                      <p>
+                          <a v-for="item in postForm.authors" href="#" title="author">{{item.author.firstname}} {{item.author.lastname}}, </a>
+                      </p>
                   </div>
-                </el-row>
-                <p class="article-doi">{{postForm.doi}}</p>
-                <h1>{{ postForm.title }} </i></h1>
-                <div class="article-author">
-                  <img v-for="item in postForm.authors" :src="item.author.avatar"></img>
-                    <p>
-                        <a v-for="item in postForm.authors" href="#" title="author">{{item.author.firstname}} {{item.author.lastname}}, </a>
-                    </p>
-                </div>
 
-                <div class="article-tag">
-                    <a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
-                </div>
-            </header>
-            <section  class="abstract">
-                <h2>Abstract</h2><br>
-                {{postForm.abstract}}
-            </section>
-
-            <div v-for="(item,key) in postForm.arr_content">
-              <section id="item.title">
-                  <h2 class="accordion-control-left">{{ item.title }}</h2>
-                  <div class="accordion-panel">
-                    <span v-html="item.content"></span>
-                    <span v-html="item.path_figure"></span>
+                  <div class="article-tag">
+                      <a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
                   </div>
+              </header>
+              <section  class="abstract">
+                  <h2>Abstract</h2><br>
+                  {{postForm.abstract}}
               </section>
-            </div>
 
-            <span id="triggerEndNav"></span>
-        </article>
-    </main>
+              <div v-for="(item,key) in postForm.arr_content">
+                <section id="item.title">
+                  <h2>
+                    <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
+                    {{ item.title }}
+                  </h2>
+                  <transition v-on:enter="enter" v-on:leave="leave">
+                    <div class="accordion-panel" v-show="item.display">
+                      <div v-for='(subblock,subkey) in item.block' v-bind:data="subblock" v-bind:key="subkey">
+                        <el-row :gutter='20' v-if='subblock.length==2' style='margin-bottom:10px'>
+                          <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
+                            <div v-if="subitem.type=='text'"><span v-html="subitem.content"></span></div>
+                            <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
+                          </el-col>
+                        </el-row>
+                        <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
+                          <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
+                            <div v-if="subitem.type=='text'"><span v-html="subitem.content"></span></div>
+                            <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
+                          </el-col>
+                        </el-row>
+                      </div>
+                    </div>
+                  </transition>
+                </section>
+              </div>
+
+              <span id="triggerEndNav"></span>
+          </article>
+      </main>
+    </el-card>
     <aside  class="comments-reviews" >
         <p>Show comments &amp; reviews</p>
     </aside>
@@ -61,7 +85,8 @@ import { validateURL } from '../../../utils/validate'
 import axios from 'axios'
 import velocity from 'velocity-animate'
 import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
-
+import VuePlotly from '@statnett/vue-plotly'
+import figureComponent from '../../../components/Figure'
 import reviewComponent from '../../../components/Review'
 
 const defaultForm = {
@@ -88,7 +113,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { MarkdownEditor,reviewComponent },
+  components: { figureComponent, VuePlotly,MarkdownEditor,reviewComponent },
   props: {
     isEdit: {
       type: Boolean,
@@ -209,6 +234,23 @@ export default {
         console.log(err)
       })
     },
+    openItem: function(item){
+      item.display = !  item.display
+    },
+    setClass: function (item) {
+      if (item.display === true) {
+        return 'open'
+      }
+      return 'close'
+    },
+    enter: function (el, done) {
+      velocity(el, 'slideDown', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
+    },
+    leave: function (el, done) {
+      velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
+    },/*
     save (event) {
       axios.put('http://localhost:4000/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"published": true })
       .then(response => {
@@ -217,7 +259,7 @@ export default {
       .catch(e => {
         console.log(e)
       })
-    },/*
+    },
     save(event) {
         console.log('hello on enregristre')
         articleRes.saveChange({ "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.content,"published": true }).then(res => {
