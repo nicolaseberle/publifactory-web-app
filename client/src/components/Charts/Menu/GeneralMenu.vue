@@ -41,6 +41,7 @@ export default {
   },
   methods: {
     updateModel (event) {
+      console.log("GeneralMenu::updateModel")
       this.$emit('input', event.target.value)
     }
   }

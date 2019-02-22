@@ -288,13 +288,11 @@ export default {
   watch:{
     parentTitleChart () {
       this.layout = {'title': this.parentTitleChart}
+      this.saveFigure ()
     },
     settings3 () {
       console.log(this.settings3)
     }
-  },
-  watch: {
-
   },
   methods: {
     saveFigure () {
