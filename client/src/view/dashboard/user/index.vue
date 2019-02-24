@@ -10,8 +10,8 @@
         </el-button-group>
         </el-col>
       </el-row>
-      <data-table ref="articles" @page-change="fetch">
-        <el-table :data="articles" fit highlight-current-row style="width: 100%">
+      <data-table ref="articles" @page-change="fetch" >
+        <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
             <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
@@ -54,7 +54,7 @@
           <template slot-scope="scope">
             <!--<router-link :to="'/example/edit/'+scope.row.id">-->
               <!--<el-button type="primary" size="small" icon="el-icon-edit">Edit</el-button>-->
-              <el-dropdown trigger="click" class="international">
+              <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
                 <div>
                   <el-button class="el-button-action" icon="el-icon-more" circle>
                   </el-button>
@@ -62,12 +62,12 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer">Assign a reviewer</el-dropdown-item>
+                  <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
                   <el-dropdown-item  command="survey">Survey (Scopus, Google Scholar...)</el-dropdown-item>
-                  <el-dropdown-item  command="remove" style="{color:'red'}">Remove the article</el-dropdown-item>
+                  <el-dropdown-item  command="remove"><div style="color:'red'">Remove the article</div></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
 
@@ -79,6 +79,13 @@
         </el-table-column>
       </el-table>
     </data-table>
+    <!-- Dialog Access Component-->
+    <el-dialog
+      title="Article settings"
+      :visible.sync="diagAccessCompVisible"
+      width="50%">
+    <accessComponent v-if="diagAccessCompVisible" :idArticle='selectedArticleId' v-on:close="diagAccessCompVisible=false"/>
+    </el-dialog>
 
 </content-module>
 </div>
@@ -102,6 +109,7 @@ import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
 import axios from 'axios'
+import accessComponent from '../../../components/AccessComponent'
 
 var uuidv4 = require('uuid/v4');
 
@@ -109,6 +117,9 @@ export default {
   locales,
   data () {
     return {
+      diagAccessCompVisible: false,
+      selectedRow: '',
+      selectedArticleId: '',
       options:{
         value:"option 1",
         lable:"option 1"
@@ -136,9 +147,21 @@ export default {
     ])
   },
   components: {
-    DataTable
+    DataTable,
+    accessComponent
   },
   methods: {
+    setSelectedRow (row, event, column) {
+        this.selectedRow = row
+        this.selectedArticleId = row.id
+      },
+    actionHandleCommand (action) {
+      if(action=='settings'){
+        this.diagAccessCompVisible = true
+      }else if(action=='openArticle'){
+        this.$router.push({ path: `/articles/${this.selectedArticleId}` })
+      }
+    },
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/articles/').then(list => {
