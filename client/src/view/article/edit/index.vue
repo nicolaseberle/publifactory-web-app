@@ -2,25 +2,37 @@
   <div>
   <div class="components-container-article">
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white" :gutter="40">
-      <el-col :span="14">
+      <el-col :span="10">
         <el-button-group>
-          <el-button v-if="valueTypeEditor==1" type="primary" round @click="changeEditor('LightEditor')">Light Editor</el-button>
-          <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
-          <el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
-          <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
-          <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latex</el-button>
-          <el-button v-if="valueTypeEditor!=3" type="" round @click="changeEditor('LatexEditor')">Latex</el-button>
+          <el-button v-if="valueTypeEditor==1" type="primary"  @click="changeEditor('LightEditor')">Light Editor</el-button>
+          <el-button v-if="valueTypeEditor!=1" type=""  @click="changeEditor('LightEditor')">Light Editor</el-button>
+          <el-button v-if="valueTypeEditor==2" type="primary"  @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
+          <el-button v-if="valueTypeEditor!=2" type=""  @click="changeEditor('MarkdownEditor')">Rich Text</el-button>
+          <el-button v-if="valueTypeEditor==3" type="primary"  @click="changeEditor('LatexEditor')">Latex</el-button>
+          <el-button v-if="valueTypeEditor!=3" type=""  @click="changeEditor('LatexEditor')">Latex</el-button>
+        </el-button-group>
+        <el-dropdown split-button type="primary" >
+          <!--<svg-icon icon-class='history-clock'/><span style='margin-left:10px'>Version </span>-->
+          Version
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>Submited</el-dropdown-item>
+            <el-dropdown-item>Reviewed - 01/08/2018</el-dropdown-item>
+            <el-dropdown-item>Reviewed - 10/09/2018</el-dropdown-item>
+            <el-dropdown-item>Reviewed - 15/09/2018</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+      <el-col :span="8">
+
+        <el-button-group>
+
+          <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
+          <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
+          <el-button type="" round disabled>Download the article</el-button>
+          <el-button type="" round >Submit your article</el-button>
         </el-button-group>
       </el-col>
-          <el-col :span="10">
-            <el-button-group>
-              <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
-              <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
-              <el-button type="" round disabled>Download the article</el-button>
-              <el-button type="" round >Submit your article</el-button>
-            </el-button-group>
-          </el-col>
-          <!--<el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="18"><el-button type="warning">Edit this version</el-button></el-col>-->
+      <!--<el-col v-if="postForm.status == 'Reviewing'" :span="4" :offset="18"><el-button type="warning">Edit this version</el-button></el-col>-->
     </el-row>
   </div>
   <div>

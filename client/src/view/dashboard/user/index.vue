@@ -176,6 +176,14 @@ export default {
           console.log(e)
         })
     },
+    importArticle () {
+      const h = this.$createElement;
+              this.$message({
+                message: h('p', null, [
+                  h('span', null, 'Soon...')
+                ])
+              });
+    },
     closeCreationDialog () {
       this.formVisible = false
     },

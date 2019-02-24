@@ -173,8 +173,8 @@ aside.comments-reviews {
         content: '';
         width: 20px;
         height: 20px;
-        background-color: white;
-        mask: url('/static/icons/Book.svg') no-repeat;
+
+        background: url('/static/icons/Book.svg') no-repeat;
         transform: rotateZ(-180deg) translateX(50%);
     }
 }

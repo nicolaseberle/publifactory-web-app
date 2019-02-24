@@ -1,7 +1,13 @@
 
 <template>
   <div>
-    <el-form :model="dynamicValidateForm" :rules="rules" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+    <div style='margin: 0px 0px 20px 0px'>
+    <el-alert
+      title="A email will be sent to invite authors to access to the article"
+      type="info">
+    </el-alert>
+    </div>
+    <el-form :model="dynamicValidateForm" :rules="rules" ref="dynamicValidateForm" label-width="120px" >
       <el-row :gutter="5">
         <el-col :span="6">
           <el-form-item label="Firstname" prop="firstname">
@@ -32,6 +38,7 @@
       </el-row>
 
         </el-form>
+
         <div style='margin-top:60px;margin-bottom:40px'>
         <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" align="left" :default-sort = "{prop: 'rank', order: 'ascending'}">
 

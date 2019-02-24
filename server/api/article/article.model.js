@@ -22,8 +22,8 @@ const ArticleSchema = new Schema({
   },
   arr_content:[{
     title:String,
-    content:String,
-    path_figure: String,//add the path of script object
+    content:String,//deprecated
+    path_figure: String,//deprecated // migrate url path for shiny
     display: {
       type: Boolean,
       default: true

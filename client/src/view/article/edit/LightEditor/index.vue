@@ -126,7 +126,7 @@
 
       </el-card>
     <aside  class="comments-reviews" >
-        <p>Show comments &amp; reviews</p>
+        <p>Show comments &amp; reviews </p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
           <reviewComponent />
