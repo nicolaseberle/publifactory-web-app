@@ -25,7 +25,6 @@
       </span>
       <span class="ql-formats">
         <button class="ql-link"></button>
-        <button class="ql-image"></button>
         <button class="ql-video"></button>
         <button class="ql-formula"></button>
       </span>
@@ -223,6 +222,7 @@ p {
   /*margin: 15px auto;*/
   background: transparent;
   position: relative;
+  z-index:1000;
 }
 .box:before {
   position: absolute;
@@ -231,7 +231,7 @@ p {
   height: 20px;
   top: -1px;
   left: -1px;
-  z-index:1;
+  z-index:1000;
   border-left: 1px solid #d9e2dc;
   border-top: 1px solid #d9e2dc;
 }

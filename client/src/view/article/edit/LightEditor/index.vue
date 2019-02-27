@@ -1,5 +1,6 @@
 <template>
   <div class="components-container-article">
+
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
       <main class="article">
         <article>
@@ -10,6 +11,7 @@
                 </el-row>
 
                 <el-row v-else>
+
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
                 <!--<div class="article-info">
@@ -267,7 +269,7 @@
       </span>
       <figureFactory :idfigure='editidfigure' :visible="diagInsertFigureVisible"/>
     </el-dialog>
-
+<div id="container"></div>
   </div>
 
 </template>
@@ -288,9 +290,15 @@ import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
+import LoadScript from 'vue-plugin-load-script'
+
+//import Zotero from '../../../../utils/zotero/include.js'
+
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
+// var Zotero = require('libzotero');
+// var ZoteroPublications = require('zotero-publications/dist/zotero-publications.js');
 
 
 const defaultForm = {
@@ -372,6 +380,7 @@ export default {
       }
     }
     return {
+      zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
       chartData: [{
@@ -456,6 +465,7 @@ export default {
     }
   },
   created() {
+
     if (1) {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
@@ -465,10 +475,100 @@ export default {
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+    var clientKey = '42f3f801ad5f770ac5e7'
+    var clientSecret = '4196feacac9df0450980'
+
+    /*var zp = new ZoteroPublications();
+    var promise = zp.getPublications(5476883);
+
+    promise.then(function(data) {
+        //optionally process your data here
+        zp.render(data, document.getElementById('container'));
+    });
+
+    promise.catch(function(reason) {
+        //optionally implement custom error handling here
+        console.warn(reason);
+    });
+    */
 
   },
   mounted() {
+      //let zoteroScript = document.createElement('script')
+      //zoteroScript.setAttribute('src', 'chrome://zotero/content/include.js')
+      //document.head.appendChild(zoteroScript)
+
       asideRightAnimation()
+
+      //var config = new Zotero.RequestConfig().LibraryType('user').LibraryID(5476883).Target('items').config;
+      //var fetcher = new Zotero.Fetcher(config);
+/*
+      fetcher.next().then((response)=>{
+      	//the parsed json array of items that the api returned is on response.data,
+      	//we can loop through them and create a Zotero.Item for each
+      	console.log('\naccessing the items directly from this response:')
+      	response.data.forEach((itemJson)=>{
+      		var items = new Zotero.Item(itemJson);
+          //this.zoteroitems = items.get('title')
+      	});
+      }).then(()=>{
+      	//the array was also saved in fetcher.results
+      	console.log('\nfetcher.results:');
+      	fetcher.results.forEach((itemJson)=>{
+      		let item = new Zotero.Item(itemJson);
+          this.zoteroitems.push(item.get('title'))
+      		console.log(item.get('title'));
+      	});
+      })*/
+/*
+      const configAxios = {
+          timeout: 1500,
+          baseURL: 'https://127.0.0.1:23119/',
+
+        };
+
+        const instance = axios.create(configAxios);
+        try {
+                const response = instance.post('connector/ping');
+                console.log(response);
+        } catch (e) {
+                console.error(e);
+        }
+
+      axios.get( 'http://127.0.0.1:23119/connector/ping').then(response => {
+        console.log("PING: " + response.data)
+      }).catch(err => {
+        console.log(err)
+      })
+
+        // Send a POST request
+        axios({
+          method: 'post',
+          url:'http://127.0.0.1:23119/connector/document/execCommand',
+          headers: {"Content-Type": "application/json"},
+          data: {
+            'commande': 'getSaveTarget'
+          }
+        }).then(function (response) {
+            console.log(response.data)
+        });*/
+/*
+      axios.get('http://127.0.0.1:23119/connector/document/execCommand', {headers: "Content-Type: application/json" , data: {"commande":"selectItems"}}).then(response => {
+        console.log("resultat de la requete: " + response)
+      }).catch(err => {
+        console.log(err)
+      })*/
+
+      /*var promise = require('zotero-api-client').library('user', 475425).collections('9KH9TNSJ').items().get();
+      promise.then(function(response) {
+          this.zoteroitems = response.getData();
+          console.log(this.zoteroitems.map(i => i.title));
+      });
+
+      promise.catch(function(reason) {
+
+          console.warn(reason);
+      });*/
   },
   watch: {
     diagInsertFigureVisible (val) {
@@ -481,7 +581,6 @@ export default {
     }
   },
   methods: {
-
     nextStep() {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
@@ -686,3 +785,6 @@ export default {
 
 }
 </style>
+<!--<style>
+@import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";
+</style>-->
