@@ -110,6 +110,22 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     return next(err);
   }
 };
+/**
+ * @function deleteArticle
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.deleteArticle = async (req, res, next) => {
+  try {
+    Article.findOneAndRemove({ _id: req.params.id }).exec();
+    return res.sendStatus(200);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 
 /**
  * @function updateAuthorOfArticle

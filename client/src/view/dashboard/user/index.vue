@@ -17,14 +17,14 @@
             <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="300px"  label="Title">
+        <el-table-column min-width="260px" label="Title">
           <template slot-scope="scope">
             <router-link :to="'/articles/'+scope.row.id" class="link-type">
               <span>{{ scope.row.title }}</span>
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column class-name="author-col" width="120px"  label="Author">
+        <el-table-column class-name="author-col" width="160px"  label="Author">
           <template slot-scope="articles">
             <div v-for="item_author in articles.row.authors">
 
@@ -32,20 +32,20 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column class-name="author-col" width="120px"  label="Reviewer">
+        <el-table-column class-name="author-col" width="160px"  label="Reviewer">
           <template slot-scope="articles" >
             <div v-for="reviewer in articles.row.reviewers" >
                 <span style="white-space: pre;">{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column class-name="doi-col" label="DOI" width="50">
+        <el-table-column class-name="doi-col" label="DOI" width="60">
           <template v-if="scope.row.doi" slot-scope="scope">
             <i class="el-icon-check"></i>
           </template>
 
         </el-table-column>
-        <el-table-column class-name="status-col" label="Status" width="110">
+        <el-table-column class-name="status-col" label="Status" width="120">
           <template slot-scope="scope">
             <el-tag class-name="el-tag-status"  :type="scope.row.status | statusFilter" >{{ scope.row.status }}</el-tag>
           </template>
@@ -160,6 +160,8 @@ export default {
         this.diagAccessCompVisible = true
       }else if(action=='openArticle'){
         this.$router.push({ path: `/articles/${this.selectedArticleId}` })
+      }else if(action=='remove'){
+        this.deleteArticle(this.selectedArticleId)
       }
     },
     fetch (current = 1) {
@@ -234,11 +236,11 @@ export default {
         }
       })
     },
-    deleteArticle (article) {
-      this.$confirm(`This action will remove the selected article: ${article.title} forever, still going on?`, this.$t('confirm.title'), {
+    deleteArticle (articleId) {
+      this.$confirm(`This action will remove the selected article forever, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
-        articleRes.delete({ _id: article._id }).then(() => {
+        axios.delete('/api/articles/' + articleId ).then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')
