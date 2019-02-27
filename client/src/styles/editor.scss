@@ -5,6 +5,18 @@
     src: url('../assets/fonts/dinnextltpro/dinnextltpro-bold.otf');
 }
 @font-face {
+    font-family: 'DNLTPro-bold-condensed';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-bold-condensed.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-heavy-condensed';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-heavy-condensed.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-heavy';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-heavy.otf');
+}
+@font-face {
     font-family: 'DNLTPro-regular';
     src: url('../assets/fonts/dinnextltpro/dinnextltpro-regular.otf');
 }
@@ -28,7 +40,28 @@
      font-family: 'DroidSerif-bold';
      src: url('../assets/fonts/droid-serif/droid-serif-bold.ttf');
  }
-
+/*Droid Sans*/
+ @font-face {
+     font-family: 'DroidSans-regular';
+     src: url('../assets/fonts/droid-sans/DroidSans.ttf');
+ }
+ @font-face {
+     font-family: 'DroidSans-bold';
+     src: url('../assets/fonts/droid-sans/DroidSans-Bold.ttf');
+ }
+ /*Calibri*/
+ @font-face {
+     font-family: 'Calibri-regular';
+     src: url('../assets/fonts/calibri/Calibri-Regular.ttf');
+ }
+ @font-face {
+     font-family: 'Calibri-bold';
+     src: url('../assets/fonts/calibri/Calibri-Bold.ttf');
+ }
+ @font-face {
+     font-family: 'Calibri-italic';
+     src: url('../assets/fonts/calibri/Calibri-Italic.ttf');
+ }
 body.document-editor {
     font-size: 16px;
     font-family: 'DroidSerif-regular';

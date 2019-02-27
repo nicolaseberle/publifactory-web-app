@@ -14,9 +14,13 @@ header {
     // Fix dropdown-menu z-index
     // -------------------------
     z-index: 198;
-    textarea{
-      border:none;
-      background-color: transparent;
+    h1{
+      textarea{
+        border:none;
+        background-color: transparent;
+        font-family: 'DNLTPro-heavy';
+        font-weight: 500;
+      }
     }
     input {
       border:none;
@@ -39,7 +43,6 @@ header {
     h2 {
         font-family: 'DNLTPro-bold';
         font-size: 18px;
-        font-weight: bold;
         color: $redColor;
         margin: 0 0 43px 0;
         padding: 0;

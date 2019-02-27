@@ -187,7 +187,9 @@ p {
     -moz-hyphens: auto;
     -ms-hyphens: auto;
     hyphens: auto;
+
 }
+
 .insert-button-box{
   width: 0px;
   height: 0px;
