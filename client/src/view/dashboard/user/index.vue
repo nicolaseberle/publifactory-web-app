@@ -10,7 +10,7 @@
         </el-button-group>
         </el-col>
       </el-row>
-      <data-table ref="articles" @page-change="fetch" >
+      <data-table ref="articles" @page-change="fetchMyArticles" >
         <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
@@ -165,8 +165,14 @@ export default {
       }
     },
     fetch (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/articles/').then(list => {
+        this.articles = list.data.articles
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    fetchMyArticles () {
+      axios.get(`/api/articles/mine/${this.userId}`).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
@@ -174,7 +180,6 @@ export default {
     },
     createArticle () {
       var uuid_block = String(uuidv4())
-      //this.formVisible = true
       const newArticle = {
           title: String('Article title'),
           abstract:  String('abstract'),
@@ -226,7 +231,7 @@ export default {
               type: 'success',
               message: this.$t('message.created')
             })
-            this.fetch()
+            this.fetchMyArticles()
           }).catch((err) => {
             this.$message({
               type: 'error',
@@ -245,14 +250,14 @@ export default {
             type: 'success',
             message: this.$t('message.removed')
           })
-          this.fetch()
+          this.fetchMyArticles()
         })
       }).catch(() => {})
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.fetch()
+      this.fetchMyArticles()
     })
   }
 }

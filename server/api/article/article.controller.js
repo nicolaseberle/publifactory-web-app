@@ -54,6 +54,35 @@ exports.getArticles = async (req, res, next) => {
   }
 };
 
+
+
+/**
+ * getArticles - Returns an array of articles requested with a page offset and limit,
+ * so that results are paginated
+ *
+ * @function getMyArticles
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+
+exports.getMyArticles = async (req, res, next) => {
+  const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
+  const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
+
+  try {
+    console.log(req.params.id)
+    const articles = await Article.paginate( { $or: [{ "authors.author": req.params.id },{ "reviewers": req.params.id }] }, { page, limit,populate: 'authors.author reviewers',lean: true });
+    console.log(JSON.stringify(articles, null, "\t"))
+    renameObjectProperty(articles, 'docs', 'articles');
+
+    return res.status(200).json(articles);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /**
  * getArticleBySlug - Returns an article requested by slug
  *
