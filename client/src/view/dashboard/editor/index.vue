@@ -10,6 +10,7 @@
         </el-col>
       </el-row>
       <div class='dashboard-tab'>
+      <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
@@ -82,10 +83,15 @@
     </data-table>
   </el-tab-pane>
   <el-tab-pane label="Submission" name="second">Submission</el-tab-pane>
-  <el-tab-pane label="Review" name="third">Review</el-tab-pane>
+
+  <el-tab-pane name="third">
+    <span slot="label">Review<el-badge :value="2" lass="mark"/></span>
+  </el-tab-pane>
+
   <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
   <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
   </el-tabs>
+  </div>
   </div>
 </content-module>
 <!--
@@ -100,6 +106,7 @@
     <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
   </span>
 </el-dialog>-->
+
 </div>
 </template>
 <script>
@@ -238,4 +245,9 @@ export default {
 .dashboard-tab{
   padding-top:20px
 }
+
+.tabs, .el-tabs__nav{
+    padding-top:10px
+}
+
 </style>

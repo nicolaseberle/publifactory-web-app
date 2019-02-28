@@ -9,12 +9,15 @@
       </el-alert>
     </div>
     <el-tabs type="card">
+
     <el-tab-pane label="Profil">
       <div style='margin:20px'>
     <el-row>
     <el-form  ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
-      <h2>{{$t('settings.title')}}</h2>
+      <h2>
+        {{$t('settings.title')}}
+      </h2>
       <el-form-item prop="firstname">
         <el-row>
           <el-col :span="6">
@@ -287,5 +290,9 @@ export default {
 <style>
 .header-tag{
   padding:10px 0 20px 0;
+}
+h2{
+  font-family:'Calibri-bold';
+  font-size: 1.8rem;
 }
 </style>

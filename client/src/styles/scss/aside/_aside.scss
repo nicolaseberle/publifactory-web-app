@@ -133,11 +133,21 @@ aside.related {
 	}
 }
 
+.aside-container{
+  position: fixed;
+  display: inline-block;
+  right: 0;
+  top: 40%;
+  z-index: 1000;
+}
+
 aside.comments-reviews {
     box-sizing: border-box;
-    position: fixed;
-    right: 0;
-    top: 50%;
+    //display: inline-block;
+    position: relative;
+    //position: fixed;
+    //right: 0;
+    //top: 70%;
     height: 290px;
     width: 54px;
     background-color: $greenColor;
@@ -178,6 +188,54 @@ aside.comments-reviews {
         transform: rotateZ(-180deg) translateX(50%);
     }
 }
+aside.tabs-reference {
+    box-sizing: border-box;
+    //position: fixed;
+    right: 0;
+    z-index:-1;
+    //top: 45%;
+    height: 240px;
+    width: 54px;
+    background-color: $blueColor2;
+    color: white;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    transform: translateY(-50%);
+    padding-top: 20px;
+    z-index: 205;
+    cursor: pointer;
+
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
+    text-align: center;
+    p {
+        position: relative;
+        height: auto;
+        transform: rotateZ(180deg);
+        text-align: right;
+        margin: 0;
+        line-height: 54px;
+        writing-mode: vertical-lr;
+
+    }
+
+    p::before {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        content: '';
+        width: 20px;
+        height: 20px;
+
+        transform: rotateZ(-180deg) translateX(50%);
+    }
+    .aside-icon{
+      margin-top: 5px;
+    }
+}
 
 
 @-webkit-keyframes slide {
@@ -196,13 +254,13 @@ aside.comments-reviews {
     100% { right: -$asideRightWidth; }
 }
 
-aside.content-comments-reviews {
+.aside-container aside.content-comments-reviews {
     position: fixed;
     right: -$asideRightWidth;
     top: $headerHeight;
     width: $asideRightWidth;
     height: calc(100% - #{$headerHeight});
-    z-index: 206;
+    z-index: 1000!important;
     background-color: white;
     display: none;
 

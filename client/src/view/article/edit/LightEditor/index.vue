@@ -127,12 +127,21 @@
     </main>
 
       </el-card>
-    <aside  class="comments-reviews" >
-        <p>Show comments &amp; reviews </p>
-    </aside>
-    <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <reviewComponent />
-    </aside>
+      <div class='aside-container'>
+        <aside  class="tabs-reference" >
+          <p>Show References</p>
+          <div class='aside-icon'>
+            <i class="ai ai-zotero ai-1x"></i>
+          </div>
+        </aside>
+        <aside  class="comments-reviews" >
+            <p>Show comments &amp; reviews </p>
+        </aside>
+        <aside type="button" class="content-comments-reviews" id="triggerAside">
+              <reviewComponent />
+        </aside>
+      </div>
+
 
     <el-dialog
       title="Insert a figure"
