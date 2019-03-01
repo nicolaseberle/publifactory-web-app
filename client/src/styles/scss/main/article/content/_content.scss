@@ -15,7 +15,7 @@ section {
     font-family: 'Calibri-regular';//'DroidSerif-regular';
     font-size: 16px;
     line-height: 30px;
-
+    background-color: transparent;
     // Import accordion rules
     // ----------------------
 
@@ -113,6 +113,7 @@ section {
 
     p {
         font-family: 'Calibri-regular';//'DroidSans-regular';//'DroidSerif-regular';
+        background-color: transparent;
         font-size: 1.1rem;
         line-height: 30px;
         color: black;
@@ -121,6 +122,10 @@ section {
         text-align-last: $textAlignLast;
         text-align: $textAlign;
         word-spacing: $textWordSpacing;
+
+        .p-span {
+          background-color: rgba(92, 115, 141, 0.00);
+        }
 
         sup {
             vertical-align: super;

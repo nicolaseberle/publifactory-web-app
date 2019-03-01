@@ -5,7 +5,7 @@ export default {
     password: 'Password',
     button: 'Log in with your email',
     authFail: 'Username or password is not correct',
-    googleButton: 'Log in with Google',
-    orcidButton: 'Log in with your ORCID'
+    googleButton: 'Continue with Google',
+    orcidButton: 'Continue with your ORCID'
   }
 }

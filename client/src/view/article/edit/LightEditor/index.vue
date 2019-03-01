@@ -117,9 +117,7 @@
                       <div id="second-icon"><el-button class="insert-buttons" type="warning" plain  icon="el-icon-delete" title='Delete all the section' v-on:click="removeRow($event,key)"circle/></div>
                     </div>
       						</div>
-
       					</footer>
-
               </section>
             </div>
             <span id="triggerEndNav"></span>
@@ -141,8 +139,6 @@
               <reviewComponent />
         </aside>
       </div>
-
-
     <el-dialog
       title="Insert a figure"
       :visible.sync="dialogVisible"
@@ -278,7 +274,8 @@
       </span>
       <figureFactory :idfigure='editidfigure' :visible="diagInsertFigureVisible"/>
     </el-dialog>
-<div id="container"></div>
+    <div id="container"></div>
+
   </div>
 
 </template>
@@ -302,13 +299,9 @@ import addCollaborator from '../../../../components/Collaborator'
 import LoadScript from 'vue-plugin-load-script'
 
 //import Zotero from '../../../../utils/zotero/include.js'
-
-
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 // var Zotero = require('libzotero');
-// var ZoteroPublications = require('zotero-publications/dist/zotero-publications.js');
-
 
 const defaultForm = {
   status: 'draft',
@@ -474,18 +467,10 @@ export default {
     }
   },
   created() {
-
-    if (1) {
-      this.sidebar.opened = false
-      const id = this.$route.params && this.$route.params.id
-      this.id = id
-      this.fetchData(id)
-
-    } else {
-      this.postForm = Object.assign({}, defaultForm)
-    }
-    var clientKey = '42f3f801ad5f770ac5e7'
-    var clientSecret = '4196feacac9df0450980'
+    this.sidebar.opened = false
+    const id = this.$route.params && this.$route.params.id
+    this.id = id
+    this.fetchData(id)
 
     /*var zp = new ZoteroPublications();
     var promise = zp.getPublications(5476883);
