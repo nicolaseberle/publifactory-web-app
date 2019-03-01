@@ -61,7 +61,7 @@ function asideRightAnimation () {
 
     // Show the pannel on click
     // ------------------------
-  asideRight.button.on('click', function () {
+  asideRight.button.on('click', () => {
     console.log('asideRight_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
@@ -69,7 +69,7 @@ function asideRightAnimation () {
 
   // Close the pannel on click
   // -------------------------
-  asideRight.pannel.close.on('click', function () {
+  asideRight.pannel.close.on('click', () => {
     console.log('asideRight_pannel_close')
     majScrollPosition()
     hideCommentsReviewsPannel()

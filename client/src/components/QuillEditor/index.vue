@@ -48,7 +48,7 @@
   </div>
     <!--<div class='bottom-right'/>-->
     <div class="questions">
-      <!--<div class="close"><i class="fa fa-times"></i>
+      <!--<div class="close-toto"><i class="fa fa-times"></i>
       </div>-->
       <div class="question">
         <div v-bind:id="idInputZotero"  style="display:none;">
@@ -156,7 +156,7 @@ export default {
         ''
       );
     });
-    $('.close').click(function (e) {
+    $('.close-toto').click(function (e) {
       e.stopPropagation();
       $(this).parent().hide();
       $('.items').removeClass('no-effect');
@@ -456,7 +456,7 @@ p {
     margin: 0;
     padding: 0;
 }
-.close {
+.close-toto {
     font-size:22px;
     cursor: pointer;
     position: absolute;

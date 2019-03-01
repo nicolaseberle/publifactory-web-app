@@ -132,22 +132,22 @@ aside.related {
 		opacity: 1;
 	}
 }
-
+/*
 .aside-container{
   position: fixed;
   display: inline-block;
   right: 0;
   top: 40%;
   z-index: 1000;
-}
+}*/
 
 aside.comments-reviews {
     box-sizing: border-box;
     //display: inline-block;
-    position: relative;
-    //position: fixed;
-    //right: 0;
-    //top: 70%;
+    //position: relative;
+    position: fixed;
+    right: 0;
+    top: 50%;
     height: 290px;
     width: 54px;
     background-color: $greenColor;
@@ -254,13 +254,13 @@ aside.tabs-reference {
     100% { right: -$asideRightWidth; }
 }
 
-.aside-container aside.content-comments-reviews {
+aside.content-comments-reviews {
     position: fixed;
     right: -$asideRightWidth;
     top: $headerHeight;
     width: $asideRightWidth;
     height: calc(100% - #{$headerHeight});
-    z-index: 1000!important;
+    z-index: 206;
     background-color: white;
     display: none;
 
@@ -337,7 +337,7 @@ aside.tabs-reference {
             a.close {
                 width: 10%;
                 margin-right: 15px;
-                text-align: left
+                text-align: left;
                 img,
                 svg,
                 svg path {
