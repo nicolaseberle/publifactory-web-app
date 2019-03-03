@@ -32,6 +32,14 @@
           <img src='/static/img/zotero-small-icon.png'/>
           <!--<i class="ai ai-zotero ai-1x"></i>-->
         </button>
+        <button v-bind:id="idButtonComment" style='margin-left:10px; transform:translate(5px, 0)'>
+          <svg-icon icon-class='comment-black'/>
+          <!--<i class="ai ai-zotero ai-1x"></i>-->
+        </button>
+        <button v-bind:id="idButtonHighlight" style='margin-left:10px; transform:translate(5px, 0)'>
+          <svg-icon icon-class='underline'/>
+          <!--<i class="ai ai-zotero ai-1x"></i>-->
+        </button>
         <!--<input  class="ql-input" name="title" type="text"></input>-->
       </span>
     </div>
@@ -81,10 +89,63 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'v-autocomplete/dist/v-autocomplete.css'
 
+import hightlightText from '../../utils/js/animation/highlight.js';
+import asideRightAnimation from '../../utils/js/animation/aside.right.js';
+
 var Quill = require('quill');
 var Font = Quill.import('formats/font');
 Font.whitelist = ['roboto'];
 Quill.register(Font, true);
+
+const Embed = Quill.import('blots/embed');
+
+class ProcLink extends Embed {
+    static create(value) {
+        let node = super.create(value);
+        // give it some margin
+        node.setAttribute('style', "background-color : #FFDCA6;");
+        node.setAttribute('datareview', value.value);
+        node.innerHTML = value.text;
+        return node;
+    }
+
+    static value(node) {
+      console.log(node  )
+      return {
+        value: node.getAttribute('datareview'),
+        text: node.innerHTML
+      };
+    }
+
+    /*static formats(node) {
+      let format = {};
+      if (node.hasAttribute('datareview')) {
+        format.datareview = node.getAttribute('datareview');
+      }
+      return format;
+    }*/
+
+
+/*
+    format(name, value) {
+      if (name === 'datareview') {
+        if (value) {
+          this.domNode.setAttribute(name, value);
+        } else {
+          this.domNode.removeAttribute(name, value);
+        }
+      } else {
+        super.format(name, value);
+      }
+    }*/
+
+}
+
+ProcLink.blotName = 'datareview';
+ProcLink.className = 'datareview';
+ProcLink.tagName = 'span';
+
+Quill.register(ProcLink, true);
 
 export default {
   name: 'QuillEditor',
@@ -112,6 +173,8 @@ export default {
       idButton: this.setIdButton(),
       idButtonZotero: this.setIdButtonZotero(),
       idInputZotero: this.setIdInputZotero(),
+      idButtonComment: this.setIdButtonComment(),
+      idButtonHighlight: this.setIdButtonHighlight(),
       item: {id: 0, name: 'Reference', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
       items: [],
       template: ItemTemplate,
@@ -135,20 +198,20 @@ export default {
     let self = this
     document.querySelector('#' + this.idButtonZotero).addEventListener('click', function() {
       var range = quill.getSelection(focus = true);
-      // this.inputRefVisible = true
-      // this.actionValidate = 0
-
       $("#"+self.idInputZotero).toggle()
       var html_ = '<a href="#" tooltip="" style="color:red">[R1]</a>'
       self.pasteHtmlAtCaret(html_)
+    });
+    document.querySelector('#' + this.idButtonComment).addEventListener('click', function() {
+      self.highlightSelection()
+      //hightlightText()
+
     });
 
     this.editor = quill
     this.editor.on('text-change', (delta, source) => {
         this.$emit('edit', this.editor, delta, source,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });
-
-
 
     $('#'+this.idButtonZotero).click(function () {
       self.showQuestion(
@@ -180,6 +243,7 @@ export default {
       self.mouse_pos = e
       return false;
     });
+
   },
   watch: {
     content (newContent) {
@@ -190,6 +254,31 @@ export default {
     }
   },
   methods:{
+    highlightSelection () {
+        var userSelection = window.getSelection().getRangeAt(0);
+        this.highlightRange();
+
+    },
+    highlightRange () {
+        /*var newNode = document.createElement("span");
+        newNode.setAttribute(
+           "id","EDM-1"
+        );
+        newNode.setAttribute(
+           "style","background-color: #FFDCA6;"
+        );
+        range.surroundContents(newNode);*/
+
+        var range = this.editor.getSelection();
+        // var index = this.editor.getSelection(true).index;
+        var selectedText = this.editor.getText(range.index, range.length);
+        var cObj = {text : selectedText, value : 'EDM-1'};
+        this.editor.deleteText(range.index  , range.length);
+        this.editor.insertEmbed(range.index,"datareview",cObj)
+
+
+
+    },
     showQuestion (button, question) {
       var offset = this.mouse_pos;//button.offset();
       console.log(offset.top,offset.left)
@@ -296,6 +385,22 @@ export default {
       }
       else{
         return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdButtonComment () {
+      if(this.uuid==''){
+        return 'button-comment-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdButtonHighlight () {
+      if(this.uuid==''){
+        return 'button-hightlight-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
       }
     },
     deleteBlock () {

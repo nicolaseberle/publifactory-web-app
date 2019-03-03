@@ -156,7 +156,7 @@ aside.comments-reviews {
     border-bottom-left-radius: 6px;
     transform: translateY(-50%);
     padding-top: 20px;
-    z-index: 205;
+    z-index: 500;
     cursor: pointer;
 
     opacity: 1;
@@ -260,7 +260,7 @@ aside.content-comments-reviews {
     top: $headerHeight;
     width: $asideRightWidth;
     height: calc(100% - #{$headerHeight});
-    z-index: 206;
+    z-index: 2000!important;
     background-color: white;
     display: none;
 
@@ -450,12 +450,12 @@ aside.content-comments-reviews {
                     }
 
                     p {
-                        font-family: 'DroidSerif-regular';
-                        font-size: 16px;
+                        font-family: 'Calibri-regular';
+                        font-size: 1.1rem;
                         line-height: 30px;
                         font-weight: normal;
-                        padding: 7px 9px;
-                        margin: 7px 0;
+                        padding: 0px 9px;
+                        /*margin: 7px 0;*/
                     }
                 }
             }

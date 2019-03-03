@@ -31,7 +31,6 @@
                       :min-height="30"
                       :cols="35"
                       :max-height="350"
-                      @blur.native="onBlurTextarea"
                       @input="save($event)"
                     ></textarea-autosize>
                     <br>
@@ -281,6 +280,7 @@ import axios from 'axios'
 import velocity from 'velocity-animate'
 import uploadData from './uploadData'
 import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
+import hightlightText from '../../../../utils/js/animation/highlight.js';
 
 import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
@@ -486,6 +486,7 @@ export default {
       //document.head.appendChild(zoteroScript)
 
       asideRightAnimation()
+      //hightlightText()
 
       //var config = new Zotero.RequestConfig().LibraryType('user').LibraryID(5476883).Target('items').config;
       //var fetcher = new Zotero.Fetcher(config);

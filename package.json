@@ -75,6 +75,7 @@
     "node-latex": "^2.4.4",
     "nodemon": "^1.10.2",
     "nprogress": "^0.2.0",
+    "parchment": "^1.1.4",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "plotly.js": "^1.44.3",
