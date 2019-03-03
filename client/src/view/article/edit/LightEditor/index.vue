@@ -70,7 +70,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
@@ -86,7 +86,7 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' ></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
@@ -128,7 +128,7 @@
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <reviewComponent/>
+          <reviewComponent :uuid='uuid_comment'/>
     </aside>
 
     <el-dialog
@@ -281,10 +281,8 @@ import velocity from 'velocity-animate'
 import uploadData from './uploadData'
 import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
 import hightlightText from '../../../../utils/js/animation/highlight.js';
-
 import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
-
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
 import figureFactory from '../../../../components/Charts'
@@ -375,6 +373,7 @@ export default {
       }
     }
     return {
+      uuid_comment: '',
       zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
@@ -569,6 +568,13 @@ export default {
     }
   },
   methods: {
+    createComment(uuid_comment){
+      // console.log('signal creation comment :',uuid_comment)
+      $('aside.content-comments-reviews').css('display', 'block')
+      this.uuid_comment = uuid_comment
+      $('aside.content-comments-reviews section.reviews textarea').focus()
+
+    },
     nextStep() {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },

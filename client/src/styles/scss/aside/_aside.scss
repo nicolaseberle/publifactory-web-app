@@ -26,7 +26,7 @@ aside.related {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin: 57px 7%;
+        margin: 57px 0px;
 
         a {
             text-decoration: none;
@@ -380,7 +380,7 @@ aside.content-comments-reviews {
             left: 0;
             overflow-y: scroll;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 20px 20px 0px 20px;
             background-color: $greyColor3;
 
             article {
@@ -435,6 +435,8 @@ aside.content-comments-reviews {
                         font-size: 16px;
                         opacity: 0.8;
                     }
+
+
                 }
 
                 section {
@@ -452,7 +454,7 @@ aside.content-comments-reviews {
                     p {
                         font-family: 'Calibri-regular';
                         font-size: 1.1rem;
-                        line-height: 30px;
+                        //line-height: 30px;
                         font-weight: normal;
                         padding: 0px 9px;
                         /*margin: 7px 0;*/

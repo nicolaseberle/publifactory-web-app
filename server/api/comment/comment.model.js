@@ -11,6 +11,9 @@ var CommentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
+  uuidComment: {
+    type: String
+  },
   anonymousFlag:{
     type: Boolean,
     default: false

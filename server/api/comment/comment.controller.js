@@ -37,7 +37,7 @@ module.exports.getArticleComments = async (req, res, next) => {
     const article = await Article.findOne({ _id: req.params.id })
       .populate({
         path: 'comments',
-        populate: { path: 'userId article' }
+        populate: { path: 'userId' }
       })
       .lean();
 
@@ -76,9 +76,10 @@ module.exports.createArticleComment = async (req, res, next) => {
     console.log('createArticleComment');
     const commentFlag = req.body.commentFlag;
     const reviewRequest = req.body.reviewRequest;
+    const uuidComment = req.body.uuidComment;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const newComment = new Comment({ userId , content, reviewRequest, commentFlag });
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment });
     const comment = await newComment.save();
 
     //console.log('newComment : ' + comment);
@@ -98,6 +99,32 @@ module.exports.createArticleComment = async (req, res, next) => {
       article.nbComments = article.nbComments + 1;
       await article.save();
     }
+
+    return res.status(200).json(comment);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ *
+ * @function updateScores
+ * @memberof module:controllers/comments
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @returns {Object}
+ */
+module.exports.updateScores = async (req, res, next) => {
+  try {
+    console.log('updateScores');
+    const upvote = req.body.upvote;
+    const downvote = req.body.downvote;
+    console.log(upvote,downvote);
+    const comment = await Comment.findOneAndUpdate(
+      { _id: req.params.uuid },
+      { $inc: { 'scores.upvote': upvote,'scores.downvote': downvote} }
+    ).exec();
 
     return res.status(200).json(comment);
   } catch (err) {

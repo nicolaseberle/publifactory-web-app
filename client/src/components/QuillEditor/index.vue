@@ -93,9 +93,10 @@ import hightlightText from '../../utils/js/animation/highlight.js';
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
 var Quill = require('quill');
-var Font = Quill.import('formats/font');
-Font.whitelist = ['roboto'];
-Quill.register(Font, true);
+var uuidv4 = require('uuid/v4');
+// var Font = Quill.import('formats/font');
+//Font.whitelist = ['roboto'];
+// Quill.register(Font, true);
 
 const Embed = Quill.import('blots/embed');
 
@@ -183,8 +184,6 @@ export default {
     }
   },
   created() {
-
-
   },
   mounted() {
     var quill = new Quill('#'+this.idEditor, {
@@ -248,7 +247,6 @@ export default {
   watch: {
     content (newContent) {
       if (this.content !== this.editor.root.innerHTML) {
-        console.log("il faut mettre à jour la fenetre")
         this.editor.root.innerHTML = this.content
       }
     }
@@ -268,20 +266,21 @@ export default {
            "style","background-color: #FFDCA6;"
         );
         range.surroundContents(newNode);*/
+        var uuid_review = String(uuidv4())
 
         var range = this.editor.getSelection();
         // var index = this.editor.getSelection(true).index;
         var selectedText = this.editor.getText(range.index, range.length);
-        var cObj = {text : selectedText, value : 'EDM-1'};
+        var cObj = {text : selectedText, value : uuid_review};
         this.editor.deleteText(range.index  , range.length);
         this.editor.insertEmbed(range.index,"datareview",cObj)
-
+        this.$emit('comment', uuid_review)
 
 
     },
     showQuestion (button, question) {
       var offset = this.mouse_pos;//button.offset();
-      console.log(offset.top,offset.left)
+      // console.log(offset.top,offset.left)
       /*var NWin = window.open($(this).prop('href'), '', 'height=30,width=400,top='+ offset.top + ',left=' + offset.left);
       if (window.focus)
         NWin.focus();*/
