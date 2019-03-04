@@ -94,9 +94,6 @@ import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
-// var Font = Quill.import('formats/font');
-//Font.whitelist = ['roboto'];
-// Quill.register(Font, true);
 
 const Embed = Quill.import('blots/embed');
 
@@ -117,29 +114,6 @@ class ProcLink extends Embed {
         text: node.innerHTML
       };
     }
-
-    /*static formats(node) {
-      let format = {};
-      if (node.hasAttribute('datareview')) {
-        format.datareview = node.getAttribute('datareview');
-      }
-      return format;
-    }*/
-
-
-/*
-    format(name, value) {
-      if (name === 'datareview') {
-        if (value) {
-          this.domNode.setAttribute(name, value);
-        } else {
-          this.domNode.removeAttribute(name, value);
-        }
-      } else {
-        super.format(name, value);
-      }
-    }*/
-
 }
 
 ProcLink.blotName = 'datareview';
@@ -214,9 +188,7 @@ export default {
 
     $('#'+this.idButtonZotero).click(function () {
       self.showQuestion(
-        $(this),
-        ''
-      );
+        $(this));
     });
     $('.close-toto').click(function (e) {
       e.stopPropagation();
@@ -258,18 +230,11 @@ export default {
 
     },
     highlightRange () {
-        /*var newNode = document.createElement("span");
-        newNode.setAttribute(
-           "id","EDM-1"
-        );
-        newNode.setAttribute(
-           "style","background-color: #FFDCA6;"
-        );
-        range.surroundContents(newNode);*/
+
         var uuid_review = String(uuidv4())
 
         var range = this.editor.getSelection();
-        // var index = this.editor.getSelection(true).index;
+
         var selectedText = this.editor.getText(range.index, range.length);
         var cObj = {text : selectedText, value : uuid_review};
         this.editor.deleteText(range.index  , range.length);
@@ -278,17 +243,15 @@ export default {
 
 
     },
-    showQuestion (button, question) {
-      var offset = this.mouse_pos;//button.offset();
-      // console.log(offset.top,offset.left)
-      /*var NWin = window.open($(this).prop('href'), '', 'height=30,width=400,top='+ offset.top + ',left=' + offset.left);
-      if (window.focus)
-        NWin.focus();*/
+    showQuestion (button) {
+      var offset = this.mouse_pos
+      console.log(offset.offsetY)
+
       $('.questions')
         .fadeIn()
         .css({
           left: Math.min(0, $(window).innerWidth()-$('.questions').outerWidth()),
-          top: offset.top + button.innerHeight()
+          top: offset.offsetY + 36  
         });
     },
     pasteHtmlAtCaret (html) {
@@ -537,7 +500,7 @@ p {
     display: none;
     background: #222;
     position: absolute;
-    z-index: 10000;
+    z-index: 1000;
     color: #EEE;
     border-radius: 6px;
 

@@ -452,7 +452,7 @@ aside.content-comments-reviews {
                     span.major-revision {
                       background-color:red;
                       border-color: red;
-                      color: #333 ;
+                      color: #f3f3f3;
                       font-family:'Calibri-bold';
                     }
                     span.rejection {
@@ -492,7 +492,10 @@ aside.content-comments-reviews {
                 }
             }
         }
-
+        .button-submit{
+            font-family: 'Calibri-bold';
+            font-size: 1rem;
+        }
         section.comments {
             display: none;
         }

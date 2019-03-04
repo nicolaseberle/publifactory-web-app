@@ -93,11 +93,6 @@
                 </div>
               </section>
               <footer style='text-align: right'>
-                <!--<footer class="grid-header">
-                </footer>-->
-
-                <!--<el-button plain type="success" icon="el-icon-arrow-up" circle></el-button>
-                <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
                 <el-button  icon="el-icon-share" circle></el-button>
                 <el-button circle><font-awesome-icon icon="reply" /></el-button>
                 <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
@@ -107,6 +102,11 @@
 
 
           <el-card id="card-form-report">
+
+          <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
+
+            <div style='font-family:"Calibri-bold";color:#f3f3f3;'>Anonymous peer review</div>
+          </el-row>
           <el-row type="flex" class="row-bg" style="margin: 5px 0 20px 0;align-items: center;">
             <el-checkbox v-model="checkedAnonymous"><svg-icon icon-class='private'/></el-checkbox>
             <el-select v-model="reviewRequest" justify="left" placeholder="No revision">
@@ -118,7 +118,7 @@
               </el-option>
             </el-select>
 
-            <el-button type="primary" style="margin-left: 5%; justify:end" @click="createReport()" >Submit your report</el-button>
+            <el-button type="primary" class='button-submit' style="margin-left: 5%; justify:end" @click="createReport()" icon="el-icon-upload2">Send your report</el-button>
           </el-row>
           <el-row type="flex" class="row-bg" justify="center">
           <el-input
