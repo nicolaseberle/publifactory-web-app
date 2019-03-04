@@ -9,14 +9,15 @@
 
           <article v-for="(report,key) in reports">
               <header>
-                  <a href="#" title="OSPR's profile">{{ report.userId.firstname  }} {{ report.userId.lastname }}</a>
+                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ report.userId.firstname  }} {{ report.userId.lastname }}</a>
+                  <a v-if='report.anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
                   <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ report.creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
                   <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-                  <el-tag style="background-color:green; color:#f3f3f3" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:orange; color:#f3f3f3" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:red; color:#f3f3f3" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:black; color:#f3f3f3" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:lightsteelblue; color:#333;font-family:'Calibri-bold' " v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="no-revision" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="minor-revision" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="major-revision" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="rejection" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="simple-comment" v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
               </header>
               <section>
                 <div class='card-review'>
@@ -56,13 +57,14 @@
           </article>
           <article v-for="report in report_tmp">
               <header>
-                  <a href="#" title="OSPR's profile">{{ username }}</a>
+                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ username }}</a>
+                  <a v-if='report.anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
                   <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-                  <el-tag style="background-color:green; color:#f3f3f3" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:orange; color:#f3f3f3" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:red; color:#f3f3f3" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:black; color:#f3f3f3" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag style="background-color:lightsteelblue; color:#333;font-family:'Calibri-bold' " v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="no-revision" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="minor-revision" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="major-revision" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="rejection" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
+                  <el-tag class="simple-comment" v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
               </header>
               <section>
                 <div class='card-review'>
@@ -70,7 +72,7 @@
                     <div class='vote-icon'>
                       <!--<el-button plain type="" icon="el-icon-caret-top" circle></el-button>-->
                       <!--<i class='el-icon-caret-top'></i>-->
-                      <div class="arrow-up" v-on:click="upvoteComment($event,report._id)"></div>
+                      <div class="arrow-up"></div>
                     </div>
                     <div class='vote-counter'>
                       0
@@ -78,7 +80,7 @@
                     <div class='vote-icon'>
                       <!--<i class='el-icon-caret-bottom'></i>-->
                       <!--<el-button plain type="" icon="el-icon-caret-bottom" circle></el-button>-->
-                      <div class="arrow-down" v-on:click="downvoteComment($event,report._id)"></div>
+                      <div class="arrow-down"></div>
                     </div>
                   </div>
                   <div class='col-content'>
@@ -142,6 +144,7 @@ import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import hightlightText from '../../utils/js/animation/highlight.js';
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
+var uuidv4 = require('uuid/v4');
 
 library.add(faCoffee,faReply)
 
@@ -226,14 +229,20 @@ export default {
       console.log("createReport : " , this.uuid)
       var self = this;
       var now = new Date().getTime();
+      if (this.uuid==''){
+        this.uuid = String(uuidv4())
+      }
       const newComment = {
         date: now,
         userId : self.userId,
         content : String(this.editReport),
         uuidComment: String(this.uuid),
         reviewRequest : String(this.reviewRequest),
-        commentFlag : false //it's a review,
+        commentFlag : false, //it's a review,
+        anonymousFlag: this.checkedAnonymous
       };
+      this.uuid = ''
+      this.checkedAnonymous = false
 
       this.report_tmp.push(newComment)
       this.article.nbReviews = this.article.nbReviews + 1

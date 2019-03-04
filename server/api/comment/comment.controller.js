@@ -75,11 +75,12 @@ module.exports.createArticleComment = async (req, res, next) => {
     */
     console.log('createArticleComment');
     const commentFlag = req.body.commentFlag;
+    const anonymousFlag = req.body.anonymousFlag;
     const reviewRequest = req.body.reviewRequest;
     const uuidComment = req.body.uuidComment;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment });
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag });
     const comment = await newComment.save();
 
     //console.log('newComment : ' + comment);

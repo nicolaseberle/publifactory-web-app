@@ -52,6 +52,7 @@ aside.related {
                         width: 100%;
                         @include text-overflow(24px, 30px, 2);
                     }
+
                 }
 
                 section.summary {
@@ -436,7 +437,36 @@ aside.content-comments-reviews {
                         opacity: 0.8;
                     }
 
-
+                    span.no-revision {
+                      background-color: YellowGreen;
+                      border-color: YellowGreen;
+                      color:#333;
+                      font-family:'Calibri-bold';
+                    }
+                    span.minor-revision {
+                      background-color:orange;
+                      border-color: orange;
+                      color:#333;
+                      font-family:'Calibri-bold';
+                    }
+                    span.major-revision {
+                      background-color:red;
+                      border-color: red;
+                      color: #333 ;
+                      font-family:'Calibri-bold';
+                    }
+                    span.rejection {
+                      background-color:black;
+                      border-color: black;
+                      color:#f3f3f3;
+                      font-family:'Calibri-bold';
+                    }
+                    span.simple-comment {
+                      background-color:rgba(176,196,222,0.8);
+                      border-color: rgba(176,196,222,1);
+                      color: #333;
+                      font-family:'Calibri-bold';
+                    }
                 }
 
                 section {
