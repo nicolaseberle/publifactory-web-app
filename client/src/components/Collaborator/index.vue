@@ -85,7 +85,7 @@
 <script>
 import axios from 'axios'
 import Sortable from 'sortablejs'
-
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'addCollaborator',
@@ -141,6 +141,13 @@ export default {
         ]
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'username',
+      'userId',
+      'roles'
+    ])
   },
   created() {
     this.idArticle = this.$route.params && this.$route.params.id
@@ -209,6 +216,11 @@ export default {
 
       this.$forceUpdate()
       this.cleanForm()
+
+      axios.post('/api/emailer', {"authorId": this.userId,"emailDest": newAuthor.author.email})
+        .then(data => { console.log("success to send email",data) })
+        .catch(error => { })
+
     },
     cleanForm () {
       this.dynamicValidateForm.email = ''

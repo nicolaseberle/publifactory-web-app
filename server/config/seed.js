@@ -24,7 +24,7 @@ const figure_7 = 'true'
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-  
+
   createComment(users);
   createArticles(users);
   createJournals(users);
@@ -131,6 +131,12 @@ function createArticles(user_tmp,comment_tmp) {
                             block: [{ type: 'tbd',uuid: '',content: ''}],
                             content: gen_text,
                             path_figure: ''
+                          },
+                          {
+                            title:"References",
+                            block: [{ type: 'text',uuid: 'DA',content: ''}],
+                            content: '',
+                            path_figure: ''
                           }],
             status: 'Reviewing',
             doi: '10.1073/pnas.1215849110'
@@ -194,6 +200,12 @@ function createArticles(user_tmp,comment_tmp) {
                             title:"Introduction",
                             content: gen_text,
                             block: [{ type: 'tbd',uuid: '',content: ''}],
+                            path_figure: ''
+                          },
+                          {
+                            title:"References",
+                            block: [{ type: 'text',uuid: 'BA',content: ''}],
+                            content: gen_text,
                             path_figure: ''
                           }],
             status: 'Submited',

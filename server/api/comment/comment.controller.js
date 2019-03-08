@@ -132,3 +132,24 @@ module.exports.updateScores = async (req, res, next) => {
     return next(err);
   }
 };
+
+
+/**
+ *
+ * @function findCommentAndDelete
+ * @memberof module:controllers/comments
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.findCommentAndDelete = async (req, res, next) => {
+  try {
+    const comment = await Comment.delete({ _id: req.params.uuid });
+
+    if (comment.n === 0) return res.sendStatus(404);
+
+    return res.sendStatus(204);
+  } catch (err) {
+    return next(err);
+  }
+};

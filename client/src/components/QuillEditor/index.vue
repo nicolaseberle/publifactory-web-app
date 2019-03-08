@@ -251,7 +251,7 @@ export default {
         .fadeIn()
         .css({
           left: Math.min(0, $(window).innerWidth()-$('.questions').outerWidth()),
-          top: offset.offsetY + 36  
+          top: offset.offsetY + 36
         });
     },
     pasteHtmlAtCaret (html) {
@@ -307,7 +307,6 @@ export default {
                       {id: 4, name: 'Distinct shifts in microbiota composition during Drosophila aging impair intestinal function and drive mortality', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
                       {id: 5, name: 'AMPK modulates tissue and organismal aging in a non-cell-autonomous manner', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}
                     ]
-
     },
     setIdEditor () {
       if(this.uuid==''){

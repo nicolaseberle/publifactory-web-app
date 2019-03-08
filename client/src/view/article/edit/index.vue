@@ -63,7 +63,7 @@ export default {
       // postForm: Object.assign({}, defaultForm),
       currentEditor: 'lightEditorComponent',
       valueTypeEditor: 1,
-      flagHidePDF:0,
+      flagHidePDF:1,
       editorType: false
     }
   },

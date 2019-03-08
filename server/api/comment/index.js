@@ -10,6 +10,6 @@ router.get('/:id/comments', commentsController.getArticleComments);
 router.post('/:id/comments', commentsController.createArticleComment);
 router.put('/:id/comments/:uuid', commentsController.updateScores);
 // router.put('/:id/comments/:id', commentsController.findCommentAndUpdate);
-// router.delete('/:id/comments/:id', commentsController.findCommentAndDelete);
+router.delete('/:id/comments/:uuid', commentsController.findCommentAndDelete);
 
 module.exports = router;

@@ -3,6 +3,7 @@
  */
 var path = require('path')
 var _ = require('lodash')
+
 var backendBase = {
   // Root path of server
   root: path.normalize(__dirname),
@@ -29,6 +30,15 @@ var backendBase = {
 }
 
 var development = {
+  email : {
+    host: "smtp.ethereal.email",//'ssl0.ovh.net',//
+    port : 587,//465,
+    secure: false,//true,
+    auth: {
+      'user' : "janice.lang@ethereal.email",
+      'pass' : "q9NeaMEEJbxpBRaW5j"
+    }
+  },
   frontend: {
     port: 9001,
     assetsRoot: path.resolve(__dirname, './client/src'),
@@ -52,6 +62,15 @@ var development = {
   })
 }
 var production = {
+  email : {
+    host: "smtp.ethereal.email",
+    port : 587,
+    secure: false,
+    auth: {
+      "user": "janice.lang@ethereal.email",
+      "pass": "q9NeaMEEJbxpBRaW5j"
+    }
+  },
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
