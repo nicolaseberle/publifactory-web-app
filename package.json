@@ -25,6 +25,7 @@
     "server": "./node_modules/.bin/nodemon --watch server server/app.js",
     "dev": "npm run client|npm run server",
     "build": "node client/build/build.js",
+    "heroku-postbuild": "echo Skip build on Heroku",
     "lint": "eslint --ext .js,.vue client/src",
     "svgo": "svgo -f ./client/src/icons/svg --config=./client/src/icons/svgo.yml"
   },

@@ -44,13 +44,7 @@ export default {
       this.$nextTick(() => { // Loading should be closed asynchronously
         loadingInstance.close();
       });
-    }, 2000);
-
-    //this.id = this.$route.params && this.$route.params.id
-    //load of invitation from params.id of URL obtained in the invitation email
-    //this.postForm  = await this.fetch(this.id)
-
-    //this.guestLogin()
+    }, 1500);
   },
   mounted () {
 

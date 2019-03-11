@@ -34,6 +34,7 @@ var development = {
     host: "smtp.ethereal.email",//'ssl0.ovh.net',//
     port : 587,//465,
     secure: false,//true,
+    rootHTML: "http://localhost:9001/",
     auth: {
       'user' : "enola.swaniawski71@ethereal.email",
       'pass' : "Nh7Y6KWNNFnU89d7UK"
@@ -65,10 +66,11 @@ var production = {
   email : {
     host: "smtp.ethereal.email",
     port : 587,
+    rootHTML: "http://shrouded-island-26928.herokuapp.com/",
     secure: false,
     auth: {
-      "user": "janice.lang@ethereal.email",
-      "pass": "q9NeaMEEJbxpBRaW5j"
+      'user' : "enola.swaniawski71@ethereal.email",
+      'pass' : "Nh7Y6KWNNFnU89d7UK"
     }
   },
   frontend: {
