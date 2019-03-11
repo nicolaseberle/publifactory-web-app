@@ -6,6 +6,8 @@ var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
+const shortid = require('shortid');
+var Invitation = require('../invitations/invitations.model');
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -32,11 +34,26 @@ exports.create = function (req, res, next) {
   newUser.role = 'user'
   newUser.save(function (err, user) {
     if (err) return validationError(res, err)
+
     var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
     res.json({ token: token })
   })
 }
-
+/**
+ * Create a guest account - a guest have to reset his password during the first connection
+ */
+exports.createGuest = function (req, res, next) {
+  var newUser = new User(req.body)
+  newUser.provider = 'local'
+  newUser.role = 'guest'
+  newUser.save(function (err, user) {
+    if (err){
+      return validationError(res, err)
+    }
+    var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+    res.json({ token: token })
+  })
+}
 /**
  * Get a single user
  */
@@ -84,6 +101,34 @@ exports.changePassword = function (req, res, next) {
     }
   })
 }
+/**
+ * Change a guest password and convert it in user
+ */
+exports.changeGuestPassword = function (req, res, next) {
+  var userId = req.user._id
+  var newPass = String(req.body.newPassword)
+
+  User.findById(userId, function (_err, user) {
+    Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
+      console.log(invite)
+    if (err || _err) {
+      // handler error
+    }
+    if (user.authenticate(invite.senderId)) {
+      user.password = newPass
+      user.role = 'user'
+      user.roles = ['user']
+      user.save(function (err) {
+        if (err) return validationError(res, err)
+        res.sendStatus(200)
+      })
+    } else {
+      res.status(403).json({ message: 'Old password is not correct.' })
+    }
+  })
+})
+}
+
 
 /**
  * Get my info

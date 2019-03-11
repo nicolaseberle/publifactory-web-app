@@ -460,9 +460,8 @@ export default {
   },
   created() {
     this.sidebar.opened = false
-    const id = this.$route.params && this.$route.params.id
-    this.id = id
-    this.fetchData(id)
+    this.id = this.$route.params && this.$route.params.id
+    this.fetchData(this.id)
 
     /*var zp = new ZoteroPublications();
     var promise = zp.getPublications(5476883);

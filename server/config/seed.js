@@ -24,7 +24,7 @@ const figure_7 = 'true'
 User.find({}, function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-
+  
   createComment(users);
   createArticles(users);
   createJournals(users);

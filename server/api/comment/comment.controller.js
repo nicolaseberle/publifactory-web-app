@@ -45,7 +45,7 @@ module.exports.getArticleComments = async (req, res, next) => {
 
     const comments = await article.comments;
     console.log(comments);
-    //ça ne marchait pas, j'ai squeezé ça
+    
     //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
     renameObjectProperty(comments, 'docs', 'comments');
 

@@ -86,6 +86,7 @@
 import axios from 'axios'
 import Sortable from 'sortablejs'
 import { mapGetters } from 'vuex'
+const shortid = require('shortid');
 
 export default {
   name: 'addCollaborator',
@@ -216,11 +217,56 @@ export default {
 
       this.$forceUpdate()
       this.cleanForm()
-
+/*
       axios.post('/api/emailer', {"authorId": this.userId,"emailDest": newAuthor.author.email})
         .then(data => { console.log("success to send email",data) })
         .catch(error => { })
+*/
+      this.invite ( newAuthor.author.email,
+                    newAuthor.author.firstname,
+                    newAuthor.author.lastname )
+    },
 
+    invite (email, firstname, lastname) {
+      let sender = this.userId;
+      let shortId = shortid.generate();
+      while(shortId.indexOf('-')>=0){
+        shortId = shortid.generate();
+      }
+      let link = shortId;
+      let inviteTo = email;
+      let message = "toto";
+      let name = this.userId;
+
+      axios.post('/api/invitations/invite', {
+              "sender": sender,
+              "link": link,
+              "to": inviteTo,
+              "msg": message,
+              "name": name})
+              .then(res => {
+                console.log(res)
+                //if the email is not in the db -> create guest account
+                if(res.data == null){
+                  console.log("creation of the temp account")
+                  this.createTempAccount( email, link, firstname, lastname)
+                }
+                else{
+                  console.log("this account exists yet")
+                }
+              })
+
+
+
+    },
+    createTempAccount (_email,_password, _firstname,_lastname) {
+      axios.post('/api/users/guest',{ "email": _email,"password": _password,"firstname": _firstname,"lastname": _lastname})
+      .then(response => {
+      }).catch((err) => {
+      setTimeout(() => {
+        this.loginError = false
+      }, 500)
+      })
     },
     cleanForm () {
       this.dynamicValidateForm.email = ''

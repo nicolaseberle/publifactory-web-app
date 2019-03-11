@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+
     <div class="components-container-dashboard">
     <content-module name="articles">
       <el-row :gutter="20">
@@ -86,21 +87,29 @@
       width="50%">
     <accessComponent v-if="diagAccessCompVisible" :idArticle='selectedArticleId' v-on:close="diagAccessCompVisible=false"/>
     </el-dialog>
+<!--
+    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+      <h1>Welcome </h1>
+
+      <h2>Michael Rera has invited you to access this article</h2>
+
+      <p>Change your password</p>
+      <br>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="Email">
+          <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="Password">
+          <el-input v-model="form.password" type="password" placeholder="new password" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type='primary' @click="onSaveNewPassword">Save</el-button>
+      </span>
+    </el-dialog>-->
 
 </content-module>
 </div>
-<!--
-<el-dialog :title="Titre" :visible.sync="formVisible">
-  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-      <el-form-item :label="$t('article.title')">
-        <el-input v-model="temp.title"/>
-      </el-form-item>
-  </el-form>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
-    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
-  </span>
-</el-dialog>-->
 </div>
 </template>
 <script>
@@ -117,6 +126,7 @@ export default {
   locales,
   data () {
     return {
+      visibleDiagFirstConnexion: true,
       diagAccessCompVisible: false,
       selectedRow: '',
       selectedArticleId: '',
@@ -125,17 +135,6 @@ export default {
         lable:"option 1"
       },
       search: {
-      },
-      form: {
-        title: ''
-      },
-      rules: {
-        title: [{
-          required: true, message: this.$t('article.rules.title'), trigger: 'blur'
-        }],
-        abstract: [{
-          required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
-        }]
       },
       formVisible: false,
       articles: []

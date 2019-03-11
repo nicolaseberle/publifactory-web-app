@@ -30,7 +30,7 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <!--<router-link to="/">-->
-            <el-dropdown-item>
+            <el-dropdown-item @click.native='goToDashboard'>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
             <el-dropdown-item @click.native="doSettings">
@@ -95,6 +95,9 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
+    goToDashboard () {
+      this.$router.push(this.$route.query.redirect || '/')
+    }
     /*logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs

@@ -29,6 +29,15 @@ export const constantRouterMap = [{
   }
 },
 {
+  path: '/invite/:id',
+  component: (resolve) => {
+    import('../view/invite/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',

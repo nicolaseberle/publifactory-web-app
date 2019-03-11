@@ -40,6 +40,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/login'
+
 export default {
   locales,
   data () {

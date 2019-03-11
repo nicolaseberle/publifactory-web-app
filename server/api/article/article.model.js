@@ -27,7 +27,7 @@ const ArticleSchema = new Schema({
     display: {
       type: Boolean,
       default: true
-    },
+    },//deprecated
     block:[[{
       type:{
         type: String,
@@ -43,7 +43,7 @@ const ArticleSchema = new Schema({
       },
       nbEdit:{
         type: Number,
-        default: 0
+        default: 0//need it to refresh figures after editing
       }
     }]]
   }],
@@ -51,7 +51,7 @@ const ArticleSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
-  },
+  },//deprecated
   status: {
     type: String,
     default: 'draft'
@@ -59,6 +59,10 @@ const ArticleSchema = new Schema({
   doi: {
     type: String,
     default: 'No_DOI'
+  },
+  sharingLink :{
+    type: String,
+    default: '/'
   },
   slug: {
     type: String,
@@ -77,6 +81,10 @@ const ArticleSchema = new Schema({
       ref: 'User'
     }}
   ],
+  invitation:[{
+    type: Schema.Types.ObjectId,
+    ref: 'Invitation'
+  }],
   reviewers: [{
     type: Schema.Types.ObjectId,
     ref: 'User'

@@ -35,8 +35,8 @@ var development = {
     port : 587,//465,
     secure: false,//true,
     auth: {
-      'user' : "janice.lang@ethereal.email",
-      'pass' : "q9NeaMEEJbxpBRaW5j"
+      'user' : "enola.swaniawski71@ethereal.email",
+      'pass' : "Nh7Y6KWNNFnU89d7UK"
     }
   },
   frontend: {

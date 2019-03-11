@@ -8,9 +8,14 @@ const state = {
   langs: [{
     label: '中文',
     value: 'zh-CN'
-  }, {
+  },
+  {
     label: 'English',
     value: 'en'
+  },
+  {
+    label: 'French',
+    value: 'fr'
   }],
   pageLimit: pageLimit
 }
