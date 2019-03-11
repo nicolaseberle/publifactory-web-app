@@ -1,18 +1,5 @@
 <template>
   <div class="container">
-    <!--
-    <el-dialog :visible.sync="visible" title="Access & Permission">
-      <h1>Welcome </h1>
-      <h2>{{postForm.senderFirstname}} {{postForm.senderLastname}} has invited you to join this wonderful article</h2>
-      <h2></h2>
-      <span slot="footer" class="dialog-footer">
-        <h2 style='font-family:"Calibri-regular";'>Please register you before accessing the site</h2>
-        <el-button type='primary'>Login</el-button>
-        <el-button type='primary'>Register</el-button>
-      </span>
-    </el-dialog>
-
-  </el-col>-->
   </div>
 </template>
 <script>

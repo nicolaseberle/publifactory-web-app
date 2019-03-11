@@ -31,7 +31,7 @@ var backendBase = {
 
 var development = {
   email : {
-    host: "smtp.ethereal.email",//'ssl0.ovh.net',//
+    host: "smtp.ethereal.email",
     port : 587,//465,
     secure: false,//true,
     rootHTML: "http://localhost:9001/",
@@ -64,13 +64,13 @@ var development = {
 }
 var production = {
   email : {
-    host: "smtp.ethereal.email",
+    host: process.env.EMAIL_HOST,
     port : 587,
-    rootHTML: "http://shrouded-island-26928.herokuapp.com/",
+    rootHTML: process.env.ROOT_HTML,
     secure: false,
     auth: {
-      'user' : "enola.swaniawski71@ethereal.email",
-      'pass' : "Nh7Y6KWNNFnU89d7UK"
+      'user' : process.env.EMAIL_ACCOUNT,
+      'pass' : process.env.EMAIL_PASS
     }
   },
   frontend: {
@@ -100,7 +100,7 @@ var production = {
     port: process.env.APP_PORT || process.env.PORT || 8080,
     // MongoDB connection options
     mongo: {
-      uri: 'mongodb://admin:admin42@ds129904.mlab.com:29904/publifactory-project'
+      uri: process.env.MONGODB_URI
       // uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI
     },
 
