@@ -72,7 +72,7 @@ async function sendEmail(_to, _from, _link, _idSender) {
       secure: configEmail.secure, // true for 465, false for other ports
       auth: configEmail.auth
   });
-  let clientUrl = `${configEmail.rootHTML}/${_from}-${_link}`;
+  let clientUrl = `${configEmail.rootHTML}/invite/${_from}-${_link}`;
   const mailOptions = {
     from: "noreply@publifactory.co",
     to: _to,

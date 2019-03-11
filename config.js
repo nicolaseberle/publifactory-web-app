@@ -95,13 +95,12 @@ var production = {
     ip: process.env.OPENSHIFT_NODEJS_IP
       || process.env.ip
       || undefined,
-    // ip: process.env.APP_HOST || process.env.APP_IP || process.env.HOST || process.env.IP,
+
     // Server port
     port: process.env.APP_PORT || process.env.PORT || 8080,
     // MongoDB connection options
     mongo: {
       uri: process.env.MONGODB_URI
-      // uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI
     },
 
     // frontend folder
