@@ -74,9 +74,9 @@ async function sendEmail(_to, _from, _link, _idSender) {
   });
   let clientUrl = `${configEmail.rootHTML}/invite/${_from}-${_link}`;
   const mailOptions = {
-    from: "noreply@publifactory.co",
+    from: `${_sender.firstname}  ${_sender.lastname}`,
     to: _to,
-    subject: "You have been Invited to read this awesome Article",
+    subject: "You have been Invited to read an article",
     html: `<p> ${_sender.firstname}  ${_sender.lastname}  invites you to co-write an article.</p>
           <p> Your invitation link is: <a href='${clientUrl}'> ${clientUrl}</a></p>`
   };

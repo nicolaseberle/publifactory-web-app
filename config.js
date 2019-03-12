@@ -34,7 +34,7 @@ var development = {
     host: "smtp.ethereal.email",
     port : 587,//465,
     secure: false,//true,
-    rootHTML: "http://localhost:9001/",
+    rootHTML: "http://localhost:9001",
     auth: {
       'user' : "enola.swaniawski71@ethereal.email",
       'pass' : "Nh7Y6KWNNFnU89d7UK"

@@ -72,6 +72,11 @@
               <svg-icon class="drag-handler" icon-class="drag"/>
             </template>
           </el-table-column>
+          <el-table-column align="center" label="Action" width="80">
+            <template slot-scope="scope">
+              <i class="el-icon-delete"></i>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     <div style='text-align:right'>
@@ -105,8 +110,8 @@ export default {
           lastname: ''
       },
       optionsEditRole: [{
-        value: 'FirstAuthor',
-        label: 'First Author'
+        value: 'Lead',
+        label: 'Lead'
       },
       {
         value: 'Author',
@@ -145,7 +150,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'username',
       'userId',
       'roles'
     ])
@@ -168,11 +172,6 @@ export default {
         this.setSort()
       })
     })
-
-
-  },
-  watch: {
-
   },
   methods: {
     getList (id) {
@@ -200,7 +199,7 @@ export default {
         }
       })
     },
-    addAuthor () {
+    async addAuthor () {
       var nbAuthors = this.list.length+1;
       var newAuthor = {
                           rank: nbAuthors,
@@ -211,20 +210,16 @@ export default {
                             lastname: this.dynamicValidateForm.lastname
                           }
                         }
+      var newAuthorId = await this.invite ( newAuthor.author.email,
+                          newAuthor.author.firstname,
+                          newAuthor.author.lastname )
+
       // warning. it's temporarly.
       this.list.push(newAuthor)
       this.newList = this.list.map(v => Number(v.rank))
-
+      console.log(this.list)
       this.$forceUpdate()
       this.cleanForm()
-/*
-      axios.post('/api/emailer', {"authorId": this.userId,"emailDest": newAuthor.author.email})
-        .then(data => { console.log("success to send email",data) })
-        .catch(error => { })
-*/
-      this.invite ( newAuthor.author.email,
-                    newAuthor.author.firstname,
-                    newAuthor.author.lastname )
     },
 
     invite (email, firstname, lastname) {
@@ -244,24 +239,39 @@ export default {
               "to": inviteTo,
               "msg": message,
               "name": name})
-              .then(res => {
-                console.log(res)
+              .then(async (res) => {
                 //if the email is not in the db -> create guest account
                 if(res.data == null){
                   console.log("creation of the temp account")
-                  this.createTempAccount( email, link, firstname, lastname)
+                  var newUser = await this.createTempAccount( email, link, firstname, lastname)
+                  return newUser
                 }
                 else{
                   console.log("this account exists yet")
+                  return res
                 }
+              }).then(newUser =>{
+                console.log(newUser)
+                  this.addNewAuthor(newUser.data._id)
               })
+    },
 
-
-
+    addNewAuthor (newAuthorId) {
+      var _newAuthor = {
+                          'rank': this.list.length,
+                          'role': 'Author',
+                          '_id': newAuthorId
+                       }
+      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor} )
+      .then(res => {
+        return res
+      }).catch((err) => {
+      })
     },
     createTempAccount (_email,_password, _firstname,_lastname) {
-      axios.post('/api/users/guest',{ "email": _email,"password": _password,"firstname": _firstname,"lastname": _lastname})
-      .then(response => {
+      return axios.post('/api/users/guest',{ "email": _email,"password": _password,"firstname": _firstname,"lastname": _lastname})
+      .then(res => {
+        return res
       }).catch((err) => {
       setTimeout(() => {
         this.loginError = false

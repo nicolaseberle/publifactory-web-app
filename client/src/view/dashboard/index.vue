@@ -77,6 +77,7 @@ export default {
     }
     // a guest account has only one role : [guest]
     if (this.roles.includes('guest') && this.roles.length==1) {
+      this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = true
     }
   },
@@ -97,8 +98,8 @@ export default {
       })
     },
     changePassword () {
-      axios.put('/api/users/'+ this.userId +'/guestPassword',{"newPassword": this.form.password},{headers: {
-        'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
+      axios.put('/api/users/'+ this.userId +'/guestPassword',{"newPassword": this.form.password},
+      {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
           this.visibleDiagFirstConnexion = false
       }).catch(err => {
         console.log(err)

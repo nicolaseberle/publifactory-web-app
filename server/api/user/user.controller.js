@@ -51,7 +51,7 @@ exports.createGuest = function (req, res, next) {
       return validationError(res, err)
     }
     var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-    res.json({ token: token })
+    res.json({_id: user._id, token: token })
   })
 }
 /**
@@ -111,8 +111,8 @@ exports.changeGuestPassword = function (req, res, next) {
   User.findById(userId, function (_err, user) {
     Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
       console.log(invite)
-    if (err || _err) {
-      // handler error
+    if (err || _err || invite == null) {
+      res.sendStatus(404)
     }
     if (user.authenticate(invite.senderId)) {
       user.password = newPass

@@ -13,6 +13,7 @@ router.get('/mine/:id', articlesController.getMyArticles);
 router.get('/:id', articlesController.findArticleById);
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
 router.put('/:id/authors', articlesController.updateAuthorOfArticle);
+router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
 router.delete('/:id', articlesController.deleteArticle);
 
 /*router.get('/:slug', articlesController.findArticleBySlug);

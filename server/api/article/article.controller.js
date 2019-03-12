@@ -189,6 +189,34 @@ module.exports.updateAuthorOfArticle = async (req, res, next) => {
   }
 };
 
+/**
+ * @function addAuthorOfArticle
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.addAuthorOfArticle = async (req, res, next) => {
+  try {
+    const author = await User.findById( req.body.author._id, ).exec();
+    console.log(author)
+    const newAuthor = {
+      '_id': req.body.author._id,
+      'rank': req.body.author.rank,
+      'role': req.body.author.role,
+      'author': author
+    }
+    const article = await Article
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $push: { authors: newAuthor } },
+        { new: true }
+      );
+    return res.status(200);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 /**
  * @function createArticle
