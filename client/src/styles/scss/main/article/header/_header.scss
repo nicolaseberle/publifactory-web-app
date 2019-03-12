@@ -3,6 +3,14 @@
 
 @import 'variables';
 
+@function get-pos-img($i) {
+  $this-translation : (-1) * (($i)-1) * 50%;
+  @return $this-translation;
+}
+@function get-zindex-img($i) {
+  $this-zindex : 100 + (-1) * ($i);
+  @return $this-zindex;
+}
 // Scss rules
 // ----------
 
@@ -97,8 +105,7 @@ header {
             margin-top: 0px;
           }
 
-
-        img {
+        /*  img {
             box-sizing: border-box;
             width: 48px;
             height: 48px;
@@ -106,18 +113,34 @@ header {
             margin: 0;
             border: 2px solid white;
             float: left;
-            z-index: 1;
             -webkit-transform: translateX(-40px);
             -ms-transform: translateX(-40px);
             transform: translateX(-40px);
-        }
-
+        }*/
+/*
         img + img {
+            float: left;
             -webkit-transform: translateX(-40px);
             -ms-transform: translateX(-40px);
             transform: translateX(-40px) translateX(-50%);
             z-index: -1;
 
+        }*/
+        @for $i from 1 through 10 {
+        img:nth-child(#{$i}) {
+          
+          box-sizing: border-box;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          margin: 0;
+          border: 2px solid white;
+          float: left;
+          -webkit-transform: translateX(-40px);
+          -ms-transform: translateX(-40px);
+          transform: translateX(-20px) translateX(get-pos-img($i));
+          z-index: get-zindex-img($i);
+          }
         }
 
         p {

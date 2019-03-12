@@ -198,10 +198,10 @@ module.exports.updateAuthorOfArticle = async (req, res, next) => {
  */
 module.exports.addAuthorOfArticle = async (req, res, next) => {
   try {
-    const author = await User.findById( req.body.author._id, ).exec();
+    const author = await User.findOne({'email' : req.body.author.email}  ).exec();
     console.log(author)
     const newAuthor = {
-      '_id': req.body.author._id,
+      '_id': author._id,
       'rank': req.body.author.rank,
       'role': req.body.author.role,
       'author': author
@@ -218,6 +218,30 @@ module.exports.addAuthorOfArticle = async (req, res, next) => {
   }
 };
 
+
+/**
+ * @function removeAuthorOfArticle
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.removeAuthorOfArticle = async (req, res, next) => {
+  try {
+    console.log(req.body.authorId)
+    const authorToRemove = await User.findById( req.body.authorId  ).exec();
+    console.log(authorToRemove)
+    const article = await Article
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $pull: { authors: { _id: authorToRemove._id } } },
+        {multi: false}
+      );
+    return res.status(200);
+  } catch (err) {
+    return next(err);
+  }
+};
 /**
  * @function createArticle
  * @memberof module:controllers/articles

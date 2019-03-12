@@ -74,7 +74,7 @@
           </el-table-column>
           <el-table-column align="center" label="Action" width="80">
             <template slot-scope="scope">
-              <i class="el-icon-delete"></i>
+              <a @click='removeAuthor(scope.row._id)'><i class="el-icon-delete"></i></a>
             </template>
           </el-table-column>
         </el-table>
@@ -160,7 +160,6 @@ export default {
     this.getList(this.idArticle).then((listAuthors)=>{
       this.list = listAuthors.map((item,key)=>{
         const container = item;
-        console.log(item.rank)
         container.rank = Number(container.rank);
         return container;
       })
@@ -211,8 +210,8 @@ export default {
                           }
                         }
       var newAuthorId = await this.invite ( newAuthor.author.email,
-                          newAuthor.author.firstname,
-                          newAuthor.author.lastname )
+                                            newAuthor.author.firstname,
+                                            newAuthor.author.lastname )
 
       // warning. it's temporarly.
       this.list.push(newAuthor)
@@ -221,7 +220,6 @@ export default {
       this.$forceUpdate()
       this.cleanForm()
     },
-
     invite (email, firstname, lastname) {
       let sender = this.userId;
       let shortId = shortid.generate();
@@ -250,17 +248,15 @@ export default {
                   console.log("this account exists yet")
                   return res
                 }
-              }).then(newUser =>{
-                console.log(newUser)
-                  this.addNewAuthor(newUser.data._id)
+              }).then(() =>{
+                  this.addNewAuthor(email)
               })
     },
-
-    addNewAuthor (newAuthorId) {
+    addNewAuthor (email) {
       var _newAuthor = {
                           'rank': this.list.length,
                           'role': 'Author',
-                          '_id': newAuthorId
+                          'email': email
                        }
       axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor} )
       .then(res => {
@@ -282,6 +278,19 @@ export default {
       this.dynamicValidateForm.email = ''
       this.dynamicValidateForm.firstname = ''
       this.dynamicValidateForm.lastname = ''
+    },
+    removeAuthor(_removedAuthorId) {
+      this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
+        type: 'warning'
+      }).then(() => {
+        axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}  ).then(() => {
+          this.$message({
+            type: 'success',
+            message: this.$t('message.removed')
+          })
+          this.fetchMyArticles()
+        })
+      }).catch(() => {})
     }
   }
 }

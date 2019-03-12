@@ -98,12 +98,16 @@ export default {
       })
     },
     changePassword () {
-      axios.put('/api/users/'+ this.userId +'/guestPassword',{"newPassword": this.form.password},
-      {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
-          this.visibleDiagFirstConnexion = false
-      }).catch(err => {
-        console.log(err)
-      })
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          axios.put('/api/users/'+ this.userId +'/guestPassword',{'newPassword': this.form.password},
+          {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
+              this.visibleDiagFirstConnexion = false
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      });
     }
 
   }

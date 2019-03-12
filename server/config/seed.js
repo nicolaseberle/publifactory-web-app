@@ -21,10 +21,9 @@ const figure_6 = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amaz
 const figure_7 = 'true'
 
 // search for admin user, if no, create one
-User.find({}, function (err, users) {
+User.find({},function (err, users) {
   if (err) throw err
   if(!users){users = createUsers()}
-  
   createComment(users);
   createArticles(users);
   createJournals(users);

@@ -564,6 +564,15 @@ export default {
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
+    },
+    diagAuthorVisible (val) {
+      if(val==false) {
+        axios.get('/api/articles/' + this.id ).then(response => {
+          this.postForm.authors = response.data.authors
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     }
   },
   methods: {

@@ -48,9 +48,8 @@ exports.createInvitation = async (req, res, next) => {
       if (error) {
         return console.log(error);
       } else {
-        //we send the email
+        //we send the email to invite the new author to access
         sendEmail(receiverEmail, senderId, newLink, senderName);
-        //we check that the guest is in the db
       }
   })
   var reciever = await User.findOne( {email: receiverEmail} ).exec()
@@ -74,9 +73,9 @@ async function sendEmail(_to, _from, _link, _idSender) {
   });
   let clientUrl = `${configEmail.rootHTML}/invite/${_from}-${_link}`;
   const mailOptions = {
-    from: `${_sender.firstname}  ${_sender.lastname}`,
+    from: "noreply@publifactory.co",
     to: _to,
-    subject: "You have been Invited to read an article",
+    subject: "You have been Invited to read an Article",
     html: `<p> ${_sender.firstname}  ${_sender.lastname}  invites you to co-write an article.</p>
           <p> Your invitation link is: <a href='${clientUrl}'> ${clientUrl}</a></p>`
   };
