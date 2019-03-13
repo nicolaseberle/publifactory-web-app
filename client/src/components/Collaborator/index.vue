@@ -283,6 +283,11 @@ export default {
       this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
+        this.list = this.list.filter(function( el ) {
+          return el._id !== _removedAuthorId;
+        });
+        this.newList = this.list.map(v => Number(v.rank))
+
         axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}  ).then(() => {
           this.$message({
             type: 'success',

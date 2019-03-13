@@ -1,16 +1,19 @@
 <template>
   <div class="login-main">
-    <div class="bg"></div>
+  <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
 
-    <h1>{{$t('title')}}</h1>
+    <!--<h1>{{$t('title')}}</h1>-->
+    <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
+    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Log into Publifactory</h1>
+    <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <el-form-item>
-        <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
+        <!--<el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
             :label="lang.label" :value="lang.value"></el-option>
-        </el-select>
+        </el-select>-->
       </el-form-item>
       <el-form-item prop="email">
         <el-input v-model="form.email" :placeholder="$t('login.email')"></el-input>
@@ -18,22 +21,30 @@
       <el-form-item prop="password">
         <el-input v-model="form.password" type="password" :placeholder="$t('login.password')"></el-input>
       </el-form-item>
-      <div class='register'>
-        <a href='/register' style="text-align:end">Create an account</a>
+      <div class='register' style='margin:5px 0 10px 0; '>
+        <!--<a href='/register' style="text-align:end">Create an account</a>-->
+        <p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>
       </div>
+
       <el-form-item>
-        <el-button class="login-button" :class="{error: loginError}" type="success"
+        <el-button class="login-button" :class="{error: loginError}" type="primary"
           native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
-
+<!--
       <el-form-item>
           <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.googleButton')}}</el-button>
       </el-form-item>
+    -->
       <el-form-item>
           <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.orcidButton')}}</el-button>
       </el-form-item>
+
     </el-form>
+    <div class='register' style='float:right'>
+      <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end;margin:0 20px 0 0px">Forgot username?</a>
+      <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end">Forgot password?</a>
+    </div>
   </div>
 </div>
 </template>
@@ -95,3 +106,22 @@ export default {
   }
 }
 </script>
+<style>
+.login-wrapper{
+  position: fixed;
+  top:0;
+  left:0;
+  height: 100%;
+  margin: 0 0 0 0;
+}
+.login-form button{
+  background-color: rgb(48, 65, 86);
+  border: none
+
+}
+.login-form button:hover{
+  background-color: rgba(48, 65, 86,0.8);
+  border: none
+}
+
+</style>

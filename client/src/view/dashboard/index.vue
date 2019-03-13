@@ -4,9 +4,7 @@
 
     <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <h1>Welcome </h1>
-
       <h2>Michael Rera has invited you to access this article</h2>
-
       <p>Change your password</p>
       <br>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
@@ -55,8 +53,6 @@ export default {
           required: true, message: this.$t('register.password'), trigger: 'blur'
         }]
       }
-
-
     }
   },
   computed: {
@@ -91,7 +87,7 @@ export default {
       })
   },
   methods: {
-    ...mapActions(['logout']),
+    ...mapActions(['resetPassword','logout']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')
@@ -100,16 +96,25 @@ export default {
     changePassword () {
       this.$refs.form.validate(valid => {
         if (valid) {
+          this.resetPassword({id: this.userId,
+            password: this.form.password,
+            token: this.accessToken
+          }).then((data) => {
+            this.visibleDiagFirstConnexion = false
+          }).catch(err => {
+            console.log(err)
+          });
+          /*
           axios.put('/api/users/'+ this.userId +'/guestPassword',{'newPassword': this.form.password},
           {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
               this.visibleDiagFirstConnexion = false
           }).catch(err => {
             console.log(err)
           })
+          */
         }
       });
     }
-
   }
 }
 </script>

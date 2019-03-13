@@ -250,7 +250,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedIn', 'globalConfig', 'accessToken'])
+    ...mapGetters(['userId','loggedIn', 'globalConfig', 'accessToken'])
   },
   mounted () {
     axios.get('/api/users/me',{headers: {
@@ -269,20 +269,6 @@ export default {
         'Authorization': `Bearer ${this.accessToken}`}
       }).then(data => {
           console.log(data)})
-      /*
-      this.getUserInfo(this.accessToken).then(user => {
-          console.log(user.email)
-        })
-        */
-      /* this.$refs.form.validate(valid => {
-        if (valid) {
-            axios.put('/api/users/',{ "email": this.form.email,"password":this.form.password})
-            .then(response => {
-              console.log("welcome new user")
-              this.$router.push(this.$route.query.redirect || '/')
-          }).catch((err) => {})
-        }
-      }) */
     }
   }
 }

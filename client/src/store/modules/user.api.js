@@ -8,6 +8,16 @@ export function login (email, password) {
   }).then(res => res.json())
 }
 
+export function resetPassword (id, password, token) {
+  return Vue.http.put('users/' + id + '/guestPassword', {
+    password
+  }, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(res => res.json())
+}
+
 export function getUserInfo (token) {
   return new Promise((resolve) => {
     Vue.http.get('users/me', {

@@ -38,6 +38,15 @@ export const constantRouterMap = [{
   }
 },
 {
+  path: '/login/forgot/',
+  component: (resolve) => {
+    import('../view/auth/forgot.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',

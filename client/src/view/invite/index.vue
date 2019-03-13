@@ -5,7 +5,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { Loading } from 'element-ui';
-import locales from 'locales/register'
+import locales from 'locales/invitation'
 import axios from 'axios'
 
 export default {

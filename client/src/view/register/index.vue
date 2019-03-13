@@ -3,7 +3,7 @@
     <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
 
-    <h1>{{$t('registerTitle')}}</h1>
+    <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <el-form-item>
@@ -19,13 +19,18 @@
         <el-input v-model="form.password" type="password" :placeholder="$t('register.password')" ></el-input>
       </el-form-item>
       <el-form-item>
+      <el-checkbox v-model="checkedCGU">I accept the <a style='text-decoration:underline'>CGU</a></el-checkbox>
+      </el-form-item>
+      <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
           native-type="submit" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
+      <!--
       <el-form-item>
           <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.googleButton')}}</el-button>
       </el-form-item>
+    -->
       <el-form-item>
         <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.orcidButton')}}</el-button>
       </el-form-item>
@@ -42,6 +47,7 @@ export default {
   locales,
   data () {
     return {
+      checkedCGU: false,
       form: {
         email: '',
         password: ''

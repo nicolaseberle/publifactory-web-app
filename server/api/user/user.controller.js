@@ -106,7 +106,7 @@ exports.changePassword = function (req, res, next) {
  */
 exports.changeGuestPassword = function (req, res, next) {
   var userId = req.params.id
-  var newPass = String(req.body.newPassword)
+  var newPass = String(req.body.password)
 
   User.findById(userId, function (_err, user) {
     Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
@@ -120,12 +120,11 @@ exports.changeGuestPassword = function (req, res, next) {
       user.roles = ['user']
       user.save(function (err) {
         if (err) return validationError(res, err)
-        res.sendStatus(200)
+        var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+        res.json({ token: token })
       })
-    } else {
-      res.status(403).json({ message: 'Old password is not correct.' })
-    }
-  })
+  }
+})
 })
 }
 

@@ -288,22 +288,6 @@ export default {
           return false
         }
       })
-    },
-    draftForm() {
-      if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
-        this.$message({
-          message: 'Please fill in the necessary title and content',
-          type: 'warning'
-        })
-        return
-      }
-      this.$message({
-        message: 'Saved successfully',
-        type: 'success',
-        showClose: true,
-        duration: 1000
-      })
-      this.postForm.status = 'draft'
     },*/
     markdown2Html() {
       import('showdown').then(showdown => {
