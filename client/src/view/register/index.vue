@@ -2,8 +2,10 @@
   <div class="login-main">
     <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
-
+    <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
+
+    <!--<h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <el-form-item>
@@ -98,3 +100,22 @@ export default {
   }
 }
 </script>
+<style>
+.login-wrapper{
+  position: fixed;
+  top:0;
+  left:0;
+  height: 100%;
+  margin: 0 0 0 0;
+}
+.login-form button{
+  background-color: rgb(48, 65, 86);
+  border: none
+
+}
+.login-form button:hover{
+  background-color: rgba(48, 65, 86,0.8);
+  border: none
+}
+
+</style>

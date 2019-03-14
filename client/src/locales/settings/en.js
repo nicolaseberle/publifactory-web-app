@@ -15,6 +15,7 @@ export default {
     numORCID: 'Num ORCID',
     button: 'Save & quit',
     cancelButton: 'Cancel',
-    deleteAccount: 'Delete your account'
+    deleteAccount: 'Delete your account',
+    successSaving: 'Success to save settings'
   }
 }

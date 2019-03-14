@@ -64,7 +64,7 @@
             {{$t('settings.field')}}
           </el-col>
           <el-col :span="12">
-            <el-select :value="form.field" :v-model="form.field" placeholder="Select">
+            <el-select v-model="form.field" placeholder="Select">
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -263,12 +263,28 @@ export default {
       this.tags = response.data.tags})
   },
   methods: {
-    ...mapActions(['changeLang']),
+    ...mapActions(['updateUser','changeLang']),
     save () {
-      axios.get('/api/users/me',{headers: {
-        'Authorization': `Bearer ${this.accessToken}`}
-      }).then(data => {
-          console.log(data)})
+
+
+          this.updateUser({id: this.userId,
+                      firstname: this.form.firstname,
+                      lastname: this.form.lastname,
+                      field: this.form.field,
+                      token: this.accessToken
+                     }).then((data) => {
+                        console.log("settings saved")
+                        const h = this.$createElement;
+                        this.$message({
+                          title: this.$t('message.save.ok'),
+                          message: this.$t('settings.successSaving'),
+                          type: 'success'
+                        })
+                      }).catch(err => {
+                        console.log(err)
+                      });
+
+
     }
   }
 }

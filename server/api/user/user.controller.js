@@ -101,8 +101,9 @@ exports.changePassword = function (req, res, next) {
     }
   })
 }
+
 /**
- * Change a guest password and convert it in user
+ * Change a guest password and convert it in user // we check that the guest is on the list
  */
 exports.changeGuestPassword = function (req, res, next) {
   var userId = req.params.id
@@ -127,6 +128,30 @@ exports.changeGuestPassword = function (req, res, next) {
 })
 })
 }
+
+/**
+ * update user settings - firstname, lastname, field... (no password)
+ */
+exports.updateUser = async function (req, res, next) {
+  try {
+    var userId = req.params.id
+    var firstname = String(req.body.firstname)
+    var lastname = String(req.body.lastname)
+    var field = String(req.body.field)
+    console.log(firstname)
+
+    const user = await User.findOneAndUpdate(
+            { _id: userId },
+            { $set: { firstname, lastname, field } },
+            { new: true })
+
+    if (!user) return res.sendStatus(404);
+
+    return res.status(200).json(user);
+  } catch (err) {
+      return next(err)
+  }
+};
 
 /**
  * Get my info

@@ -5,7 +5,7 @@
 
     <!--<h1>{{$t('title')}}</h1>-->
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
-    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Log into Publifactory</h1>
+    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Login</h1>
     <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">

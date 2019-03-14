@@ -18,6 +18,16 @@ export function resetPassword (id, password, token) {
   }).then(res => res.json())
 }
 
+export function updateUser (id, firstname, lastname, field, token) {
+  return Vue.http.put('users/' + id + '/updateUser', {
+    firstname, lastname, field
+  }, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  }).then(res => res.json())
+}
+
 export function getUserInfo (token) {
   return new Promise((resolve) => {
     Vue.http.get('users/me', {

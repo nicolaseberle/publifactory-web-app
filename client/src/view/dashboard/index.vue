@@ -104,14 +104,6 @@ export default {
           }).catch(err => {
             console.log(err)
           });
-          /*
-          axios.put('/api/users/'+ this.userId +'/guestPassword',{'newPassword': this.form.password},
-          {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
-              this.visibleDiagFirstConnexion = false
-          }).catch(err => {
-            console.log(err)
-          })
-          */
         }
       });
     }
