@@ -56,12 +56,13 @@ export default {
       }else{
       this.login({
         email: this.postForm.recieptEmail,
-        password: this.postForm.senderId}).then((data) => {
+        password: this.postForm.senderId
+      }).then((data) => {
           this.loading = false
-          this.$router.push(this.$route.query.redirect || '/'  )
-        }).catch((err) => {
+          this.$router.push(this.$route.query.redirect || '/' )
+      }).catch((err) => {
           this.$router.push(this.$route.query.redirect || '/')
-        })
+      })
       }
     }
   }

@@ -20,7 +20,6 @@
         <el-button type='primary' @click="changePassword">Save</el-button>
       </span>
     </el-dialog>
-
   </div>
 </template>
 
@@ -105,7 +104,7 @@ export default {
             console.log(err)
           });
         }
-      });
+      })
     }
   }
 }

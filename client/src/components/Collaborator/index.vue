@@ -208,7 +208,7 @@ export default {
                             firstname: this.dynamicValidateForm.firstname,
                             lastname: this.dynamicValidateForm.lastname
                           }
-                        }
+                      }
       var newAuthorId = await this.invite ( newAuthor.author.email,
                                             newAuthor.author.firstname,
                                             newAuthor.author.lastname )

@@ -64,6 +64,10 @@ var UserSchema = new Schema({
   lockedAccount: {
     type: Boolean,
     default: false
+  },
+  invitationId: {
+    type: String,
+    default: 'None'
   }
 })
 

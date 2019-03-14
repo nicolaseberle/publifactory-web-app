@@ -122,21 +122,6 @@ export const constantRouterMap = [{
       }
     }]
 },
-/*
-{ path: '',
-  component: Layout,
-  redirect: 'Article',
-  children: [
-    {
-      path: '/articles/:id',
-      meta: { title: 'Article', noCache: true },
-      component: (resolve) => {
-        import('../view/ArticleList.vue').then(resolve)
-      },
-      hidden: true
-    }
-  ]
-}, */
 {
   path: '*',
   component: {
@@ -156,41 +141,6 @@ const router = new VueRouter({
 export const asyncRouterMap = [
   componentsRouter
 ]
-/*
-export const asyncRouterMap = [
-  {
-    path: '/article',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    hidden: true,
-    meta: {
-      title: 'example',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'createArticle', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'editArticle', noCache: true },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'articleList', icon: 'list' }
-      }
-    ]
-  }
-]*/
 
 export function hook (userPromise) {
   // router

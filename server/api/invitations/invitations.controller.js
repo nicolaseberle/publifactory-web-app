@@ -145,6 +145,7 @@ exports.checkInvitation = async (req, res, next) => {
         { $set: { updated_at :seen } })
 
     const _sender = await User.findById( invitation.senderName ).exec();
+    const _guest = await User.findOneAndUpdate( {'email': invitation.recieptEmail},{ $set: {'invitationId': invitation._id}} ).exec();
 
     invitation.senderLastname = _sender.lastname
     invitation.senderFirstname = _sender.firstname

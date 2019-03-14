@@ -28,6 +28,12 @@ export function changePassword (id, oldPassword, newPassword, token) {
   }).then(res => res.json())
 }
 
+export function resetPassword (email) {
+  return Vue.http.put('users/resetPassword', {
+    email
+  }).then(res => res.json())
+}
+
 export function updateUser (id, firstname, lastname, field, token) {
   return Vue.http.put('users/' + id + '/updateUser', {
     firstname, lastname, field

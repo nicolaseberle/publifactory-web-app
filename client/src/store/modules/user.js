@@ -1,6 +1,6 @@
 import { merge } from 'lodash'
 import { saveMulti, clearMulti } from '../../storage'
-import { login, getUserInfo, resetGuestPassword, changePassword, updateUser } from './user.api'
+import { login, getUserInfo, resetGuestPassword, changePassword, resetPassword, updateUser } from './user.api'
 // eslint-disable-next-line camelcase
 import { username, email, access_token, refresh_token } from '../../stored'
 import { STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN } from '../../constants'
@@ -105,6 +105,17 @@ const actions = {
   changePassword ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
       changePassword(payload.id, payload.oldPassword, payload.newPassword, payload.token).then(data => {
+        if (!data) {
+          reject('error')
+        }
+        resolve()
+      }).catch(err => { reject(err) })
+    })
+  },
+  // resetPassword action
+  resetPassword ({ commit, dispatch }, payload) {
+    return new Promise((resolve, reject) => {
+      resetPassword(payload.email).then(data => {
         if (!data) {
           reject('error')
         }

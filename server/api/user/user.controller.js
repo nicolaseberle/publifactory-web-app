@@ -7,7 +7,10 @@ var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
 const shortid = require('shortid');
+
+const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model');
+const nodemailer = require('nodemailer')
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -114,8 +117,10 @@ exports.changeGuestPassword = function (req, res, next) {
     var userId = req.params.id
     var newPass = String(req.body.password)
 
-    User.findById(userId, function (_err, user) {
-      Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
+    User.findById( userId, function (_err, user) {
+      console.log(user)
+      Invitation.findById( user.invitationId , (err,invite)=>{
+        console.log(invite)
         if (err) {
           // handler error
         }
@@ -123,6 +128,7 @@ exports.changeGuestPassword = function (req, res, next) {
           user.password = newPass
           user.role = 'user'
           user.roles = ['user']
+          user.invitationId = 'None'
           user.save(function (err) {
             if (err) return validationError(res, err)
             var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
@@ -130,6 +136,81 @@ exports.changeGuestPassword = function (req, res, next) {
           })
         }
       })
+    })
+  } catch (err) {
+      return next(err)
+  }
+}
+
+//send email function
+async function sendResetEmail(_to, _from, _link) {
+
+  let transporter = nodemailer.createTransport({
+      host: configEmail.host,
+      port: configEmail.port,
+      secure: configEmail.secure, // true for 465, false for other ports
+      auth: configEmail.auth
+  });
+  let clientUrl = `${configEmail.rootHTML}/invite/${_from}-${_link}`;
+  const mailOptions = {
+    from: "noreply@publifactory.co",
+    to: _to,
+    subject: "Password Reset Request",
+    html: `<p> You asked us to send you a password reset link </p>
+          <p> Your reset link is: <a href='${clientUrl}'> ${clientUrl}</a></p>`
+  };
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      return console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+}
+
+
+/**
+ * Reset the password and convert it in user // we check that the guest is on the list
+ */
+exports.resetPassword = function (req, res, next) {
+  try {
+    let email = String(req.body.email)
+    let senderMsg = 'reset'
+    let newLink = shortid.generate()
+    while(newLink.indexOf('-')>=0){
+      newLink = shortid.generate()
+    }
+
+    User.findOne({"email": email}, async function (_err, user) {
+      let senderName = user._id
+      let current = new Date().toISOString()
+      const newInvitation = new Invitation({
+        "created_at": current,
+        "updated_at": current,
+        "link": newLink,
+        "recieptEmail": email,
+        "senderId": newLink,
+        "senderMsg": senderMsg,
+        "senderName": senderName
+      });
+      const invitation = await newInvitation.save((error, result) => {
+        if (error) {
+          return console.log(error);
+        } else {
+          //we send en email to reset the password
+          sendResetEmail(email, newLink, newLink);
+        }
+      })
+      // temporary password is newLink - a random key
+      user.password = newLink
+      user.role = 'guest'
+      user.roles = ['guest']
+      user.save(function (err) {
+        if (err) return validationError(res, err)
+        var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+        res.json({ token: token })
+      })
+      console.log(invitation)
     })
   } catch (err) {
       return next(err)

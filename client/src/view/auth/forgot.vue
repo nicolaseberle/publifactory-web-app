@@ -32,8 +32,7 @@ export default {
   data () {
     return {
       form: {
-        email: '',
-        password: ''
+        email: ''
       },
       rules: {
         email: [{
@@ -48,11 +47,27 @@ export default {
     ...mapGetters(['loggedIn', 'globalConfig'])
   },
   methods: {
-    ...mapActions(['login', 'changeLang']),
+    ...mapActions(['resetPassword', 'changeLang']),
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-
+          this.resetPassword({email: this.form.email})
+          .then((data) => {
+            const h = this.$createElement;
+            this.$message({
+              title: this.$t('message.save.ok'),
+              message: this.$t('login.reset.message'),
+              type: 'success'
+            })
+            this.$router.push(this.$route.query.redirect || '/')
+          }).catch((err) => {
+            const h = this.$createElement;
+            this.$message({
+              title: this.$t('message.save.err'),
+              message: this.$t('login.reset.nomail'),
+              type: 'error'
+            })
+          })
         }
       })
     }
