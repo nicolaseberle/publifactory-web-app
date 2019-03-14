@@ -10,12 +10,17 @@ export default {
     laboratory: 'Laboratory',
     field: 'Field',
     tags: 'Tags',
+    messagePassword: 'Enter a password',
     oldPassword: 'Old password',
+    messageOldPassword: 'Enter your old password',
     newPassword: 'New password',
+    messageNewPassword: 'Enter your new password',
     numORCID: 'Num ORCID',
     button: 'Save & quit',
     cancelButton: 'Cancel',
     deleteAccount: 'Delete your account',
-    successSaving: 'Success to save settings'
+    successSaving: 'Success to save settings',
+    successChangingPassword: 'Success to change password',
+    badOldPassword: 'Wrong old password'
   }
 }

@@ -12,9 +12,10 @@
 
     <el-tab-pane label="Profil">
       <div style='margin:20px'>
-    <el-row>
-    <el-form  ref="form" :model="form" :rules="rules"
-      @submit.native.prevent="onSubmit">
+
+
+
+    <el-form  ref="form" :model="form" :rules="rules">
       <h2>
         {{$t('settings.title')}}
       </h2>
@@ -88,13 +89,24 @@
           </el-col>
         </el-row>
       </el-form-item>
+      <el-form-item>
+      <el-row>
+        <el-col :span="12" :offset="6">
+          <div style="text-align:right">
+            <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()">Save</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      </el-form-item>
+      </el-form>
+      <el-form  ref="formPassword" :model="formPassword" :rules="rulesPassword">
       <el-form-item prop="password">
         <el-row>
           <el-col :span="6">
             {{$t('settings.oldPassword')}}
           </el-col>
           <el-col :span="12">
-            <el-input v-model="form.oldPassword" type="password" :placeholder="$t('settings.password')"></el-input>
+            <el-input v-model="formPassword.oldPassword" type="password" :placeholder="$t('settings.messageOldPassword')"></el-input>
           </el-col>
         </el-row>
 
@@ -105,20 +117,41 @@
           {{$t('settings.newPassword')}}
         </el-col>
         <el-col :span="12">
-          <el-input v-model="form.newPassword" type="password" :placeholder="$t('settings.password')"></el-input>
+          <el-input v-model="formPassword.newPassword" type="password" :placeholder="$t('settings.messageNewPassword')"></el-input>
         </el-col>
       </el-row>
       </el-form-item>
       <el-row>
         <el-col :span="12" :offset="6">
           <div style="text-align:right">
-            <el-button type="primary" round v-on:click="save()">Save</el-button>
+            <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()">Change Password</el-button>
           </div>
         </el-col>
       </el-row>
     </el-form>
   </el-row>
-  </div>
+
+
+    <el-row style='margin-top:20px'>
+      <el-form >
+        <el-form-item prop="password">
+          <el-row>
+          <el-col :span="6">
+            {{$t('settings.deleteAccount')}}
+          </el-col>
+          <el-col :span="6" :offset="6">
+            <div style="text-align:right">
+              <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()">Delete</el-button>
+            </div>
+          </el-col>
+        </el-row>
+      </el-form-item>
+      </el-form>
+    </el-row>
+
+
+</div>
+
   </el-tab-pane>
   <el-tab-pane label="Biblio">
     <div style='margin:20px'>
@@ -136,7 +169,7 @@
           <el-table
           :data="tableData"
           style="width: 100%"
-          :row-class-name="tableRowClassName">
+          >
           <el-table-column
             prop="date"
             label="Date"
@@ -175,9 +208,12 @@ export default {
   locales,
   data () {
     return {
+      formPassword: {
+        oldPassword: '',
+        newPassword: ''
+      },
       form: {
         email: '',
-        password: '',
         firstname: '',
         lastname:  '',
         field: ''
@@ -192,13 +228,18 @@ export default {
           required: false, message: this.$t('settings.firstname'), trigger: 'blur'
         }],
         lastname: [{
-          required: false, message: this.$t('settings.firstname'), trigger: 'blur'
+          required: false, message: this.$t('settings.lastname'), trigger: 'blur'
         }],
         field: [{
-          required: false, message: this.$t('settings.firstname'), trigger: 'blur'
+          required: false, message: this.$t('settings.field'), trigger: 'blur'
+        }]
+      },
+      rulesPassword: {
+        oldPassword: [{
+          required: true, message: this.$t('settings.messagePassword'), trigger: 'blur'
         }],
-        password: [{
-          required: true, message: this.$t('settings.password'), trigger: 'blur'
+        newPassword: [{
+          required: true, message: this.$t('settings.messagePassword'), trigger: 'blur'
         }]
       },
       loading: false,
@@ -263,28 +304,53 @@ export default {
       this.tags = response.data.tags})
   },
   methods: {
-    ...mapActions(['updateUser','changeLang']),
-    save () {
+    ...mapActions(['updateUser','changePassword','changeLang']),
+    onSave () {
+      this.updateUser({id: this.userId,
+                  firstname: this.form.firstname,
+                  lastname: this.form.lastname,
+                  field: this.form.field,
+                  token: this.accessToken
+                 }).then((data) => {
+                    console.log("settings saved")
+                    const h = this.$createElement;
+                    this.$message({
+                      title: this.$t('message.save.ok'),
+                      message: this.$t('settings.successSaving'),
+                      type: 'success'
+                    })
+                  }).catch(err => {
+                    console.log(err)
+                  });
+    },
+    onChangePassword () {
+      this.$refs.formPassword.validate(valid => {
+        if (valid) {
+          this.changePassword({
+            id: this.userId,
+            oldPassword:this.formPassword.oldPassword,
+            newPassword:this.formPassword.newPassword,
+            token:this.accessToken
+          }).then((data) => {
+              this.formPassword.oldPassword = ''
+              this.formPassword.newPassword = ''
+               console.log("settings saved")
+               const h = this.$createElement;
+               this.$message({
+                 title: this.$t('message.save.ok'),
+                 message: this.$t('settings.successChangingPassword'),
+                 type: 'success'
+               })
+             }).catch(err => {
+               const h = this.$createElement;
+               this.$message({
+                 title: this.$t('message.error'),
+                 message: this.$t('settings.badOldPassword'),
+                 type: 'error'})
+             });
 
-
-          this.updateUser({id: this.userId,
-                      firstname: this.form.firstname,
-                      lastname: this.form.lastname,
-                      field: this.form.field,
-                      token: this.accessToken
-                     }).then((data) => {
-                        console.log("settings saved")
-                        const h = this.$createElement;
-                        this.$message({
-                          title: this.$t('message.save.ok'),
-                          message: this.$t('settings.successSaving'),
-                          type: 'success'
-                        })
-                      }).catch(err => {
-                        console.log(err)
-                      });
-
-
+        }
+      })
     }
   }
 }

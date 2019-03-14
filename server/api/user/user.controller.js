@@ -82,51 +82,58 @@ exports.destroy = function (req, res) {
  * Change a users password
  */
 exports.changePassword = function (req, res, next) {
-  var userId = req.user._id
-  var oldPass = String(req.body.oldPassword)
-  var newPass = String(req.body.newPassword)
+  try {
+    var userId = req.user._id
+    var oldPass = String(req.body.oldPassword)
+    var newPass = String(req.body.newPassword)
 
-  User.findById(userId, function (err, user) {
-    if (err) {
-      // handler error
-    }
-    if (user.authenticate(oldPass)) {
-      user.password = newPass
-      user.save(function (err) {
-        if (err) return validationError(res, err)
-        res.sendStatus(200)
-      })
-    } else {
-      res.status(403).json({ message: 'Old password is not correct.' })
-    }
-  })
+    User.findById(userId, function (err, user) {
+      if (err) {
+        // handler error
+      }
+      if (user.authenticate(oldPass)) {
+        user.password = newPass
+        user.save(function (err) {
+          if (err) return validationError(res, err)
+          res.status(200).json({ message: 'ok' })
+        })
+      } else {
+        res.status(403).json({ message: 'Old password is not correct.' })
+      }
+    })
+  } catch (err) {
+      return next(err)
+  }
 }
 
 /**
  * Change a guest password and convert it in user // we check that the guest is on the list
  */
 exports.changeGuestPassword = function (req, res, next) {
-  var userId = req.params.id
-  var newPass = String(req.body.password)
+  try {
+    var userId = req.params.id
+    var newPass = String(req.body.password)
 
-  User.findById(userId, function (_err, user) {
-    Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
-      console.log(invite)
-    if (err) {
-      // handler error
-    }
-    if (user.authenticate(invite.senderId)) {
-      user.password = newPass
-      user.role = 'user'
-      user.roles = ['user']
-      user.save(function (err) {
-        if (err) return validationError(res, err)
-        var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-        res.json({ token: token })
+    User.findById(userId, function (_err, user) {
+      Invitation.findOne({recieptEmail : user.email}, (err,invite)=>{
+        if (err) {
+          // handler error
+        }
+        if (user.authenticate(invite.senderId)) {
+          user.password = newPass
+          user.role = 'user'
+          user.roles = ['user']
+          user.save(function (err) {
+            if (err) return validationError(res, err)
+            var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+            res.json({ token: token })
+          })
+        }
       })
+    })
+  } catch (err) {
+      return next(err)
   }
-})
-})
 }
 
 /**

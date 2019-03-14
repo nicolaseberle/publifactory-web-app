@@ -87,7 +87,7 @@ export default {
       })
   },
   methods: {
-    ...mapActions(['resetPassword','logout']),
+    ...mapActions(['resetGuestPassword','logout']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')
@@ -96,7 +96,7 @@ export default {
     changePassword () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.resetPassword({id: this.userId,
+          this.resetGuestPassword({id: this.userId,
             password: this.form.password,
             token: this.accessToken
           }).then((data) => {
