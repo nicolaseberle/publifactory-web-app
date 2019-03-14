@@ -29,12 +29,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.international-icon {
-  font-size: 20px;
-  cursor: pointer;
-  vertical-align: -5px!important;
-}
-</style>
-

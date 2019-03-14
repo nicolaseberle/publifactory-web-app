@@ -1,4 +1,4 @@
-<template>
+<!--<template>
   <transition name="header">
     <header id="header" v-if="loggedIn">
       <h1></h1>
@@ -15,7 +15,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <!-- user settings -->
+
       <el-dialog :title="$t('header.settings')" v-model="config.visible" size="small"
         top="4%" @close="cancelConfig">
         <el-form class="noline" ref="config" label-position="top"
@@ -35,7 +35,7 @@
           <el-button type="primary" @click.native="saveConfig">{{$t('confirm.ok')}}</el-button>
         </span>
       </el-dialog>
-      <!-- change password -->
+
       <el-dialog :title="$t('header.password')" v-model="password.visible" size="small" @close="cancelPassword">
         <el-form label-position="top" :model="password.form"
           :rules="password.rules" ref="password">
@@ -199,3 +199,4 @@ export default {
     margin 0
     padding 0
 </style>
+-->

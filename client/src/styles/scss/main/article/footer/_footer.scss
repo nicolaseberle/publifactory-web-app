@@ -17,37 +17,68 @@ footer{
     }
 
   }
+
+
     .section-footer-left{
-      text-align: left;
-      display: inline-block;
+      // height:20px;
+      // width:30px;
+      .btn-group .insert-buttons {
+        // text-align: center;
+        display: inline-block;//block
+          // display: block; /* Make the buttons appear below each other */
+          margin: 0px 0px 0px 0px;
+          -webkit-transform: translate(-60px,0);
+          -ms-transform: translate(-60px,0px);
+          transform: translate(-60px,0px);
 
-      .insert-buttons {
-        //float: left;
-         //color: greyBorderColor(0.5);
-         //background: #fff;
-         //width: 32px;
-         //height: 32px;
-         //box-sizing: border-box;
-         //border-radius: 50%;
-         //border: 1px solid greyBorderColor(0.5);
-         //line-height: 30px;
-         //text-align: center;
-         //padding: 0;
-         //font-size: 20px;
-         -webkit-transform: translate(-60px,0px);
-         -ms-transform: translate(-60px,0px);
-         transform: translate(-60px,0px);
-       }
 
-       .insert-buttons:hover {
-         //color: greyBorderColor(0.8);
-         //border: 1px solid greyBorderColor(0.8);
-       }
 
-      .insert-buttons
-         span {
-           //display: block;
-           margin-top: 0px;
-         }
+        }
+        .btn-group {
+          #main-icon {
+            display: inline-block;//block
+             button{
+              background-color: #00a459;
+              color: white;
+              border-color: transparent;
+            }
+          }
+          #second-icon {
+              opacity: 0;
+              display: inline-block;
+              -webkit-transition: opacity 3s ease-in-out;
+              -moz-transition: opacity 3s ease-in-out;
+              -ms-transition: opacity 3s ease-in-out;
+              -o-transition: opacity 3s ease-in-out;
+              transition: opacity 3s ease-in-out;
+          }
+        }
+
+        .btn-group:hover {
+          #main-icon {
+            // display: block;
+          }
+          #second-icon {
+              //display: block;
+              opacity: 1;
+              -webkit-transition: opacity 0.25s ease-in-out;
+              -moz-transition: opacity 0.25s ease-in-out;
+              -ms-transition: opacity 0.25s ease-in-out;
+              -o-transition: opacity 0.25s ease-in-out;
+              transition: opacity 0.25s ease-in-out;
+
+          }
+          /*
+          #main-icon:hover~#second-icon{
+              display: block;
+          }
+          #main-icon:active~#second-icon{
+              display: block;
+          }
+          #second-icon {
+              display: none;
+          }*/
+        }
+
       }
   }

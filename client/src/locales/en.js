@@ -1,5 +1,6 @@
 export default {
-  title: 'Springer Editorial Manager',
+  title: 'Editorial Manager',
+  registerTitle: 'Register',
   constant: {
     name: 'Name',
     desc: 'Description'

@@ -1,42 +1,68 @@
 <template>
+  <div class="login-main">
+  <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
-    <div class="bg"></div>
-    <h1>{{$t('title')}}</h1>
-    <el-form ref="form" :model="form" :rules="rules"
+
+    <!--<h1>{{$t('title')}}</h1>-->
+    <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
+    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Login</h1>
+    <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
+    <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
       <el-form-item>
-        <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
+        <!--<el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
             :label="lang.label" :value="lang.value"></el-option>
-        </el-select>
+        </el-select>-->
       </el-form-item>
-      <el-form-item prop="username">
-        <el-input v-model="form.username" :placeholder="$t('login.username')"></el-input>
+      <el-form-item prop="email">
+        <el-input v-model="form.email" :placeholder="$t('login.email')"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input v-model="form.password" type="password" :placeholder="$t('login.password')"></el-input>
       </el-form-item>
+      <div class='register' style='margin:5px 0 10px 0; '>
+        <!--<a href='/register' style="text-align:end">Create an account</a>-->
+        <p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>
+      </div>
+
       <el-form-item>
-        <el-button class="login-button" :class="{error: loginError}" type="success"
+        <el-button class="login-button" :class="{error: loginError}" type="primary"
           native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
       </el-form-item>
+      <h2>or</h2>
+<!--
+      <el-form-item>
+          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.googleButton')}}</el-button>
+      </el-form-item>
+    -->
+      <el-form-item>
+          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.orcidButton')}}</el-button>
+      </el-form-item>
+
     </el-form>
+    <div class='register' style='float:right'>
+      <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end;margin:0 20px 0 0px">Forgot username?</a>
+      <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end">Forgot password?</a>
+    </div>
   </div>
+</div>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/login'
+
 export default {
   locales,
   data () {
     return {
       form: {
-        username: '',
+        email: '',
         password: ''
       },
       rules: {
-        username: [{
-          required: true, message: this.$t('login.username'), trigger: 'blur'
+        email: [{
+          required: true, message: this.$t('login.email'), trigger: 'blur'
         }],
         password: [{
           required: true, message: this.$t('login.password'), trigger: 'blur'
@@ -56,17 +82,17 @@ export default {
         if (valid) {
           this.loading = true
           this.login({
-            username: this.form.username,
+            email: this.form.email,
             password: this.form.password
           }).then((data) => {
             this.loading = false
             this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
-            this.$notify({
+            const h = this.$createElement;
+            this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('login.authFail'),
-              type: 'error',
-              duration: 1500
+              type: 'error'
             })
             this.loading = false
             this.loginError = true
@@ -80,58 +106,22 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-@import "../../assets/css/variable"
-$input-width = 15rem
-.login-wrapper
-  align-self center
-  .bg
-    position absolute
-    left 0
-    right 0
-    top 0
-    bottom 0
-    width 100%
-    height 100%
-    background-size cover
-    background-position 100%
-    background-image url('../../assets/images/login-bg-2.jpg')
-  > h1
-    position relative
-    margin 0rem  0 1rem
-    padding 10rem 0 0 0
-    text-align center
-    font-size 1.4rem
-    z-index 1
-  > form
-    width $input-width
-    margin 0 auto
-    .el-input__inner
-      color $color-black-exact-light
-      border-color $color-silver-light
-      background-color rgba(255,255,255,1)
-      &:focus
-        color $color-black
-        border-color $color-black
-  .login-button
-    width 100%
-    &.error
-      animation shake .5s
-  /*.lang
-    position fixed
-    right 1.5rem
-    bottom @right
-    width 5rem
-    .el-input__icon
-      display none
-    input
-      height 1.75rem
-      border none
-      padding-right 10px
-      text-align center
-      color $color-white-dark
-      background-color rgba(255,255,255,.4)
-      &:hover
-        color $color-white
-        background-color rgba(255,255,255,.25)*/
+<style>
+.login-wrapper{
+  position: fixed;
+  top:0;
+  left:0;
+  height: 100%;
+  margin: 0 0 0 0;
+}
+.login-form button{
+  background-color: rgb(48, 65, 86);
+  border: none
+
+}
+.login-form button:hover{
+  background-color: rgba(48, 65, 86,0.8);
+  border: none
+}
+
 </style>

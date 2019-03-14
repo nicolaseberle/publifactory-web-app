@@ -1,7 +1,10 @@
 <template>
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <div class="logo-wrapper">
+      <transition name="fade">
          <router-link v-if="!isCollapse" to="/" exact>PubliFactory</router-link>
+      </transition>
+         <router-link v-if="isCollapse" to="/" exact><div class='filter-logo' >P</div></router-link>
     </div>
     <el-menu
       :show-timeout="200"
@@ -34,3 +37,12 @@ export default {
   }
 }
 </script>
+<style>
+.filter-logo {
+  position: absolute;
+  left:8px;
+  top: 0;
+  padding-top: 10px;
+  font-size: 2rem;
+}
+</style>

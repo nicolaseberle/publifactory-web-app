@@ -5,8 +5,8 @@
 @import './sidebar.scss';
 @import './btn.scss';
 @import './scss/main.scss';
-@import '../assets/css/editor.css';
-@import "../assets/css/_variable.scss";
+@import './editor.scss';
+@import "./_variable.scss";
 
 body {
   height: 100%;
@@ -116,6 +116,7 @@ code {
   }
 }
 
+
 .warn-content{
   background: rgba(66,185,131,.1);
   border-radius: 2px;
@@ -129,13 +130,156 @@ code {
   }
 }
 
+.nprogress-custom-parent #nprogress .spinner,
+#nprogress .spinner {
+  display: none;
+}
+
+
 .app-container {
   padding: 20px;
   font-family: sans-serif;
+
+  .ui-data-table .toolbar {
+    margin-bottom: 0.5rem;
+  }
+  .ui-data-table .toolbar .el-form-item {
+    margin-bottom: 0;
+  }
+  .ui-data-table .data-table {
+    position: relative;
+    font-size: 0.75rem;
+    border-left: none;
+    border-right: none;
+  }
+  .ui-data-table .data-table .el-table::before {
+    background: none;
+  }
+  .ui-data-table .data-table .actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ui-data-table .data-table .actions .el-tooltip {
+    margin-left: 1rem;
+  }
+  .ui-data-table .data-table .actions .el-tooltip:first-child {
+    margin-left: 0;
+  }
+  .ui-data-table .data-table .actions .el-tooltip .el-tooltip__rel {
+    display: inline-block;
+    line-height: 1rem;
+  }
+  .ui-data-table .data-table .actions .icon {
+    margin-left: 0.5rem;
+    line-height: 1rem;
+    font-size: 1rem;
+    color: $color-primary;
+    cursor: pointer;
+  }
+  .ui-data-table .data-table .actions .icon:first-child {
+    margin-left: 0;
+  }
+  .ui-data-table .data-table .actions .icon:hover {
+    color: $color-primary-light;
+  }
+  @media (max-width: 64rem) {
+    .ui-data-table .data-table .actions .el-tooltip {
+      margin-left: 0.5rem;
+    }
+  }
+
+
+  .ui-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid $color-gray;
+    background-color: #fff;
+  }
+  .ui-pagination .navs > a {
+    float: left;
+    width: 2rem;
+    height: 1.75rem;
+    line-height: 1.75rem;
+    text-align: center;
+    border-right: 1px solid $color-gray;
+    background-color: $color-white;
+    color: $color-black-exact-light;
+    border: 1px solid $color-gray;
+    border-right: none;
+    cursor: pointer;
+  }
+  .ui-pagination .navs > a:last-child {
+    border-right: 1px solid $color-gray;
+  }
+  .ui-pagination .navs > a[disabled] {
+    color: $color-silver-exact-light;
+    cursor: not-allowed;
+    background-color: $color-gray-exact-light;
+  }
+  .ui-pagination .navs > a:hover {
+    background-color: $color-primary;
+    color: $color-white;
+    border-color: $color-primary;
+  }
+
 }
 
-.components-container {
+.app-container .article-tag {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+
+    a {
+        width: auto;
+        height: 30px;
+        background-color: rgba(61, 72, 83, 0.5);
+        text-decoration: none;
+        padding: 0 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-out;
+
+        h4 {
+            font-family: 'DNLTPro-medium';
+            font-size: 16px;
+            font-weight: 500;
+            font-style: normal;
+            line-height: 30px;
+            color: white;
+            margin: 0;
+            max-width: 15rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+    a:hover {
+        background-color: rgba(61, 72, 83, 0.8);
+    }
+    a:not(:last-child) {
+        margin-right: 10px;
+    }
+}
+
+.ck.ck-block-toolbar-button {
+    transform: translateX( -10px );
+}
+
+.components-container-dashboard {
+  margin: 30px 20px;
+  position: relative;
+}
+
+.components-container-article {
   margin: 30px 50px;
+  position: relative;
+}
+
+.components-container-journal {
+  margin: 30px 20px;
   position: relative;
 }
 

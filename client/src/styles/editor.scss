@@ -1,0 +1,495 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:200,200i,400,400i,600,600i,700,700i');
+
+@font-face {
+    font-family: 'DNLTPro-bold';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-bold.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-bold-condensed';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-bold-condensed.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-heavy-condensed';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-heavy-condensed.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-heavy';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-heavy.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-regular';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-regular.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-medium';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-medium.otf');
+}
+@font-face {
+    font-family: 'DNLTPro-medium-italic';
+    src: url('../assets/fonts/dinnextltpro/dinnextltpro-medium-italic.otf');
+}
+
+// Droid Serif fonts
+// -----------------
+
+ @font-face {
+     font-family: 'DroidSerif-regular';
+     src: url('../assets/fonts/droid-serif/droid-serif-regular.ttf');
+ }
+ @font-face {
+     font-family: 'DroidSerif-bold';
+     src: url('../assets/fonts/droid-serif/droid-serif-bold.ttf');
+ }
+/*Droid Sans*/
+ @font-face {
+     font-family: 'DroidSans-regular';
+     src: url('../assets/fonts/droid-sans/DroidSans.ttf');
+ }
+ @font-face {
+     font-family: 'DroidSans-bold';
+     src: url('../assets/fonts/droid-sans/DroidSans-Bold.ttf');
+ }
+ /*Calibri*/
+ @font-face {
+     font-family: 'Calibri-regular';
+     src: url('../assets/fonts/calibri/Calibri-Regular.ttf');
+ }
+ @font-face {
+     font-family: 'Calibri-bold';
+     src: url('../assets/fonts/calibri/Calibri-Bold.ttf');
+ }
+ @font-face {
+     font-family: 'Calibri-italic';
+     src: url('../assets/fonts/calibri/Calibri-Italic.ttf');
+ }
+body.document-editor {
+    font-size: 16px;
+    font-family: 'DroidSerif-regular';
+    // background-color: rgba(92, 115, 141, 0.05);
+}
+
+
+body.document-editor td, body.document-editor th {
+    font-size: 0.9em;
+}
+
+body.document-editor p {
+    font-family: 'DroidSerif-regular';
+    font-size: 14px;
+    line-height: 30px;
+    color: black;
+    margin: 0;
+    /*text-indent: 65px;*/
+    text-align-last: auto;
+    text-align: justify;
+    word-spacing: normal;
+
+    sup {
+        vertical-align: super;
+        font-size: 10px;
+        color: red;
+    }
+  }
+
+  body.document-editor  p + p {
+      margin-top: 30px;
+  }
+
+
+
+.abstract
+{
+	/*font-style: italic;*/
+	/*font-family: Georgia, Times, "Times New Roman", serif;*/
+	/*padding: 5px 10px;*/
+  margin: 0 0 48px;
+  padding: 30px 24px 24px;
+  background-color: rgba(92, 115, 141, 0.05);
+  border: 0px solid rgba(61, 72, 83, 0.05);
+}
+
+.cke_contents_ltr .abstract
+{
+	padding: 30px 24px 24px;
+	border-width: 1px;
+  border-color: rgba(61, 72, 83, 0.5);
+}
+body.document-editor .titlebox {
+    padding: 8px;
+    margin: 10px;
+    background: #eee;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 1px #fff inset, 0 -1px 0px #ccc inset;
+}
+
+body.document-editor .simplebox {
+    padding: 8px;
+    margin: 10px;
+    background: #eee;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 1px #fff inset, 0 -1px 0px #ccc inset;
+}
+body.document-editor .abstractbox {
+    padding: 8px;
+    margin: 10px;
+    background: #eee;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 1px #fff inset, 0 -1px 0px #ccc inset;
+}
+body.document-editor .simplebox-title,body.document-editor .simplebox-content {
+    box-shadow: 0 1px 1px #ddd inset;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    background: #fff;
+}
+body.document-editor .simplebox-title {
+    margin: 0 0 8px;
+    padding: 5px 8px;
+}
+body.document-editor .simplebox-content {
+    padding: 0 8px;
+}
+
+body.document-editor .abstractbox-title,body.document-editor .abstractbox-content {
+    box-shadow: 0 1px 1px #ddd inset;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    background: #fff;
+}
+body.document-editor .abstractbox-title {
+    margin: 0 0 8px;
+    padding: 5px 8px;
+}
+body.document-editor .abstractbox-content {
+    padding: 0 8px;
+}
+
+body.document-editor .titlebox-title,body.document-editor .titlebox-content {
+    box-shadow: 0 1px 1px #ddd inset;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    background: #fff;
+}
+body.document-editor .titlebox-title {
+    margin: 0 0 8px;
+    padding: 5px 8px;
+}
+body.document-editor .titlebox-content {
+    padding: 0 8px;
+}
+
+
+body.document-editor h1 {
+  position: relative;
+  /*display: inline-block;*/
+  font-family: 'DNLTPro-bold';
+  font-size: 24px;
+  line-height: 24px;
+  color: black;
+  margin: 0 0 20px;
+}
+
+body.document-editor h2 {
+    position: relative;
+    /*display: inline-block;*/
+    font-family: 'DNLTPro-bold';
+    font-size: 24px;
+    line-height: 24px;
+    color: black;
+    margin: 0 0 20px;
+}
+
+
+.abstractbox{
+  margin: 0 0 48px;
+  padding: 30px 24px 24px;
+  // background-color: rgba(92, 115, 141, 0.05);
+  border: 1px solid rgba(61, 72, 83, 0.5);
+}
+.abstractbox-title{
+    position: relative;
+    display: inline-block;
+    font-family: 'DNLTPro-bold';
+    font-size: 24px;
+    line-height: 24px;
+    color: black;
+    margin: 0 0 20px;
+}
+.abstractbox-content{
+  font-family: 'DroidSerif-regular';
+  font-size: 14px;
+  line-height: 30px;
+  color: black;
+  margin: 0;
+  /*text-indent: 65px;*/
+  text-align-last: auto;
+  text-align: justify;
+  word-spacing: normal;
+}
+
+.simplebox{
+  margin: 0 0 48px;
+  padding: 30px 24px 24px;
+}
+.simplebox-title{
+    position: relative;
+    display: inline-block;
+    font-family: 'DNLTPro-bold';
+    font-size: 24px;
+    line-height: 24px;
+    color: black;
+    /*margin: 0 0 20px;*/
+}
+.simplebox-content{
+  font-family: 'DroidSerif-regular';
+  font-size: 14px;
+  line-height: 30px;
+  color: black;
+  margin: 0;
+  /*text-indent: 65px;*/
+  text-align-last: auto;
+  text-align: justify;
+  word-spacing: normal;
+}
+
+.titlebox{
+  margin: 0 0 48px;
+  padding: 30px 24px 24px;
+}
+.titlebox-title{
+    position: relative;
+    display: inline-block;
+    font-family: 'DNLTPro-bold';
+    font-size: 24px;
+    line-height: 24px;
+    color: black;
+    margin: 0 0 20px;
+}
+.titlebox-content{
+  font-family: 'DroidSerif-regular';
+  font-size: 14px;
+  line-height: 30px;
+  color: black;
+  margin: 0;
+  /*text-indent: 65px;*/
+  text-align-last: auto;
+  text-align: justify;
+  word-spacing: normal;
+}
+
+body.document-editor h3 {
+    position: relative;
+    display: inline-block;
+    font-family: 'DroidSerif-bold';
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 42px;
+    color: black;
+    margin: 0 0 13px;
+}
+
+body.document-editor h4 {
+    position: relative;
+    display: inline-block;
+    font-family: 'DroidSerif-regular';
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 30px;
+    color: black;
+    margin: 0 0 13px;
+}
+
+section {
+    width: auto;
+    height: auto;
+    margin: 0 0 0px;
+    padding: 0;
+    font-family: 'DroidSerif-regular';
+    font-size: 16px;
+    line-height: 30px;
+  }
+
+/*
+body.document-editor section {
+    width: auto;
+    height: auto;
+    margin: 0 0 31px;
+    padding: 0;
+    font-family: 'DroidSerif-regular';
+    font-size: 16px;
+    line-height: 30px;
+
+    // Import accordion rules
+    // ----------------------
+
+    @import 'accordion';
+
+    section {
+        margin: 0 0 78px;
+    }
+
+    h2 {
+        position: relative;
+        display: inline-block;
+        font-family: 'DNLTPro-bold';
+        font-size: 24px;
+        line-height: 24px;
+        color: $blackColor;
+        margin: 0 0 20px;
+    }
+
+    h3 {
+        position: relative;
+        display: inline-block;
+        font-family: 'DroidSerif-bold';
+        font-weight: bold;
+        font-size: 20px;
+        line-height: 42px;
+        color: $blackColor;
+        margin: 0 0 13px;
+    }
+
+    h4 {
+        position: relative;
+        display: inline-block;
+        font-family: 'DroidSerif-regular';
+        font-weight: normal;
+        font-size: 20px;
+        line-height: 30px;
+        color: $blackColor;
+        margin: 0 0 13px;
+    }
+
+    u {
+        text-decoration: underline;
+    }
+
+    ol {
+        counter-reset: index;
+        padding: 0 0 0 20px;
+        margin: 0;
+
+        li {
+            position: relative;
+            list-style-type: none;
+            counter-increment: index;
+            margin-bottom: 30px;
+            font-family: 'DroidSerif-regular';
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: normal;
+            color: $blackColor;
+        }
+
+        li::before {
+            position: absolute;
+            top: 0;
+            left: -20px;
+            content: counter(index) '.';
+            margin-right: 13px;
+            font-family: 'DNLTPro-bold';
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 24px;
+        }
+    }
+
+    p {
+        font-family: 'DroidSerif-regular';
+        font-size: 16px;
+        line-height: 30px;
+        color: black;
+        margin: 0;
+        text-indent: $textIdentation;
+        text-align-last: $textAlignLast;
+        text-align: $textAlign;
+        word-spacing: $textWordSpacing;
+
+        sup {
+            vertical-align: super;
+            font-size: 10px;
+            color: $redColor;
+        }
+    }
+
+    p + p {
+        margin-top: 30px;
+    }
+
+    figure {
+        box-sizing: border-box;
+        width: auto;
+        height: auto;
+        border: solid 1px $headerFirstSectionLinkColor;
+        margin: 72px 0 65px;
+
+        figcaption {
+            height: 48px;
+            width: auto;
+            background-color: $headerFirstSectionLinkColor;
+            color: white;
+            font-family: 'DNLTPro-bold';
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 48px;
+            padding: 0 40px;
+            margin: 0 0 30px;
+        }
+
+        div.figure {
+            width: auto;
+            height: auto;
+            padding: 0 60px;
+            margin: 0 0 30px;
+
+            img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+        }
+
+        p {
+            font-family: 'DNLTPro-regular';
+            font-size: 14px;
+            font-weight: normal;
+            line-height: 21px;
+            text-indent: 0;
+            text-align: justify;
+            padding: 0 40px 20px;
+        }
+    }
+}
+*/
+
+
+
+body.document-editor table {
+    margin-top:0.5cm;
+    margin-bottom:0.5cm;
+}
+
+body.document-editor table td {
+    border-right: 1px solid #d0d0d0;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+body.document-editor table td:first-of-type {
+    border-left: 1px solid #d0d0d0;
+}
+
+body.document-editor table tr:first-of-type td {
+    border-top: 1px solid #d0d0d0;
+}
+
+body.document-editor table thead th {
+    border-top: 1px solid #d0d0d0;
+    border-right: 1px solid #d0d0d0;
+}
+
+body.document-editor table thead th:first-of-type {
+    border-left: 1px solid #d0d0d0;
+}

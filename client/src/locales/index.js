@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { merge } from 'lodash'
-import { lang } from '../stored'
+// import { lang } from '../stored'
 
 import zhCN from './zh-CN'
 import en from './en'
@@ -15,7 +15,7 @@ const locales = {
 
 Vue.use(VueI18n)
 
-Vue.config.lang = lang
+Vue.config.lang = 'en'
 Vue.config.fallbackLang = 'en'
 
 // set locales

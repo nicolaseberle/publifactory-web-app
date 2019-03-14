@@ -10,7 +10,7 @@
             <span> {{ item.title }}</span>
           </div>
           <div  v-for="subitem in item.children">
-          <el-card class="box-card" shadow="never" :style="{ margin: '0 0 10px 0' }">
+          <el-card class="box-card" shadow="hover" :style="{ margin: '0 0 10px 0' }">
 
               <div class='header'>
                 <span> {{ subitem.title }}</span>
@@ -30,14 +30,14 @@
 
 <script>
 import hist from '../../../components/Charts/histChart'
-import basicbox from '../../../components/Charts/boxPlot'
-import basicline from '../../../components/Charts/evolChart'
-import waterfall from '../../../components/Charts/waterfallChart'
-import scatter from '../../../components/Charts/scatterChart'
+// import basicbox from '../../../components/Charts/boxPlot'
+// import basicline from '../../../components/Charts/evolChart'
+// import waterfall from '../../../components/Charts/waterfallChart'
+// import scatter from '../../../components/Charts/scatterChart'
 
 export default {
   name: 'LineChart',
-  components: { hist, basicbox, scatter, waterfall, basicline },
+  components: { hist }, //, basicbox, scatter, waterfall, basicline },
   data() {
     return {
       items: [

@@ -6,11 +6,12 @@
 import { mapGetters } from 'vuex'
 import editComponent from './edit'
 import readComponent from './read'
-import { article as articleRes } from 'resources'
+import axios from 'axios'
 
 const defaultForm = {
   status: 'draft',
   title: '',
+  abstract: '',
   content: '',
   arr_content: [{
                   name:"titre_1",
@@ -61,13 +62,12 @@ export default {
   },
   methods: {
     fetchData(id) {
-      console.log(id)
-      articleRes.query({ _id: id }).then(response => {
+      axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
         var self = this;
         // we check if article author is the current user to give him the righ to edit the document
-        this.postForm.authors.forEach(function(author) {
-          if (author._id == self.userId) {
+        this.postForm.authors.forEach(function(item) {
+          if (item.author._id == self.userId) {
             self.currentRole = 'editComponent'
           }
         });

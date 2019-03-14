@@ -47,7 +47,8 @@
 body.document-editor {
     font-size: 16px;
     font-family: 'DroidSerif-regular';
-    background-color: rgba(92, 115, 141, 0.05);
+    /*background-color: rgba(92, 115, 141, 0.05);*/
+    background-color: #FFF;
 }
 
 

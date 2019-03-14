@@ -18,23 +18,63 @@ export const constantRouterMap = [{
   meta: {
     skipAuth: true
   }
-}, {
+},
+{
+  path: '/register',
+  component: (resolve) => {
+    import('../view/register/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
+  path: '/invite/:id',
+  component: (resolve) => {
+    import('../view/invite/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
+  path: '/login/forgot/',
+  component: (resolve) => {
+    import('../view/auth/forgot.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',
   // hidden: true,
-  meta: { title: 'Dashboard', icon: 'nested', noCache: true },
+  meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
   children: [
     {
       path: '',
       name: 'Articles',
-      meta: { title: 'Articles', noCache: true },
+      meta: { title: 'Articles', icon: 'edit', noCache: true },
       component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
       name: 'Journals',
-      meta: { title: 'Journal', noCache: true }
+      meta: { title: 'Journals', icon: 'book', noCache: true },
+      component: () => import('../view/journals/index.vue')
+    },
+    {
+      path: '/data',
+      name: 'Data',
+      meta: { title: 'Data', icon: 'database', noCache: true },
+      component: () => import('../view/data/index.vue')
+    },
+    {
+      path: 'settings',
+      hidden: true,
+      component: () => import('../view/settings/index.vue')
     },
     {
       path: 'dashboard',
@@ -48,18 +88,18 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'applications',
   // hidden: true,
-  meta: { title: 'Applications', icon: 'component', noCache: true },
+  meta: { title: 'Services', icon: 'puzzle-piece-plugin', noCache: true },
   children: [
     {
       path: 'reviewermatcher',
       name: 'Matcher',
-      meta: { title: 'reviewermatcher', noCache: true },
+      meta: { title: 'Reviewer Matcher', icon: 'network', noCache: true },
       component: () => import('../view/applications/reviewermatcher/index.vue')
     },
     {
       path: 'preprintsearch',
       name: 'Radar',
-      meta: { title: 'preprintsearch', noCache: true },
+      meta: { title: 'Preprint Search', icon: 'search', noCache: true },
       component: () => import('../view/applications/preprintsearch/index.vue')
     },
     {
@@ -82,21 +122,6 @@ export const constantRouterMap = [{
       }
     }]
 },
-/*
-{ path: '',
-  component: Layout,
-  redirect: 'Article',
-  children: [
-    {
-      path: '/articles/:id',
-      meta: { title: 'Article', noCache: true },
-      component: (resolve) => {
-        import('../view/ArticleList.vue').then(resolve)
-      },
-      hidden: true
-    }
-  ]
-}, */
 {
   path: '*',
   component: {
@@ -116,41 +141,6 @@ const router = new VueRouter({
 export const asyncRouterMap = [
   componentsRouter
 ]
-/*
-export const asyncRouterMap = [
-  {
-    path: '/article',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    hidden: true,
-    meta: {
-      title: 'example',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'createArticle', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'editArticle', noCache: true },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'articleList', icon: 'list' }
-      }
-    ]
-  }
-]*/
 
 export function hook (userPromise) {
   // router

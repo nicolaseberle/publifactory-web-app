@@ -8,6 +8,10 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
 
+        <el-tooltip :content="$t('navbar.nightmode')" effect="dark" placement="bottom">
+          <nightmode class="nightmode right-menu-item"/>
+        </el-tooltip>
+
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
         </el-tooltip>
@@ -26,14 +30,16 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <!--<router-link to="/">-->
-            <el-dropdown-item>
+            <el-dropdown-item @click.native='goToDashboard'>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click.native="doSettings">
               {{ $t('navbar.settings') }}
             </el-dropdown-item>
-          <!--</router-link>-->
-          <el-dropdown-item @click.native="doLogout">{{$t('navbar.logout')}}</el-dropdown-item>
+            <!--</router-link>-->
+            <el-dropdown-item @click.native="doLogout">
+              {{$t('navbar.logout')}}
+            </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -46,6 +52,7 @@ import Breadcrumb from '../../../components/Breadcrumb'
 import Hamburger from '../../../components/Hamburger'
 import ErrorLog from '../../../components/ErrorLog'
 import Screenfull from '../../../components/Screenfull'
+import Nightmode from '../../../components/Nightmode'
 // import SizeSelect from '../../../components/SizeSelect'
 import LangSelect from '../../../components/LangSelect'
 import locales from  '../../../locales/navbar'
@@ -55,6 +62,7 @@ export default {
   locales,
   // locales2,
   components: {
+    Nightmode,
     Breadcrumb,
     Hamburger,
     ErrorLog,
@@ -81,9 +89,15 @@ export default {
         this.$router.push('/login')
       })
     },
+    doSettings () {
+        this.$router.push('/settings')
+    },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
+    goToDashboard () {
+      this.$router.push(this.$route.query.redirect || '/')
+    }
     /*logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
@@ -92,61 +106,3 @@ export default {
   }
 }
 </script>
-
-<style rel="stylesheet/scss" lang="scss" scoped>
-.navbar {
-  height: 50px;
-  line-height: 50px;
-  border-radius: 0px !important;
-  .hamburger-container {
-    line-height: 58px;
-    height: 50px;
-    float: left;
-    padding: 0 10px;
-  }
-  .breadcrumb-container{
-    float: left;
-  }
-  .errLog-container {
-    display: inline-block;
-    vertical-align: top;
-  }
-  .right-menu {
-    float: right;
-    height: 100%;
-    &:focus{
-     outline: none;
-    }
-    .right-menu-item {
-      display: inline-block;
-      margin: 0 8px;
-    }
-    .screenfull {
-      height: 20px;
-    }
-    .international{
-      vertical-align: top;
-    }
-    .avatar-container {
-      height: 50px;
-      margin-right: 30px;
-      .avatar-wrapper {
-        cursor: pointer;
-        margin-top: 5px;
-        position: relative;
-        .user-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-        }
-        .el-icon-caret-bottom {
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
-      }
-    }
-  }
-}
-</style>

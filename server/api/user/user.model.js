@@ -9,8 +9,10 @@ var UserSchema = new Schema({
     type: String,
     default: 'None'
   },
-  email: { type: String, lowercase: true },
-  username: { type: String, lowercase: true },
+  username: {
+    type: String,
+    lowercase: true
+  },
   orcid : {
     type: String,
     default: 'None'
@@ -26,7 +28,8 @@ var UserSchema = new Schema({
   email: {
     type: String,
     lowercase: true,
-    required: true
+    required: true,
+    unique: true
   },
   field: {
     type: String,
@@ -36,9 +39,12 @@ var UserSchema = new Schema({
     type: String,
     default: 'None'
   },
+  tags: [{
+    type: String
+  }],
   avatar: {
     type: String,
-    default: 'https://d30y9cdsu7xlg0.cloudfront.net/png/363633-200.png',
+    default: '/static/Default.png'
   },
   role: {
     type: String,
@@ -50,7 +56,19 @@ var UserSchema = new Schema({
   }],
   hashedPassword: String,
   provider: String,
-  salt: String
+  salt: String,
+  link: {
+    type: String,
+    default: '/'
+  },
+  lockedAccount: {
+    type: Boolean,
+    default: false
+  },
+  invitationId: {
+    type: String,
+    default: 'None'
+  }
 })
 
 /**

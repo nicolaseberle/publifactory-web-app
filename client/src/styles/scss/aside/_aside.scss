@@ -26,7 +26,7 @@ aside.related {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        margin: 57px 7%;
+        margin: 57px 0px;
 
         a {
             text-decoration: none;
@@ -52,6 +52,7 @@ aside.related {
                         width: 100%;
                         @include text-overflow(24px, 30px, 2);
                     }
+
                 }
 
                 section.summary {
@@ -108,6 +109,7 @@ aside.related {
                         transform: translateY(-75%);
                     }
 
+
                     .counter-comment::before {
                         /* serve this img cause fill / stroke probleme for another element with same SVG
                            ----------------------------------------------------------------------------- */
@@ -131,13 +133,23 @@ aside.related {
 		opacity: 1;
 	}
 }
+/*
+.aside-container{
+  position: fixed;
+  display: inline-block;
+  right: 0;
+  top: 40%;
+  z-index: 1000;
+}*/
 
 aside.comments-reviews {
     box-sizing: border-box;
+    //display: inline-block;
+    //position: relative;
     position: fixed;
     right: 0;
     top: 50%;
-    height: 270px;
+    height: 290px;
     width: 54px;
     background-color: $greenColor;
     color: white;
@@ -145,7 +157,7 @@ aside.comments-reviews {
     border-bottom-left-radius: 6px;
     transform: translateY(-50%);
     padding-top: 20px;
-    z-index: 205;
+    z-index: 500;
     cursor: pointer;
 
     opacity: 1;
@@ -171,10 +183,58 @@ aside.comments-reviews {
         left: 50%;
         content: '';
         width: 20px;
-        height: 14px;
-        background-color: white;
-        mask: url('/static/icons/Book.svg') no-repeat;
+        height: 20px;
+
+        background: url('/static/icons/Book.svg') no-repeat;
         transform: rotateZ(-180deg) translateX(50%);
+    }
+}
+aside.tabs-reference {
+    box-sizing: border-box;
+    //position: fixed;
+    right: 0;
+    z-index:-1;
+    //top: 45%;
+    height: 240px;
+    width: 54px;
+    background-color: $blueColor2;
+    color: white;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    transform: translateY(-50%);
+    padding-top: 20px;
+    z-index: 205;
+    cursor: pointer;
+
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
+    text-align: center;
+    p {
+        position: relative;
+        height: auto;
+        transform: rotateZ(180deg);
+        text-align: right;
+        margin: 0;
+        line-height: 54px;
+        writing-mode: vertical-lr;
+
+    }
+
+    p::before {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        content: '';
+        width: 20px;
+        height: 20px;
+
+        transform: rotateZ(-180deg) translateX(50%);
+    }
+    .aside-icon{
+      margin-top: 5px;
     }
 }
 
@@ -201,7 +261,7 @@ aside.content-comments-reviews {
     top: $headerHeight;
     width: $asideRightWidth;
     height: calc(100% - #{$headerHeight});
-    z-index: 206;
+    z-index: 2000!important;
     background-color: white;
     display: none;
 
@@ -278,7 +338,7 @@ aside.content-comments-reviews {
             a.close {
                 width: 10%;
                 margin-right: 15px;
-                text-align: left
+                text-align: left;
                 img,
                 svg,
                 svg path {
@@ -321,7 +381,7 @@ aside.content-comments-reviews {
             left: 0;
             overflow-y: scroll;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 20px 20px 0px 20px;
             background-color: $greyColor3;
 
             article {
@@ -332,6 +392,8 @@ aside.content-comments-reviews {
                 padding: 10px;
                 width: 100%;
                 margin-bottom: 20px;
+                //overflow-x:scroll;
+                //max-height: 300px;
 
                 header {
                     height: 68px;
@@ -374,6 +436,37 @@ aside.content-comments-reviews {
                         font-size: 16px;
                         opacity: 0.8;
                     }
+
+                    span.no-revision {
+                      background-color: YellowGreen;
+                      border-color: YellowGreen;
+                      color:#333;
+                      font-family:'Calibri-bold';
+                    }
+                    span.minor-revision {
+                      background-color:orange;
+                      border-color: orange;
+                      color:#333;
+                      font-family:'Calibri-bold';
+                    }
+                    span.major-revision {
+                      background-color:red;
+                      border-color: red;
+                      color: #f3f3f3;
+                      font-family:'Calibri-bold';
+                    }
+                    span.rejection {
+                      background-color:black;
+                      border-color: black;
+                      color:#f3f3f3;
+                      font-family:'Calibri-bold';
+                    }
+                    span.simple-comment {
+                      background-color:rgba(176,196,222,0.8);
+                      border-color: rgba(176,196,222,1);
+                      color: #333;
+                      font-family:'Calibri-bold';
+                    }
                 }
 
                 section {
@@ -389,17 +482,20 @@ aside.content-comments-reviews {
                     }
 
                     p {
-                        font-family: 'DroidSerif-regular';
-                        font-size: 16px;
-                        line-height: 30px;
+                        font-family: 'Calibri-regular';
+                        font-size: 1.1rem;
+                        //line-height: 30px;
                         font-weight: normal;
-                        padding: 7px 9px;
-                        margin: 7px 0;
+                        padding: 0px 9px;
+                        /*margin: 7px 0;*/
                     }
                 }
             }
         }
-
+        .button-submit{
+            font-family: 'Calibri-bold';
+            font-size: 1rem;
+        }
         section.comments {
             display: none;
         }

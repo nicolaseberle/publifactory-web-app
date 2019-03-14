@@ -3,6 +3,7 @@
  */
 var path = require('path')
 var _ = require('lodash')
+
 var backendBase = {
   // Root path of server
   root: path.normalize(__dirname),
@@ -29,6 +30,16 @@ var backendBase = {
 }
 
 var development = {
+  email : {
+    host: "smtp.ethereal.email",
+    port : 587,//465,
+    secure: false,//true,
+    rootHTML: "http://localhost:9001",
+    auth: {
+      'user' : "enola.swaniawski71@ethereal.email",
+      'pass' : "Nh7Y6KWNNFnU89d7UK"
+    }
+  },
   frontend: {
     port: 9001,
     assetsRoot: path.resolve(__dirname, './client/src'),
@@ -52,6 +63,16 @@ var development = {
   })
 }
 var production = {
+  email : {
+    host: process.env.EMAIL_HOST,
+    port : 587,
+    rootHTML: process.env.ROOT_HTML,
+    secure: false,
+    auth: {
+      'user' : process.env.EMAIL_ACCOUNT,
+      'pass' : process.env.EMAIL_PASS
+    }
+  },
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
@@ -69,14 +90,17 @@ var production = {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
     serverFrontend: true,
+
     // Server IP
-    ip: process.env.APP_HOST || process.env.APP_IP || process.env.HOST || process.env.IP,
+    ip: process.env.OPENSHIFT_NODEJS_IP
+      || process.env.ip
+      || undefined,
+
     // Server port
-    port: process.env.APP_PORT || process.env.PORT,
+    port: process.env.APP_PORT || process.env.PORT || 8080,
     // MongoDB connection options
     mongo: {
-      uri: process.env.MONGODB_URI || process.env.MONGOHQ_URI ||
-           'mongodb://localhost:27017/mevn'
+      uri: process.env.MONGODB_URI
     },
 
     // frontend folder

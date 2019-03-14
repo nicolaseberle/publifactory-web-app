@@ -9,13 +9,13 @@
 section {
     width: auto;
     height: auto;
-    margin: 0 0 31px;
+    margin: 0 0 10px;
     display: block;
     padding: 0;
-    font-family: 'DroidSerif-regular';
+    font-family: 'Calibri-regular';//'DroidSerif-regular';
     font-size: 16px;
     line-height: 30px;
-
+    background-color: transparent;
     // Import accordion rules
     // ----------------------
 
@@ -33,11 +33,26 @@ section {
         line-height: 1.2rem;
         color: $blackColor;
         margin: 0 0 20px;
+        width:100%;
 
         input {
           border:none;
           background-color: transparent;
+          width:90%;
         }
+/*
+        .textarea-autosize {
+          padding-top: 20px;
+          line-height: 25px;
+          color: black;
+          text-align-last: $textAlignLast;
+          text-align: $textAlign;
+          word-spacing: $textWordSpacing;
+          //border:none;
+          background-color: transparent;
+          width: 90%;
+        }
+*/
     }
 
     h3 {
@@ -97,8 +112,9 @@ section {
     }
 
     p {
-        font-family: 'DroidSerif-regular';
-        font-size: 1rem;
+        font-family: 'Calibri-regular';//'DroidSans-regular';//'DroidSerif-regular';
+        background-color: transparent;
+        font-size: 1.1rem;
         line-height: 30px;
         color: black;
         margin: 0;
@@ -107,12 +123,27 @@ section {
         text-align: $textAlign;
         word-spacing: $textWordSpacing;
 
+        .p-span {
+          background-color: rgba(92, 115, 141, 0.00);//0.05
+        }
+
         sup {
             vertical-align: super;
             font-size: 10px;
             color: $redColor;
         }
+        b{
+          font-family: 'Calibri-bold';//'DroidSans-regular';//'DroidSerif-regular';
+        }
+        strong{
+          font-family: 'Calibri-bold';//'DroidSans-regular';//'DroidSerif-regular';
+        }
+        p.italic {
+          font-style: 'Calibri-italic';
+        }
+
     }
+
 
     p + p {
         margin-top: 30px;
@@ -123,32 +154,43 @@ section {
         width: auto;
         height: auto;
         border: solid 1px $headerFirstSectionLinkColor;
-        margin: 72px 0 65px;
+        margin: 20px 2px 20px 2px;
 
         figcaption {
-            height: 48px;
+            height: auto;
             width: auto;
             background-color: $headerFirstSectionLinkColor;
             color: white;
             font-family: 'DNLTPro-bold';
             font-size: 24px;
             font-weight: bold;
-            line-height: 48px;
-            padding: 0 40px;
-            margin: 0 0 30px;
+            line-height: 32px;
+            padding: 2px 40px;
+            margin: 0 0 10px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+
         }
 
         div.figure {
-            width: auto;
+            width: 100%;
             height: auto;
-            padding: 0 60px;
-            margin: 0 0 30px;
-
+            margin: 0 2px 0 2px;
+            padding: 0 2px 0 2px;
             img {
                 width: 100%;
                 height: auto;
                 object-fit: contain;
             }
+
+        }
+
+        div.action-button{
+          text-align:right;
+          margin-bottom:10px;
+          margin-right:40px;
         }
 
         p {
@@ -161,6 +203,50 @@ section {
             padding: 0 40px 20px;
         }
     }
+    .section-block{
+
+        .btn-group {
+          text-align: center;
+          width:100%;
+
+          #main-icon {
+            opacity: 1;
+
+              display: inline-block;
+
+          }
+          #second-icon {
+              opacity: 0;
+              -webkit-transition: opacity 3s ease-in-out;
+              -moz-transition: opacity 3s ease-in-out;
+              -ms-transition: opacity 3s ease-in-out;
+              -o-transition: opacity 3s ease-in-out;
+              transition: opacity 3s ease-in-out;
+
+                display: inline-block;
+
+          }
+
+        }
+
+
+        .btn-group:hover {
+          #main-icon {
+            opacity: 1;
+          }
+          #second-icon {
+              opacity: 1;
+              -webkit-transition: opacity 0.25s ease-in-out;
+              -moz-transition: opacity 0.25s ease-in-out;
+              -ms-transition: opacity 0.25s ease-in-out;
+              -o-transition: opacity 0.25s ease-in-out;
+              transition: opacity 0.25s ease-in-out;
+          }
+        }
+
+      }
+
+
 }
 
 section.abstract {

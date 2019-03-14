@@ -3,21 +3,40 @@
 
 @import 'variables';
 
+@function get-pos-img($i) {
+  $this-translation : (-1) * (($i)-1) * 50%;
+  @return $this-translation;
+}
+@function get-zindex-img($i) {
+  $this-zindex : 100 + (-1) * ($i);
+  @return $this-zindex;
+}
 // Scss rules
 // ----------
 
 header {
     width: auto;
     height: auto;
-    margin: 0 0 85px 0;
+    margin: 30px 0 65px 0;
 
     // Fix dropdown-menu z-index
     // -------------------------
     z-index: 198;
+    h1{
+      textarea{
+        border:none;
+        background-color: transparent;
+        font-family: 'DNLTPro-bold';
+        //font-weight: 500;
+      }
+      font-family: 'DNLTPro-bold';
+    }
     input {
       border:none;
       background-color: transparent;
+      width: 80%;
     }
+
     .left {
       float: left;
       //width: 60%;
@@ -33,7 +52,6 @@ header {
     h2 {
         font-family: 'DNLTPro-bold';
         font-size: 18px;
-        font-weight: bold;
         color: $redColor;
         margin: 0 0 43px 0;
         padding: 0;
@@ -71,33 +89,23 @@ header {
         height: 48px;
         margin: 0 0 20px 0;
 
-        .insert-buttons {
+        .add-collaborator-buttons {
           float: left;
-           // color: grey;
-           // background: #fff;
-           // width: 32px;
-           // height: 32px;
-           // box-sizing: border-box;
-           // border-radius: 50%;
-           // border: 1px solid grey;
-           // line-height: 30px;
-           // text-align: center;
-           // padding: 0;
-           // font-size: 20px;
-           -webkit-transform: translate(-60px,10px);
-           -ms-transform: translate(-60px,10px);
-           transform: translate(-60px,10px);
+          background-color: #00a459;
+          border: 0px;
+           -webkit-transform: translate(-60px,6px);
+           -ms-transform: translate(-60px,6px);
+           transform: translate(-60px,6px);
        }
 
 
-       .insert-buttons
+       .add-collaborator-buttons
           span {
             display: block;
             margin-top: 0px;
           }
 
-
-        img {
+        /*  img {
             box-sizing: border-box;
             width: 48px;
             height: 48px;
@@ -105,18 +113,34 @@ header {
             margin: 0;
             border: 2px solid white;
             float: left;
-            z-index: 1;
             -webkit-transform: translateX(-40px);
             -ms-transform: translateX(-40px);
             transform: translateX(-40px);
-        }
-
+        }*/
+/*
         img + img {
+            float: left;
             -webkit-transform: translateX(-40px);
             -ms-transform: translateX(-40px);
             transform: translateX(-40px) translateX(-50%);
             z-index: -1;
 
+        }*/
+        @for $i from 1 through 10 {
+        img:nth-child(#{$i}) {
+          
+          box-sizing: border-box;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          margin: 0;
+          border: 2px solid white;
+          float: left;
+          -webkit-transform: translateX(-40px);
+          -ms-transform: translateX(-40px);
+          transform: translateX(-20px) translateX(get-pos-img($i));
+          z-index: get-zindex-img($i);
+          }
         }
 
         p {

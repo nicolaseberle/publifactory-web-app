@@ -21,7 +21,8 @@
           :item="child"
           :key="child.path"
           :base-path="resolvePath(child.path)"
-          class="nest-menu" />
+          class="nest-menu"
+          popper-class='popup-menu' />
 
         <a v-else :href="child.path" :key="child.name" target="_blank" @click="clickLink(child.path,$event)">
           <el-menu-item :index="resolvePath(child.path)">

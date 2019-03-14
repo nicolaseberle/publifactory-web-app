@@ -2,6 +2,7 @@ var path = require('path')
 var config = require('../../config').frontend
 var vueLoaderConfig = require('./vue-loader.conf')
 var utils = require('./utils')
+// var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -74,6 +75,10 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.js$/,
+        loader: 'ify-loader'
       }
     ]
   }

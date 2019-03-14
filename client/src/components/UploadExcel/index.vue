@@ -22,14 +22,17 @@ export default {
       excelData: {
         name: null,
         header: null,
-        results: null
-      }
+        results: null,
+        size: null
+      },
+      fileSize: null
     }
   },
   methods: {
     generateData({ header, results }) {
       this.excelData.header = header
       this.excelData.results = results
+      this.excelData.size = this.fileSize
       this.onSuccess && this.onSuccess(this.excelData)
     },
     handleDrop(e) {
@@ -42,7 +45,7 @@ export default {
         return
       }
       const rawFile = files[0] // only use files[0]
-
+      this.fileSize = rawFile.size
       if (!this.isExcel(rawFile)) {
         this.$message.error('Only supports upload .xlsx, .xls, .csv suffix files')
         return false
@@ -135,11 +138,11 @@ export default {
 }
 #drop{
   border: 2px dashed #bbb;
-  width: 600px;
+  width: 100%;
   height: 160px;
   line-height: 160px;
-  margin: 0 auto;
-  font-size: 24px;
+  margin: 20px 0 0 0;
+  font-size: 1rem;
   border-radius: 5px;
   text-align: center;
   color: #bbb;

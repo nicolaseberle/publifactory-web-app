@@ -1,6 +1,6 @@
 <template>
   <div :style="{height:height+'px',zIndex:zIndex}" class="simplemde-container">
-    <textarea :id="id"/>
+    <textarea :id="id" style="{overflow:hidden}"/>
   </div>
 </template>
 
@@ -57,12 +57,21 @@ export default {
     }
   },
   mounted() {
+    var md = require('markdown-it')(),
+    mk = require('markdown-it-katex');
+
+    md.use(mk);
+
     this.simplemde = new SimpleMDE({
       element: document.getElementById(this.id),
       autoDownloadFontAwesome: false,
+      math: {
+		      inlineMathDouble: true,
+      },
+      previewRender: md,
       autofocus: this.autofocus,
       toolbar: this.toolbar.length > 0 ? this.toolbar : undefined,
-      spellChecker: false,
+      spellChecker: true,
       insertTexts: {
         link: ['[', ']( )']
       },
@@ -87,13 +96,18 @@ export default {
 </script>
 
 <style scoped>
+
 .simplemde-container>>>.CodeMirror {
-  min-height: 150px;
+  min-height: 200px;
+  height: 200px;
   line-height: 20px;
+  overflow:hidden;
 }
 
 .simplemde-container>>>.CodeMirror-scroll {
-  min-height: 150px;
+  min-height: 200px;
+  height: 200px;
+  overflow:hidden;
 }
 
 .simplemde-container>>>.CodeMirror-code {

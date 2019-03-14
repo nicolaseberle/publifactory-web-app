@@ -1,6 +1,16 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <el-row :gutter="20">
+        <el-col :span='6'>
+          <el-button-group>
+          <el-button round v-on:click="createArticle()">Create Article</el-button>
+          <el-button round v-on:click="importArticle()">Import</el-button>
+        </el-button-group>
+        </el-col>
+      </el-row>
+      <div class='dashboard-tab'>
+      <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
@@ -19,8 +29,8 @@
         </el-table-column>
         <el-table-column class-name="author-col" width="120px"  label="Author">
           <template slot-scope="articles">
-            <div v-for="author in articles.row.authors">
-              {{ author.firstname[0] }}. {{ author.lastname }}
+            <div v-for="item_author in articles.row.authors">
+              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
             </div>
           </template>
         </el-table-column>
@@ -73,19 +83,40 @@
     </data-table>
   </el-tab-pane>
   <el-tab-pane label="Submission" name="second">Submission</el-tab-pane>
-  <el-tab-pane label="Review" name="third">Review</el-tab-pane>
+
+  <el-tab-pane name="third">
+    <span slot="label">Review<el-badge :value="2" lass="mark"/></span>
+  </el-tab-pane>
+
   <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
   <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
   </el-tabs>
+  </div>
+  </div>
 </content-module>
+<!--
+<el-dialog :title="Titre" :visible.sync="formVisible">
+  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form-item :label="$t('article.title')">
+        <el-input v-model="temp.title"/>
+      </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
+    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
+  </span>
+</el-dialog>-->
 
 </div>
 </template>
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
-import { article as articleRes } from '../../../resources'
 import locales from '../../../locales/article'
+import axios from 'axios'
+
+var uuidv4 = require('uuid/v4');
 
 export default {
   locales,
@@ -113,6 +144,11 @@ export default {
       articles: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'userId'
+    ])
+  },
   components: {
     DataTable
   },
@@ -121,15 +157,44 @@ export default {
         console.log(tab, event);
     },
     fetch (current = 1) {
-      this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-        this.articles = list.articles
-        console.log(list)
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.get('/api/articles/').then(list => {
+        this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
       })
     },
     createArticle () {
-      this.formVisible = true
+      var uuid_block = String(uuidv4())
+      //this.formVisible = true
+      const newArticle = {
+          title: String('Article title'),
+          abstract:  String('abstract'),
+          status: 'Draft',
+          arr_content: [{
+                          name:"titre_1",
+                          title:"Titre 1",
+                          title_placeholder:"Titre 1",
+                          block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
+                          content:"Type the text",
+                          display:true
+                        }],
+          category : String('Biology'),
+          id_author : this.userId,
+          published: true
+        };
+        axios.post('/api/articles/', newArticle)
+        .then(response => {
+          let new_article_id = response.data
+          console.log("create successfully ")
+          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    },
+    closeCreationDialog () {
+      this.formVisible = false
     },
     cancelForm () {
       this.form.title = ''
@@ -176,3 +241,13 @@ export default {
   }
 }
 </script>
+<style>
+.dashboard-tab{
+  padding-top:20px
+}
+
+.tabs, .el-tabs__nav{
+    padding-top:10px
+}
+
+</style>

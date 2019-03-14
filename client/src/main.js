@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 // read localStorage stored data
 import './stored'
 // locale
-import './locales'
+// import './locales'
 import './icons'
 import './errorLog' // error log
 
@@ -14,22 +14,37 @@ import router, { hook as routerHook } from './router'
 import { sync } from 'vuex-router-sync'
 sync(store, router)
 
-import i18n from './lang' // Internationalization
+// import i18n from './lang' // Internationalization
 import './locales'
 import './icons'
 // ui library
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-// Vue.use(ElementUI)
+
+// import CKEditor from '@ckeditor/ckeditor5-vue';
+// import VueQuill from 'vue-quill'
+
+import 'vue-awesome/icons/flag'
+import 'vue-awesome/icons'
+
+import VueSplit from 'vue-split-panel'
+Vue.use(VueSplit)
+
+import Icon from 'vue-awesome/components/Icon'
+Vue.component('v-icon', Icon)
+
+import VueTextareaAutosize from 'vue-textarea-autosize'
+Vue.use(VueTextareaAutosize)
+
 Vue.use(ElementUI, {
-  size: Cookies.get('size') || 'medium', // set element-ui default size
-  i18n: (key, value) => i18n.t(key, value)
+  size: Cookies.get('size') || 'medium'// set element-ui default size
+  // i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(require('vue-moment'))
 
 import './styles/index.scss' // global css
-
+import 'codemirror/lib/codemirror.css'
 // ajax
 import './http'
 
@@ -42,6 +57,7 @@ routerHook(userPromise)
 import App from './App'
 
 import './socket'
+// Vue.use( CKEditor );
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
@@ -52,7 +68,7 @@ userPromise.then(() => {
   const app = new Vue({
     router,
     store,
-    i18n,
+    // i18n,
     ...App // Object spread copying everything from App.vue
   })
   // actually mount to DOM

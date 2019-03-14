@@ -11,7 +11,7 @@ function asideRightAnimation () {
       reviews: $('aside.content-comments-reviews a.showreviews'),
       comments: $('aside.content-comments-reviews a.showcomments'),
       close: $('aside.content-comments-reviews a.close'),
-      article: $('aside.content-comments-reviews [data-review]')
+      article: $('aside.content-comments-reviews  [data-review]')
     },
     comments: $('aside.content-comments-reviews section.comments'),
     reviews: $('aside.content-comments-reviews section.reviews'),
@@ -61,7 +61,7 @@ function asideRightAnimation () {
 
     // Show the pannel on click
     // ------------------------
-  asideRight.button.on('click', function () {
+  asideRight.button.on('click', () => {
     console.log('asideRight_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
@@ -69,7 +69,7 @@ function asideRightAnimation () {
 
   // Close the pannel on click
   // -------------------------
-  asideRight.pannel.close.on('click', function () {
+  asideRight.pannel.close.on('click', () => {
     console.log('asideRight_pannel_close')
     majScrollPosition()
     hideCommentsReviewsPannel()
@@ -99,7 +99,9 @@ function asideRightAnimation () {
   // -----------------------------------------------------
   asideRight.pannel.article.on('click', function () {
     const markup = $(this).attr('data-review')
+    console.log('markup : ' + markup)
     const articleText = $("main article span[data-review='" + markup + "'")
+    console.log('articleText : ' + articleText)
     const accordionPannel = articleText.parents('div.accordion-panel').get(0)
     accordionPannel.style.display = 'block'
     accordionPannel.previousElementSibling.classList.remove('collapsed-180deg', 'collapsed-90deg')
@@ -112,6 +114,7 @@ function asideRightAnimation () {
   })
   asideRight.pannel.article.mouseenter(function () {
     const markup = $(this).attr('data-review')
+    console.log('markup : ' + markup)
     const articleText = $("main article span[data-review='" + markup + "'")
     articleText.css('background-color', 'rgba(92, 115, 141, 0.3)')
   })
