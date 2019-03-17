@@ -21,29 +21,51 @@ const figure_5 = '<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazo
 const figure_6 = '<iframe  src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/boxplot/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;  margin:10px 10px 10px 10px;"></iframe>'
 const figure_7 = 'true'
 
-// search for admin user, if no, create one
-User.find({},function (err, users) {
-  if (seedDB == false) return 
+// call our promise
 
-  if (err) throw err
-  if(!users){users = createUsers()}
-
-  createComment(users);
-  createArticles(users);
-  createJournals(users);
+// Promise
+var populateUsers = new Promise(
+    function (resolve, reject) {
+      var users = User.find({}).remove()
+      .then(() => {
+      let users = createUsers()
+      return users
+    })
+    resolve(users);
 
 })
+
+
+var populateBase = function () {
+    populateUsers.then(function (users) {
+      User.find({}, function (err, users) {
+        if (seedDB == 'false') return
+        if (err) throw err
+        createComment(users)
+        createArticles(users);
+        createJournals(users);
+      })
+      }).catch(function (error) {
+          console.log(error.message);
+      });
+};
+
+populateBase();
+
+// search for admin user, if no, create one
+
+
 
 function createComment(user_tmp) {
   Comments.find({}).remove()
     .then(() => {
       let comments = Comments.create(
       {
-        userId: [user_tmp[1]._id],
+        userId: [user_tmp[0]._id],
         content: 'ceci est un commentaire'
       },
       {
-        userId: [user_tmp[1]._id],
+        userId: [user_tmp[0]._id],
         content: 'ceci est un autre commentaire'
       });
   })
@@ -224,8 +246,6 @@ function createArticles(user_tmp,comment_tmp) {
 }
 
 function createUsers() {
-  User.find({}).remove()
-    .then(() => {
       let users = User.create({
         provider: 'local',
         role: 'user',
@@ -319,22 +339,20 @@ function createUsers() {
         password: 'alex',
         avatar: '/static/Default.png',
         field: 'Physics'
-      },{
+      },
+      {
         provider: 'local',
         role: 'user',
         roles : ['user'],
-        name: 'anne-laure',
-        firstname: 'Anne-Laure',
-        username: 'Anne-Laure',
-        lastname: 'Delga',
-        laboratory: 'Faculté de Bordeaux',
-        email: 'annelaure@example.com',
-        password: 'annelaure',
+        name: 'caterina',
+        firstname: 'Caterina',
+        username: 'Cate',
+        lastname: 'Cicognani',
+        laboratory: 'LGA',
+        email: 'cate@example.com',
+        password: 'cate',
         avatar: '/static/Default.png',
-        field: 'Spanish'
+        field: 'Physics'
       });
       return users;
-    })
-      .then((users) => {console.log('finished populating users');})
-      .catch(err => console.log('error populating users', err));
 }

@@ -57,7 +57,7 @@ var development = {
     cssSourceMap: false
   },
   backend: _.merge({}, backendBase, {
-    seedDB: true,
+    seedDB: 'false',
     mongo: {
       uri: 'mongodb://localhost:27017/mevn-dev'
     }

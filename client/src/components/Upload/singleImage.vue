@@ -9,7 +9,7 @@
       drag
       action="https://httpbin.org/post">
       <i class="el-icon-upload"/>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      <div class="el-upload__text"><em>Upload</em></div>
     </el-upload>
     <div class="image-preview">
       <div v-show="imageUrl.length>1" class="image-preview-wrapper">
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-// 预览效果见付费文章
+
 import { getToken } from '@/api/qiniu'
 
 export default {
