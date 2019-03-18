@@ -35,11 +35,9 @@ var populateUsers = new Promise(
 
 })
 
-
 var populateBase = function () {
     populateUsers.then(function (users) {
       User.find({}, function (err, users) {
-        if (seedDB == 'false') return
         if (err) throw err
         createComment(users)
         createArticles(users);
@@ -50,11 +48,10 @@ var populateBase = function () {
       });
 };
 
-populateBase();
+if (seedDB == 'true')
+  populateBase();
 
 // search for admin user, if no, create one
-
-
 
 function createComment(user_tmp) {
   Comments.find({}).remove()
