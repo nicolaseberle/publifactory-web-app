@@ -110,7 +110,7 @@
             <el-checkbox v-model="checkedAnonymous"><svg-icon icon-class='private'/></el-checkbox>
             <el-select v-model="reviewRequest" justify="left" placeholder="No revision">
               <el-option
-                v-for="item in options"
+                v-for="item in optionsReview"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -131,10 +131,6 @@
       </section>
       <section class="content comments">
         <article>
-          <header>
-              <a href="#" title="OSPR's profile">Albert Einstein</a>
-              <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-          </header>
           <section>
             <el-collapse v-model="activeComments" accordion>
               <el-collapse-item title="Review 1" name="1">
@@ -193,7 +189,7 @@ export default {
       errors: {message: ''},
       article: '',
       report_tmp: [],
-      options: [{
+      optionsReview: [{
           value: 'No revision',
           label: 'No revision'
         }, {
