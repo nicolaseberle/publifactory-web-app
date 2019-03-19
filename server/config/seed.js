@@ -48,8 +48,9 @@ var populateBase = function () {
       });
 };
 
-if (seedDB == 'true')
+if (seedDB == 'true') {
   populateBase();
+}
 
 // search for admin user, if no, create one
 

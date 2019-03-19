@@ -6,7 +6,6 @@
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
-
           <article v-for="(report,key) in reports">
               <header>
                   <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ report.userId.firstname  }} {{ report.userId.lastname }}</a>
@@ -130,6 +129,36 @@
           </el-row>
           </el-card>
       </section>
+      <section class="content comments">
+        <article>
+          <header>
+              <a href="#" title="OSPR's profile">Albert Einstein</a>
+              <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
+          </header>
+          <section>
+            <el-collapse v-model="activeComments" accordion>
+              <el-collapse-item title="Review 1" name="1">
+                <el-row>
+                <el-col :span='24'>
+                  <div style='width:auto'>
+                  <vue-plotly :data="currentData" :layout="layout" :options="options" />
+                  </div>
+                </el-col>
+                <el-col :span='24'>
+                  <div style='font-family:"Calibri";font-size:1rem'>
+                  Quid enim tam absurdum quam delectari multis inanimis rebus, ut honore, ut gloria, ut aedificio, ut vestitu cultuque corporis, animante virtute praedito, eo qui vel amare vel, ut ita dicam, redamare possit, non admodum delectari? Nihil est enim remuneratione benevolentiae, nihil vicissitudine studiorum officiorumque iucundius.
+
+                  In his tractibus navigerum nusquam visitur flumen sed in locis plurimis aquae suapte natura calentes emergunt ad usus aptae multiplicium medelarum. verum has quoque regiones pari sorte Pompeius Iudaeis domitis et Hierosolymis captis in provinciae speciem delata iuris dictione formavit.
+                  </div>
+                </el-col>
+                </el-row>
+              </el-collapse-item>
+              <el-collapse-item title="Review 2" name="2">
+              </el-collapse-item>
+            </el-collapse>
+          </section>
+        </article>
+      </section>
       <!--<footer class="wrapper">
       </footer>-->
   </div>
@@ -143,6 +172,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // import hightlightText from '../../utils/js/animation/highlight.js';
+import VuePlotly from '@statnett/vue-plotly'
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 var uuidv4 = require('uuid/v4');
 
@@ -151,10 +181,11 @@ library.add(faCoffee,faReply)
 export default {
   name: 'reportComponent',
   locales,
-  components: {'font-awesome-icon': FontAwesomeIcon},
+  components: {'font-awesome-icon': FontAwesomeIcon, VuePlotly},
   props: ['uuid'],
   data () {
     return {
+      activeComments: ['1'],
       checkedAnonymous: false,
       activeName: 'first',
       reports : '',
@@ -178,7 +209,10 @@ export default {
           value: 'Simple comment',
           label: 'Simple comment'
         }],
-        reviewRequest: 'Simple comment'
+        reviewRequest: 'Simple comment',
+        currentData: {},
+        layout: {},
+        options:  {}
     }
   },
   computed: {
@@ -207,6 +241,61 @@ export default {
   },
   mounted () {
     asideRightAnimation()
+
+    this.currentData = [{
+      type: 'scatterpolar',
+      r: [4, 5, 2, 1, 5, 4, 4, 4],
+      theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+      fill: 'toself',
+      name: 'review 1'
+    },
+    {
+      type: 'scatterpolar',
+      r: [3, 4, 4, 2, 5, 4, 4, 3],
+      theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+      fill: 'toself',
+      name: 'review 2'
+    }]
+
+    this.layout = {
+      autosize: true,
+      width: 350,
+      height: 350,
+      margin: {
+        l: 50,
+        r: 50,
+        b: 50,
+        t: 50,
+        pad: 10
+      },
+      polar: {
+        radialaxis: {
+          visible: false,
+          range: [0, 5]
+        },
+        angularaxis:{
+          showline: false,
+          rotation: 115
+        }
+      },
+      showlegend: false
+    }
+
+    var layout = {
+      autosize: false,
+      width: 500,
+      height: 500,
+      margin: {
+        l: 50,
+        r: 50,
+        b: 100,
+        t: 100,
+        pad: 4
+      },
+      paper_bgcolor: '#7f7f7f',
+      plot_bgcolor: '#c7c7c7'
+    };
+
   },
   methods: {
     fetchReport(id) {

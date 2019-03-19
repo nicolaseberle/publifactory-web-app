@@ -45,7 +45,7 @@
       <el-col :span="6">
         <transition name="slide-fade">
           <generalMenu v-model="parentTitleChart"  v-if='visibleGeneralMenu'/>
-          <tracesMenu v-if='visibleTracesMenu' />
+          <tracesMenu v-model="parentFigureType" v-if='visibleTracesMenu' />
           <styletracesMenu v-if='visibleStyleTracesMenu' />
         </transition>
       </el-col>
@@ -105,6 +105,7 @@ export default {
         }],
       tabIndex: 1,
       parentTitleChart: 'Title',
+      parentFigureType: 'bar',
       options: {},
       layout: {
         title: 'Title',
@@ -126,8 +127,30 @@ export default {
               console.log(__data)
               console.log(__data[0])
               console.log(__data[1].map(Number))
+
               this.currentData[0].x = __data[0]
-              this.currentData[0].y = __data[1].map(Number)
+              if (this.parentFigureType == 'bar'){
+                this.currentData[0].y = __data[1].map(Number)
+              }
+              if (this.parentFigureType == 'box'){
+
+                //this.currentData[0].y = __data[1].map(Number)
+                var y0 = [];
+                var y1 = [];
+                var y2 = [];
+                for (var i = 0; i < 50; i ++) {
+                	y0[i] = Math.random();
+                  y1[i] = Math.random() + 1;
+                  y2[i] = Math.random()*3 ;
+                }
+                this.currentData[0].x = '';
+                this.currentData[0].y = y0;
+                this.currentData[1].x = '';
+                this.currentData[1].y = y1;
+                this.currentData[2].x = '';
+                this.currentData[2].y = y2;
+                this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
+              }
               this.saveFigure()
             }
           }
@@ -290,12 +313,43 @@ export default {
       this.layout = {'title': this.parentTitleChart}
       this.saveFigure ()
     },
+    parentFigureType () {
+      // WARNING [0] for Trace 1 [1] for Trace 2...
+      console.log("parentFigureType change : ", this.parentFigureType)
+      this.currentData[0] = {'type': this.parentFigureType}
+      if (this.parentFigureType == 'box'){
+        this.currentData = [{
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample A'
+        },
+        {
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample B'
+        },
+        {
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample C'
+        }]
+      }else {
+        this.currentData = [{
+              x: ['Sample A','Sample B','Sample C','Sample D'],
+              y: [ 10, 9, 12, 13],
+              type: 'bar',
+              orientation: 'v'
+        }]
+      }
+      this.saveFigure ()
+    },
     settings3 () {
-      console.log(this.settings3)
+      //console.log(this.settings3)
     }
   },
   methods: {
     saveFigure () {
+      console.log("saveFigure ", this.currentData.y)
       axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
       .then(response => {
         console.log("figure saved")
@@ -327,7 +381,7 @@ export default {
           this.currentData[0].x = this.tableHeader[0]
           console.log("loadData")
           console.log(this.currentData[0].x)
-          this.currentData[0].y = [10, 6 , 4 ,5]
+          this.currentData[0].y = [10, 6 , 4]
           console.log(this.currentData[0].y)
           this.settings.data = new Array(this.currentData[0].x,this.currentData[0].y)
           this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
@@ -386,7 +440,6 @@ export default {
               }
             });
           }
-
           this.editableTabsValue = activeName;
           this.editableTabs = tabs.filter(tab => tab.name !== targetName);
         }
