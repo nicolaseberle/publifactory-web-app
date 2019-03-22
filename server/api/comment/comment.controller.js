@@ -45,11 +45,30 @@ module.exports.getArticleComments = async (req, res, next) => {
 
     const comments = await article.comments;
     console.log(comments);
-    
+
     //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
     renameObjectProperty(comments, 'docs', 'comments');
 
     return res.status(200).json(comments);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ *
+ * @function getArticleComment
+ * @memberof module:controllers/comments
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ * @returns {Object}
+ */
+module.exports.getArticleComment = async (req, res, next) => {
+  const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
+  const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
+
+  try {
   } catch (err) {
     return next(err);
   }
@@ -109,14 +128,14 @@ module.exports.createArticleComment = async (req, res, next) => {
 
 /**
  *
- * @function updateScores
+ * @function updateComment
  * @memberof module:controllers/comments
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-module.exports.updateScores = async (req, res, next) => {
+module.exports.updateComment = async (req, res, next) => {
   try {
     console.log('updateScores');
     const upvote = req.body.upvote;

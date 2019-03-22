@@ -1,3 +1,4 @@
+
 <template>
   <div class="wrapper">
       <header class="wrapper">
@@ -51,14 +52,15 @@
                 <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
                 <el-button  icon="el-icon-share" circle></el-button>
                 <el-button circle><font-awesome-icon icon="reply" /></el-button>
+                <el-button icon="el-icon-edit" circle></el-button>
                 <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
               </footer>
           </article>
           <article v-for="report in report_tmp">
               <header>
-                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ username }}</a>
+                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ form.firstname }} {{ form.lastname }}</a>
                   <a v-if='report.anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
-                  <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
+                  <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ form.creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
                   <el-tag class="no-revision" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
                   <el-tag class="minor-revision" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
                   <el-tag class="major-revision" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
@@ -130,30 +132,24 @@
           </el-card>
       </section>
       <section class="content comments">
-        <article>
-          <section>
-            <el-collapse v-model="activeComments" accordion>
-              <el-collapse-item title="Review 1" name="1">
-                <el-row>
-                <el-col :span='24'>
-                  <div style='width:auto'>
-                  <vue-plotly :data="currentData" :layout="layout" :options="options" />
-                  </div>
-                </el-col>
-                <el-col :span='24'>
-                  <div style='font-family:"Calibri";font-size:1rem'>
-                  Quid enim tam absurdum quam delectari multis inanimis rebus, ut honore, ut gloria, ut aedificio, ut vestitu cultuque corporis, animante virtute praedito, eo qui vel amare vel, ut ita dicam, redamare possit, non admodum delectari? Nihil est enim remuneratione benevolentiae, nihil vicissitudine studiorum officiorumque iucundius.
+        <el-collapse v-model="activeComments" accordion>
+          <div v-for="t in Comments">
+            <article>
+              <section>
+                <el-collapse-item :title="t.name" :name="t.id">
 
-                  In his tractibus navigerum nusquam visitur flumen sed in locis plurimis aquae suapte natura calentes emergunt ad usus aptae multiplicium medelarum. verum has quoque regiones pari sorte Pompeius Iudaeis domitis et Hierosolymis captis in provinciae speciem delata iuris dictione formavit.
+                  <div class="figure">
+                    <vue-plotly :data="t.currentData" :layout="t.layout" :options="options" />
                   </div>
-                </el-col>
-                </el-row>
-              </el-collapse-item>
-              <el-collapse-item title="Review 2" name="2">
-              </el-collapse-item>
-            </el-collapse>
-          </section>
-        </article>
+                    <div style='font-family:"Calibri";font-size:1rem'>
+                      {{t.reviewContent}}
+                    </div>
+
+                </el-collapse-item>
+              </section>
+            </article>
+          </div>
+        </el-collapse>
       </section>
       <!--<footer class="wrapper">
       </footer>-->
@@ -174,6 +170,39 @@ var uuidv4 = require('uuid/v4');
 
 library.add(faCoffee,faReply)
 
+const layout_1 = {
+  autosize: true,
+  width: 400,
+  height: 400,
+  polar: {
+    radialaxis: {
+      visible: false,
+      range: [0, 5]
+    },
+    angularaxis:{
+      showline: false,
+      rotation: 115
+    }
+  },
+  showlegend: false
+}
+const layout_2 = {
+  autosize: true,
+  width: 400,
+  height: 400,
+  polar: {
+    radialaxis: {
+      visible: false,
+      range: [0, 5]
+    },
+    angularaxis:{
+      showline: false,
+      rotation: 115
+    }
+  },
+  showlegend: false
+}
+
 export default {
   name: 'reportComponent',
   locales,
@@ -181,6 +210,58 @@ export default {
   props: ['uuid'],
   data () {
     return {
+      form: {
+        firstname: '',
+        lastname: '',
+        creationDate: ''
+      },
+      Comments: [{
+        name: 'Summary report',
+        id: '1',
+        reviewContent: 'Reviewer 1 : This article describes a new approach to brief evolutions - Reviewer 2:This subject is close to the article of Albeck & Al.',
+        "layout": layout_1,
+        currentData: [{
+          type: 'scatterpolar',
+          r: [4, 5, 2, 1, 5, 4, 4, 4],
+          theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+          fill: 'toself',
+          name: 'review 1'
+        },
+        {
+          type: 'scatterpolar',
+          r: [3, 4, 4, 2, 5, 4, 4, 3],
+          theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+          fill: 'toself',
+          name: 'review 2'
+        }]
+      },
+      {
+        name: 'Reviewer 1',
+        id: '2',
+        reviewContent: 'This article describes a new approach to brief evolutions',
+        "layout": layout_2,
+        currentData: [{
+          type: 'scatterpolar',
+          r: [4, 5, 2, 1, 5, 4, 4, 4],
+          theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+          fill: 'toself',
+          name: 'review 11'
+        }]
+      }/*,
+      {
+        name: 'Reviewer 2',
+        id: '3',
+        reviewContent: 'This subject is close to the article of Albeck & Al. He is',
+        layout: layout,
+        currentData: [
+        {
+          type: 'scatterpolar',
+          r: [3, 4, 4, 2, 5, 4, 4, 3],
+          theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
+          fill: 'toself',
+          name: 'review 2'
+        }]
+      }*/],
       activeComments: ['1'],
       checkedAnonymous: false,
       activeName: 'first',
@@ -213,9 +294,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'username',
       'userId',
-      'roles'
+      'roles',
+      'accessToken'
     ])
   },
   watch: {
@@ -237,6 +318,13 @@ export default {
   },
   mounted () {
     asideRightAnimation()
+    axios.get('/api/users/me',{headers: {
+      'Authorization': `Bearer ${this.accessToken}`}
+    }).then(response => {
+      this.form.email = response.data.email
+      this.form.firstname = response.data.firstname
+      this.form.lastname = response.data.lastname
+      })
 
     this.currentData = [{
       type: 'scatterpolar',
@@ -252,46 +340,6 @@ export default {
       fill: 'toself',
       name: 'review 2'
     }]
-
-    this.layout = {
-      autosize: true,
-      width: 350,
-      height: 350,
-      margin: {
-        l: 50,
-        r: 50,
-        b: 50,
-        t: 50,
-        pad: 10
-      },
-      polar: {
-        radialaxis: {
-          visible: false,
-          range: [0, 5]
-        },
-        angularaxis:{
-          showline: false,
-          rotation: 115
-        }
-      },
-      showlegend: false
-    }
-
-    var layout = {
-      autosize: false,
-      width: 500,
-      height: 500,
-      margin: {
-        l: 50,
-        r: 50,
-        b: 100,
-        t: 100,
-        pad: 4
-      },
-      paper_bgcolor: '#7f7f7f',
-      plot_bgcolor: '#c7c7c7'
-    };
-
   },
   methods: {
     fetchReport(id) {
@@ -314,6 +362,7 @@ export default {
       console.log("createReport : " , this.uuid)
       var self = this;
       var now = new Date().getTime();
+      this.form.creationDate = now
       if (this.uuid==''){
         this.uuid = String(uuidv4())
       }
@@ -336,7 +385,7 @@ export default {
         this.editReport = ''
         this.reviewRequest = ''
       }
-      axios.post('/api/comments/'  + this.id + '/comments', newComment)
+      axios.post('/api/comments/'  + this.id + '/comment', newComment)
       .then(response => {
         response__ = response.data;
         this.errors.message = 'createReport success ';
@@ -439,5 +488,14 @@ export default {
 }
 .arrow-down:hover {
   border-top: 15px solid #475069;
+}
+
+
+.figure {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    margin: 0 2px 0 2px;
+    padding: 0 2px 0 2px;
 }
 </style>
