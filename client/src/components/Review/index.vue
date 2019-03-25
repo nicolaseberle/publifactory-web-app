@@ -150,6 +150,48 @@
             </article>
           </div>
         </el-collapse>
+        <article>
+          <section>
+            <div class="block">
+              <span>Innovative:</span>
+              <el-slider
+                v-model="innovativescore"
+                :step="20"
+                show-stops>
+              </el-slider>
+              <span>Reproducibility:</span>
+              <el-slider
+                v-model="reproducibilityscore"
+                :step="20"
+                show-stops>
+              </el-slider>
+              <span>Writing:</span>
+              <el-slider
+                v-model="writingscore"
+                :step="20"
+                show-stops>
+              </el-slider>
+              <span>Rigorous:</span>
+              <el-slider
+                v-model="rigorousscore"
+                :step="20"
+                show-stops>
+              </el-slider>
+              <span>Statistic relevant:</span>
+              <el-slider
+                v-model="statisticrelevancescore"
+                :step="20"
+                show-stops>
+              </el-slider>
+              <span>Quality of biblio</span>
+              <el-slider
+                v-model="qualitybiblioscore"
+                :step="20"
+                show-stops>
+              </el-slider>
+            </div>
+          </section>
+        </article>
       </section>
       <!--<footer class="wrapper">
       </footer>-->
@@ -210,6 +252,12 @@ export default {
   props: ['uuid'],
   data () {
     return {
+      qualitybiblioscore:0,
+      statisticrelevancescore: 0,
+      rigorousscore: 0,
+      innovativescore: 0,
+      reproducibilityscore: 0,
+      writingscore: 0,
       form: {
         firstname: '',
         lastname: '',
@@ -497,5 +545,9 @@ export default {
     text-align: center;
     margin: 0 2px 0 2px;
     padding: 0 2px 0 2px;
+}
+.block{
+  font-size: 1rem;
+  font-family: 'DNLTPro-bold'
 }
 </style>
