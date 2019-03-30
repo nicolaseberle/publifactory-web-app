@@ -1,5 +1,18 @@
 <template>
   <div>
+  <div>
+    {{idEditor}}
+    <p>
+      <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator'></span>
+      <span v-bind:id="idSharedbSocketState" class='socket-state'></span>
+    </p>
+    <p>
+      <span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
+      <span v-bind:id="idCursorsSocketState" class='socket-state'></span>
+    </p>
+    <div v-bind:id="idUsersList" style='display:none;'></div>
+  </div>
+  <div>
     <div class='insert-button-box' v-bind:id="idButton">
       <el-button type="" plain class="el-icon-rank" v-on:click='' circle></el-button>
       <!--<el-button type="" plain v-on:click='' circle><i class="ai ai-zotero ai-1x"></i></el-button>
@@ -51,8 +64,7 @@
       <div   v-bind:id="idEditor">
         <span class='p-span' v-html="content"></span>
       </div>
-      </div>
-
+    </div>
   </div>
     <!--<div class='bottom-right'/>-->
     <div class="questions">
@@ -73,11 +85,13 @@
       </div>
     </div>
 </div>
+</div>
 
 </template>
 
 <script>
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 import Autocomplete from 'v-autocomplete'
 Vue.use(Autocomplete)
 
@@ -87,15 +101,28 @@ import defaultsDeep from 'lodash.defaultsdeep'
 import 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
+import 'quill-cursors/dist/quill-cursors.css'
 import 'v-autocomplete/dist/v-autocomplete.css'
 
 import hightlightText from '../../utils/js/animation/highlight.js';
-import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
+var ShareDB = require('sharedb/lib/client')// cursor
+var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
+var utils = require('../../utils/js/collaboration/utils')// cursor
+import Cursors from '../../utils/js/collaboration/cursors.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
+import QuillCursors from 'quill-cursors/src/cursors';
+Quill.register('modules/cursors', QuillCursors);
+
+ShareDB.types.register(require('rich-text').type);
 const Embed = Quill.import('blots/embed');
+
+
+var shareDBSocket = new ReconnectingWebSocket('ws' + '://localhost:4000/sharedb');
+var shareDBConnection = new ShareDB.Connection(shareDBSocket);
+
 
 class ProcLink extends Embed {
     static create(value) {
@@ -143,6 +170,11 @@ export default {
     return {
       inputRefVisible: false,
       editor: {},
+      idSharedbSocketIndicator: this.setIdSharedbSocketIndicator(),
+      idSharedbSocketState: this.setIdSharedbSocketState(),
+      idCursorsSocketIndicator: this.setIdCursorsSocketIndicator(),
+      idCursorsSocketState: this.setIdCursorsSocketState(),
+      idUsersList: this.setIdUsersList(),
       idEditor: this.setIdEditor(),
       idToolBar: this.setIdToolBar(),
       idButton: this.setIdButton(),
@@ -154,37 +186,234 @@ export default {
       items: [],
       template: ItemTemplate,
       actionValidate: 0,
-      mouse_pos : ''
+      mouse_pos : '',
+      hostname: ''
     }
   },
   created() {
+
+
   },
   mounted() {
-    var quill = new Quill('#'+this.idEditor, {
+
+    var quill = window.quill = new Quill('#'+this.idEditor, {
       modules: {
+        cursors:  {
+          hideDelayMs: 5000,
+          hideSpeedMs: 0,
+          selectionChangeSource: null
+      },
         toolbar: '#'+ this.idToolBar
+      },
+      history: {
+        userOnly: true
       },
       placeholder: 'Compose an epic...',
       theme: 'bubble'  // or 'bubble',
 
     });
+
+    var cursors = new Cursors(this.idCursorsSocketIndicator, this.idCursorsSocketState)
+
+    var doc = shareDBConnection.get('documents', this.idEditor);
+
     let self = this
+
     document.querySelector('#' + this.idButtonZotero).addEventListener('click', function() {
       var range = quill.getSelection(focus = true);
       $("#"+self.idInputZotero).toggle()
       var html_ = '<a href="#" tooltip="" style="color:red">[R1]</a>'
       self.pasteHtmlAtCaret(html_)
     });
+
     document.querySelector('#' + this.idButtonComment).addEventListener('click', function() {
       self.highlightSelection()
       //hightlightText()
-
     });
 
     this.editor = quill
-    this.editor.on('text-change', (delta, source) => {
-        this.$emit('edit', this.editor, delta, source,this.numBlock,this.numSubBlock,this.numSubSubBlock)
-    });
+
+    var cursorsModule = this.editor.getModule('cursors');
+
+    /*this.editor.on('text-change', (delta, oldDelta, source) => {
+        this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+    });*/
+
+    self = this
+
+    doc.subscribe(function(err) {
+
+      if (err) throw err;
+
+      if (!doc.type)
+        doc.create([{
+          insert: '\n'
+        }], 'rich-text')
+
+      // update editor contents
+      self.editor.setContents(doc.data);
+
+      // local -> server
+      self.editor.on('text-change', function(delta, oldDelta, source) {
+        if (source == 'user') {
+          self.$emit('edit', self.editor, delta, oldDelta,self.numBlock,self.numSubBlock,self.numSubSubBlock)
+          // Check if it's a formatting-only delta
+          var formattingDelta = delta.reduce(function (check, op) {
+            return (op.insert || op.delete) ? false : check;
+          }, true);
+
+          // If it's not a formatting-only delta, collapse local selection
+          if (
+            !formattingDelta &&
+            cursors.getLocalConnectionRange() &&
+            cursors.getLocalConnectionRangeLength()
+          ) {
+            var _index = cursors.getLocalConnectionRangeLength() + 1
+            cursors.setLocalConnectionRangeIndex(_index)
+            cursors.setLocalConnectionRangeLength(0)
+            cursors.update()
+          }
+
+          doc.submitOp(delta, {
+            source: self.editor
+          }, function(err) {
+            if (err)
+              console.error('Submit OP returned an error:', err);
+          });
+
+          updateUserList();
+        }
+      });
+
+      cursorsModule.registerTextChangeListener();
+
+      // server -> local
+      doc.on('op', function(op, source) {
+        if (source !== self.editor) {
+          self.editor.updateContents(op);
+          updateUserList();
+        }
+      });
+
+      //
+      function sendCursorData(range) {
+        cursors.setLocalConnectionRange(range);
+        cursors.update();
+      }
+
+      //
+      var debouncedSendCursorData = utils.debounce(function() {
+        var range = self.editor.getSelection();
+        if (range) {
+          console.log('[cursors] Stopped typing, sending a cursor update/refresh.');
+          sendCursorData(range);
+        }
+      }, 3000);
+
+      doc.on('nothing pending', debouncedSendCursorData);
+
+      function updateCursors(source) {
+        var activeConnections = {},
+          updateAll = Object.keys(cursorsModule.cursors).length == 0;
+
+        cursors.connections.forEach(function(connection) {
+          if (connection.id != cursors.localConnection.id) {
+
+            // Update cursor that sent the update, source (or update all if we're initting)
+            if ((connection.id == source.id || updateAll) && connection.range) {
+              cursorsModule.setCursor(
+                connection.id,
+                connection.range,
+                connection.name,
+                connection.color
+              );
+            }
+
+            // Add to active connections hashtable
+            activeConnections[connection.id] = connection;
+          }
+        });
+
+        // Clear 'disconnected' cursors
+        Object.keys(cursorsModule.cursors).forEach(function(cursorId) {
+          if (!activeConnections[cursorId]) {
+            cursorsModule.removeCursor(cursorId);
+          }
+        });
+      }
+
+      self.editor.on('selection-change', function(range, oldRange, source) {
+        sendCursorData(range);
+      });
+
+      document.addEventListener('cursors-update', function(e) {
+        // Handle Removed Connections
+        e.detail.removedConnections.forEach(function(connection) {
+          if (cursorsModule.cursors[connection.id])
+            cursorsModule.removeCursor(connection.id);
+        });
+
+        updateCursors(e.detail.source);
+        updateUserList();
+      })
+
+      updateCursors(cursors.localConnection)
+    })
+
+
+
+    window.cursors = cursors
+
+    var usersListEl = document.getElementById(this.idUsersList);
+
+    function updateUserList() {
+      // Wipe the slate clean
+      usersListEl.innerHTML = null;
+
+      cursors.connections.forEach(function(connection) {
+        //var userItemEl = document.createElement('li');
+        var userNameEl = document.createElement('div');
+        var userParagraphEl = document.createElement('p');
+        userNameEl.className = 'circle'
+        //var userDataEl = document.createElement('div');
+
+        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
+        //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
+        //userNameEl.classList.add('user-name');
+
+        if (connection.id == cursors.localConnection.id) {
+          userParagraphEl.innerHTML = 'Y';
+        }
+
+
+        if (connection.range) {
+
+          if (connection.id == cursors.localConnection.id)
+            connection.range = self.editor.getSelection();
+
+          /*userDataEl.innerHTML = [
+            '<div class="user-data">',
+            '  <div>Index: ' + connection.range.index + '</div>',
+            '  <div>Length: ' + connection.range.length + '</div>',
+            '</div>'
+          ].join('');*/
+        } /*else
+          userDataEl.innerHTML = '(Not focusing on editor.)';*/
+
+
+        //userItemEl.appendChild(userNameEl);
+        //userItemEl.appendChild(userDataEl);
+
+        userNameEl.style.backgroundColor = connection.color;
+        userNameEl.appendChild(userParagraphEl);
+        usersListEl.appendChild(userNameEl);
+
+      });
+    }
+
+    cursors.localConnection.name = this.userId
+    cursors.update()
+
 
     $('#'+this.idButtonZotero).click(function () {
       self.showQuestion(
@@ -207,12 +436,42 @@ export default {
           $("#"+self.idButton).toggle()
         });
     });
+    /*
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();
       quill.theme.tooltip.show();
       self.mouse_pos = e
       return false;
+    });
+    */
+    // DEBUG
+
+    var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
+    var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator');
+
+    shareDBConnection.on('state', function(state, reason) {
+      var indicatorColor;
+
+      console.log('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+
+      sharedbSocketStateEl.innerHTML = state.toString();
+
+      switch (state.toString()) {
+        case 'connecting':
+          indicatorColor = 'silver';
+          break;
+        case 'connected':
+          indicatorColor = 'lime';
+          break;
+        case 'disconnected':
+        case 'closed':
+        case 'stopped':
+          indicatorColor = 'red';
+          break;
+      }
+
+      sharedbSocketIndicatorEl.style.backgroundColor = indicatorColor;
     });
 
   },
@@ -222,6 +481,9 @@ export default {
         this.editor.root.innerHTML = this.content
       }
     }
+  },
+  computed: {
+    ...mapGetters(['userId'])
   },
   methods:{
     highlightSelection () {
@@ -364,6 +626,46 @@ export default {
         return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
       }
     },
+    setIdSharedbSocketIndicator () {
+      if(this.uuid==''){
+        return 'id-sharedb-socket-indicator-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'id-sharedb-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdSharedbSocketState () {
+      if(this.uuid==''){
+        return 'id-sharedb-socket-state-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'id-sharedb-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdCursorsSocketIndicator () {
+      if(this.uuid==''){
+        return 'id-cursors-socket-indicator-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'id-cursors-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdCursorsSocketState () {
+      if(this.uuid==''){
+        return 'id-cursors-socket-state-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'id-cursors-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
+    setIdUsersList () {
+      if(this.uuid==''){
+        return 'id-users-list-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
+      }
+      else{
+        return 'id-users-list-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+      }
+    },
     deleteBlock () {
       this.$emit('delete',true)
     }
@@ -376,7 +678,11 @@ export default {
   color:black;
   background-color:transparent;
 }
-
+/*
+.ql-cursor-flag {
+  display: none;
+}
+*/
 .pre {
   margin: 0 auto;
   width: 100%;
@@ -384,7 +690,8 @@ export default {
 
 p {
   text-align: justify;
-  white-space: pre-line;
+
+  /*white-space: pre-line;*/
   -webkit-hyphens: auto;
     -moz-hyphens: auto;
     -ms-hyphens: auto;
@@ -529,5 +836,72 @@ p {
     right:10px;
     top:5px;
 }
+.socket-indicator {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 5px;
+  display: none;
+}
 
+.socket-state {
+  text-transform: capitalize;
+  display: none;
+}
+
+
+.circle{
+    position:relative;
+    background:#666;
+    width:50px;
+    height:50px;
+    left:-100px;
+    text-align:center;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #fff;
+
+
+display: none;
+}
+.circle+.circle{
+  -webkit-transform: translateY(-20px);
+  -ms-transform: translateY(-20px);
+  transform: translateY(-20px);
+  display: none;
+}
+.circle p
+{
+    font:italic 26px Georgia;
+    color:#fff;
+    vertical-align:middle;
+    height:50px;
+    position: inherit;
+    top:15%;
+    display: none;
+}
+
+#users-panel ul > li {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+#users-panel .user-name {
+  margin-bottom: 5px;
+}
+
+#users-panel .user-data {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#users-panel .user-data > div {
+  flex-grow: 1;
+}
 </style>
