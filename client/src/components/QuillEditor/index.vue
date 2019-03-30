@@ -1,16 +1,11 @@
 <template>
   <div>
   <div>
-    {{idEditor}}
-    <p>
       <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator'></span>
       <span v-bind:id="idSharedbSocketState" class='socket-state'></span>
-    </p>
-    <p>
       <span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
       <span v-bind:id="idCursorsSocketState" class='socket-state'></span>
-    </p>
-    <div v-bind:id="idUsersList" style='display:none;'></div>
+      <div v-bind:id="idUsersList" style='display:none;'></div>
   </div>
   <div>
     <div class='insert-button-box' v-bind:id="idButton">
@@ -216,6 +211,8 @@ export default {
     var cursors = new Cursors(this.idCursorsSocketIndicator, this.idCursorsSocketState)
 
     var doc = shareDBConnection.get('documents', this.idEditor);
+    //shareDBConnection.createFetchQuery(collectionName, query, options, callback)
+    //shareDBConnection.createSubscribeQuery(collectionName, query, options, callback)
 
     let self = this
 
@@ -239,16 +236,20 @@ export default {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });*/
 
+    //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
+
     self = this
 
     doc.subscribe(function(err) {
 
       if (err) throw err;
 
-      if (!doc.type)
+      if (!doc.type) {
         doc.create([{
           insert: '\n'
         }], 'rich-text')
+        doc.data = self.content
+      }
 
       // update editor contents
       self.editor.setContents(doc.data);
@@ -562,7 +563,6 @@ export default {
       }
     },
     updateItems (text) {
-
         this.items = [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
                       {id: 2, name: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
                       {id: 3, name: 'Parkin overexpression during aging reduces proteotoxicity, alters mitochondrial dynamics, and extends lifespan', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
@@ -571,100 +571,40 @@ export default {
                     ]
     },
     setIdEditor () {
-      if(this.uuid==''){
-        return 'editor-container-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdToolBar () {
-      if(this.uuid==''){
-        return 'toolbar-container-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButton () {
-      if(this.uuid==''){
-        return 'bottom-right-button-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonZotero () {
-      if(this.uuid==''){
-        return 'button-zotero-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdInputZotero () {
-      if(this.uuid==''){
-        return 'input-zotero-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonComment () {
-      if(this.uuid==''){
-        return 'button-comment-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonHighlight () {
-      if(this.uuid==''){
-        return 'button-hightlight-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdSharedbSocketIndicator () {
-      if(this.uuid==''){
-        return 'id-sharedb-socket-indicator-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'id-sharedb-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'id-sharedb-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdSharedbSocketState () {
-      if(this.uuid==''){
-        return 'id-sharedb-socket-state-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'id-sharedb-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'id-sharedb-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdCursorsSocketIndicator () {
-      if(this.uuid==''){
-        return 'id-cursors-socket-indicator-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'id-cursors-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'id-cursors-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdCursorsSocketState () {
-      if(this.uuid==''){
-        return 'id-cursors-socket-state-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'id-cursors-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'id-cursors-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdUsersList () {
-      if(this.uuid==''){
-        return 'id-users-list-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'id-users-list-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'id-users-list-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     deleteBlock () {
       this.$emit('delete',true)
