@@ -74,15 +74,9 @@ const content = `
 \\begin{document}
 
 \\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
-\\vspace{.5pc}
-\\centerline{\\sc Stupid Stuff I Wish Someone Had Told Me Four Years Ago}
-\\centerline{\\it (Read the .tex file along with this or it won't
-            make much sense)}
 \\vspace{2pc}
 
-The first thing to realize about \\LaTeX\\ is that it is not  WYSIWYG.
-In other words, it isn't a word processor; what you type into your
-.tex file is not what you'll see in your .dvi file.
+Type your text
 
 \\end{document}
 `
