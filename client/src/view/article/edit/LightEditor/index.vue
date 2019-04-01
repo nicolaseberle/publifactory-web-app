@@ -346,59 +346,17 @@ export default {
   name: 'LightEditor',
   components: {addCollaborator,figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
-    const validateRequire = (rule, value, callback) => {
-      if (value === '') {
-        this.$message({
-          message: rule.field + 'required',
-          type: 'error'
-        })
-        callback(new Error(rule.field + 'required'))
-      } else {
-        callback()
-      }
-    }
-    const validateSourceUri = (rule, value, callback) => {
-      if (value) {
-        if (validateURL(value)) {
-          callback()
-        } else {
-          this.$message({
-            message: 'wrong url chain',
-            type: 'error'
-          })
-          callback(new Error('wrong url chain'))
-        }
-      } else {
-        callback()
-      }
-    }
     return {
       uuid_comment: '',
       zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
-      chartData: [{
-        x:['Exp. A11','Exp. A12','Exp. A21','Exp. A22','Exp. B1','Exp. B2','Exp. C1','Exp. C2', 'Exp. CRTL'],
-        y: [30, 60, 90, 40, 110, 36, 78, 30, 60],
-        type: 'bar',
-        orientation: 'v'
-      }],
-      chartLayout: {
-        title: 'number of samples',
-        showlegend: false
-      },
-      chartOptions: {},
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
       diagInsertFigureVisible: false,
       userListOptions: [],
       html: '',
-      rules: {
-        title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
-      },
       activeNames: ['1'],
       activeNames_section: ['1'],
       options: options,
