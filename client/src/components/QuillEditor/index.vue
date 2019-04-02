@@ -1,11 +1,11 @@
 <template>
   <div>
   <div>
-      <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator'></span>
-      <span v-bind:id="idSharedbSocketState" class='socket-state'></span>
-      <span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
+      <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator' style='display:none;'></span>
+      <span v-bind:id="idSharedbSocketState" class='socket-state' style='display:none;'></span>
+      <!--<span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
       <span v-bind:id="idCursorsSocketState" class='socket-state'></span>
-      <div v-bind:id="idUsersList" style='display:none;'></div>
+      <div v-bind:id="idUsersList" style='display:none;'></div>-->
   </div>
   <div>
     <div class='insert-button-box' v-bind:id="idButton">
@@ -104,7 +104,7 @@ import hightlightText from '../../utils/js/animation/highlight.js';
 var ShareDB = require('sharedb/lib/client')// cursor
 var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
 var utils = require('../../utils/js/collaboration/utils')// cursor
-import Cursors from '../../utils/js/collaboration/cursors.js'
+
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
@@ -147,6 +147,7 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
+    cursors: [Object],
     content: [String],
     uuid: [String],
     numBlock: {},
@@ -208,8 +209,6 @@ export default {
 
     });
 
-    var cursors = new Cursors(this.idCursorsSocketIndicator, this.idCursorsSocketState)
-
     var doc = shareDBConnection.get('documents', this.idEditor);
     //shareDBConnection.createFetchQuery(collectionName, query, options, callback)
     //shareDBConnection.createSubscribeQuery(collectionName, query, options, callback)
@@ -266,13 +265,13 @@ export default {
           // If it's not a formatting-only delta, collapse local selection
           if (
             !formattingDelta &&
-            cursors.getLocalConnectionRange() &&
-            cursors.getLocalConnectionRangeLength()
+            self.cursors.getLocalConnectionRange() &&
+            self.cursors.getLocalConnectionRangeLength()
           ) {
-            var _index = cursors.getLocalConnectionRangeLength() + 1
-            cursors.setLocalConnectionRangeIndex(_index)
-            cursors.setLocalConnectionRangeLength(0)
-            cursors.update()
+            var _index = self.cursors.getLocalConnectionRangeLength() + 1
+            self.cursors.setLocalConnectionRangeIndex(_index)
+            self.cursors.setLocalConnectionRangeLength(0)
+            self.cursors.update()
           }
 
           doc.submitOp(delta, {
@@ -282,7 +281,9 @@ export default {
               console.error('Submit OP returned an error:', err);
           });
 
-          updateUserList();
+          /*setInterval(function() {
+            self.$emit('signalUpdateUserList', self.cursors)
+          },5000)*/
         }
       });
 
@@ -292,14 +293,17 @@ export default {
       doc.on('op', function(op, source) {
         if (source !== self.editor) {
           self.editor.updateContents(op);
-          updateUserList();
+          /*setInterval(function() {
+            self.$emit('signalUpdateUserList', self.cursors)
+          },5000)*/
+
         }
       });
 
       //
       function sendCursorData(range) {
-        cursors.setLocalConnectionRange(range);
-        cursors.update();
+        self.cursors.setLocalConnectionRange(range);
+        self.cursors.update();
       }
 
       //
@@ -317,8 +321,8 @@ export default {
         var activeConnections = {},
           updateAll = Object.keys(cursorsModule.cursors).length == 0;
 
-        cursors.connections.forEach(function(connection) {
-          if (connection.id != cursors.localConnection.id) {
+        self.cursors.connections.forEach(function(connection) {
+          if (connection.id != self.cursors.localConnection.id) {
 
             // Update cursor that sent the update, source (or update all if we're initting)
             if ((connection.id == source.id || updateAll) && connection.range) {
@@ -355,66 +359,18 @@ export default {
         });
 
         updateCursors(e.detail.source);
-        updateUserList();
+        /*setInterval(function() {
+          self.$emit('signalUpdateUserList', self.cursors)
+        },5000)*/
       })
 
-      updateCursors(cursors.localConnection)
+      updateCursors(self.cursors.localConnection)
+      /*setInterval(function() {
+        self.$emit('signalUpdateUserList', self.cursors)
+      },5000)*/
     })
 
-
-
-    window.cursors = cursors
-
-    var usersListEl = document.getElementById(this.idUsersList);
-
-    function updateUserList() {
-      // Wipe the slate clean
-      usersListEl.innerHTML = null;
-
-      cursors.connections.forEach(function(connection) {
-        //var userItemEl = document.createElement('li');
-        var userNameEl = document.createElement('div');
-        var userParagraphEl = document.createElement('p');
-        userNameEl.className = 'circle'
-        //var userDataEl = document.createElement('div');
-
-        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
-        //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
-        //userNameEl.classList.add('user-name');
-
-        if (connection.id == cursors.localConnection.id) {
-          userParagraphEl.innerHTML = 'Y';
-        }
-
-
-        if (connection.range) {
-
-          if (connection.id == cursors.localConnection.id)
-            connection.range = self.editor.getSelection();
-
-          /*userDataEl.innerHTML = [
-            '<div class="user-data">',
-            '  <div>Index: ' + connection.range.index + '</div>',
-            '  <div>Length: ' + connection.range.length + '</div>',
-            '</div>'
-          ].join('');*/
-        } /*else
-          userDataEl.innerHTML = '(Not focusing on editor.)';*/
-
-
-        //userItemEl.appendChild(userNameEl);
-        //userItemEl.appendChild(userDataEl);
-
-        userNameEl.style.backgroundColor = connection.color;
-        userNameEl.appendChild(userParagraphEl);
-        usersListEl.appendChild(userNameEl);
-
-      });
-    }
-
-    cursors.localConnection.name = this.userId
-    cursors.update()
-
+    window.cursors = this.cursors
 
     $('#'+this.idButtonZotero).click(function () {
       self.showQuestion(
@@ -503,8 +459,6 @@ export default {
         this.editor.deleteText(range.index  , range.length);
         this.editor.insertEmbed(range.index,"datareview",cObj)
         this.$emit('comment', uuid_review)
-
-
     },
     showQuestion (button) {
       var offset = this.mouse_pos
@@ -741,7 +695,6 @@ p {
   display: block;
   font-family: sans-serif;
 }
-
 .questions {
     display: none;
     background: #222;
@@ -760,7 +713,6 @@ p {
     padding: 5px 2px 5px 5px;
     font-size: 16px;
     text-align: center;
-
 }
 .question img{
   margin-top: 7px;
@@ -775,73 +727,5 @@ p {
     position: absolute;
     right:10px;
     top:5px;
-}
-.socket-indicator {
-  height: 10px;
-  width: 10px;
-  display: inline-block;
-  margin-right: 5px;
-  border-radius: 5px;
-  display: none;
-}
-
-.socket-state {
-  text-transform: capitalize;
-  display: none;
-}
-
-
-.circle{
-    position:relative;
-    background:#666;
-    width:50px;
-    height:50px;
-    left:-100px;
-    text-align:center;
-    -webkit-border-radius: 25px;
-    -moz-border-radius: 25px;
-    border-radius: 25px;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #fff;
-
-
-display: none;
-}
-.circle+.circle{
-  -webkit-transform: translateY(-20px);
-  -ms-transform: translateY(-20px);
-  transform: translateY(-20px);
-  display: none;
-}
-.circle p
-{
-    font:italic 26px Georgia;
-    color:#fff;
-    vertical-align:middle;
-    height:50px;
-    position: inherit;
-    top:15%;
-    display: none;
-}
-
-#users-panel ul > li {
-  padding: 5px;
-  border-radius: 5px;
-  color: white;
-  margin-bottom: 10px;
-}
-
-#users-panel .user-name {
-  margin-bottom: 5px;
-}
-
-#users-panel .user-data {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-#users-panel .user-data > div {
-  flex-grow: 1;
 }
 </style>

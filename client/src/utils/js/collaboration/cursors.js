@@ -2,6 +2,8 @@ var ReconnectingWebSocket = require('reconnectingwebsocket')
 var Chance = require('chance')
 var chance = new Chance()
 
+// const list_color = ['#a9997e', '#cd051d', '#303c79', '#157fde', '#f6662e', '#de3c1b']
+
 class CursorConnection {
   constructor (name, color) {
     this.id = null
@@ -17,14 +19,14 @@ class CursorConnection {
 }
 
 export default class Cursors {
-  constructor (idIndicator, idState) {
-    this.socketStateEl = document.getElementById(idState)
-    this.socketIndicatorEl = document.getElementById(idIndicator)
+  constructor (idIndicator, idState, username) {
+    // this.socketStateEl = document.getElementById(idState)
+    // this.socketIndicatorEl = document.getElementById(idIndicator)
 
     // Create browserchannel socket
     this.socket = new ReconnectingWebSocket(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' + '/cursors')
-    this.socketStateEl.innerHTML = 'connecting'
-    this.socketIndicatorEl.style.backgroundColor = 'silver'
+    // this.socketStateEl.innerHTML = 'connecting'
+    // this.socketIndicatorEl.style.backgroundColor = 'silver'
 
     // Init a blank user connection to store local conn data
     this.localConnection = new CursorConnection(
@@ -34,6 +36,8 @@ export default class Cursors {
       })
     )
 
+    this.localConnection.name = username
+
     // Init connections array
     this.connections = []
 
@@ -41,8 +45,8 @@ export default class Cursors {
     // retrieve a list of current clients so we can set a colour.
     var self = this
     this.socket.onopen = function () {
-      self.socketStateEl.innerHTML = 'connected'
-      self.socketIndicatorEl.style.backgroundColor = 'lime'
+      // self.socketStateEl.innerHTML = 'connected'
+      // self.socketIndicatorEl.style.backgroundColor = 'lime'
       self.update()
     }
 
@@ -71,7 +75,7 @@ export default class Cursors {
       // Find removed connections
       for (var i = 0; i < self.connections.length; i++) {
         var testConnection = data.connections.find(function (connection) {
-          return connection.id === self.connections[i].id
+          return self.localConnection.id === self.connections[i].id
         })
 
         if (!testConnection) {
@@ -102,7 +106,7 @@ export default class Cursors {
         }
 
         if (reportNewConnections && !self.connections.find(function (connection) {
-          return connection.id === data.connections[i_].id
+          return connection.id === data.connections[i_].id || connection.name === data.connections[i_].name
         })) {
           console.log('[cursors] User connected:', data.connections[i_])
           console.log('[cursors] Connections after new user:', data.connections)
@@ -125,14 +129,14 @@ export default class Cursors {
 
     this.socket.onclose = function (event) {
       console.log('[cursors] Socket closed. Event:', event)
-      self.socketStateEl.innerHTML = 'closed'
-      self.socketIndicatorEl.style.backgroundColor = 'red'
+      // self.socketStateEl.innerHTML = 'closed'
+      // self.socketIndicatorEl.style.backgroundColor = 'red'
     }
 
     this.socket.onerror = function (event) {
       console.log('[cursors] Error on socket. Event:', event)
-      self.socketStateEl.innerHTML = 'error'
-      self.socketIndicatorEl.style.backgroundColor = 'red'
+      // self.socketStateEl.innerHTML = 'error'
+      // self.socketIndicatorEl.style.backgroundColor = 'red'
     }
   }
   // Update

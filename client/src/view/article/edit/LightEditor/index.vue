@@ -22,6 +22,7 @@
                 </div>-->
                 <p class="article-doi">DOI : {{postForm.doi}}</p>
                 <!--<h1>{{ postForm.title }} </i></h1>-->
+                <div class='connectedUser'><div id="id-users-list"></div></div>
                 <h1>
                   <form name="article_title_form">
                     <textarea-autosize
@@ -42,7 +43,10 @@
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
-
+                    <div>
+                      <span id="id-cursors-socket-indicator" class='socket-indicator'></span>
+                      <span id="id-cursors-socket-state" class='socket-state'></span>
+                    </div>
                 </div>
 
                 <div class="article-tag">
@@ -70,7 +74,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors'  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
@@ -86,7 +90,7 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors' v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
@@ -288,7 +292,7 @@ import figureComponent from '../../../../components/Figure'
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
 import LoadScript from 'vue-plugin-load-script'
-
+import Cursors from '../../../../utils/js/collaboration/cursors.js'
 //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -347,6 +351,7 @@ export default {
   components: {addCollaborator,figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     return {
+      cursors : Object,
       uuid_comment: '',
       zoteroitems: [],
       editidfigure: 0,
@@ -408,7 +413,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar','userId','username']),
     contentShortLength() {
       return this.postForm.content_short.length
     },
@@ -434,7 +439,8 @@ export default {
         console.warn(reason);
     });
     */
-
+    this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
+    this.cursors.update()
   },
   mounted() {
       //let zoteroScript = document.createElement('script')
@@ -442,6 +448,8 @@ export default {
       //document.head.appendChild(zoteroScript)
 
       asideRightAnimation()
+      this.updateUserList()
+
       //hightlightText()
 
       //var config = new Zotero.RequestConfig().LibraryType('user').LibraryID(5476883).Target('items').config;
@@ -534,29 +542,61 @@ export default {
     }
   },
   methods: {
-    createComment(uuid_comment){
+    /*signalUpdateUserList (newCursors) {
+      this.updateUserList (editor)
+    },*/
+    updateUserList (editor) {
+      // Wipe the slate clean
+
+      var usersListEl = document.getElementById('id-users-list');
+      usersListEl.innerHTML = null;
+      var _cursors = this.cursors
+      _cursors.connections.forEach(function(connection) {
+        //var userItemEl = document.createElement('li');
+        var userNameEl = document.createElement('div');
+        var userParagraphEl = document.createElement('p');
+        userNameEl.className = 'circle'
+        //var userDataEl = document.createElement('div');
+
+        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
+        //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
+        //userNameEl.classList.add('user-name');
+
+        if (connection.id == _cursors.localConnection.id) {
+          userParagraphEl.innerHTML = _cursors.localConnection.name.charAt(0);
+        }
+
+        if (connection.range) {
+          if (connection.id == _cursors.localConnection.id)
+            connection.range = editor.getSelection();
+
+          /*userDataEl.innerHTML = [
+            '<div class="user-data">',
+            '  <div>Index: ' + connection.range.index + '</div>',
+            '  <div>Length: ' + connection.range.length + '</div>',
+            '</div>'
+          ].join('');*/
+        } /*else
+          userDataEl.innerHTML = '(Not focusing on editor.)';*/
+
+        userNameEl.style.backgroundColor = connection.color;
+        userNameEl.appendChild(userParagraphEl);
+        usersListEl.appendChild(userNameEl);
+
+      });
+    },
+    createComment (uuid_comment){
       // console.log('signal creation comment :',uuid_comment)
       $('aside.content-comments-reviews').css('display', 'block')
       this.uuid_comment = uuid_comment
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
-    nextStep() {
+    nextStep () {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
-    previousStep() {
+    previousStep () {
         if (this.dialogStepActive-- < 0 ) this.dialogStepActive = 0;
-    },
-
-    handleClose(done) {
-        this.$confirm('Are you sure to close this dialog?')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
-    handleClick(tab, event) {
-
     },
     fetchData(id) {
       axios.get('/api/articles/' + id ).then(response => {
@@ -606,6 +646,7 @@ export default {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
       this.save(this.$event)
+      this.updateUserList(editor)
     },
     addNewRow (ev,key) {
       var uuid_ = String(uuidv4())
@@ -746,6 +787,38 @@ export default {
 }
 .vue-plotly{
 
+}
+
+.socket-indicator {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+.socket-state {
+  text-transform: capitalize;
+}
+.connectedUser {
+  display: inline-block;
+  float: right;
+  position: inherit;
+}
+
+#users-panel ul > li {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  margin-bottom: 10px;
+}
+#users-panel .user-name {
+  margin-bottom: 5px;
+}
+#users-panel .user-data {
+  flex-wrap: wrap;
+}
+#users-panel .user-data > div {
+  flex-grow: 1;
 }
 </style>
 <!--<style>
