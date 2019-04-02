@@ -123,12 +123,13 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     // console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
     const title = req.body.title.trim();
     const abstract = req.body.abstract;
+    const content = req.body.content;
     const arr_content = req.body.arr_content;
     const published = req.body.published;
     const article = await Article
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { title, abstract, arr_content, published } },
+        { $set: { title, abstract, content, arr_content, published } },
         { new: true }
       );
 
@@ -218,7 +219,6 @@ module.exports.addAuthorOfArticle = async (req, res, next) => {
   }
 };
 
-
 /**
  * @function removeAuthorOfArticle
  * @memberof module:controllers/articles
@@ -258,16 +258,13 @@ module.exports.createArticle = async (req, res, next) => {
     }*/
 
     const title = req.body.title.trim();
-    //console.log(title);
     const abstract = req.body.abstract.trim();
-    //console.log(abstract);
     const arr_content = req.body.arr_content;
-    //console.log(arr_content);
+    const content = req.body.content;
     const status = req.body.status;
-    //console.log(content);
     const published = req.body.published;
-    //console.log(published);
-    const newArticle = new Article({ title, abstract, arr_content, status, published});
+
+    const newArticle = new Article({ title, abstract, content, arr_content, status, published});
 
     //Add category to the Article
     //Catch the good category

@@ -31,56 +31,6 @@ import CodeMirror from 'codemirror'
 import 'codemirror/mode/stex/stex.js'
 import 'codemirror/lib/codemirror.css'
 
-const source = `
-\\documentclass{article}
-\\begin{document}
-Hello World!
-\\end{document}
-`
-
-
-const defaultForm = {
-  status: 'draft',
-  title: '',
-  abstract: '',
-  content: '',
-  arr_content: [{
-                  name:"titre_1",
-                  title:"Titre 1",
-                  title_placeholder:"Titre 1",
-                  content:"Type your text",
-                  path_figure: "",
-                  display:true
-                }],
-  content_short: '',
-  source_uri: '',
-  image_uri: '',
-  display_time: undefined,
-  id: undefined,
-  platforms: ['a-platform'],
-  comment_disabled: false,
-  importance: 0
-}
-
-const latex_code = "" +
-  "\\documentclass{article}" +
-  "\\begin{document}" +
-  "\\LaTeX is great!" +
-  "$E = mc^2$" +
-  "\\end{document}";
-
-const content = `
-\\documentclass[12pt]{article}
-\\begin{document}
-
-\\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
-\\vspace{2pc}
-
-Type your text
-
-\\end{document}
-`
-
 export default {
   name: 'LatexComponent',
   components: {  },
@@ -91,8 +41,9 @@ export default {
     return {
       postForm: {},
       editor: {},
-      content: content,
-      html: ''
+      content: '',
+      html: '',
+      id: ''
     }
   },
   computed: {
@@ -104,26 +55,48 @@ export default {
   created () {
     this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    // this.fetchData(this.id)
+    this.fetchData(this.id)
   },
   mounted () {
-      this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        value: latex_code,
+    this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        value: this.content,
         lineNumbers: true,
         styleActiveLine: true,
         matchBrackets: true,
         mode: "text/x-stex"
      });
-     // const pdf = pdflatex(source);
+     var self = this
+     this.editor.on("change", function (object) {
+       self.postForm.content = String(object.getValue())
+       self.save()
+     })
 
+     // const pdf = pdflatex(source);
   },
   methods: {
+
     fetchData(id) {
       axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
+        this.content = this.postForm.content
       }).catch(err => {
         console.log(err)
       })
+    },
+    save () {
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"arr_content": this.postForm.arr_content,"published": true })
+      .then(response => {
+        console.log("article saved")
+      })
+      .catch(e => {
+        console.log(e)
+      })
+    }
+  },
+  watch: {
+    content (newVal) {
+      if(this.editor)
+        this.editor.setValue(this.content)
     }
   }
 }

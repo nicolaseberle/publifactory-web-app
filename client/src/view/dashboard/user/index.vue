@@ -191,6 +191,17 @@ export default {
                           content:"Type the text",
                           display:true
                         }],
+          content:
+`
+\\documentclass[12pt]{article}
+\\begin{document}
+\\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
+\\vspace{2pc}
+
+Type your text
+
+\\end{document}
+`,
           category : String('physics'),
           id_author : this.userId,
           published: true

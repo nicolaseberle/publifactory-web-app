@@ -582,9 +582,13 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
-
     save (ev) {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
+                                               "abstract":this.postForm.abstract,
+                                               "content": this.postForm.content,
+                                               "arr_content": this.postForm.arr_content,
+                                               "published": true
+                                             })
       .then(response => {
         console.log("article saved")
       })
@@ -592,7 +596,6 @@ export default {
         console.log(e)
       })
     },
-
     applyAbstractEdit (ev) {
       if (ev.event.target) {
         this.postForm.abstract = ev.event.target.innerHTML
