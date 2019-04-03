@@ -1,7 +1,7 @@
 <template>
   <div>
     <figure>
-        <figcaption>Fig.1 {{layout.title}}</figcaption>
+        <figcaption>Fig.1 : {{layout.title}}</figcaption>
         <div class="figure">
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
         </div>

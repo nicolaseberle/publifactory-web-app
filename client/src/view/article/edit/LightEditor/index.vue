@@ -186,7 +186,7 @@
       <el-row :gutter="20" style='margin-top:3rem'>
         <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/plotly-logo.png" style="width: 90%;" alt="Chart Manager" v-on:click="addNewFigure($event)">
+            <img src="/../../static/img/plotly-logo.png" style="width: 90%;" alt="Chart Manager" v-on:click="addNewFigurePlotly($event)">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -203,7 +203,7 @@
       <el-row :gutter="20" style='margin-top:1rem'>
         <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/Python_logo.png" style="width: 90%;" alt="Python_script">
+            <img src="/../../static/img/Python_logo.png" style="width: 90%;" alt="Python_script" v-on:click="addNewFigurePython($event)">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -243,7 +243,7 @@
       <span slot="footer" class="dialog-footer">
         <!--<el-button @click="previousStep">Previous step</el-button>
             <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
-        <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigure($event)">Next</el-button>
+        <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigurePlotly($event)">Next</el-button>
       </span>
 
     </el-dialog>
@@ -257,19 +257,37 @@
     <el-dialog
       show-close
       top="0"
-      :visible.sync="diagInsertFigureVisible"
+      :visible.sync="diagInsertFigurePlotlyVisible"
       width="100%"
       center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
+          <el-button type=""  @click="diagInsertFigurePlotlyVisible=false" >Cancel</el-button>
           <el-button type="primary" @click="" >Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
+          <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
         </div>
       </span>
-      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigureVisible"/>
+      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible"/>
     </el-dialog>
+
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigurePythonVisible"
+      width="100%"
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type=""  @click="diagInsertFigurePythonVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="" >Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" >Insert Figure</el-button>
+        </div>
+      </span>
+      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible"/>
+    </el-dialog>
+
     <div id="container"></div>
 
   </div>
@@ -289,6 +307,8 @@ import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
+import scriptPython from '../../../../components/ScriptPython'
+
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
 import LoadScript from 'vue-plugin-load-script'
@@ -348,7 +368,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {addCollaborator,figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {addCollaborator,figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     return {
       cursors : Object,
@@ -359,7 +379,8 @@ export default {
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
-      diagInsertFigureVisible: false,
+      diagInsertFigurePlotlyVisible: false,
+      diagInsertFigurePythonVisible: false,
       userListOptions: [],
       html: '',
       activeNames: ['1'],
@@ -523,7 +544,15 @@ export default {
       });*/
   },
   watch: {
-    diagInsertFigureVisible (val) {
+    diagInsertFigurePlotlyVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+      }
+    },
+    diagInsertFigurePythonVisible (val) {
       if(val==false) {
         var idfigure = this.editidfigure
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
@@ -728,11 +757,19 @@ export default {
     openEditFigure (ev,key,subkey,subsubkey) {
       this.dialogVisible = true;
     },
-    addNewFigure (ev,key,subkey,subsubkey){
+    addNewFigurePlotly (ev,key,subkey,subsubkey){
       this.dialogStepActive++;
       if(this.dialogStepActive == 2){
         this.dialogVisible = false;
-        this.diagInsertFigureVisible = true;
+        this.diagInsertFigurePlotlyVisible = true;
+        this.dialogStepActive = 0;
+      }
+    },
+    addNewFigurePython (ev,key,subkey,subsubkey){
+      this.dialogStepActive++;
+      if(this.dialogStepActive == 2){
+        this.dialogVisible = false;
+        this.diagInsertFigurePythonVisible = true;
         this.dialogStepActive = 0;
       }
     },

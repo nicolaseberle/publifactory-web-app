@@ -113,8 +113,8 @@ export default {
       },
       settings3: {
           data: [
-            ["", "Ford", "Volvo", "Toyota", "Honda"],
-            ["2016", 10, 11, 12, 13]
+            ["Ford", "Volvo", "Toyota", "Honda"],
+            [10, 11, 12, 13]
           ],
           colHeaders: true,
           rowHeaders: true,
