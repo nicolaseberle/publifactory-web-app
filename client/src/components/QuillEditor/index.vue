@@ -115,7 +115,7 @@ ShareDB.types.register(require('rich-text').type);
 const Embed = Quill.import('blots/embed');
 
 
-var shareDBSocket = new ReconnectingWebSocket('ws' + '://localhost:4000/sharedb');
+var shareDBSocket = new ReconnectingWebSocket(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' + '/sharedb');
 var shareDBConnection = new ShareDB.Connection(shareDBSocket);
 
 
