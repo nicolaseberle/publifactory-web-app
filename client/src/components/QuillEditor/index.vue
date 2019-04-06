@@ -113,9 +113,15 @@ Quill.register('modules/cursors', QuillCursors);
 
 ShareDB.types.register(require('rich-text').type);
 const Embed = Quill.import('blots/embed');
+var sharedbWSAddress = ''
 
+if (process.env.NODE_ENV === 'production'){
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/sharedb'
+} else {
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/sharedb'
+}
 
-var shareDBSocket = new ReconnectingWebSocket(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' + '/sharedb');
+var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
 var shareDBConnection = new ShareDB.Connection(shareDBSocket);
 
 

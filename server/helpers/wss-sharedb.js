@@ -18,7 +18,7 @@ module.exports = function(server) {
     debug('A new client (%s) connected.', ws.id);
 
     var stream = new WebSocketJSONStream(ws);
-    
+
     shareDBServer.listen(stream);
 
     ws.on('pong', function(data, flags) {

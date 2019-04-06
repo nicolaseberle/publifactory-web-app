@@ -28,7 +28,8 @@ module.exports = merge(baseWebpackConfig, {
       jQuery: 'jquery'
     }),
     new webpack.DefinePlugin({
-      'process.env': '"development"'
+      'process.env': '"development"',
+      'process.env.NODE_ENV': JSON.stringify('development')
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),

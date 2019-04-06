@@ -1,8 +1,18 @@
 var ReconnectingWebSocket = require('reconnectingwebsocket')
+// var config = require('../../../../../config').backend
+
 var Chance = require('chance')
 var chance = new Chance()
-
+var socketAddress = ''
 // const list_color = ['#a9997e', '#cd051d', '#303c79', '#157fde', '#f6662e', '#de3c1b']
+
+if (process.env.NODE_ENV === 'production') {
+  socketAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/cursors'
+} else {
+  socketAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/cursors'
+}
+
+console.log(process.env.NODE_ENV, socketAddress)
 
 class CursorConnection {
   constructor (name, color) {
@@ -24,7 +34,7 @@ export default class Cursors {
     // this.socketIndicatorEl = document.getElementById(idIndicator)
 
     // Create browserchannel socket
-    this.socket = new ReconnectingWebSocket(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' + '/cursors')
+    this.socket = new ReconnectingWebSocket(socketAddress)
     // this.socketStateEl.innerHTML = 'connecting'
     // this.socketIndicatorEl.style.backgroundColor = 'silver'
 

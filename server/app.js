@@ -31,6 +31,17 @@ require('./config/socketio')(socketio)
 require('./config/express')(app)
 require('./routes')(app)
 
+if(process.env.NODE_ENV == 'production'){
+  //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
+  //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
+  app.use(serveStatic(__dirname + "/../client/dist"));
+  console.log(__dirname + "/../client/dist")
+  console.log("listen port :"+ config.port)
+}
+
+server.listen(config.port, config.ip, function () {
+  console.log('Express server listening on %d, in %s mode', config.port, app.get('env'))
+})
 
 // init websockets servers
 var wssShareDB = require('./helpers/wss-sharedb')(server);
@@ -54,20 +65,6 @@ server.on('upgrade', (request, socket, head) => {
     socket.destroy();
   }
 });
-
-if(process.env.NODE_ENV == 'production'){
-  //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
-  //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
-  app.use(serveStatic(__dirname + "/../client/dist"));
-  console.log(__dirname + "/../client/dist")
-  console.log("listen port :"+ config.port)
-}
-
-
-server.listen(config.port, config.ip, function () {
-  console.log('Express server listening on %d, in %s mode', config.port, app.get('env'))
-})
-
 
 // Expose app
 exports = module.exports = app
