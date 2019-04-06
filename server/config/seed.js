@@ -9,6 +9,7 @@ var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 var Journals = require('../api/journal/journal.model');
 var seedDB = require('../../config.js').backend.seedDB
+var resetDB = require('../../config.js').backend.resetDB
 
 const gen_text = `
 \\documentclass[12pt]{article}
@@ -39,7 +40,9 @@ var populateUsers = new Promise(
     function (resolve, reject) {
       var users = User.find({}).remove()
       .then(() => {
+      console.log('remove users')
       let users = createUsers()
+      console.log('finished populating users')
       return users
     })
     resolve(users);
@@ -59,7 +62,8 @@ var populateBase = function () {
       });
 };
 
-if (seedDB == 'true') {
+console.log('flag seedDB: ', seedDB)
+if (seedDB === 'true') {
   populateBase();
 }
 

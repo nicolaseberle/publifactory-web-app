@@ -51,6 +51,8 @@
 
                 <div class="article-tag">
                     <a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
+                    <div v-show='inputTagsVisible==true'><el-input placeholder="add a new tag" v-model="newTag" @keyup.enter.native="addNewTag($event)"></el-input></div>
+                    <a @click="inputTagsVisible=true"><h4 style='font-size:1.4rem'>+</h4></a>
                 </div>
             </header>
             <section  class="abstract">
@@ -371,6 +373,8 @@ export default {
   components: {addCollaborator,figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     return {
+      inputTagsVisible : false,
+      newTag : '',
       cursors : Object,
       uuid_comment: '',
       zoteroitems: [],
@@ -621,6 +625,12 @@ export default {
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
+    addNewTag (ev) {
+      this.inputTagsVisible = false
+      this.postForm.tags.push(this.newTag)
+      this.newTag = ''
+      this.save(ev)
+    },
     nextStep () {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
@@ -717,7 +727,7 @@ export default {
     editChartBlock (ev,key,subkey,subsubkey,idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
-      this.diagInsertFigureVisible = true;
+      this.diagInsertFigurePlotlyVisible = true;
     },
     forceRerenderBlock (key,subkey,subsubkey) {
 

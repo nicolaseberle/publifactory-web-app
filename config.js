@@ -59,7 +59,8 @@ var development = {
     cssSourceMap: false
   },
   backend: _.merge({}, backendBase, {
-    seedDB: 'false',
+    resetDB: 'false',
+    seedDB: 'true',
     mongo: {
       uri: 'mongodb://localhost:27017/mevn-dev'
     }
@@ -93,7 +94,8 @@ var production = {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
     serverFrontend: true,
-    seedDB: process.env.SEEDB,
+    resetDB: process.env.RESETDB || 'false',
+    seedDB: process.env.SEEDB || 'false',
     // Server IP
     ip: process.env.OPENSHIFT_NODEJS_IP
       || process.env.ip

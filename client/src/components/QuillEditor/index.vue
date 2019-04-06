@@ -399,7 +399,7 @@ export default {
           $("#"+self.idButton).toggle()
         });
     });
-    /*
+    
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();
@@ -407,7 +407,7 @@ export default {
       self.mouse_pos = e
       return false;
     });
-    */
+
     // DEBUG
 
     var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
