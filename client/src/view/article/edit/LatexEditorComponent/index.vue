@@ -1,27 +1,17 @@
 <template>
-  <div class="components-container-article">
-    <el-row :gutter="40" >
-      <form>
-        <el-col v-if='hidePDF==1' :span="24">
-          <textarea id="code" name="code">
-            {{content}}
-          </textarea>
-        </el-col>
-        <el-col v-if='hidePDF==0' :span="14">
-          <textarea id="code" name="code">
-            {{content}}
-          </textarea>
-        </el-col>
-      </form>
-      <el-col v-if='hidePDF==0' :span="10">
-        <el-card class="box-card">
-          <div v-html="html"/>
-        </el-card>
-      </el-col>
-    </el-row>
-
-
-  </div>
+  <!--<div class="components-container-article">-->
+    <div id='content'>
+    <Split>
+      <SplitArea :size="50">
+        <textarea id="latex-editor" name="latex-editor">
+          {{content}}
+        </textarea>
+      </SplitArea>
+      <SplitArea :size="50">
+          <iframe id="preview" sandbox="allow-same-origin allow-scripts"></iframe>
+      </SplitArea>
+    </Split>
+    </div>
 </template>
 
 <script>
@@ -30,10 +20,16 @@ import axios from 'axios'
 import CodeMirror from 'codemirror'
 import 'codemirror/mode/stex/stex.js'
 import 'codemirror/lib/codemirror.css'
+//import 'js/playground.bundle.min.js'
+
+import { parse, HtmlGenerator } from 'latex.js'
+import compile from '../../../../utils/js/latex/latex2html.js'
+// import 'latex.js/dist/latex.min.js'
+import VueSplit from 'vue-split-panel'
 
 export default {
   name: 'LatexComponent',
-  components: {  },
+  components: { VueSplit   },
   props: {
     hidePDF: Number
   },
@@ -43,7 +39,8 @@ export default {
       editor: {},
       content: '',
       html: '',
-      id: ''
+      id: '',
+
     }
   },
   computed: {
@@ -58,23 +55,29 @@ export default {
     this.fetchData(this.id)
   },
   mounted () {
-    this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    this.editor = CodeMirror.fromTextArea(document.getElementById("latex-editor"), {
         value: this.content,
         lineNumbers: true,
         styleActiveLine: true,
         matchBrackets: true,
         mode: "text/x-stex"
      });
+
      var self = this
-     this.editor.on("change", function (object) {
+     var iframe = document.getElementById('preview')
+     document.addEventListener('DOMContentLoaded', function() {
+       compile(self.editor.getValue(), iframe)
+       self.editor.refresh()
+     })
+     this.editor.on('change', function (object) {
        self.postForm.content = String(object.getValue())
        self.save()
+       compile(self.editor.getValue(), iframe)
+       iframe.contentDocument.dispatchEvent(new Event('change'))
      })
 
-     // const pdf = pdflatex(source);
   },
   methods: {
-
     fetchData(id) {
       axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
@@ -84,7 +87,7 @@ export default {
       })
     },
     save () {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"arr_content": this.postForm.arr_content,"published": true })
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"tags": this.postForm.tags,"arr_content": this.postForm.arr_content,"tags" : '' ,"published": true })
       .then(response => {
         console.log("article saved")
       })
@@ -101,3 +104,64 @@ export default {
   }
 }
 </script>
+<style>
+#content {
+    display: flex;
+}
+
+#latex-editor {
+    height: auto;
+}
+
+#preview {
+    color: #333;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+/* splitter */
+
+.gutter.gutter-horizontal {
+    display: flex;
+    align-items: center;
+    line-height: 5px;
+    font-size: 12px;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+    color: #ccc;
+    text-shadow: 1px 0 1px black;
+
+}
+.split.split-horizontal {
+    height : 900px;
+}
+
+.gutter::after {
+    content: '.. .. .. ..';
+}
+
+.gutter {
+    cursor: ew-resize;
+    background-color: #eee;
+}
+
+/* LaTeX logo */
+
+.latex span {
+    text-transform: uppercase;
+}
+
+.latex span:first-child {
+    font-size: 0.8em;
+    vertical-align: 0.2em;
+    margin-left:  -0.45em;
+    margin-right: -0.15em;
+}
+.latex span:last-child {
+    margin-left: -0.2em;
+    margin-right: -0.2em;
+    position: relative;
+    top: 0.45ex;
+}
+</style>

@@ -9,6 +9,8 @@ var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
 
+var fs = require('fs')
+
 var validationError = function (res, err) {
   return res.status(422).json(err)
 }
@@ -125,11 +127,12 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     const abstract = req.body.abstract;
     const content = req.body.content;
     const arr_content = req.body.arr_content;
+    const tags = req.body.tags;
     const published = req.body.published;
     const article = await Article
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { title, abstract, content, arr_content, published } },
+        { $set: { title, abstract, content, arr_content, tags, published } },
         { new: true }
       );
 

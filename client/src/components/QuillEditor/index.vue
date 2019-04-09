@@ -124,7 +124,7 @@ if (process.env.NODE_ENV === 'production'){
 var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
 var shareDBConnection = new ShareDB.Connection(shareDBSocket);
 
-
+/*Zotero, highlight button in quill toolbar*/
 class ProcLink extends Embed {
     static create(value) {
         let node = super.create(value);
@@ -148,6 +148,7 @@ ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
 
+/*Link the new button in quill*/
 Quill.register(ProcLink, true);
 
 export default {
@@ -230,7 +231,6 @@ export default {
 
     document.querySelector('#' + this.idButtonComment).addEventListener('click', function() {
       self.highlightSelection()
-      //hightlightText()
     });
 
     this.editor = quill
@@ -379,7 +379,7 @@ export default {
     window.cursors = this.cursors
 
     $('#'+this.idButtonZotero).click(function () {
-      self.showQuestion(
+      self.showZoteroMenu(
         $(this));
     });
     $('.close-toto').click(function (e) {
@@ -399,7 +399,7 @@ export default {
           $("#"+self.idButton).toggle()
         });
     });
-    
+
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();
@@ -449,10 +449,10 @@ export default {
     ...mapGetters(['userId'])
   },
   methods:{
+    /*Hightlight Functions*/
     highlightSelection () {
         var userSelection = window.getSelection().getRangeAt(0);
         this.highlightRange();
-
     },
     highlightRange () {
 
@@ -466,7 +466,7 @@ export default {
         this.editor.insertEmbed(range.index,"datareview",cObj)
         this.$emit('comment', uuid_review)
     },
-    showQuestion (button) {
+    showZoteroMenu (button) {
       var offset = this.mouse_pos
       console.log(offset.offsetY)
 

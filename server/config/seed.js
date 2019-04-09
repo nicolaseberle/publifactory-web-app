@@ -12,11 +12,10 @@ var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
 const gen_text = `
+
 \\documentclass[12pt]{article}
 \\begin{document}
 
-\\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
-\\vspace{2pc}
 
 Type your text
 

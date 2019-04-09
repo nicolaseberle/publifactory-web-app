@@ -627,9 +627,12 @@ export default {
     },
     addNewTag (ev) {
       this.inputTagsVisible = false
-      this.postForm.tags.push(this.newTag)
+      if (this.newTag !== '') {
+        this.postForm.tags.push(this.newTag)
+        this.save(ev)
+      }
       this.newTag = ''
-      this.save(ev)
+
     },
     nextStep () {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
@@ -666,6 +669,7 @@ export default {
                                                "abstract":this.postForm.abstract,
                                                "content": this.postForm.content,
                                                "arr_content": this.postForm.arr_content,
+                                               "tags": this.postForm.tags, 
                                                "published": true
                                              })
       .then(response => {
