@@ -179,6 +179,34 @@ export default {
     },
     createArticle () {
       var uuid_block = String(uuidv4())
+      const gen_text = `
+\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[english]{babel}
+\\usepackage{multicol}
+
+\\setcounter{secnumdepth}{2}
+
+\\title{Title of the article}
+\\author{Author's Name}
+\\date{2019}
+
+\\begin{document}
+
+\\maketitle
+
+\\begin{multicols}{2}
+\\section{Titre 1}
+\\subsection{Titre 1.1}
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ultrices sem sit amet massa semper condimentum. Nunc quis ipsum orci. Quisque diam augue, volutpat scelerisque dolor nec, porttitor rhoncus lorem. Cras rhoncus tristique dictum. Aliquam aliquet orci a tortor luctus interdum. Vivamus lacinia porttitor tellus ac euismod. Nullam tempor justo nulla, non molestie justo volutpat sed. Phasellus porttitor auctor mattis. Maecenas sit amet tincidunt elit, id consequat turpis. Vestibulum iaculis iaculis massa, nec convallis ipsum.
+
+Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu sodales felis mollis. Aenean purus mauris, vehicula id lacus ut, gravida faucibus quam. Ut vel felis erat. Pellentesque laoreet felis eu diam iaculis, et ornare est pharetra. Nam at nunc a arcu commodo maximus. Quisque consectetur lectus mollis volutpat congue. Phasellus rhoncus mi ac purus iaculis, ac suscipit dui interdum. Aenean eget neque nibh. Donec maximus ante ut dui lobortis ultrices. Duis finibus massa at maximus fermentum. Morbi lacinia fringilla purus at varius. Suspendisse consectetur vestibulum aliquam. Quisque convallis nunc vel vestibulum maximus. Donec rutrum venenatis risus sed sollicitudin.
+
+\\end{multicols}
+\\end{document}
+      `
       const newArticle = {
           title: String('Article title'),
           abstract:  String('abstract'),
@@ -191,17 +219,7 @@ export default {
                           content:"Type the text",
                           display:true
                         }],
-          content:
-`
-\\documentclass[12pt]{article}
-\\begin{document}
-\\centerline{\\sc \\large A Simple Sample \\LaTeX\\ File}
-\\vspace{2pc}
-
-Type your text
-
-\\end{document}
-`,
+          content: gen_text,
           category : String('physics'),
           id_author : this.userId,
           published: true

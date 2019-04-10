@@ -3,7 +3,7 @@
     <div id='content'>
     <Split>
       <SplitArea :size="50">
-        <textarea id="latex-editor" name="latex-editor">
+        <textarea id="latex-editor" name="latex-editor" >
           {{content}}
         </textarea>
       </SplitArea>
@@ -26,6 +26,8 @@ import { parse, HtmlGenerator } from 'latex.js'
 import compile from '../../../../utils/js/latex/latex2html.js'
 // import 'latex.js/dist/latex.min.js'
 import VueSplit from 'vue-split-panel'
+const util = require('util');
+const setTimeoutPromise = util.promisify(setTimeout);
 
 export default {
   name: 'LatexComponent',
@@ -55,27 +57,32 @@ export default {
     this.fetchData(this.id)
   },
   mounted () {
+    var iframe = document.getElementById('preview')
+
     this.editor = CodeMirror.fromTextArea(document.getElementById("latex-editor"), {
-        value: this.content,
-        lineNumbers: true,
-        styleActiveLine: true,
-        matchBrackets: true,
-        mode: "text/x-stex"
-     });
+      lineNumbers: true,
+      lineWrapping: true,
+      autoRefresh: true,
+      scrollbarStyle: "null",
+      mode: "text/x-stex"
+    });
+    this.editor.refresh();
 
-     var self = this
-     var iframe = document.getElementById('preview')
-     document.addEventListener('DOMContentLoaded', function() {
-       compile(self.editor.getValue(), iframe)
-       self.editor.refresh()
+    var self = this
+      document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(async function(){
+        await compile(self.editor.getValue(), iframe)
+      },2000);
+    })
+    this.editor.on('change', function (object) {
+      self.postForm.content = String(object.getValue())
+      self.save()
+      setTimeout(async function(){
+        await compile(self.editor.getValue(), iframe)
+        iframe.contentDocument.dispatchEvent(new Event('change'))
+       },2000);
+       setTimeout(() => void self.editor.refresh(), 0)
      })
-     this.editor.on('change', function (object) {
-       self.postForm.content = String(object.getValue())
-       self.save()
-       compile(self.editor.getValue(), iframe)
-       iframe.contentDocument.dispatchEvent(new Event('change'))
-     })
-
   },
   methods: {
     fetchData(id) {
@@ -94,6 +101,16 @@ export default {
       .catch(e => {
         console.log(e)
       })
+    },
+    // toggle class on all individual cursors
+    cmToggleCursorsInnerClass (cm, theClass, newState) {
+    	let cursors=Array.from(cm.getWrapperElement().getElementsByClassName('CodeMirror-cursor'))
+    	cursors.forEach(c => { toggleClass(c, theClass, newState); })
+    },
+    // blink the cursor as thick red once
+    cmBlinkCursorRedOnce (cm) {
+    	cmToggleCursorsInnerClass(cm, 'redCursor', true)
+    	setTimeout(() => { cmToggleCursorsInnerClass(cm, 'redCursor', false); }, 500)
     }
   },
   watch: {
@@ -110,7 +127,9 @@ export default {
 }
 
 #latex-editor {
+    width: auto;
     height: auto;
+    overflow: auto;
 }
 
 #preview {
@@ -120,19 +139,34 @@ export default {
     height: 100%;
 }
 
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  width: auto;
+  word-wrap: break-word;
+}
+.CodeMirror-scroll {
+  width: auto;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-scroll *{
+  width: auto;
+}
+
 /* splitter */
 
 .gutter.gutter-horizontal {
     display: flex;
     align-items: center;
-    line-height: 5px;
+    line-height: 900px;
     font-size: 12px;
     font-family: sans-serif;
     letter-spacing: 2px;
     color: #ccc;
-    text-shadow: 1px 0 1px black;
-
+    text-shadow: 2px 0 2px black;
 }
+
 .split.split-horizontal {
     height : 900px;
 }

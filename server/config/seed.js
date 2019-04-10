@@ -12,13 +12,28 @@ var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
 const gen_text = `
+\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[english]{babel}
+\\usepackage{multicol}
 
-\\documentclass[12pt]{article}
+\\setcounter{secnumdepth}{2}
+
+\\title{Title of the article}
+\\author{Author's Name}
+\\date{2019}
+
 \\begin{document}
 
+\\maketitle
+
+\\begin{multicols}{2}
+\\section{Titre 1}
+\\subsection{Titre 1.1}
 
 Type your text
 
+\\end{multicols}
 \\end{document}
 `
 //const gen_text = '<p>Hoc inmaturo interitu ipse quoque sui pertaesus excessit e vita aetatis nono anno atque vicensimo cum quadriennio imperasset. natus apud Tuscos in Massa Veternensi, patre Constantio Constantini fratre imperatoris, matreque Galla sorore Rufini et Cerealis, quos trabeae consulares nobilitarunt et praefecturae.</p>';
