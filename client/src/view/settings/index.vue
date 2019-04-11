@@ -13,141 +13,167 @@
     <el-tab-pane label="Profil">
       <div style='margin:20px'>
 
-
-
     <el-form  ref="form" :model="form" :rules="rules">
       <h2>
         {{$t('settings.title')}}
       </h2>
-      <el-form-item prop="firstname">
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.firstname')}}
-          </el-col>
-          <el-col :span="12">
-            <el-input v-model="form.firstname" :placeholder="$t('settings.firstname')"></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item prop="lastname">
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.lastname')}}
-          </el-col>
-          <el-col :span="12">
-            <el-input v-model="form.lastname" :placeholder="$t('settings.lastname')"></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item prop="email">
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.email')}}
-          </el-col>
-          <el-col :span="12">
-            <el-input v-model="form.email" :placeholder="$t('settings.email')" disabled></el-input>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item>
-      <el-row>
-          <el-col :span="6">
-          {{$t('settings.numORCID')}}
-        </el-col>
-        <el-col :span="12">
-          13344-2239203-2023023
-        </el-col>
-      </el-row>
-      </el-form-item>
-      <el-form-item>
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.field')}}
-          </el-col>
-          <el-col :span="12">
-            <el-select v-model="form.field" placeholder="Select">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item>
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.language')}}
-          </el-col>
-          <el-col :span="12">
-          <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
-            <el-option v-for="lang in globalConfig.langs" :key="lang.value"
-              :label="lang.label" :value="lang.value"></el-option>
-          </el-select>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item>
-      <el-row>
-        <el-col :span="12" :offset="6">
-          <div style="text-align:right">
-            <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()">Save</el-button>
-          </div>
-        </el-col>
-      </el-row>
-      </el-form-item>
-      </el-form>
-      <el-form  ref="formPassword" :model="formPassword" :rules="rulesPassword">
-      <el-form-item prop="password">
-        <el-row>
-          <el-col :span="6">
-            {{$t('settings.oldPassword')}}
-          </el-col>
-          <el-col :span="12">
-            <el-input v-model="formPassword.oldPassword" type="password" :placeholder="$t('settings.messageOldPassword')"></el-input>
-          </el-col>
-        </el-row>
-
-      </el-form-item>
-      <el-form-item>
+      
       <el-row>
         <el-col :span="6">
-          {{$t('settings.newPassword')}}
-        </el-col>
-        <el-col :span="12">
-          <el-input v-model="formPassword.newPassword" type="password" :placeholder="$t('settings.messageNewPassword')"></el-input>
-        </el-col>
-      </el-row>
-      </el-form-item>
-      <el-row>
-        <el-col :span="12" :offset="6">
-          <div style="text-align:right">
-            <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()">Change Password</el-button>
-          </div>
-        </el-col>
-      </el-row>
-    </el-form>
-  </el-row>
+          <pan-thumb :image="image"/>
+          <el-button class="primary" plain icon="el-icon-edit "  @click="imagecropperShow=true" circle></el-button>
 
+          <image-cropper
+            v-show="imagecropperShow"
+            :width="300"
+            :height="300"
+            :key="imagecropperKey"
+            url="https://httpbin.org/post"
+            lang-type="en"
+            @close="close"
+            @crop-upload-success="cropSuccess"/>
+          </el-col>
+          <el-col :span="18">
 
-    <el-row style='margin-top:20px'>
-      <el-form >
-        <el-form-item prop="password">
+          <el-form-item prop="firstname">
+            <el-row>
+              <el-col :span="6">
+                {{$t('settings.firstname')}}
+              </el-col>
+              <el-col :span="12">
+                <el-input v-model="form.firstname" :placeholder="$t('settings.firstname')"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item prop="lastname">
+            <el-row>
+              <el-col :span="6">
+                {{$t('settings.lastname')}}
+              </el-col>
+              <el-col :span="12">
+                <el-input v-model="form.lastname" :placeholder="$t('settings.lastname')"></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item prop="email">
+            <el-row>
+              <el-col :span="6">
+                {{$t('settings.email')}}
+              </el-col>
+              <el-col :span="12">
+                <el-input v-model="form.email" :placeholder="$t('settings.email')" disabled></el-input>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item>
           <el-row>
-          <el-col :span="6">
-            {{$t('settings.deleteAccount')}}
-          </el-col>
-          <el-col :span="6" :offset="6">
-            <div style="text-align:right">
-              <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()">Delete</el-button>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      </el-form>
-    </el-row>
+              <el-col :span="6">
+              {{$t('settings.numORCID')}}
+            </el-col>
+            <el-col :span="12">
+              13344-2239203-2023023
+            </el-col>
+          </el-row>
+          </el-form-item>
+          <el-form-item>
+            <el-row>
+              <el-col :span="6">
+                {{$t('settings.field')}}
+              </el-col>
+              <el-col :span="12">
+                <el-select v-model="form.field" placeholder="Select">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item>
+            <el-row>
+              <el-col :span="6">
+                {{$t('settings.language')}}
+              </el-col>
+              <el-col :span="12">
+              <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
+                <el-option v-for="lang in globalConfig.langs" :key="lang.value"
+                  :label="lang.label" :value="lang.value"></el-option>
+              </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item>
+          <el-form-item>
+          <el-row>
+            <el-col :span="12" :offset="6">
+              <div style="text-align:right">
+                <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()">Save</el-button>
+              </div>
+            </el-col>
+          </el-row>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+          </el-form>
+
+          <el-form  ref="formPassword" :model="formPassword" :rules="rulesPassword">
+            <el-row>
+              <el-col :offset="6" :span="18">
+                <el-form-item prop="password">
+                  <el-row>
+                    <el-col :span="6">
+                      {{$t('settings.oldPassword')}}
+                    </el-col>
+                    <el-col :span="12">
+                      <el-input v-model="formPassword.oldPassword" type="password" :placeholder="$t('settings.messageOldPassword')"></el-input>
+                    </el-col>
+                  </el-row>
+
+                </el-form-item>
+                <el-form-item>
+                <el-row>
+                  <el-col :span="6">
+                    {{$t('settings.newPassword')}}
+                  </el-col>
+                  <el-col :span="12">
+                    <el-input v-model="formPassword.newPassword" type="password" :placeholder="$t('settings.messageNewPassword')"></el-input>
+                  </el-col>
+                </el-row>
+                </el-form-item>
+                <el-row>
+                  <el-col :span="12" :offset="6">
+                    <div style="text-align:right">
+                      <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()">Change Password</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-form>
+
+        <el-row style='margin-top:20px'>
+          <el-form >
+            <el-row>
+              <el-col :offset="6" :span="18">
+                <el-form-item prop="password">
+                  <el-row>
+                  <el-col :span="6">
+                    {{$t('settings.deleteAccount')}}
+                  </el-col>
+                  <el-col :span="6" :offset="6">
+                    <div style="text-align:right">
+                      <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()">Delete</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-row>
 
 
 </div>
@@ -204,10 +230,17 @@
 import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/settings'
 import axios from 'axios'
+import ImageCropper from '../../components/ImageCropper'
+import PanThumb from '../../components/PanThumb'
+
 export default {
   locales,
+  components: { "image-cropper": ImageCropper, "pan-thumb": PanThumb },
   data () {
     return {
+      imagecropperShow: false,
+      imagecropperKey: 0,
+      image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
       formPassword: {
         oldPassword: '',
         newPassword: ''
@@ -305,6 +338,14 @@ export default {
   },
   methods: {
     ...mapActions(['updateUser','changePassword','changeLang']),
+    cropSuccess(resData) {
+      this.imagecropperShow = false
+      this.imagecropperKey = this.imagecropperKey + 1
+      this.image = resData.files.avatar
+    },
+    close() {
+      this.imagecropperShow = false
+    },
     onSave () {
       this.updateUser({id: this.userId,
                   firstname: this.form.firstname,
@@ -363,4 +404,11 @@ h2{
   font-family:'Calibri-bold';
   font-size: 1.8rem;
 }
+
+.avatar{
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
 </style>

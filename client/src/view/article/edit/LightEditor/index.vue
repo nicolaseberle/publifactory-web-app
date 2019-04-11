@@ -78,6 +78,7 @@
 
                           <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors'  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -94,6 +95,7 @@
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors' v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -253,7 +255,7 @@
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="70%">
-    <addCollaborator v-on:close="diagAuthorVisible=false"/>
+    <addCollaborator v-bind:authors='postForm.authors' v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
@@ -309,6 +311,7 @@ import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
+import imageComponent from '../../../../components/Image'
 import scriptPython from '../../../../components/ScriptPython'
 
 import figureFactory from '../../../../components/Charts'
@@ -370,7 +373,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {addCollaborator,figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
   data() {
     return {
       inputTagsVisible : false,
@@ -669,7 +672,7 @@ export default {
                                                "abstract":this.postForm.abstract,
                                                "content": this.postForm.content,
                                                "arr_content": this.postForm.arr_content,
-                                               "tags": this.postForm.tags, 
+                                               "tags": this.postForm.tags,
                                                "published": true
                                              })
       .then(response => {
@@ -724,6 +727,12 @@ export default {
       })
       this.openEditFigure(ev,key,subkey,subsubkey)
     },
+    addPictureBlock (ev,key,subkey,subsubkey) {
+      console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
+      var new_block = { type: 'image', uuid: 'mqlssdfpsdazoizeDSQMKqsdmlk', content: 'New Image',nbEdit:0}
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+    },
     removeBlock (ev,key,subkey,subsubkey) {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
@@ -732,6 +741,11 @@ export default {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       this.diagInsertFigurePlotlyVisible = true;
+    },
+    editImageBlock () {
+      //this.editidfigure = idFigure
+      //this.poseditfigure = [key, subkey, subsubkey]
+      //this.diagInsertFigurePlotlyVisible = true;
     },
     forceRerenderBlock (key,subkey,subsubkey) {
 
@@ -803,6 +817,17 @@ export default {
       };
 
       return axios.post('/api/figure/', newFigure)
+      .then(response => {
+        let _idFigure = response.data;
+        console.log("createFigure::idFigure: " + _idFigure)
+        return _idFigure
+      })
+      .catch(err => {
+
+      })
+    },
+    createImage () {
+      return axios.post('/api/image/', newImage)
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)

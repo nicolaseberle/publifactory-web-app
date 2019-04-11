@@ -109,32 +109,27 @@
 <script>
 /* eslint-disable */
 'use strict'
-import request from '@/utils/request'
+import request from '../../utils/request'
 import language from './utils/language.js'
 import mimes from './utils/mimes.js'
 import data2blob from './utils/data2blob.js'
 import effectRipple from './utils/effectRipple.js'
 export default {
   props: {
-    // 域，上传文件name，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     field: {
       type: String,
       'default': 'avatar'
     },
-    // 原名key，类似于id，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     ki: {
       'default': 0
     },
-    // 显示该控件与否
     value: {
       'default': true
     },
-    // 上传地址
     url: {
       type: String,
       'default': ''
     },
-    // 其他要上传文件附带的数据，对象格式
     params: {
       type: Object,
       'default': null
@@ -144,52 +139,42 @@ export default {
       type: Object,
       'default': null
     },
-    // 剪裁图片的宽
     width: {
       type: Number,
       default: 200
     },
-    // 剪裁图片的高
     height: {
       type: Number,
       default: 200
     },
-    // 不显示旋转功能
     noRotate: {
       type: Boolean,
       default: true
     },
-    // 不预览圆形图片
     noCircle: {
       type: Boolean,
       default: false
     },
-    // 不预览方形图片
     noSquare: {
       type: Boolean,
       default: false
     },
-    // 单文件大小限制
     maxSize: {
       type: Number,
       'default': 10240
     },
-    // 语言类型
     langType: {
       type: String,
       'default': 'zh'
     },
-    // 语言包
     langExt: {
       type: Object,
       'default': null
     },
-    // 图片上传格式
     imgFormat: {
       type: String,
       'default': 'png'
     },
-    // 是否支持跨域
     withCredentials: {
       type: Boolean,
       'default': false
@@ -212,7 +197,7 @@ export default {
     const tempImgFormat = allowImgFormat.indexOf(imgFormat) === -1 ? 'jpg' : imgFormat
     const lang = language[langType] ? language[langType] : language['en']
     const mime = mimes[tempImgFormat]
-    // 规范图片格式
+
     that.imgFormat = tempImgFormat
     if (langExt) {
       Object.assign(lang, langExt)
@@ -221,63 +206,50 @@ export default {
       isSupported = false
     }
     return {
-      // 图片的mime
       mime,
-      // 语言包
       lang,
-      // 浏览器是否支持该控件
       isSupported,
-      // 浏览器是否支持触屏事件
       isSupportTouch: document.hasOwnProperty('ontouchstart'),
-      // 步骤
-      step: 1, // 1选择文件 2剪裁 3上传
-      // 上传状态及进度
-      loading: 0, // 0未开始 1正在 2成功 3错误
+      step: 1,
+      loading: 0,
       progress: 0,
-      // 是否有错误及错误信息
       hasError: false,
       errorMsg: '',
-      // 需求图宽高比
       ratio: width / height,
-      // 原图地址、生成图片地址
       sourceImg: null,
       sourceImgUrl: '',
       createImgUrl: '',
-      // 原图片拖动事件初始值
       sourceImgMouseDown: {
         on: false,
-        mX: 0, // 鼠标按下的坐标
+        mX: 0,
         mY: 0,
-        x: 0, // scale原图坐标
+        x: 0,
         y: 0
       },
-      // 生成图片预览的容器大小
       previewContainer: {
         width: 100,
         height: 100
       },
-      // 原图容器宽高
       sourceImgContainer: { // sic
         width: 240,
-        height: 184 // 如果生成图比例与此一致会出现bug，先改成特殊的格式吧，哈哈哈
+        height: 184
       },
-      // 原图展示属性
       scale: {
-        zoomAddOn: false, // 按钮缩放事件开启
-        zoomSubOn: false, // 按钮缩放事件开启
-        range: 1, // 最大100
-        rotateLeft: false, // 按钮向左旋转事件开启
-        rotateRight: false, // 按钮向右旋转事件开启
-        degree: 0, // 旋转度数
+        zoomAddOn: false,
+        zoomSubOn: false,
+        range: 1,
+        rotateLeft: false,
+        rotateRight: false,
+        degree: 0,
         x: 0,
         y: 0,
         width: 0,
         height: 0,
         maxWidth: 0,
         maxHeight: 0,
-        minWidth: 0, // 最宽
+        minWidth: 0,
         minHeight: 0,
-        naturalWidth: 0, // 原宽
+        naturalWidth: 0,
         naturalHeight: 0
       }
     }
@@ -468,7 +440,7 @@ export default {
       that.errorMsg = ''
       that.progress = 0
     },
-    // 设置图片源
+
     setSourceImg(file) {
       let that = this,
         fr = new FileReader()
@@ -478,7 +450,7 @@ export default {
       }
       fr.readAsDataURL(file)
     },
-    // 剪裁前准备工作
+
     startCrop() {
       let that = this,
         {
@@ -501,7 +473,7 @@ export default {
           h = sim.height,
           x = 0,
           y = 0
-        // 图片像素不达标
+
         if (nWidth < width || nHeight < height) {
           that.hasError = true
           that.errorMsg = lang.error.lowestPx + width + '*' + height
@@ -532,10 +504,10 @@ export default {
         that.setStep(2)
       }
     },
-    // 鼠标按下图片准备移动
+
     imgStartMove(e) {
       e.preventDefault()
-      // 支持触摸事件，则鼠标事件无效
+
       if (this.isSupportTouch && !e.targetTouches) {
         return false
       }
@@ -551,10 +523,10 @@ export default {
       simd.y = scale.y
       simd.on = true
     },
-    // 鼠标按下状态下移动，图片移动
+
     imgMove(e) {
       e.preventDefault()
-      // 支持触摸事件，则鼠标事件无效
+
       if (this.isSupportTouch && !e.targetTouches) {
         return false
       }
@@ -593,7 +565,7 @@ export default {
       scale.x = rX
       scale.y = rY
     },
-     // 按钮按下开始向右旋转
+
     startRotateRight(e) {
       let that = this,
         {
@@ -611,7 +583,7 @@ export default {
       }
       rotate()
     },
-    // 按钮按下开始向右旋转
+
     startRotateLeft(e) {
       let that = this,
         {
@@ -637,7 +609,7 @@ export default {
       scale.rotateLeft = false
       scale.rotateRight = false
     },
-    // 按钮按下开始放大
+
     startZoomAdd(e) {
       let that = this,
         {
@@ -655,11 +627,11 @@ export default {
       }
       zoom()
     },
-    // 按钮松开或移开取消放大
+
     endZoomAdd(e) {
       this.scale.zoomAddOn = false
     },
-    // 按钮按下开始缩小
+
     startZoomSub(e) {
       let that = this,
         {
@@ -677,7 +649,7 @@ export default {
       }
       zoom()
     },
-    // 按钮松开或移开取消缩小
+
     endZoomSub(e) {
       const {
         scale
@@ -687,7 +659,7 @@ export default {
     zoomChange(e) {
       this.zoomImg(e.target.value)
     },
-    // 缩放原图
+
     zoomImg(newRange) {
       const that = this
       const {
@@ -707,16 +679,16 @@ export default {
         range
       } = scale
       const sim = sourceImgMasking
-      // 蒙版宽高
+
       const sWidth = sim.width
       const sHeight = sim.height
-      // 新宽高
+
       const nWidth = minWidth + (maxWidth - minWidth) * newRange / 100
       const nHeight = minHeight + (maxHeight - minHeight) * newRange / 100
-      // 新坐标（根据蒙版中心点缩放）
+
       let nX = sWidth / 2 - (nWidth / width) * (sWidth / 2 - x)
       let nY = sHeight / 2 - (nHeight / height) * (sHeight / 2 - y)
-      // 判断新坐标是否超过蒙版限制
+
       if (nX > 0) {
         nX = 0
       }
@@ -729,7 +701,7 @@ export default {
       if (nY < sHeight - nHeight) {
         nY = sHeight - nHeight
       }
-      // 赋值处理
+
       scale.x = nX
       scale.y = nY
       scale.width = nWidth
@@ -741,7 +713,7 @@ export default {
         }
       }, 300)
     },
-     // 生成需求图片
+
     createImg(e) {
       let that = this,
         {
@@ -761,13 +733,13 @@ export default {
         canvas = that.$refs.canvas,
         ctx = canvas.getContext('2d')
       if (e) {
-        // 取消鼠标按下移动状态
+
         that.sourceImgMouseDown.on = false
       }
       canvas.width = that.width
       canvas.height = that.height
       ctx.clearRect(0, 0, that.width, that.height)
-      // 将透明区域设置为白色底边
+
       ctx.fillStyle = '#fff'
       ctx.fillRect(0, 0, that.width, that.height)
       ctx.translate(that.width * 0.5, that.height * 0.5)
@@ -790,7 +762,7 @@ export default {
         this.off()
       }
     },
-    // 上传图片
+
     upload() {
       let that = this,
         {
@@ -807,19 +779,19 @@ export default {
         } = this,
         fmData = new FormData()
       fmData.append(field, data2blob(createImgUrl, mime), field + '.' + imgFormat)
-      // 添加其他参数
+
       if (typeof params === 'object' && params) {
         Object.keys(params).forEach((k) => {
           fmData.append(k, params[k])
         })
       }
-      // 监听进度回调
+
       const uploadProgress = function(event) {
         if (event.lengthComputable) {
           that.progress = 100 * Math.round(event.loaded) / event.total
         }
       }
-      // 上传文件
+
       that.reset()
       that.loading = 1
       that.setStep(3)
@@ -841,7 +813,7 @@ export default {
     }
   },
   created() {
-    // 绑定按键esc隐藏此插件事件
+
     document.addEventListener('keyup', (e) => {
       if (this.value && (e.key == 'Escape' || e.keyCode == 27)) {
         this.off()

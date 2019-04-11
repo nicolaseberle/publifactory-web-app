@@ -33,7 +33,7 @@
         </el-form-item>
         </el-col>
         <el-col :span='4'>
-          <el-button type="primary" @click="addAuthor" >Add</el-button>
+          <el-button type="primary" @click="submitForm('dynamicValidateForm')" >Add</el-button>
         </el-col>
       </el-row>
 
@@ -96,6 +96,9 @@ const shortid = require('shortid');
 export default {
   name: 'addCollaborator',
   components: {},
+  props: {
+    authors: {}
+  },
   data() {
     return {
       list: null,
@@ -136,8 +139,7 @@ export default {
       idArticle : '',
       rules: {
         email: [
-          { required: true, message: 'Please input email address', trigger: 'blur' },
-          { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+          { type: 'email',required: true, message: 'Please input correct email address', trigger: ['blur', 'change'] }
         ],
         firstname: [
           { required: true, message: 'Please input firstname', trigger: 'blur' }
@@ -157,30 +159,16 @@ export default {
   created() {
     this.idArticle = this.$route.params && this.$route.params.id
     this.total = 2
-    this.getList(this.idArticle).then((listAuthors)=>{
-      this.list = listAuthors.map((item,key)=>{
-        const container = item;
-        container.rank = Number(container.rank);
-        return container;
-      })
-
-      // this.list = [{rank:1, firstname: "Michael",lastname: "Rera"},{rank:2,firstname: "Nicolas",lastname: 'Eberle'}]
+  },
+  mounted() {
+      this.list = this.authors
       this.oldList = this.list.map(v => Number(v.rank))
       this.newList = this.oldList.slice()
       this.$nextTick(() => {
         this.setSort()
       })
-    })
   },
   methods: {
-    getList (id) {
-      return axios.get('/api/articles/' + id ).then(response => {
-        console.log(response.data.authors)
-        return response.data.authors
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     setSort() {
       const el = document.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
       this.sortable = Sortable.create(el, {
@@ -197,6 +185,16 @@ export default {
           })
         }
       })
+    },
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.addAuthor()
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     },
     async addAuthor () {
       var nbAuthors = this.list.length+1;
