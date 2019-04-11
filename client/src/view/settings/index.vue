@@ -17,7 +17,7 @@
       <h2>
         {{$t('settings.title')}}
       </h2>
-      
+
       <el-row>
         <el-col :span="6">
           <pan-thumb :image="image"/>
@@ -334,6 +334,7 @@ export default {
       this.form.firstname = response.data.firstname
       this.form.lastname = response.data.lastname
       this.form.field = response.data.field
+      this.image = response.data.avatar
       this.tags = response.data.tags})
   },
   methods: {
