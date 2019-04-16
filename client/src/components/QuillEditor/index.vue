@@ -237,9 +237,11 @@ export default {
 
     var cursorsModule = this.editor.getModule('cursors');
 
-    /*this.editor.on('text-change', (delta, oldDelta, source) => {
+    /*
+    this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
-    });*/
+    });
+    */
 
     //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
 
@@ -262,7 +264,7 @@ export default {
       // local -> server
       self.editor.on('text-change', function(delta, oldDelta, source) {
         if (source == 'user') {
-          self.$emit('edit', self.editor, delta, oldDelta,self.numBlock,self.numSubBlock,self.numSubSubBlock)
+          // self.$emit('edit', self.editor, delta, source,self.numBlock,self.numSubBlock,self.numSubSubBlock)
           // Check if it's a formatting-only delta
           var formattingDelta = delta.reduce(function (check, op) {
             return (op.insert || op.delete) ? false : check;

@@ -2,6 +2,15 @@
 var en = require('hyphenation.en-us')
 var latexjs = require('latex.js')
 
+
+var basename = ''
+if (process.env.NODE_ENV === 'production') {
+  basename = window.location.protocol + '//' + window.location.hostname + '/static/css'
+} else {
+  basename = window.location.protocol + '//' + window.location.hostname + ':9001/static/css'
+}
+
+
 var generator = new latexjs.HtmlGenerator({
   hyphenate: true,
   languagePatterns: en
@@ -173,7 +182,7 @@ function compile (latex, iframe) {
 
   try {
     generator.reset()
-    var newDoc = latexjs.parse(latex, { generator: generator }).htmlDocument('http://localhost:9001/static/css')
+    var newDoc = latexjs.parse(latex, { generator: generator }).htmlDocument(basename)
 
     // we need to disable normal processing of same-page links in the iframe
     // see also https://stackoverflow.com/questions/50657574/iframe-with-srcdoc-same-page-links-load-the-parent-page-in-the-frame

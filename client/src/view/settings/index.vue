@@ -19,7 +19,7 @@
       </h2>
 
       <el-row>
-        <el-col :span="6">
+        <el-col :span="4">
           <pan-thumb :image="image"/>
           <el-button class="primary" plain icon="el-icon-edit "  @click="imagecropperShow=true" circle></el-button>
 
@@ -33,12 +33,12 @@
             @close="close"
             @crop-upload-success="cropSuccess"/>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="20">
 
           <el-form-item prop="firstname">
             <el-row>
               <el-col :span="6">
-                {{$t('settings.firstname')}}
+                <h3>{{$t('settings.firstname')}}</h3>
               </el-col>
               <el-col :span="12">
                 <el-input v-model="form.firstname" :placeholder="$t('settings.firstname')"></el-input>
@@ -48,7 +48,7 @@
           <el-form-item prop="lastname">
             <el-row>
               <el-col :span="6">
-                {{$t('settings.lastname')}}
+                <h3>{{$t('settings.lastname')}}</h3>
               </el-col>
               <el-col :span="12">
                 <el-input v-model="form.lastname" :placeholder="$t('settings.lastname')"></el-input>
@@ -58,7 +58,7 @@
           <el-form-item prop="email">
             <el-row>
               <el-col :span="6">
-                {{$t('settings.email')}}
+                <h3>{{$t('settings.email')}}</h3>
               </el-col>
               <el-col :span="12">
                 <el-input v-model="form.email" :placeholder="$t('settings.email')" disabled></el-input>
@@ -68,7 +68,7 @@
           <el-form-item>
           <el-row>
               <el-col :span="6">
-              {{$t('settings.numORCID')}}
+              <h3>{{$t('settings.numORCID')}}</h3>
             </el-col>
             <el-col :span="12">
               13344-2239203-2023023
@@ -78,7 +78,7 @@
           <el-form-item>
             <el-row>
               <el-col :span="6">
-                {{$t('settings.field')}}
+                <h3>{{$t('settings.field')}}</h3>
               </el-col>
               <el-col :span="12">
                 <el-select v-model="form.field" placeholder="Select">
@@ -95,7 +95,7 @@
           <el-form-item>
             <el-row>
               <el-col :span="6">
-                {{$t('settings.language')}}
+                <h3>{{$t('settings.language')}}</h3>
               </el-col>
               <el-col :span="12">
               <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
@@ -121,11 +121,11 @@
 
           <el-form  ref="formPassword" :model="formPassword" :rules="rulesPassword">
             <el-row>
-              <el-col :offset="6" :span="18">
+              <el-col :offset="4" :span="20">
                 <el-form-item prop="password">
                   <el-row>
                     <el-col :span="6">
-                      {{$t('settings.oldPassword')}}
+                      <h3>{{$t('settings.oldPassword')}}</h3>
                     </el-col>
                     <el-col :span="12">
                       <el-input v-model="formPassword.oldPassword" type="password" :placeholder="$t('settings.messageOldPassword')"></el-input>
@@ -136,7 +136,7 @@
                 <el-form-item>
                 <el-row>
                   <el-col :span="6">
-                    {{$t('settings.newPassword')}}
+                    <h3>{{$t('settings.newPassword')}}</h3>
                   </el-col>
                   <el-col :span="12">
                     <el-input v-model="formPassword.newPassword" type="password" :placeholder="$t('settings.messageNewPassword')"></el-input>
@@ -157,11 +157,11 @@
         <el-row style='margin-top:20px'>
           <el-form >
             <el-row>
-              <el-col :offset="6" :span="18">
+              <el-col :offset="4" :span="20">
                 <el-form-item prop="password">
                   <el-row>
                   <el-col :span="6">
-                    {{$t('settings.deleteAccount')}}
+                    <h3>{{$t('settings.deleteAccount')}}</h3>
                   </el-col>
                   <el-col :span="6" :offset="6">
                     <div style="text-align:right">
@@ -240,7 +240,7 @@ export default {
     return {
       imagecropperShow: false,
       imagecropperKey: 0,
-      image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
+      image: '',
       formPassword: {
         oldPassword: '',
         newPassword: ''
@@ -405,7 +405,11 @@ h2{
   font-family:'Calibri-bold';
   font-size: 1.8rem;
 }
-
+h3{
+  font-family:'Calibri-bold';
+  font-size: 1.2rem;
+  margin: 0;
+}
 .avatar{
   width: 200px;
   height: 200px;

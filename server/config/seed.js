@@ -31,7 +31,14 @@ const gen_text = `
 \\section{Titre 1}
 \\subsection{Titre 1.1}
 
-Type your text
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ultrices sem sit amet massa semper condimentum. Nunc quis ipsum orci. Quisque diam augue, volutpat scelerisque dolor nec, porttitor rhoncus lorem.
+$$
+\\lim_{a\\to b} \\frac{a}{b}
+$$
+
+$$
+f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2 \\pi i \\xi x}\\,d\\xi
+$$
 
 \\end{multicols}
 \\end{document}

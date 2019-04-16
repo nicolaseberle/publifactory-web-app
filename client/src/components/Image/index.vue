@@ -1,11 +1,12 @@
 
-<!--<template>
+<template>
   <div class="hello">
     <picture-input
       ref="pictureInput"
       @change="onChange"
-      width="600"
-      height="600"
+      
+      removable="true"
+      crop="false"
       margin="16"
       accept="image/jpeg,image/png"
       size="10"
@@ -41,4 +42,4 @@ export default {
     }
   }
 }
-</script>-->
+</script>
