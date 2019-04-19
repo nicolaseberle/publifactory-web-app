@@ -39,9 +39,11 @@
 </div>
 </template>
 <script>
-import DataTable from 'components/DataTable'
-import { user as userRes } from 'resources'
-import locales from 'locales/users'
+import DataTable from '../../components/DataTable'
+import locales from '../../locales/users'
+import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   locales,
   data () {
@@ -67,13 +69,21 @@ export default {
   components: {
     DataTable
   },
+  computed: {
+    ...mapGetters([
+      'roles',
+      'userId',
+      'accessToken'
+    ])
+  },
   methods: {
-    fetch (current = 1) {
-      this.$refs.users.query(userRes, current, { search: this.search }).then(list => {
-        this.users = list
-      }).catch(err => {
-        console.error(err)
-      })
+    fetch () {
+      axios.get('/api/users/',{headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+        console.log(response.data)
+        this.users = response.data
+        })
     },
     createUser () {
       this.formVisible = true
@@ -84,7 +94,7 @@ export default {
       this.formVisible = false
     },
     saveForm () {
-      this.$refs.form.validate(valid => {
+      /*this.$refs.form.validate(valid => {
         if (valid) {
           userRes.save(null, this.form).then(() => {
             this.cancelForm()
@@ -100,10 +110,10 @@ export default {
             })
           })
         }
-      })
+      })*/
     },
     deleteUser (user) {
-      this.$confirm(`This action will remove the selected user: ${user.username} forever, still going on?`, this.$t('confirm.title'), {
+      /*this.$confirm(`This action will remove the selected user: ${user.username} forever, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
         userRes.delete({ _id: user._id }).then(() => {
@@ -114,6 +124,7 @@ export default {
           this.fetch()
         })
       }).catch(() => {})
+      */
     }
   },
   mounted () {

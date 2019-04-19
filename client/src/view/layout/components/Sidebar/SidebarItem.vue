@@ -1,6 +1,5 @@
 <template>
-  <div v-if="!item.hidden&&item.children" class="menu-wrapper">
-
+  <div v-if="!item.hidden&&item.children&&hasPermission(roles, item.meta.roles)" class="menu-wrapper">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <a :href="onlyOneChild.path" target="_blank" @click="clickLink(onlyOneChild.path,$event)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
@@ -11,9 +10,9 @@
 
     <el-submenu v-else :index="item.name||item.path">
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
+          <item v-if="item.meta" :icon="item.meta.icon" :title="generateTitle(item.meta.title)" />
       </template>
-
+<!--item.meta.admin==flagAdmin-->
       <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item
           v-if="child.children&&child.children.length>0"
@@ -31,11 +30,10 @@
         </a>
       </template>
     </el-submenu>
-
   </div>
 </template>
-
 <script>
+import { mapGetters } from 'vuex'
 import path from 'path'
 import { generateTitle } from '../../../../utils/i18n'
 import { validateURL } from '../../../../utils/validate'
@@ -61,12 +59,31 @@ export default {
   },
   data() {
     return {
+      flagAdmin: false,
       onlyOneChild: null
     }
   },
+  created () {
+    if (this.roles.includes('admin')) {
+      this.flagAdmin = true
+    } else {
+      this.flagAdmin = false
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'roles'
+    ])
+  },
   methods: {
+    hasPermission (roles, permissionRoles) {
+      if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
+      if (!permissionRoles) return true
+      return roles.some(role => permissionRoles.indexOf(role) >= 0)
+    },
     hasOneShowingChild(children, parent) {
       const showingChildren = children.filter(item => {
+
         if (item.hidden) {
           return false
         } else {

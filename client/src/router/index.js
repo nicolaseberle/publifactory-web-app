@@ -5,7 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
-import componentsRouter from './modules/components'
+// import componentsRouter from './modules/components'
 // import otherModuleRoutes from './module'
 
 Vue.use(VueRouter)
@@ -27,6 +27,11 @@ export const constantRouterMap = [{
   meta: {
     skipAuth: true
   }
+},
+{
+  path: '/auth-redirect',
+  component: () => import('../view/auth/authredirect'),
+  hidden: true
 },
 {
   path: '/invite/:id',
@@ -104,7 +109,27 @@ export const constantRouterMap = [{
     },
     {
       path: 'applications',
+      hidden: true,
       component: () => import('../view/applications/index.vue')
+    }
+  ]
+},
+{
+  path: '/admin',
+  component: Layout,
+  redirect: 'admin',
+  // hidden: true,
+  meta: { title: 'Admin', icon: 'lock', noCache: true, roles: ['admin'] },
+  children: [
+    {
+      path: 'user',
+      name: 'Users',
+      meta: { title: 'Users', icon: 'profile', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/UserList.vue')
+    },
+    {
+      path: 'admin',
+      component: () => import('../view/admin/UserList.vue')
     }
   ]
 },
@@ -139,8 +164,14 @@ const router = new VueRouter({
 })
 
 export const asyncRouterMap = [
-  componentsRouter
+  // componentsRouter,
 ]
+
+function hasPermission (roles, permissionRoles) {
+  if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
+  if (!permissionRoles) return true
+  return roles.some(role => permissionRoles.indexOf(role) >= 0)
+}
 
 export function hook (userPromise) {
   // router
@@ -160,7 +191,21 @@ export function hook (userPromise) {
               query: { redirect: to.fullPath }
             })
           } else {
-            next()
+            if (store.getters.roles.length === 0) {
+              store.dispatch('GetUserInfo').then(res => {
+                const roles = res.data.roles // note: roles must be a array! such as: ['editor','editor_journal_1','editor_journal_2']
+                store.dispatch('GenerateRoutes', { roles }).then(() => {
+                  router.addRoutes(store.getters.addRouters)
+                  next({ ...to, replace: true })
+                })
+              })
+            } else {
+              if (hasPermission(store.getters.roles, to.meta.roles)) {
+                next()
+              } else {
+                next({ path: '/401', replace: true, query: { noGoBack: true }})
+              }
+            }
           }
         } else {
           next()

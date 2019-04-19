@@ -116,9 +116,9 @@ const Embed = Quill.import('blots/embed');
 var sharedbWSAddress = ''
 
 if (process.env.NODE_ENV === 'production'){
-  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/sharedb'
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
 } else {
-  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/sharedb'
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
 }
 
 var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
@@ -171,6 +171,7 @@ export default {
   },
   data() {
     return {
+      id: '',
       inputRefVisible: false,
       editor: {},
       idSharedbSocketIndicator: this.setIdSharedbSocketIndicator(),
@@ -194,7 +195,7 @@ export default {
     }
   },
   created() {
-
+    this.id = this.$route.params && this.$route.params.id
 
   },
   mounted() {
@@ -216,8 +217,17 @@ export default {
 
     });
 
-    var doc = shareDBConnection.get('documents', this.idEditor);
-    //shareDBConnection.createFetchQuery(collectionName, query, options, callback)
+    //var doc = shareDBConnection.get('documents', this.idEditor);
+    var doc = shareDBConnection.get('articles/',this.id)
+    /*arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+    axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
+                                             "abstract":this.postForm.abstract,
+                                             "content": this.postForm.content,
+                                             "arr_content": this.postForm.arr_content,
+                                             "tags": this.postForm.tags,
+                                             "published": true
+                                           })*/
+
     //shareDBConnection.createSubscribeQuery(collectionName, query, options, callback)
 
     let self = this

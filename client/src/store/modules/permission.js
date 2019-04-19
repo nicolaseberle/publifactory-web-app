@@ -1,4 +1,4 @@
-import { asyncRouterMap, constantRouterMap } from '../../router'
+import { constantRouterMap } from '../../router'
 
 /**
  * @param roles
@@ -49,9 +49,9 @@ const permission = {
         const { roles } = data
         let accessedRouters
         if (roles.includes('admin')) {
-          accessedRouters = asyncRouterMap
+          accessedRouters = constantRouterMap
         } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = filterAsyncRouter(constantRouterMap, roles)
         }
         commit('SET_ROUTERS', accessedRouters)
         resolve()

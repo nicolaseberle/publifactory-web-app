@@ -37,7 +37,7 @@ export default {
     return {
       id: '',
       visibleDiagFirstConnexion: false,
-      currentRole: 'adminDashboard',
+      currentRole: 'userDashboard',
       form: {
         email: '',
         password: '',
@@ -68,6 +68,10 @@ export default {
     }
     if (this.roles.includes('user')) {
       this.currentRole = 'userDashboard'
+      this.visibleDiagFirstConnexion = false
+    }
+    if (this.roles.includes('admin')) {
+      this.currentRole = 'adminDashboard'
       this.visibleDiagFirstConnexion = false
     }
     // a guest account has only one role : [guest]

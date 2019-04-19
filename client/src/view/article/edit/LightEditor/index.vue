@@ -454,101 +454,12 @@ export default {
     this.id = this.$route.params && this.$route.params.id
     this.fetchData(this.id)
 
-    /*var zp = new ZoteroPublications();
-    var promise = zp.getPublications(5476883);
-
-    promise.then(function(data) {
-        //optionally process your data here
-        zp.render(data, document.getElementById('container'));
-    });
-
-    promise.catch(function(reason) {
-        //optionally implement custom error handling here
-        console.warn(reason);
-    });
-    */
     this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
     this.cursors.update()
   },
   mounted() {
-      //let zoteroScript = document.createElement('script')
-      //zoteroScript.setAttribute('src', 'chrome://zotero/content/include.js')
-      //document.head.appendChild(zoteroScript)
-
       asideRightAnimation()
       this.updateUserList()
-
-      //hightlightText()
-
-      //var config = new Zotero.RequestConfig().LibraryType('user').LibraryID(5476883).Target('items').config;
-      //var fetcher = new Zotero.Fetcher(config);
-/*
-      fetcher.next().then((response)=>{
-      	//the parsed json array of items that the api returned is on response.data,
-      	//we can loop through them and create a Zotero.Item for each
-      	console.log('\naccessing the items directly from this response:')
-      	response.data.forEach((itemJson)=>{
-      		var items = new Zotero.Item(itemJson);
-          //this.zoteroitems = items.get('title')
-      	});
-      }).then(()=>{
-      	//the array was also saved in fetcher.results
-      	console.log('\nfetcher.results:');
-      	fetcher.results.forEach((itemJson)=>{
-      		let item = new Zotero.Item(itemJson);
-          this.zoteroitems.push(item.get('title'))
-      		console.log(item.get('title'));
-      	});
-      })*/
-/*
-      const configAxios = {
-          timeout: 1500,
-          baseURL: 'https://127.0.0.1:23119/',
-
-        };
-
-        const instance = axios.create(configAxios);
-        try {
-                const response = instance.post('connector/ping');
-                console.log(response);
-        } catch (e) {
-                console.error(e);
-        }
-
-      axios.get( 'http://127.0.0.1:23119/connector/ping').then(response => {
-        console.log("PING: " + response.data)
-      }).catch(err => {
-        console.log(err)
-      })
-
-        // Send a POST request
-        axios({
-          method: 'post',
-          url:'http://127.0.0.1:23119/connector/document/execCommand',
-          headers: {"Content-Type": "application/json"},
-          data: {
-            'commande': 'getSaveTarget'
-          }
-        }).then(function (response) {
-            console.log(response.data)
-        });*/
-/*
-      axios.get('http://127.0.0.1:23119/connector/document/execCommand', {headers: "Content-Type: application/json" , data: {"commande":"selectItems"}}).then(response => {
-        console.log("resultat de la requete: " + response)
-      }).catch(err => {
-        console.log(err)
-      })*/
-
-      /*var promise = require('zotero-api-client').library('user', 475425).collections('9KH9TNSJ').items().get();
-      promise.then(function(response) {
-          this.zoteroitems = response.getData();
-          console.log(this.zoteroitems.map(i => i.title));
-      });
-
-      promise.catch(function(reason) {
-
-          console.warn(reason);
-      });*/
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {

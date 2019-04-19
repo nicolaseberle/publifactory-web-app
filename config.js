@@ -49,7 +49,7 @@ var development = {
       '/api': { target: 'http://localhost:' + backendBase.port, changeOrigin: true },
       '/socket.io': { target: 'http://localhost:' + backendBase.port, changeOrigin: true, ws: true },
       '/cursors': { target: 'http://localhost:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
-      '/sharedb': { target: 'http://localhost:' + backendBase.port + '/sharedb', changeOrigin: true, ws: true }
+      '/mevn-dev': { target: 'http://localhost:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

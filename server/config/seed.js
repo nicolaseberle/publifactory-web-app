@@ -293,7 +293,7 @@ function createUsers() {
         password: 'nicolas',
         avatar: '/static/img/Nicolas_Eberle.png',
         field: 'Physics'
-      },/* {
+      }, {
         provider: 'local',
         role: 'admin',
         roles : ['admin'],
@@ -306,7 +306,7 @@ function createUsers() {
         password: 'admin',
         avatar: '/static/img/Defaut.png',
         field: 'Administrator'
-      },*/ {
+      }, {
         provider: 'local',
         role: 'user',
         roles : ['user'],

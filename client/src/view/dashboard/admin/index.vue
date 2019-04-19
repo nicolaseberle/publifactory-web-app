@@ -9,6 +9,10 @@
         </el-button-group>
         </el-col>
       </el-row>
+      <div class='dashboard-tab'>
+      <div style='margin-top:20px;z-index:1000;'>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
@@ -25,8 +29,8 @@
         </el-table-column>
         <el-table-column class-name="author-col" width="120px"  label="Author">
           <template slot-scope="articles">
-            <div v-for="author in articles.row.authors">
-              {{ author.firstname[0] }}. {{ author.lastname }}
+            <div v-for="item_author in articles.row.authors">
+              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
             </div>
           </template>
         </el-table-column>
@@ -77,6 +81,18 @@
         </el-table-column>
       </el-table>
     </data-table>
+  </el-tab-pane>
+  <el-tab-pane label="Submission" name="second">Submission</el-tab-pane>
+
+  <el-tab-pane name="third">
+    <span slot="label">Review<el-badge :value="2" lass="mark"/></span>
+  </el-tab-pane>
+
+  <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
+  <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
+  </el-tabs>
+  </div>
+  </div>
 </content-module>
 <!--
 <el-dialog :title="Titre" :visible.sync="formVisible">
@@ -90,6 +106,7 @@
     <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
   </span>
 </el-dialog>-->
+
 </div>
 </template>
 <script>
@@ -105,6 +122,7 @@ export default {
   locales,
   data () {
     return {
+      activeName: 'first',
       options:{
         value:"option 1",
         lable:"option 1"
@@ -135,6 +153,9 @@ export default {
     DataTable
   },
   methods: {
+    handleClick(tab, event) {
+        console.log(tab, event);
+    },
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/articles/').then(list => {
@@ -149,15 +170,16 @@ export default {
       const newArticle = {
           title: String('Article title'),
           abstract:  String('abstract'),
-          status:  String('Draft'),
+          status: 'Draft',
           arr_content: [{
                           name:"titre_1",
                           title:"Titre 1",
                           title_placeholder:"Titre 1",
+                          block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
                           content:"Type the text",
                           display:true
                         }],
-          category : String('physics'),
+          category : String('Biology'),
           id_author : this.userId,
           published: true
         };
@@ -219,3 +241,13 @@ export default {
   }
 }
 </script>
+<style>
+.dashboard-tab{
+  padding-top:20px
+}
+
+.tabs, .el-tabs__nav{
+    padding-top:10px
+}
+
+</style>
