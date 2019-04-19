@@ -22,7 +22,8 @@ var validationError = function (res, err) {
  */
 exports.index = function (req, res) {
   var search = _.merge(req.query.search, { role: 'user' })
-  paging.listQuery(User, search, '-salt -hashedPassword', {}, req.query.page, function (err, json) {
+  var page = {current : 1 ,limit: 10}
+  paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
     if (err) return res.status(500).send(err)
     res.status(200).json(json)
   })
