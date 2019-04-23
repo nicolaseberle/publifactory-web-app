@@ -9,6 +9,7 @@
           <el-table :data="users">
             <el-table-column property="firstname" label="Firstname" sortable min-width="120"></el-table-column>
             <el-table-column property="lastname" label="Lastname" sortable min-width="120"></el-table-column>
+            <el-table-column property="email" label="Email" sortable min-width="120"></el-table-column>
             <el-table-column property="role" :label="$t('user.model.role')" min-width="90"></el-table-column>
             <el-table-column :label="$t('operation.operation')" align="center" width="120">
               <template scope="scope">
@@ -100,7 +101,15 @@ export default {
 
     },
     deleteUser (user) {
-
+      axios.delete('/api/users/' + user._id, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       }).then(response => {
+        console.log(response.data.results)
+        this.users = response.data.results
+      })
+      this.$nextTick(() => {
+          this.fetch()
+      })
     }
   },
   mounted () {
