@@ -135,45 +135,83 @@ class ConverterLight extends Converter {
     super("light");
   }
 
-  replaceHtmlOccurrenceToMarkdown (string) {
+  replaceHtmlOccurrence (string, destFormat) {
     const HtmlRegex = super.getRegex.getHtmlRegex;
     switch (true) {
       case HtmlRegex.strong.test(string):
+        if (destFormat === 'latex') {
 
+        } else {
+
+        }
         break;
       case HtmlRegex.emphasis.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.hr.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.href.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.preCode.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.code.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.sub.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.sup.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
       case HtmlRegex.quote.test(string):
+        if (destFormat === 'latex') {
+
+        } else {
+
+        }
         break;
     }
     return string;
   }
 
-  replaceHtmlOccurrenceToLatex () {
-
-  }
-
-  //TODO Add conversion of text with Regex-> HTML mark into Markdown
-  //TODO Create Regex conversions in Regex's class
   convertToMarkdown (article) {
     let markdown = {};
-    markdown.title = "# " + this.replaceHtmlOccurrenceToMarkdown(article.title);
-    markdown.abstract = "#### " + this.replaceHtmlOccurrenceToMarkdown(article.abstract);
+    markdown.title = "# " + this.replaceHtmlOccurrence(article.title, "markdown");
+    markdown.abstract = "#### " + this.replaceHtmlOccurrence(article.abstract, "markdown");
     markdown.arr_content = [];
     for (let i = 0, len = article.arr_content.length; i < len; ++i)
-      markdown.arr_content[i].title = "## " + this.replaceHtmlOccurrenceToMarkdown(article.arr_content[i].title);
+      markdown.arr_content[i].title = "## " + this.replaceHtmlOccurrence(article.arr_content[i].title, "markdown");
     markdown.blocks = [];
     for (let i = 0, len = article.blocks.length; i < len; ++i) {
       markdown.blocks[i] = [];
@@ -181,7 +219,7 @@ class ConverterLight extends Converter {
         markdown.blocks[i][j].type = article.blocks[i][j].type;
         markdown.blocks[i][j].uuid = article.blocks[i][j].uuid;
         if (markdown.blocks[i][j].type === 'text')
-          markdown.blocks[i][j].content = "### " + this.replaceHtmlOccurrenceToMarkdown(article.blocks[i][j].content);
+          markdown.blocks[i][j].content = "### " + this.replaceHtmlOccurrence(article.blocks[i][j].content, "markdown");
         markdown.blocks[i][j].nbEdit = article.blocks[i][j].nbEdit;
       }
     }
@@ -190,19 +228,26 @@ class ConverterLight extends Converter {
     return markdown;
   }
 
-  //TODO Add conversion of text with Regex-> HTML mark into Latex
-  //TODO Create Regex conversions in Regex's class
   convertToLatex(article) {
     let latex = {};
-    latex.title = "\\title{" + article.title + "}";
-    latex.abstract = article.abstract;
+    latex.title = "\\title{" + this.replaceHtmlOccurrence(article.title, "latex") + "}";
+    latex.abstract = this.replaceHtmlOccurrence(article.abstract, "latex");
     latex.arr_content = [];
     for (let i = 0, len = article.arr_content.length; i < len; ++i)
-      latex.arr_content[i].title = "\\section{" + article.arr_content[i] + "}";
+      latex.arr_content[i].title = "\\section{" + this.replaceHtmlOccurrence(article.arr_content[i], "latex") + "}";
     latex.blocks = article.blocks;
+    for (let i = 0, len = article.blocks.length; i < len; ++i) {
+      latex.blocks[i] = [];
+      for (let j = 0, sLen = article.blocks[i].length; j < sLen; ++j) {
+        latex.blocks[i][j].type = article.blocks[i][j].type;
+        latex.blocks[i][j].uuid = article.blocks[i][j].uuid;
+        if (latex.blocks[i][j].type === 'text')
+          latex.blocks[i][j].content = "### " + this.replaceHtmlOccurrence(article.blocks[i][j].content, "latex");
+        latex.blocks[i][j].nbEdit = article.blocks[i][j].nbEdit;
+      }
+    }
     latex.authors = article.authors;
     latex.tags = article.tags;
-    this.replaceHtmlOccurrenceToLatex();
     return latex;
   }
 }
