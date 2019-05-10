@@ -137,8 +137,10 @@ class ConverterLight extends Converter {
 
   replaceHtmlOccurrence (string, destFormat) {
     const HtmlRegex = super.getRegex.getHtmlRegex;
+    let tmp;
     switch (true) {
       case HtmlRegex.strong.test(string):
+        tmp = string.match(HtmlRegex.strong);
         if (destFormat === 'latex') {
 
         } else {
@@ -146,6 +148,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.emphasis.test(string):
+        tmp = string.match(HtmlRegex.emphasis);
         if (destFormat === 'latex') {
 
         } else {
@@ -153,6 +156,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.hr.test(string):
+        tmp = string.match(HtmlRegex.hr);
         if (destFormat === 'latex') {
 
         } else {
@@ -160,6 +164,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.href.test(string):
+        tmp = string.match(HtmlRegex.href);
         if (destFormat === 'latex') {
 
         } else {
@@ -167,6 +172,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.preCode.test(string):
+        tmp = string.match(HtmlRegex.preCode);
         if (destFormat === 'latex') {
 
         } else {
@@ -174,6 +180,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.code.test(string):
+        tmp = string.match(HtmlRegex.code);
         if (destFormat === 'latex') {
 
         } else {
@@ -181,6 +188,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.sub.test(string):
+        tmp = string.match(HtmlRegex.sub);
         if (destFormat === 'latex') {
 
         } else {
@@ -188,6 +196,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.sup.test(string):
+        tmp = string.match(HtmlRegex.sup);
         if (destFormat === 'latex') {
 
         } else {
@@ -195,6 +204,7 @@ class ConverterLight extends Converter {
         }
         break;
       case HtmlRegex.quote.test(string):
+        tmp = string.match(HtmlRegex.quote);
         if (destFormat === 'latex') {
 
         } else {
@@ -210,17 +220,19 @@ class ConverterLight extends Converter {
     markdown.title = "# " + this.replaceHtmlOccurrence(article.title, "markdown");
     markdown.abstract = "#### " + this.replaceHtmlOccurrence(article.abstract, "markdown");
     markdown.arr_content = [];
-    for (let i = 0, len = article.arr_content.length; i < len; ++i)
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
+      markdown.arr_content[i] = {};
       markdown.arr_content[i].title = "## " + this.replaceHtmlOccurrence(article.arr_content[i].title, "markdown");
-    markdown.blocks = [];
-    for (let i = 0, len = article.blocks.length; i < len; ++i) {
-      markdown.blocks[i] = [];
-      for (let j = 0, sLen = article.blocks[i].length; j < sLen; ++j) {
-        markdown.blocks[i][j].type = article.blocks[i][j].type;
-        markdown.blocks[i][j].uuid = article.blocks[i][j].uuid;
-        if (markdown.blocks[i][j].type === 'text')
-          markdown.blocks[i][j].content = "### " + this.replaceHtmlOccurrence(article.blocks[i][j].content, "markdown");
-        markdown.blocks[i][j].nbEdit = article.blocks[i][j].nbEdit;
+      markdown.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        markdown.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          markdown.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          markdown.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
+          if (markdown.arr_content[i].block[j][k].type === 'text')
+            markdown.arr_content[i].block[j][k].content = "### " + this.replaceHtmlOccurrence(article.arr_content[i].block[j][k].content, "markdown");
+          markdown.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
+        }
       }
     }
     markdown.authors = article.authors;
@@ -233,17 +245,18 @@ class ConverterLight extends Converter {
     latex.title = "\\title{" + this.replaceHtmlOccurrence(article.title, "latex") + "}";
     latex.abstract = this.replaceHtmlOccurrence(article.abstract, "latex");
     latex.arr_content = [];
-    for (let i = 0, len = article.arr_content.length; i < len; ++i)
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
       latex.arr_content[i].title = "\\section{" + this.replaceHtmlOccurrence(article.arr_content[i], "latex") + "}";
-    latex.blocks = article.blocks;
-    for (let i = 0, len = article.blocks.length; i < len; ++i) {
-      latex.blocks[i] = [];
-      for (let j = 0, sLen = article.blocks[i].length; j < sLen; ++j) {
-        latex.blocks[i][j].type = article.blocks[i][j].type;
-        latex.blocks[i][j].uuid = article.blocks[i][j].uuid;
-        if (latex.blocks[i][j].type === 'text')
-          latex.blocks[i][j].content = "### " + this.replaceHtmlOccurrence(article.blocks[i][j].content, "latex");
-        latex.blocks[i][j].nbEdit = article.blocks[i][j].nbEdit;
+      latex.arr_content[i].block = article.block;
+      for (let j = 0, len = article.block.length; j < len; ++j) {
+        latex.arr_content[i].block[j] = [];
+        for (let k = 0, sLen = article.block[j].length; k < sLen; ++k) {
+          latex.arr_content[i].block[j][k].type = article.block[j][k].type;
+          latex.arr_content[i].block[j][k].uuid = article.block[j][k].uuid;
+          if (latex.arr_content[i].block[j][k].type === 'text')
+            latex.arr_content[i].block[j][k].content = this.replaceHtmlOccurrence(article.block[j][k].content, "latex");
+          latex.arr_content[i].block[j][k].nbEdit = article.block[j][k].nbEdit;
+        }
       }
     }
     latex.authors = article.authors;
@@ -266,15 +279,15 @@ router.post('/:sourceFormat(markdown|latex|light)/:destFormat(markdown|latex|lig
       if (req.params.sourceFormat === 'markdown') {
         converter = new ConverterMarkdown;
         response = req.params.destFormat === 'latex' ?
-          converter.convertToLatex() : converter.convertToLightEditor();
+          converter.convertToLatex(req.body.article) : converter.convertToLightEditor(req.body.article);
       } else if (req.params.sourceFormat === 'latex') {
         converter = new ConverterLatex;
         response = req.params.destFormat === 'markdown' ?
-          converter.convertToMarkdown() : converter.convertToLightEditor();
+          converter.convertToMarkdown(req.body.article) : converter.convertToLightEditor(req.body.article);
       } else {
         converter = new ConverterLight;
         response = req.params.destFormat === 'latex' ?
-          converter.convertToLatex() : converter.convertToMarkdown();
+          converter.convertToLatex(req.body.article) : converter.convertToMarkdown(req.body.article);
       }
       res.json({success: true, response: response});
     } catch (e) {
