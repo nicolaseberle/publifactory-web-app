@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const matchAll = require('string.prototype.matchall');
 
 /**
  * This class contains every Regular expression use to translate text
@@ -14,37 +15,37 @@ const router = express.Router()
 class Regex {
   constructor () {
     this.HtmlRegex = {
-      strong: /(<strong>(.*?)<\/strong>)/g,
-      emphasis: /(<em>(.*?)<\/em>)/g,
+      strong: /<strong>(.*?)<\/strong>/g,
+      emphasis: /<em>(.*?)<\/em>/gi,
       hr: /<hr.?\/>/g,
-      href: /(<a href=(.*?)>(.*?)<\/a>)/g,
-      preCode: /(<pre><code>(.*?)<\/code><\/pre>)/g,
-      code: /(<code>(.*?)<\/code>)/g,
-      sub: /(<sub>(.*?)<\/sub>)/g,
-      sup: /(<sup>(.*?)<\/sup>)/g,
-      quote: /(<blockquote>(.*?)<\/blockquote>)/g
+      href: /<a href=(.*?)>(.*?)<\/a>/g,
+      preCode: /<pre><code>(.*?)<\/code><\/pre>/g,
+      code: /<code>(.*?)<\/code>/g,
+      sub: /<sub>(.*?)<\/sub>/g,
+      sup: /<sup>(.*?)<\/sup>/g,
+      quote: /<blockquote>(.*?)<\/blockquote>/g
     };
     this.MarkdownRegex = {
-      strong: /(\*{2}(\w*)\*{2})/g,
-      emphasis: /(\*(\w*)\*)/g,
-      hr: /(-{3,})/g,
-      href: /(\[(.*?)]\((.*?)\))/g,
-      preCode: /(```(.*?)```)/g,
-      code: /(`(.*?)`)/g,
-      sub: /(\^\(_(.*?)\))/g,
-      sup: /(\^\((.*?)\))/g,
-      quote: /(^> (.*?)$)/g
+      strong: /\*{2}(\w*)\*{2}/g,
+      emphasis: /\*(\w*)\*/g,
+      hr: /-{3,}/g,
+      href: /\[(.*?)]\((.*?)\)/g,
+      preCode: /```(.*?)```/g,
+      code: /`(.*?)`/g,
+      sub: /\^\(_(.*?)\)/g,
+      sup: /\^\((.*?)\)/g,
+      quote: /^> (.*?)$/g
     };
     this.LatexRegex = {
-      strong: /(\\textbf{(.*?)})/g,
-      emphasis: /(\\emph{(.*?)})/g,
-      hr: /(\\begin{.*?}\\rule{.*?\\linewidth}{.*?\\linethickness}\\end{.*?})/g,
-      href: /(\\href{(.*?)}{(.*?)})/g,
-      preCode: /(\\begin{verbatim}(.*?)\\end{verbatim})/g,
-      code: /(\\texttt{(.*?)})/g,
-      sub: /(\\textsubscript{(.*?)})/g,
-      sup: /(\\textsuperscript{(.*?)})/g,
-      quote: /(\\begin{quote}(.*?)\\end{quote})/g
+      strong: /\\textbf{(.*?)}/g,
+      emphasis: /\\emph{(.*?)}/g,
+      hr: /\\begin{.*?}\\rule{.*?\\linewidth}{.*?\\linethickness}\\end{.*?}/g,
+      href: /\\href{(.*?)}{(.*?)}/g,
+      preCode: /\\begin{verbatim}(.*?)\\end{verbatim}/g,
+      code: /\\texttt{(.*?)}/g,
+      sub: /\\textsubscript{(.*?)}/g,
+      sup: /\\textsuperscript{(.*?)}/g,
+      quote: /\\begin{quote}(.*?)\\end{quote}/g
     };
   }
 
@@ -105,6 +106,7 @@ class ConverterMarkdown extends Converter {
   convertToLightEditor() {
 
   }
+
 }
 
 /**
@@ -137,81 +139,34 @@ class ConverterLight extends Converter {
 
   replaceHtmlOccurrence (string, destFormat) {
     const HtmlRegex = super.getRegex.getHtmlRegex;
-    let tmp;
-    switch (true) {
-      case HtmlRegex.strong.test(string):
-        tmp = string.match(HtmlRegex.strong);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.emphasis.test(string):
-        tmp = string.match(HtmlRegex.emphasis);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.hr.test(string):
-        tmp = string.match(HtmlRegex.hr);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.href.test(string):
-        tmp = string.match(HtmlRegex.href);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.preCode.test(string):
-        tmp = string.match(HtmlRegex.preCode);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.code.test(string):
-        tmp = string.match(HtmlRegex.code);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.sub.test(string):
-        tmp = string.match(HtmlRegex.sub);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.sup.test(string):
-        tmp = string.match(HtmlRegex.sup);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-      case HtmlRegex.quote.test(string):
-        tmp = string.match(HtmlRegex.quote);
-        if (destFormat === 'latex') {
-
-        } else {
-
-        }
-        break;
-    }
+    let matches;
+    while ((matches = HtmlRegex.emphasis.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = HtmlRegex.strong.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
+    while ((matches = HtmlRegex.hr.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = HtmlRegex.href.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\href{${matches[1]}}{${matches[2]}}` : `[${matches[2]}](${matches[1]})`);
+    while ((matches = HtmlRegex.preCode.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\begin{verbatim}${matches[1]}\\end{verbatim}` : `\`\`\`${matches[1]}\`\`\``);
+    while ((matches = HtmlRegex.code.exec(string)) !== null)
+      string = string.replace(matches[0], destFormat === 'latex' ? `\\texttt{${matches[1]}}` : `\`${matches[1]}\``);
+    while ((matches = HtmlRegex.sub.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textsubscript{${matches[1]}}` : `^(_${matches[1]})`);
+    while ((matches = HtmlRegex.sup.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textsuperscript{${matches[1]}}` : `^(${matches[1]})`);
+    while ((matches = HtmlRegex.quote.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textgreater{}${matches[1]}` : `> ${matches[1]}\n`);
+    console.log(string);
     return string;
   }
 
@@ -246,16 +201,17 @@ class ConverterLight extends Converter {
     latex.abstract = this.replaceHtmlOccurrence(article.abstract, "latex");
     latex.arr_content = [];
     for (let i = 0, len = article.arr_content.length; i < len; ++i) {
-      latex.arr_content[i].title = "\\section{" + this.replaceHtmlOccurrence(article.arr_content[i], "latex") + "}";
-      latex.arr_content[i].block = article.block;
-      for (let j = 0, len = article.block.length; j < len; ++j) {
-        latex.arr_content[i].block[j] = [];
-        for (let k = 0, sLen = article.block[j].length; k < sLen; ++k) {
-          latex.arr_content[i].block[j][k].type = article.block[j][k].type;
-          latex.arr_content[i].block[j][k].uuid = article.block[j][k].uuid;
+      latex.arr_content[i] = {};
+      latex.arr_content[i].title = "\\section{" + this.replaceHtmlOccurrence(article.arr_content[i].title, "latex") + "}";
+      latex.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        latex.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          latex.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          latex.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
           if (latex.arr_content[i].block[j][k].type === 'text')
-            latex.arr_content[i].block[j][k].content = this.replaceHtmlOccurrence(article.block[j][k].content, "latex");
-          latex.arr_content[i].block[j][k].nbEdit = article.block[j][k].nbEdit;
+            latex.arr_content[i].block[j][k].content = this.replaceHtmlOccurrence(article.arr_content[i].block[j][k].content, "latex");
+          latex.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
         }
       }
     }
