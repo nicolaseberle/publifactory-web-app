@@ -2,7 +2,6 @@
 
 const express = require('express')
 const router = express.Router()
-const matchAll = require('string.prototype.matchall');
 
 /**
  * This class contains every Regular expression use to translate text
@@ -15,8 +14,14 @@ const matchAll = require('string.prototype.matchall');
 class Regex {
   constructor () {
     this.HtmlRegex = {
-      strong: /<strong>(.*?)<\/strong>/g,
-      emphasis: /<em>(.*?)<\/em>/gi,
+      strong: {
+        strong: /<strong>(.*?)<\/strong>/g,
+        bold: /<b>(.*?)<\/b>/g
+      },
+      emphasis: {
+        emphasis: /<em>(.*?)<\/em>/g,
+        italic: /<i>(.*?)<\/i>/g
+      },
       hr: /<hr.?\/>/g,
       href: /<a href=(.*?)>(.*?)<\/a>/g,
       preCode: /<pre><code>(.*?)<\/code><\/pre>/g,
@@ -105,7 +110,10 @@ class Converter {
 }
 
 /**
- * TODO TBD
+ * This class is used to convert the markup of the different other languages
+ * This class contains several methods which permit to actually translate your Mardown Editor text into :
+ *   - Light Editor
+ *   - LaTeX
  */
 class ConverterMarkdown extends Converter {
   constructor () {
@@ -124,13 +132,13 @@ class ConverterMarkdown extends Converter {
     while ((matches = MarkdownRegex.emphasis.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\emph{${matches[1]}}` : `<em>${matches[1]}</em>`);
-    while ((matches = LatexRegex.hr.stars.exec(string)) !== null)
+    while ((matches = MarkdownRegex.hr.stars.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'light' ? `\\begin{center}\\rule{0.5\\linewidth}{\\linethickness}\\end{center}` : `<hr />`);
-    while ((matches = LatexRegex.hr.dash.exec(string)) !== null)
+    while ((matches = MarkdownRegex.hr.dash.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'light' ? `\\begin{center}\\rule{0.5\\linewidth}{\\linethickness}\\end{center}` : `<hr />`);
-    while ((matches = LatexRegex.hr.underscore.exec(string)) !== null)
+    while ((matches = MarkdownRegex.hr.underscore.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'light' ? `\\begin{center}\\rule{0.5\\linewidth}{\\linethickness}\\end{center}` : `<hr />`);
     while ((matches = MarkdownRegex.href.exec(string)) !== null)
@@ -210,7 +218,10 @@ class ConverterMarkdown extends Converter {
 }
 
 /**
- * TODO TBD
+ * This class is used to convert the markup of the different other languages
+ * This class contains several methods which permit to actually translate your LaTeX Editor text into :
+ *   - Markdown
+ *   - Light Editor
  */
 class ConverterLatex extends Converter {
   constructor () {
@@ -317,15 +328,21 @@ class ConverterLight extends Converter {
   replaceHtmlOccurrence (string, destFormat) {
     const HtmlRegex = super.getRegex.getHtmlRegex;
     let matches;
-    while ((matches = HtmlRegex.emphasis.exec(string)) !== null)
+    while ((matches = HtmlRegex.emphasis.emphasis.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
-    while ((matches = HtmlRegex.strong.exec(string)) !== null)
+    while ((matches = HtmlRegex.emphasis.italic.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = HtmlRegex.strong.strong.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
+    while ((matches = HtmlRegex.strong.bold.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
     while ((matches = HtmlRegex.hr.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+        destFormat === 'latex' ? `\\begin{center}\\rule{0.5\\linewidth}{\\linethickness}\\end{center}` : `---`);
     while ((matches = HtmlRegex.href.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\href{${matches[1]}}{${matches[2]}}` : `[${matches[2]}](${matches[1]})`);

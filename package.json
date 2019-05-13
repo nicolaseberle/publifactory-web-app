@@ -111,7 +111,6 @@
     "socket.io-client": "^1.7.1",
     "socketio-jwt": "^4.5.0",
     "sortablejs": "^1.9.0",
-    "string.prototype.matchall": "^3.0.1",
     "svg-fill-loader": "0.0.8",
     "tls": "0.0.1",
     "url-loader": "^1.1.2",
