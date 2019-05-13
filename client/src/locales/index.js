@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import { merge } from 'lodash'
+// import { merge } from 'lodash'
 // import { lang } from '../stored'
 
 import zhCN from './zh-CN'
@@ -9,8 +9,10 @@ import eleZhCN from 'element-ui/lib/locale/lang/zh-CN'
 import eleEn from 'element-ui/lib/locale/lang/en'
 
 const locales = {
-  'zh-CN': merge(zhCN, eleZhCN),
-  en: merge(en, eleEn)
+  // 'zh-CN': merge(zhCN, eleZhCN),
+  'zh-CN': Object.assign(zhCN, eleZhCN),
+  // en: merge(en, eleEn)
+  en: Object.assign(en, eleEn)
 }
 
 Vue.use(VueI18n)

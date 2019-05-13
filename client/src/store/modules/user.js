@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+// import { merge } from 'lodash'
 import { saveMulti, clearMulti } from '../../storage'
 import { login, getUserInfo, resetGuestPassword, changePassword, resetPassword, updateUser } from './user.api'
 // eslint-disable-next-line camelcase
@@ -19,7 +19,8 @@ const state = {
 const mutations = {
   // set user info
   SET_USER_INFO (state, userInfo) {
-    merge(state, userInfo)
+    // merge(state, userInfo)
+    Object.assign(state, userInfo)
   },
   // after logout
   LOGOUT (state) {
@@ -65,7 +66,12 @@ const actions = {
           reject('error')
         }
         getUserInfo(data.token).then(user => {
-          const userInfo = merge({}, user, {
+          /* const userInfo = merge({}, user, {
+            email: payload.email,
+            access_token: data.token, // eslint-disable-line
+            refresh_token: '' // eslint-disable-line
+          }) */
+          const userInfo = Object.assign({}, user, {
             email: payload.email,
             access_token: data.token, // eslint-disable-line
             refresh_token: '' // eslint-disable-line

@@ -243,9 +243,13 @@ export default {
       self.highlightSelection()
     });
 
+
     this.editor = quill
 
     var cursorsModule = this.editor.getModule('cursors');
+    // var table = this.editor.getModule('table');
+
+
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)

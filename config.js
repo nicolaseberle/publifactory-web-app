@@ -2,7 +2,7 @@
  * Project config file includes dev/prod and frontend/backend
  */
 var path = require('path')
-var _ = require('lodash')
+// var _ = require('lodash')
 
 var backendBase = {
   // Root path of server
@@ -58,7 +58,7 @@ var development = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   },
-  backend: _.merge({}, backendBase, {
+  backend: Object.assign({}, backendBase, {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
@@ -90,7 +90,7 @@ var production = {
     productionGzip: false,
     productionGzipExtensions: ['js', 'css']
   },
-  backend: _.merge({}, backendBase, {
+  backend: Object.assign({}, backendBase, {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
     serverFrontend: true,
@@ -115,4 +115,4 @@ var production = {
 
 var config = process.env.NODE_ENV === 'production' ? production : development
 
-module.exports = _.assign({}, config)
+module.exports = Object.assign({}, config)

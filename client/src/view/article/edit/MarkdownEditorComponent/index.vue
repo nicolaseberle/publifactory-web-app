@@ -8,7 +8,7 @@
         </SplitArea>
         <SplitArea :size="50" style="background-color: #f3f3f3">
           <el-card class="box-card" style="margin: 10px 10px 10px 10px;">
-            <div v-html="html"/>
+            <div class='md' v-html="html"/>
           </el-card>
         </SplitArea>
     </Split>
@@ -134,5 +134,13 @@ export default {
 .gutter.gutter-vertical {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
 }
+/*
+div.md{
+  font-family: Helvetica,Arial,sans-serif;
 
+  h1 {
+    color: red;
+  }
+}
+*/ 
 </style>

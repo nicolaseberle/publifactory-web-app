@@ -72,7 +72,6 @@
     "latex": "0.0.1",
     "latex-parser": "^0.6.2",
     "latex.js": "^0.11.1",
-    "lodash": "^4.17.2",
     "markdown-it": "^8.4.2",
     "markdown-it-katex": "^2.0.3",
     "method-override": "^2.3.7",
@@ -115,7 +114,7 @@
     "uuid": "^3.2.1",
     "v-autocomplete": "^1.8.2",
     "velocity-animate": "^1.5.2",
-    "vue": "^2.5.17",
+    "vue": "^2.6.10",
     "vue-awesome": "^3.2.0",
     "vue-chartjs": "^3.4.0",
     "vue-codemirror": "^4.0.6",
@@ -124,7 +123,7 @@
     "vue-picture-input": "^2.1.6",
     "vue-quill": "^1.5.0-0",
     "vue-resource": "^1.0.3",
-    "vue-router": "^3.0.1",
+    "vue-router": "^3.0.6",
     "vue-split-panel": "^1.0.4",
     "vue-textarea-autosize": "^1.0.4",
     "vue2-medium-editor": "^1.1.6",
@@ -200,6 +199,6 @@
   },
   "engines": {
     "node": "9.2.1",
-    "npm": "5.5.1"
+    "npm": "6.9.0"
   }
 }
