@@ -218,7 +218,7 @@ export default {
     });
 
     //var doc = shareDBConnection.get('documents', this.idEditor);
-    var doc = shareDBConnection.get('articles/',this.id)
+    //var doc = shareDBConnection.get('articles/',this.id)
     /*arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
     axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
                                              "abstract":this.postForm.abstract,
@@ -247,16 +247,16 @@ export default {
 
     var cursorsModule = this.editor.getModule('cursors');
 
-    /*
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });
-    */
+
 
     //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
 
     self = this
-
+    this.editor.root.innerHTML = this.content
+    /*
     doc.subscribe(function(err) {
 
       if (err) throw err;
@@ -299,9 +299,9 @@ export default {
               console.error('Submit OP returned an error:', err);
           });
 
-          /*setInterval(function() {
-            self.$emit('signalUpdateUserList', self.cursors)
-          },5000)*/
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
         }
       });
 
@@ -311,9 +311,9 @@ export default {
       doc.on('op', function(op, source) {
         if (source !== self.editor) {
           self.editor.updateContents(op);
-          /*setInterval(function() {
-            self.$emit('signalUpdateUserList', self.cursors)
-          },5000)*/
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
 
         }
       });
@@ -377,17 +377,17 @@ export default {
         });
 
         updateCursors(e.detail.source);
-        /*setInterval(function() {
-          self.$emit('signalUpdateUserList', self.cursors)
-        },5000)*/
+        //setInterval(function() {
+        //  self.$emit('signalUpdateUserList', self.cursors)
+        //},5000)
       })
 
       updateCursors(self.cursors.localConnection)
-      /*setInterval(function() {
-        self.$emit('signalUpdateUserList', self.cursors)
-      },5000)*/
+      //setInterval(function() {
+      //  self.$emit('signalUpdateUserList', self.cursors)
+      //},5000)
     })
-
+*/
     window.cursors = this.cursors
 
     $('#'+this.idButtonZotero).click(function () {
