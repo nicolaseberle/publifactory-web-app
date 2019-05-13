@@ -99,14 +99,87 @@ class ConverterMarkdown extends Converter {
     super("markdown");
   }
 
-  async convertToLatex () {
-
+  replaceMarkdownOccurrence (string, destFormat) {
+    const LatexRegex = super.getRegex.getMarkdownRegex
+    let matches;
+    while ((matches = LatexRegex.emphasis.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = LatexRegex.strong.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
+    while ((matches = LatexRegex.hr.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = LatexRegex.href.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\href{${matches[1]}}{${matches[2]}}` : `[${matches[2]}](${matches[1]})`);
+    while ((matches = LatexRegex.preCode.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\begin{verbatim}${matches[1]}\\end{verbatim}` : `\`\`\`${matches[1]}\`\`\``);
+    while ((matches = LatexRegex.code.exec(string)) !== null)
+      string = string.replace(matches[0], destFormat === 'latex' ? `\\texttt{${matches[1]}}` : `\`${matches[1]}\``);
+    while ((matches = LatexRegex.sub.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textsubscript{${matches[1]}}` : `^(_${matches[1]})`);
+    while ((matches = LatexRegex.sup.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textsuperscript{${matches[1]}}` : `^(${matches[1]})`);
+    while ((matches = LatexRegex.quote.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\textgreater{}${matches[1]}` : `> ${matches[1]}\n`);
+    return string;
   }
 
-  convertToLightEditor() {
-
+  convertToLatex (article) {
+    let latex = {};
+    latex.title = "\\title{" + this.replaceMarkdownOccurrence(article.title, "latex") + "}";
+    latex.abstract = this.replaceMarkdownOccurrence(article.abstract, "latex");
+    latex.arr_content = [];
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
+      latex.arr_content[i] = {};
+      latex.arr_content[i].title = "\\section{" + this.replaceMarkdownOccurrence(article.arr_content[i].title, "latex") + "}";
+      latex.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        latex.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          latex.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          latex.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
+          if (latex.arr_content[i].block[j][k].type === 'text')
+            latex.arr_content[i].block[j][k].content = this.replaceMarkdownOccurrence(article.arr_content[i].block[j][k].content, "latex");
+          latex.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
+        }
+      }
+    }
+    latex.authors = article.authors;
+    latex.tags = article.tags;
+    return latex;
   }
 
+  convertToLightEditor(article) {
+    let light = {};
+    light.title = this.replaceMarkdownOccurrence(article.title, "light");
+    light.abstract = this.replaceMarkdownOccurrence(article.abstract, "light");
+    light.arr_content = [];
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
+      light.arr_content[i] = {};
+      light.arr_content[i].title = this.replaceMarkdownOccurrence(article.arr_content[i].title, "light");
+      light.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        light.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          light.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          light.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
+          if (light.arr_content[i].block[j][k].type === 'text')
+            light.arr_content[i].block[j][k].content = this.replaceMarkdownOccurrence(article.arr_content[i].block[j][k].content, "light");
+          light.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
+        }
+      }
+    }
+    light.authors = article.authors;
+    light.tags = article.tags;
+    return light;
+  }
 }
 
 /**
@@ -117,12 +190,86 @@ class ConverterLatex extends Converter {
     super("markdown");
   }
 
-  async convertToMarkdown () {
-
+  replaceLatexOccurrence (string, destFormat) {
+    const LatexRegex = super.getRegex.getLatexRegex
+    let matches;
+    while ((matches = LatexRegex.emphasis.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = LatexRegex.strong.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
+    while ((matches = LatexRegex.hr.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+    while ((matches = LatexRegex.href.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\href{${matches[1]}}{${matches[2]}}` : `[${matches[2]}](${matches[1]})`);
+    while ((matches = LatexRegex.preCode.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\begin{verbatim}${matches[1]}\\end{verbatim}` : `\`\`\`${matches[1]}\`\`\``);
+    while ((matches = LatexRegex.code.exec(string)) !== null)
+      string = string.replace(matches[0], destFormat === 'light' ? `\\texttt{${matches[1]}}` : `\`${matches[1]}\``);
+    while ((matches = LatexRegex.sub.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\textsubscript{${matches[1]}}` : `^(_${matches[1]})`);
+    while ((matches = LatexRegex.sup.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\textsuperscript{${matches[1]}}` : `^(${matches[1]})`);
+    while ((matches = LatexRegex.quote.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'light' ? `\\textgreater{}${matches[1]}` : `> ${matches[1]}\n`);
+    return string;
   }
 
-  convertToLightEditor() {
+  convertToMarkdown (article) {
+    let markdown = {};
+    markdown.title = "# " + this.replaceLatexOccurrence(article.title, "markdown");
+    markdown.abstract = "#### " + this.replaceLatexOccurrence(article.abstract, "markdown");
+    markdown.arr_content = [];
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
+      markdown.arr_content[i] = {};
+      markdown.arr_content[i].title = "## " + this.replaceLatexOccurrence(article.arr_content[i].title, "markdown");
+      markdown.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        markdown.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          markdown.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          markdown.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
+          if (markdown.arr_content[i].block[j][k].type === 'text')
+            markdown.arr_content[i].block[j][k].content = "### " + this.replaceLatexOccurrence(article.arr_content[i].block[j][k].content, "markdown");
+          markdown.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
+        }
+      }
+    }
+    markdown.authors = article.authors;
+    markdown.tags = article.tags;
+    return markdown;
+  }
 
+  convertToLightEditor(article) {
+    let light = {};
+    light.title = this.replaceHtmlOccurrence(article.title, "light");
+    light.abstract = this.replaceHtmlOccurrence(article.abstract, "light");
+    light.arr_content = [];
+    for (let i = 0, len = article.arr_content.length; i < len; ++i) {
+      light.arr_content[i] = {};
+      light.arr_content[i].title = this.replaceHtmlOccurrence(article.arr_content[i].title, "light");
+      light.arr_content[i].block = [[]];
+      for (let j = 0, len = article.arr_content[i].block.length; j < len; ++j) {
+        light.arr_content[i].block[j] = [{}];
+        for (let k = 0, sLen = article.arr_content[i].block[j].length; k < sLen; ++k) {
+          light.arr_content[i].block[j][k].type = article.arr_content[i].block[j][k].type;
+          light.arr_content[i].block[j][k].uuid = article.arr_content[i].block[j][k].uuid;
+          if (light.arr_content[i].block[j][k].type === 'text')
+            light.arr_content[i].block[j][k].content = this.replaceHtmlOccurrence(article.arr_content[i].block[j][k].content, "light");
+          light.arr_content[i].block[j][k].nbEdit = article.arr_content[i].block[j][k].nbEdit;
+        }
+      }
+    }
+    light.authors = article.authors;
+    light.tags = article.tags;
+    return light;
   }
 }
 
@@ -166,7 +313,6 @@ class ConverterLight extends Converter {
     while ((matches = HtmlRegex.quote.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\textgreater{}${matches[1]}` : `> ${matches[1]}\n`);
-    console.log(string);
     return string;
   }
 
