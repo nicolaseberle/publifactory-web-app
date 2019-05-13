@@ -27,7 +27,7 @@ class Regex {
     };
     this.MarkdownRegex = {
       strong: /\*{2}(\w*)\*{2}/g,
-      emphasis: /\*(\w*)\*/g,
+      emphasis: /\*(.*?)\*/g,
       hr: /-{3,}/g,
       href: /\[(.*?)]\((.*?)\)/g,
       preCode: /```(.*?)```/g,
@@ -102,32 +102,35 @@ class ConverterMarkdown extends Converter {
   replaceMarkdownOccurrence (string, destFormat) {
     const LatexRegex = super.getRegex.getMarkdownRegex
     let matches;
-    while ((matches = LatexRegex.emphasis.exec(string)) !== null)
-      string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
     while ((matches = LatexRegex.strong.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `**${matches[1]}**`);
+        destFormat === 'latex' ? `\\textbf{${matches[1]}}` : `<strong>${matches[1]}</strong>`);
+    while ((matches = LatexRegex.emphasis.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `<em>${matches[1]}</em>`);
     while ((matches = LatexRegex.hr.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `*${matches[1]}*`);
+        destFormat === 'latex' ? `\\emph{${matches[1]}}` : `<hr />`);
     while ((matches = LatexRegex.href.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\href{${matches[1]}}{${matches[2]}}` : `[${matches[2]}](${matches[1]})`);
+        destFormat === 'latex' ? `\\href{${matches[2]}}{${matches[1]}}` : `<a href=${matches[2]}>${matches[1]}</a>`);
     while ((matches = LatexRegex.preCode.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\begin{verbatim}${matches[1]}\\end{verbatim}` : `\`\`\`${matches[1]}\`\`\``);
+        destFormat === 'latex' ? `\\begin{verbatim}${matches[1]}\\end{verbatim}` :
+          `<pre><code>${matches[1]}</code></pre>`);
     while ((matches = LatexRegex.code.exec(string)) !== null)
-      string = string.replace(matches[0], destFormat === 'latex' ? `\\texttt{${matches[1]}}` : `\`${matches[1]}\``);
+      string = string.replace(matches[0], destFormat === 'latex' ? `\\texttt{${matches[1]}}` :
+        `<code>${matches[1]}</code>`);
     while ((matches = LatexRegex.sub.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\textsubscript{${matches[1]}}` : `^(_${matches[1]})`);
+        destFormat === 'latex' ? `\\textsubscript{${matches[1]}}` : `<sub>${matches[1]}</sub>`);
     while ((matches = LatexRegex.sup.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\textsuperscript{${matches[1]}}` : `^(${matches[1]})`);
+        destFormat === 'latex' ? `\\textsuperscript{${matches[1]}}` : `<sup>${matches[1]}</sup>`);
     while ((matches = LatexRegex.quote.exec(string)) !== null)
       string = string.replace(matches[0],
-        destFormat === 'latex' ? `\\textgreater{}${matches[1]}` : `> ${matches[1]}\n`);
+        destFormat === 'latex' ? `\\textgreater{}${matches[1]}` : `<blockquote>${matches[1]}</blockquote>`);
+    console.log(string);
     return string;
   }
 
