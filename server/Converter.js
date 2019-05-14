@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Theses constants are used to create the route for the converter.
+ * It refers to route.js file.
+ * @type {createApplication}
+ */
 const express = require('express')
 const router = express.Router()
 
@@ -81,14 +86,26 @@ class Regex {
     };
   }
 
+  /**
+   * Getter of HTML Regular Expressions
+   * @returns {{preCode: RegExp, sub: RegExp, strong: {strong: RegExp, bold: RegExp}, code: RegExp, quote: RegExp, strike: {simplified: RegExp, full: RegExp}, emphasis: {emphasis: RegExp, italic: RegExp}, hr: RegExp, href: RegExp, list: {unordered: RegExp, elem: RegExp, ordered: RegExp}, sup: RegExp}|*}
+   */
   get getHtmlRegex() {
     return this.HtmlRegex;
   }
 
+  /**
+   * Getter of LaTeX Regular Expressions
+   * @returns {{preCode: RegExp, sub: RegExp, strong: RegExp, code: RegExp, quote: RegExp, strike: RegExp, emphasis: RegExp, hr: RegExp, href: RegExp, list: {elem: RegExp, list: RegExp}, sup: RegExp}|*}
+   */
   get getLatexRegex() {
     return this.LatexRegex;
   }
 
+  /**
+   * Getter of Markdown Regular Expressions
+   * @returns {{preCode: RegExp, sub: RegExp, strong: {underscore: RegExp, stars: RegExp}, code: RegExp, quote: RegExp, strike: RegExp, emphasis: RegExp, hr: {underscore: RegExp, stars: RegExp, dash: RegExp}, href: RegExp, list: {unordered: RegExp, ordered: RegExp}, sup: RegExp}|*}
+   */
   get getMarkdownRegex() {
     return this.MarkdownRegex;
   }
@@ -106,18 +123,35 @@ class Converter {
       throw new Error('This file type isn\'t covered yet.')
   }
 
+  /**
+   * Static method to check if the converter can convert this file type.
+   * @param fileType
+   * @returns {boolean}
+   */
   static fileTypeExist (fileType) {
     return ['markdown', 'latex', 'light'].includes(fileType)
   }
 
+  /**
+   * Getter of the originFileType
+   * @returns {*}
+   */
   get getOriginFileType() {
     return this.originFileType
   }
 
+  /**
+   * Setter of the originFileType
+   * @param originFileType
+   */
   set setOriginFileType(originFileType) {
     this.originFileType = originFileType
   }
 
+  /**
+   * Getter of the Regex object class
+   * @returns {Regex}
+   */
   get getRegex() {
     return this.regex;
   }
@@ -134,6 +168,13 @@ class ConverterMarkdown extends Converter {
     super("markdown");
   }
 
+  /**
+   * This method is used to replace every Markdown occurrences
+   * into Latex or Html format
+   * @param string
+   * @param destFormat
+   * @returns {*}
+   */
   replaceMarkdownOccurrence (string, destFormat) {
     const MarkdownRegex = super.getRegex.getMarkdownRegex
     let matches;
@@ -180,6 +221,11 @@ class ConverterMarkdown extends Converter {
     return string;
   }
 
+  /**
+   * This public method is used to convert the original Markdown text
+   * into a Latex Text
+   * @param article
+   */
   convertToLatex (article) {
     let latex = {};
     latex.title = "\\title{" + this.replaceMarkdownOccurrence(article.title, "latex") + "}";
@@ -205,6 +251,11 @@ class ConverterMarkdown extends Converter {
     return latex;
   }
 
+  /**
+   * This public method is used to convert the original Markdown text
+   * into a Html Text for the Light Editor
+   * @param article
+   */
   convertToLightEditor(article) {
     let light = {};
     light.title = this.replaceMarkdownOccurrence(article.title, "light");
@@ -242,6 +293,13 @@ class ConverterLatex extends Converter {
     super("markdown");
   }
 
+  /**
+   * This method is used to replace every Latex occurrences
+   * into Markdown or Html format
+   * @param string
+   * @param destFormat
+   * @returns {*}
+   */
   replaceLatexOccurrence (string, destFormat) {
     const LatexRegex = super.getRegex.getLatexRegex
     let matches;
@@ -287,6 +345,11 @@ class ConverterLatex extends Converter {
     return string;
   }
 
+  /**
+   * This public method is used to convert the original Latex text
+   * into a Markdown Text
+   * @param article
+   */
   convertToMarkdown (article) {
     let markdown = {};
     markdown.title = "# " + this.replaceLatexOccurrence(article.title, "markdown");
@@ -312,6 +375,11 @@ class ConverterLatex extends Converter {
     return markdown;
   }
 
+  /**
+   * This public method is used to convert the original Latex text
+   * into a Html Text for the Light Editor
+   * @param article
+   */
   convertToLightEditor(article) {
     let light = {};
     light.title = this.replaceLatexOccurrence(article.title, "light");
@@ -349,6 +417,13 @@ class ConverterLight extends Converter {
     super("light");
   }
 
+  /**
+   * This method is used to replace every HTML occurrences from the Light Editor
+   * into Markdown or Latex format
+   * @param string
+   * @param destFormat
+   * @returns {*}
+   */
   replaceHtmlOccurrence (string, destFormat) {
     const HtmlRegex = super.getRegex.getHtmlRegex;
     let matches;
@@ -403,6 +478,11 @@ class ConverterLight extends Converter {
     return string;
   }
 
+  /**
+   * This public method is used to convert the original HTML text from the Light Editor
+   * into a Markdown text
+   * @param article
+   */
   convertToMarkdown (article) {
     let markdown = {};
     markdown.title = "# " + this.replaceHtmlOccurrence(article.title, "markdown");
@@ -428,6 +508,11 @@ class ConverterLight extends Converter {
     return markdown;
   }
 
+  /**
+   * This public method is used to convert the original HTML text from the Light Editor
+   * into a Latex text
+   * @param article
+   */
   convertToLatex(article) {
     let latex = {};
     latex.title = "\\title{" + this.replaceHtmlOccurrence(article.title, "latex") + "}";
@@ -461,6 +546,7 @@ class ConverterLight extends Converter {
  *   - @params destFormat   -> the format needed.
  * It take in the body field the article models, in json format.
  * It will return a json with parameters success: true and response: containing the translated article.
+ * // TODO Replace the res.status() -> next(e) in the try/catch
  */
 router.post('/:sourceFormat(markdown|latex|light)/:destFormat(markdown|latex|light)',
   async function (req, res, next) {
