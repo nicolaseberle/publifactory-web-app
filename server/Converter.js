@@ -15,69 +15,68 @@ class Regex {
   constructor () {
     this.HtmlRegex = {
       strong: {
-        strong: /<strong>(.*?)<\/strong>/g,
-        bold: /<b>(.*?)<\/b>/g
+        strong: /<strong>(.*?)<\/strong>/,
+        bold: /<b>(.*?)<\/b>/
       },
       emphasis: {
-        emphasis: /<em>(.*?)<\/em>/g,
-        italic: /<i>(.*?)<\/i>/g
+        emphasis: /<em>(.*?)<\/em>/,
+        italic: /<i>(.*?)<\/i>/
       },
-      hr: /<hr.?\/>/g,
-      href: /<a href=(.*?)>(.*?)<\/a>/g,
-      preCode: /<pre><code>(.*?)<\/code><\/pre>/g,
-      code: /<code>(.*?)<\/code>/g,
-      sub: /<sub>(.*?)<\/sub>/g,
-      sup: /<sup>(.*?)<\/sup>/g,
-      quote: /<blockquote>(.*?)<\/blockquote>/g,
+      hr: /<hr.?\/>/,
+      href: /<a href=(.*?)>(.*?)<\/a>/,
+      preCode: /<pre><code>(.*?)<\/code><\/pre>/,
+      code: /<code>(.*?)<\/code>/,
+      sub: /<sub>(.*?)<\/sub>/,
+      sup: /<sup>(.*?)<\/sup>/,
+      quote: /<blockquote>(.*?)<\/blockquote>/,
       strike: {
-        simplified: /<s>(.*?)<\/s>/g,
-        full: /<strike>(.*?)<\/strike>/g
+        simplified: /<s>(.*?)<\/s>/,
+        full: /<strike>(.*?)<\/strike>/
       },
       list: {
-        unordered: /<ul>(.*?)<\/ul>/g,
-        ordered: /<ol>(.*?)<\/ol>/g,
-        elem: /<li>(.*?)<\/li>/g
+        unordered: /<ul>(.*?)<\/ul>/m,
+        ordered: /<ol>(.*?)<\/ol>/m,
+        elem: /<li>(.*?)<\/li>/
       }
     };
     this.MarkdownRegex = {
       strong: {
-        stars: /\*{2}(.*?)\*{2}/g,
-        underscore: /_{2}(.*?)_{2}/g
+        stars: /\*{2}(.*?)\*{2}/,
+        underscore: /_{2}(.*?)_{2}/
       },
-      emphasis: /\*(.*?)\*/g,
+      emphasis: /\*(.*?)\*/,
       hr: {
-        dash: /-{3,}/g,
-        stars: /\*{3,}/g,
-        underscore: /_{3,}/g
+        dash: /-{3,}/,
+        stars: /\*{3,}/,
+        underscore: /_{3,}/
       },
-      href: /\[(.*?)]\((.*?)\)/g,
-      preCode: /```(.*?)```/g,
-      code: /`(.*?)`/g,
-      sub: /\^\(_(.*?)\)/g,
-      sup: /\^\((.*?)\)/g,
-      quote: /^> (.*?)$/g,
-      strike: /~~(.*?)~~/g,
-      //TODO Add Markdown RegExp for the lists
+      href: /\[(.*?)]\((.*?)\)/,
+      preCode: /```(.*?)```/,
+      code: /`(.*?)`/,
+      sub: /\^\(_(.*?)\)/,
+      sup: /\^\((.*?)\)/,
+      quote: /^> (.*?)$/,
+      strike: /~~(.*?)~~/,
+      // TODO Trouver le moyen de faire fonctionner le regex from md to ltx / LE
       list: {
-        unordered: /<ul>(.*?)<\/ul>/g,
-        ordered: /<ol>(.*?)<\/ol>/g,
-        elem: /<li>(.*?)<\/li>/g
+        unordered: /[*|-] (.*?)\n/,
+        ordered: /([0-9]+)\. (.*?)\n/
       }
     };
     this.LatexRegex = {
-      strong: /\\textbf{(.*?)}/g,
-      emphasis: /\\emph{(.*?)}/g,
-      hr: /\\begin{.*?}\\rule{.*?\\linewidth}{.*?\\linethickness}\\end{.*?}/g,
-      href: /\\href{(.*?)}{(.*?)}/g,
-      preCode: /\\begin{verbatim}(.*?)\\end{verbatim}/g,
-      code: /\\texttt{(.*?)}/g,
-      sub: /\\textsubscript{(.*?)}/g,
-      sup: /\\textsuperscript{(.*?)}/g,
-      quote: /\\begin{quote}(.*?)\\end{quote}/g,
-      strike: /\\sout{(.*?)}/g,
+      strong: /\\textbf{(.*?)}/,
+      emphasis: /\\emph{(.*?)}/,
+      hr: /\\begin{.*?}\\rule{.*?\\linewidth}{.*?\\linethickness}\\end{.*?}/,
+      href: /\\href{(.*?)}{(.*?)}/,
+      preCode: /\\begin{verbatim}(.*?)\\end{verbatim}/,
+      code: /\\texttt{(.*?)}/,
+      sub: /\\textsubscript{(.*?)}/,
+      sup: /\\textsuperscript{(.*?)}/,
+      quote: /\\begin{quote}(.*?)\\end{quote}/,
+      strike: /\\sout{(.*?)}/,
       list: {
-        list: /\\begin{(.*?)}\\tightlist(.*?)\\end{.*?}/g,
-        elem: /\\item ([a-zA-Z ]+)/g
+        list: /\\begin{(.*?)}\\tightlist(.*?)\\end{.*?}/,
+        elem: /\\item ([a-zA-Z ]+)/
       }
     };
   }
@@ -276,7 +275,7 @@ class ConverterLatex extends Converter {
       string = string.replace(matches[0],
         destFormat === 'light' ? `<s>${matches[1]}</s>` : `~~${matches[1]}~~`);
     while ((matches = LatexRegex.list.list.exec(string)) !== null) {
-      let iterator = 0, tmpValue = [], tmpString = matches[2];
+      let iterator = 1, tmpValue = [], tmpString = matches[2];
       while ((tmpValue = LatexRegex.list.elem.exec(matches[2])) !== null) {
         tmpString = tmpString.replace(tmpValue[0], destFormat === 'light' ? `<li>${tmpValue[1]}</li>` :
           (matches[1] === 'enumerate' ? `${iterator}. ${tmpValue[1]}\n` : `- ${tmpValue[1]}\n`));
@@ -391,24 +390,16 @@ class ConverterLight extends Converter {
     while ((matches = HtmlRegex.strike.full.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\sout{${matches[1]}}` : `~~${matches[1]}~~`);
-    while ((matches = HtmlRegex.list.ordered.exec(string)) !== null) {
-      let iterator = 0, tmpValue = [], tmpString = matches[1];
-      while ((tmpValue = HtmlRegex.list.elem.exec(tmpString)) !== null) {
-        tmpString = tmpString.replace(tmpValue[0],
-          destFormat === 'latex' ? `\\item ${tmpValue[1]}` : `${iterator}. ${tmpValue[1]}\n`);
-        iterator++;
-      }
-      string = string.replace(matches[0], destFormat === 'latex' ?
-        `\\begin{enumerate}\\tightlist${tmpString}\\end{enumerate}` : `\n${tmpString}`)
-    }
-    while ((matches = HtmlRegex.list.unordered.exec(string)) !== null) {
-      let tmpValue = [], tmpString = matches[1];
-      while ((tmpValue = HtmlRegex.list.elem.exec(tmpString)) !== null)
-        tmpString = tmpString.replace(tmpValue[0],
-          destFormat === 'latex' ? `\\item ${tmpValue[1]}` : `- ${tmpValue[1]}\n`);
-      string = string.replace(matches[0], destFormat === 'latex' ?
-        `\\begin{itemize}\\tightlist${tmpString}\\end{enumerate}` : `\n${tmpString}`)
-    }
+    while ((matches = HtmlRegex.list.elem.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\item ${matches[1]}` : `- ${matches[1]}\n`);
+    while ((matches = HtmlRegex.list.ordered.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\begin{enumerate}\\tightlist${matches[1]}\\end{enumerate}` : `\n${matches[1]}`);
+    while ((matches = HtmlRegex.list.unordered.exec(string)) !== null)
+      string = string.replace(matches[0],
+        destFormat === 'latex' ? `\\begin{itemize}\\tightlist${matches[1]}\\end{enumerate}` : `\n${matches[1]}`);
+    console.log(string);
     return string;
   }
 
@@ -464,7 +455,12 @@ class ConverterLight extends Converter {
 }
 
 /**
- * TODO Implémenter cette route dans le code
+ * This route able to convert a format to another.
+ * It take in parameters :
+ *   - @params sourceFormat -> the source format to convert.
+ *   - @params destFormat   -> the format needed.
+ * It take in the body field the article models, in json format.
+ * It will return a json with parameters success: true and response: containing the translated article.
  */
 router.post('/:sourceFormat(markdown|latex|light)/:destFormat(markdown|latex|light)',
   async function (req, res, next) {
