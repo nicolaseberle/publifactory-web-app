@@ -207,6 +207,7 @@ export default {
           hideSpeedMs: 0,
           selectionChangeSource: null
       },
+        table: true,
         toolbar: '#'+ this.idToolBar
       },
       history: {
@@ -247,7 +248,7 @@ export default {
     this.editor = quill
 
     var cursorsModule = this.editor.getModule('cursors');
-    // var table = this.editor.getModule('table');
+    const table = this.editor.getModule('table');
 
 
 

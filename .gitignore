@@ -5,4 +5,5 @@ client/dist
 srv
 heroku-app
 script_set_var_prod_heroku.sh
-script_set_var_prod_heroku.sh~
+*~
+.idea/
