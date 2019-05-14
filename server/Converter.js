@@ -32,6 +32,11 @@ class Regex {
       strike: {
         simplified: /<s>(.*?)<\/s>/g,
         full: /<strike>(.*?)<\/strike>/g
+      },
+      list: {
+        unordered: /<ul>(.*?)<\/ul>/g,
+        ordered: /<ol>(.*?)<\/ol>/g,
+        elem: /<li>(.*?)<\/li>/g
       }
     };
     this.MarkdownRegex = {
@@ -51,7 +56,13 @@ class Regex {
       sub: /\^\(_(.*?)\)/g,
       sup: /\^\((.*?)\)/g,
       quote: /^> (.*?)$/g,
-      strike: /~~(.*?)~~/g
+      strike: /~~(.*?)~~/g,
+      //TODO Add Markdown RegExp for the lists
+      list: {
+        unordered: /<ul>(.*?)<\/ul>/g,
+        ordered: /<ol>(.*?)<\/ol>/g,
+        elem: /<li>(.*?)<\/li>/g
+      }
     };
     this.LatexRegex = {
       strong: /\\textbf{(.*?)}/g,
@@ -63,7 +74,11 @@ class Regex {
       sub: /\\textsubscript{(.*?)}/g,
       sup: /\\textsuperscript{(.*?)}/g,
       quote: /\\begin{quote}(.*?)\\end{quote}/g,
-      strike: /\\sout{(.*?)}/g
+      strike: /\\sout{(.*?)}/g,
+      list: {
+        list: /\\begin{(.*?)}\\tightlist(.*?)\\end{.*?}/g,
+        elem: /\\item ([a-zA-Z ]+)/g
+      }
     };
   }
 
@@ -260,6 +275,16 @@ class ConverterLatex extends Converter {
     while ((matches = LatexRegex.strike.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'light' ? `<s>${matches[1]}</s>` : `~~${matches[1]}~~`);
+    while ((matches = LatexRegex.list.list.exec(string)) !== null) {
+      let iterator = 0, tmpValue = [], tmpString = matches[2];
+      while ((tmpValue = LatexRegex.list.elem.exec(matches[2])) !== null) {
+        tmpString = tmpString.replace(tmpValue[0], destFormat === 'light' ? `<li>${tmpValue[1]}</li>` :
+          (matches[1] === 'enumerate' ? `${iterator}. ${tmpValue[1]}\n` : `- ${tmpValue[1]}\n`));
+        iterator++;
+      }
+      string = string.replace(matches[0], destFormat === 'light' ?
+        (matches[1] === 'enumerate' ? `<ol>${tmpString}</ol>` : `<ul>${tmpString}</ul>`) : `\n${tmpString}`);
+    }
     return string;
   }
 
@@ -366,6 +391,24 @@ class ConverterLight extends Converter {
     while ((matches = HtmlRegex.strike.full.exec(string)) !== null)
       string = string.replace(matches[0],
         destFormat === 'latex' ? `\\sout{${matches[1]}}` : `~~${matches[1]}~~`);
+    while ((matches = HtmlRegex.list.ordered.exec(string)) !== null) {
+      let iterator = 0, tmpValue = [], tmpString = matches[1];
+      while ((tmpValue = HtmlRegex.list.elem.exec(tmpString)) !== null) {
+        tmpString = tmpString.replace(tmpValue[0],
+          destFormat === 'latex' ? `\\item ${tmpValue[1]}` : `${iterator}. ${tmpValue[1]}\n`);
+        iterator++;
+      }
+      string = string.replace(matches[0], destFormat === 'latex' ?
+        `\\begin{enumerate}\\tightlist${tmpString}\\end{enumerate}` : `\n${tmpString}`)
+    }
+    while ((matches = HtmlRegex.list.unordered.exec(string)) !== null) {
+      let tmpValue = [], tmpString = matches[1];
+      while ((tmpValue = HtmlRegex.list.elem.exec(tmpString)) !== null)
+        tmpString = tmpString.replace(tmpValue[0],
+          destFormat === 'latex' ? `\\item ${tmpValue[1]}` : `- ${tmpValue[1]}\n`);
+      string = string.replace(matches[0], destFormat === 'latex' ?
+        `\\begin{itemize}\\tightlist${tmpString}\\end{enumerate}` : `\n${tmpString}`)
+    }
     return string;
   }
 
