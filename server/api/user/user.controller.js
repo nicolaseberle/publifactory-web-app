@@ -5,7 +5,6 @@ var User = require('./user.model')
 var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
-var _ = require('lodash')
 const shortid = require('shortid');
 
 const configEmail = require('../../../config.js').email
@@ -21,7 +20,7 @@ var validationError = function (res, err) {
  * restriction: 'admin'
  */
 exports.index = function (req, res) {
-  var search = _.merge(req.query.search, { role: 'user' })
+  var search = Object.assign(req.query.search, { role: 'user' })
   var page = {current : 1 ,limit: 10}
   paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
     if (err) return res.status(500).send(err)
@@ -36,6 +35,7 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body)
   newUser.provider = 'local'
   newUser.role = 'user'
+  newUser.roles = ['user']
   newUser.save(function (err, user) {
     if (err) return validationError(res, err)
 
@@ -50,6 +50,7 @@ exports.createGuest = function (req, res, next) {
   var newUser = new User(req.body)
   newUser.provider = 'local'
   newUser.role = 'guest'
+  newUser.roles = ['guest']
   newUser.save(function (err, user) {
     if (err){
       return validationError(res, err)
