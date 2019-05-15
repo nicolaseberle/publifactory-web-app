@@ -207,7 +207,6 @@ export default {
           hideSpeedMs: 0,
           selectionChangeSource: null
       },
-        table: true,
         toolbar: '#'+ this.idToolBar
       },
       history: {
@@ -248,9 +247,6 @@ export default {
     this.editor = quill
 
     var cursorsModule = this.editor.getModule('cursors');
-    const table = this.editor.getModule('table');
-
-
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
