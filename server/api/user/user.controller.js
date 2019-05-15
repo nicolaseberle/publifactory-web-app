@@ -31,17 +31,20 @@ exports.index = function (req, res) {
 /**
  * Creates a new user
  */
-exports.create = function (req, res, next) {
+exports.create = async function (req, res, next) {
   var newUser = new User(req.body)
   newUser.provider = 'local'
   newUser.role = 'user'
   newUser.roles = ['user']
-  newUser.save(function (err, user) {
-    if (err) return validationError(res, err)
-
-    var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-    res.json({ token: token })
+  const newToken = await new Promise((resolve, reject) => {
+    newUser.save(function (err, user) {
+      //if (err) return validationError(res, err)
+      if (err) reject(err)
+      var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+      resolve(token)
+    })
   })
+  res.json({ token: newToken })
 }
 /**
  * Create a guest account - a guest have to reset his password during the first connection

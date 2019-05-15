@@ -1,9 +1,23 @@
 <template>
   <div class="components-container-journal">
   <el-row :gutter="10" @page-change="fetch">
-    <el-col :span="20">
+    <el-col :span="12">
       <div>
-        <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px;">Create A Journal</el-button>
+        <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+      </div>
+    </el-col>
+    <el-col :span="10">
+      <div style="width:100% ;margin-top:10px;">
+        <el-autocomplete style='display: flex;'
+          class="inline-input"
+          v-model="state2"
+          :fetch-suggestions="querySearch"
+          placeholder="Search"
+          :trigger-on-focus="false"
+          @select="handleSelect"
+        ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
+
+
       </div>
     </el-col>
     <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
@@ -83,7 +97,9 @@ export default {
         }]
       },
       journals: [],
-      dialogCreationJournal : false
+      dialogCreationJournal : false,
+      links: [],
+      state2: ''
     }
   },
   computed: {
@@ -98,6 +114,7 @@ export default {
     this.$nextTick(() => {
       this.fetch()
     })
+    this.links = this.loadAll();
   },
   methods: {
     fetch (current = 1) {
@@ -108,13 +125,38 @@ export default {
         console.error(err)
       })
     },
+    loadAll() {
+    // to do -> lister les journaux (this.journals) dans cette structure pour permettre l'autocompletion
+        return [
+          { "value": "vue", "link": "https://github.com/vuejs/vue" },
+          { "value": "element", "link": "https://github.com/ElemeFE/element" },
+          { "value": "cooking", "link": "https://github.com/ElemeFE/cooking" },
+          { "value": "mint-ui", "link": "https://github.com/ElemeFE/mint-ui" },
+          { "value": "vuex", "link": "https://github.com/vuejs/vuex" },
+          { "value": "vue-router", "link": "https://github.com/vuejs/vue-router" },
+          { "value": "babel", "link": "https://github.com/babel/babel" }
+         ];
+    },
+    handleSelect(item) {
+      console.log(item);
+    },
     handleCreateJournal () {
       this.dialogCreationJournal = true
     },
     closeCreationDialog () {
       this.dialogCreationJournal = false
     },
-
+    querySearch(queryString, cb) {
+      var links = this.links;
+      var results = queryString ? links.filter(this.createFilter(queryString)) : links;
+      // call callback function to return suggestions
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (link) => {
+        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
     createJournal () {
 
       const newJournal = {
@@ -138,3 +180,5 @@ export default {
 }
 
 </script>
+<style>
+</style>
