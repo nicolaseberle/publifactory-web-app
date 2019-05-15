@@ -40,6 +40,7 @@ module.exports = merge(baseWebpackConfig, {
       template: 'client/index.html',
       inject: true
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    new webpack.LoaderOptionsPlugin({ options: {} })
   ]
 })
