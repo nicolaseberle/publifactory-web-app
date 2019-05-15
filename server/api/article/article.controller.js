@@ -276,14 +276,14 @@ module.exports.createArticle = async (req, res, next) => {
     //newArticle.categories[0] = category;
     //const article = await newArticle.save();
     //console.log(JSON.stringify(category, null, "\t"));
-    console.log(JSON.stringify(req.body.id_author, null, "\t"));
+    // console.log(JSON.stringify(req.body.id_author, null, "\t"));
     //Add Author to the Article
     const author = await User.findById( req.body.id_author ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
     newArticle.authors[0] = {"rank":1,"role":"Lead","author":author};
     const article = await newArticle.save();
 
-    console.log(JSON.stringify(article._id, null, "\t"));
+    // console.log(JSON.stringify(article._id, null, "\t"));
 
     return res.status(200).json(article._id);
   } catch (err) {

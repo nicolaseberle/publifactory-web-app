@@ -53,6 +53,7 @@ export default {
     this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
     this.fetchData(this.id)
+    this.convertLightEditor2Latex()
   },
   mounted () {
     var iframe = document.getElementById('preview')
@@ -74,6 +75,7 @@ export default {
     })
     this.editor.on('change', function (object) {
       self.postForm.content = String(object.getValue())
+      self.convertLatex2LightEditor()
       self.save()
       setTimeout(async function(){
         await compile(self.editor.getValue(), iframe)
@@ -83,6 +85,12 @@ export default {
      })
   },
   methods: {
+    convertLightEditor2Latex (){
+
+    },
+    convertLatex2LightEditor (){
+      this.postForm.content
+    },
     fetchData(id) {
       axios.get('/api/articles/' + id ).then(response => {
         this.postForm = response.data
