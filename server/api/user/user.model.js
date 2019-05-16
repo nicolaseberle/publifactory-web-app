@@ -54,6 +54,10 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   }],
+  articleRights: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Roles'
+  }],
   hashedPassword: String,
   provider: String,
   salt: String,

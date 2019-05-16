@@ -6,8 +6,8 @@ var auth = require('../../auth/auth.service')
 
 var router = express.Router()
 
+router.post('/invite/:role(reviewer|collaborator)', controller.createInvitation)
 router.get('/myInvitations', controller.getMyInvitations)
-router.post('/invite', controller.createInvitation)
 router.get('/invite/:id', controller.checkInvitation)
 
 module.exports = router

@@ -9,7 +9,7 @@ const shortid = require('shortid');
 
 const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model');
-const nodemailer = require('nodemailer')
+const Email = require('../email/email.controller');
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -148,6 +148,7 @@ exports.changeGuestPassword = function (req, res, next) {
 }
 
 //send email function
+/*
 async function sendResetEmail(_to, _from, _link) {
 
   let transporter = nodemailer.createTransport({
@@ -172,7 +173,7 @@ async function sendResetEmail(_to, _from, _link) {
     }
   });
 }
-
+*/
 
 /**
  * Reset the password and convert it in user // we check that the guest is on the list
@@ -203,7 +204,10 @@ exports.resetPassword = function (req, res, next) {
           return console.log(error);
         } else {
           //we send en email to reset the password
-          sendResetEmail(email, newLink, newLink);
+          const clientUrl = `${configEmail.rootHTML}/recover/password/${senderName}-${newLink}`;
+          const gmail = new Email(email);
+          gmail.sendRecuperationPassword(clientUrl);
+          //sendResetEmail(email, newLink, newLink);
         }
       })
       // temporary password is newLink - a random key

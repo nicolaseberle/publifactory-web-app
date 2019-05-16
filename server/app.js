@@ -15,6 +15,7 @@ var config = require('../config').backend
 var serveStatic = require('serve-static');
 var path = require('path');
 var url = require('url');
+const logger = require('morgan');
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options)
@@ -25,6 +26,7 @@ require('./config/seed')
 // Setup server
 var app = express()
 app.use(cors())
+app.use(logger(process.env.NODE_ENV === 'development' ? 'dev' : 'prod'));
 var server = require('http').createServer(app)
 var socketio = require('socket.io')(server)
 require('./config/socketio')(socketio)
