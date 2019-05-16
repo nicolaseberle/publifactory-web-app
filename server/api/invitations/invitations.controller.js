@@ -8,8 +8,9 @@ const shortid = require('shortid')
 const configEmail = require('../../../config.js').email
 const nodemailer = require('nodemailer')
 
-var User = require('../user/user.model');
-var Invitation = require('./invitations.model');
+const User = require('../user/user.model')
+const Invitation = require('./invitations.model')
+const Email = require('../email/email.controller');
 
 
 /**
@@ -22,7 +23,7 @@ var Invitation = require('./invitations.model');
  * @param {Function} next - Express next middleware function
  */
 
-exports.createInvitation = async (req, res, next) => {
+async function createInvitation(req, res, next) {
   try {
     let senderId = req.body.link,
         senderMsg = req.body.msg,
@@ -33,7 +34,6 @@ exports.createInvitation = async (req, res, next) => {
         while(newLink.indexOf('-')>=0){
              newLink = shortid.generate();
         }
-
     let current = new Date().toISOString()
     const newInvitation = new Invitation({
       "created_at": current,
@@ -44,51 +44,26 @@ exports.createInvitation = async (req, res, next) => {
       "senderMsg": senderMsg,
       "senderName": senderName
     });
-    const invitation = await newInvitation.save((error, result) => {
+    const invitation = await newInvitation.save(async (error, result) => {
       if (error) {
         return console.log(error);
       } else {
         //we send the email to invite the new author to access
-        sendEmail(receiverEmail, senderId, newLink, senderName);
+        //sendEmail(receiverEmail, senderId, newLink, senderName);
+        const mail = new Email(receiverEmail);
+        const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+        req.params.role === 'collaborator' ?
+          await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
+          await mail.sendInvitationReviewer(req.body.sender, clientUrl);
       }
-  })
-  var reciever = await User.findOne( {email: receiverEmail} ).exec()
-  return res.status(200).json(reciever)
+    })
+    const reciever = await User.findOne({ email: receiverEmail }).exec()
+    return res.status(200).json(reciever)
 
   } catch (err) {
     return next(err);
   }
-};
-
-//send email function
-async function sendEmail(_to, _from, _link, _idSender) {
-
-  const _sender = await User.findById( _idSender ).exec();
-
-  let transporter = nodemailer.createTransport({
-      host: configEmail.host,
-      port: configEmail.port,
-      secure: configEmail.secure, // true for 465, false for other ports
-      auth: configEmail.auth
-  });
-  let clientUrl = `${configEmail.rootHTML}/invite/${_from}-${_link}`;
-  const mailOptions = {
-    from: "noreply@publifactory.co",
-    to: _to,
-    subject: "You have been Invited to read an Article",
-    html: `<p> ${_sender.firstname}  ${_sender.lastname}  invites you to co-write an article.</p>
-          <p> Your invitation link is: <a href='${clientUrl}'> ${clientUrl}</a></p>`
-  };
-  transporter.sendMail(mailOptions, function(error, info) {
-    if (error) {
-      return console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
 }
-
-
 /**
  * getMyInvitations
  *
@@ -99,24 +74,23 @@ async function sendEmail(_to, _from, _link, _idSender) {
  * @param {Function} next - Express next middleware function
  */
 
-exports.getMyInvitations = async (req, res, next) => {
+async function getMyInvitations (req, res, next) {
   try {
     let link=req.query.link
     console.log(link)
     const invitations = await Invitation.findOne({ senderId: link }, (error, doc) => {
         if (error) {
-        console.log(error);
+          console.log(error);
         } else {
-        console.log(doc);
-        res.status(200).send(doc.rows);
+          console.log(doc);
+          res.status(200).send(doc.rows);
         }
       }
     );
   } catch (err) {
     return next(err);
   }
-};
-
+}
 /**
  * checkInvitation
  *
@@ -127,9 +101,8 @@ exports.getMyInvitations = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 
-exports.checkInvitation = async (req, res, next) => {
+async function checkInvitation(req, res, next) {
   try {
-
     console.log(req.params);
     let sender = req.params.id
       .trim()
@@ -155,4 +128,10 @@ exports.checkInvitation = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+}
+
+module.exports = {
+  createInvitation: createInvitation,
+  checkInvitation: checkInvitation,
+  getMyInvitations: getMyInvitations
 };
