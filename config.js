@@ -39,6 +39,10 @@ var development = {
       'user' : "enola.swaniawski71@ethereal.email",
       'pass' : "Nh7Y6KWNNFnU89d7UK"
     }
+    // Compte 
+    // publifactory.noreply@gmail.com
+    // 09TLebxXoyLVjZlYVQqdgUniIE1vib9o
+
   },
   frontend: {
     port: 9001,

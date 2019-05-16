@@ -128,13 +128,10 @@ export default {
     loadAll() {
     // to do -> lister les journaux (this.journals) dans cette structure pour permettre l'autocompletion
         return [
-          { "value": "vue", "link": "https://github.com/vuejs/vue" },
-          { "value": "element", "link": "https://github.com/ElemeFE/element" },
-          { "value": "cooking", "link": "https://github.com/ElemeFE/cooking" },
-          { "value": "mint-ui", "link": "https://github.com/ElemeFE/mint-ui" },
-          { "value": "vuex", "link": "https://github.com/vuejs/vuex" },
-          { "value": "vue-router", "link": "https://github.com/vuejs/vue-router" },
-          { "value": "babel", "link": "https://github.com/babel/babel" }
+          { "value": "vue", "link": "https://" },
+          { "value": "Research", "link": "https://" },
+          { "value": "journal of oncology", "link": "https://" },
+          { "value": "journal of genetics", "link": "https://" }
          ];
     },
     handleSelect(item) {

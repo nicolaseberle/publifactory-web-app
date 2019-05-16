@@ -21,7 +21,6 @@ import CodeMirror from 'codemirror'
 import 'codemirror/mode/stex/stex.js'
 import 'codemirror/lib/codemirror.css'
 
-import { parse, HtmlGenerator } from 'latex.js'
 import compile from '../../../../utils/js/latex/latex2html.js'
 import VueSplit from 'vue-split-panel'
 const util = require('util');

@@ -20,7 +20,7 @@ var validationError = function (res, err) {
  * restriction: 'admin'
  */
 exports.index = function (req, res) {
-  var search = Object.assign(req.query.search, { role: 'user' })
+  var search = {...req.query.search, ...{ role: 'user' }}
   var page = {current : 1 ,limit: 10}
   paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
     if (err) return res.status(500).send(err)
