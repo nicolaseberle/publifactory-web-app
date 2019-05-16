@@ -31,14 +31,9 @@ var backendBase = {
 
 var development = {
   email : {
-    host: "smtp.ethereal.email",
-    port : 587,//465,
-    secure: false,//true,
     rootHTML: "http://localhost:9001",
-    auth: {
-      'user' : "enola.swaniawski71@ethereal.email",
-      'pass' : "Nh7Y6KWNNFnU89d7UK"
-    }
+    user: "publifactory.noreply@gmail.com",
+    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
   },
   frontend: {
     port: 9001,
