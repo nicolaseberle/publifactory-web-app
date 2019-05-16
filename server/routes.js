@@ -18,7 +18,6 @@ module.exports = function (app) {
   app.use('/api/data', require('./api/data'))
   app.use('/api/figure', require('./api/figure'))
   app.use('/api/auth', require('./auth'))
-  app.use('/api/emailer', require('./api/email'))
   app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
   app.use('/api/roles', require('./api/roles'))
@@ -33,7 +32,7 @@ module.exports = function (app) {
     })
   }
 
-  // error handling
+  // TODO implement error handling and replace old responses of every controller
   /*
   app.use(function(err, req, res, next) {
     try {

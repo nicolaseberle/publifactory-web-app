@@ -229,7 +229,7 @@ export default {
       let message = "toto";
       let name = this.userId;
 
-      axios.post('/api/invitations/invite', {
+      axios.post('/api/invitations/invite/collaborator', {
               "sender": sender,
               "link": link,
               "to": inviteTo,
