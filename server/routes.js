@@ -21,6 +21,7 @@ module.exports = function (app) {
   app.use('/api/emailer', require('./api/email'))
   app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
+  app.use('/api/roles', require('./api/roles'))
 
   // All undefined asset or api routes should return a 404
   app.route('/:url(api|auth|static)/*').get(errors[404])
@@ -31,4 +32,20 @@ module.exports = function (app) {
       res.sendFile(path.join(config.frontend, '/index.html'))
     })
   }
+
+  // error handling
+  /*
+  app.use(function(err, req, res, next) {
+    try {
+      res.status(err.code ? err.code : 500).json({
+        success: false,
+        message: err.message
+      });
+    } catch (e) {
+      return res.status(500).json({
+        success : false,
+        error : "Unknown server error."});
+    }
+  });
+  */
 }
