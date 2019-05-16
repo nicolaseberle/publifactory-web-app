@@ -18,9 +18,8 @@ async function getArticleUsers (req, res, next) {
     const query = { id_article: req.body.id_article };
     if (req.params.right)
       query.right = req.params.right;
-    const users = await Roles.find(query).toArray((err, result) => {
-      if (err) throw err
-      else console.log(result)
+    const users = await new Promise(async (resolve, reject) => {
+      resolve(await Roles.find(query));
     });
     res.json({ success: true, users: users})
   } catch (e) {
@@ -38,12 +37,11 @@ async function getArticleUsers (req, res, next) {
  */
 async function getUserRoles (req, res, next) {
   try {
-    const query = { _id: (req.params.id ? req.params.id : null) };
-    const role = await Roles.find(query).toArray((err, result) => {
-      if (err) throw err
-      else console.log(result)
+    const query = { id_user: (req.params.id ? req.params.id : null) };
+    const response = await new Promise(async (resolve, reject) => {
+      resolve(await Roles.find(query));
     });
-    res.json({ success: true, role: role })
+    res.json({ success: true, role: response })
   } catch (e) {
     next(e);
   }
@@ -59,11 +57,10 @@ async function getUserRoles (req, res, next) {
 async function getRoleById (req, res, next) {
   try {
     const query = { _id: req.params.id };
-    const role = await Roles.find(query).toArray((err, result) => {
-      if (err) throw err
-      else console.log(result)
+    const response = await new Promise(async (resolve, reject) => {
+      resolve(await Roles.find(query))
     });
-    res.json({ success: true, role: role })
+    res.json({ success: true, role: response })
   } catch (e) {
     next(e);
   }
@@ -84,6 +81,7 @@ async function deleteRole (req, res, next) {
       if (err) throw err
       else console.log(`Document deleted ; Result -> ${result}`)
     });
+    res.json({ success: true });
   } catch (e) {
     next(e);
   }
@@ -135,7 +133,7 @@ async function createRole (req, res, next) {
     const id_user = req.body.id_user;
     const id_article = req.body.id_article;
     const right = req.body.right;
-    console.log('User : %s, Article : %s, Right : %s', [id_user]);
+    console.log('User : %s, Article : %s, Right : %s', id_user, id_article, right);
     const roles = new Roles({ id_user, id_article, right });
     roles.save();
     res.json({ success: true })

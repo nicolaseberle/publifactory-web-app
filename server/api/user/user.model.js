@@ -46,10 +46,10 @@ var UserSchema = new Schema({
     type: String,
     default: '/static/Default.png'
   },
-  role: {
-    type: String,
-    default: 'user'
-  },
+  role: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Roles'
+  }],
   roles: [{
     type: String,
     default: 'user'
