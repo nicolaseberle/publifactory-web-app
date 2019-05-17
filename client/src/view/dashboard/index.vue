@@ -4,15 +4,15 @@
 
     <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <h1>Welcome </h1>
-      <h2>Michael Rera has invited you to access this article</h2>
+      <h2></h2>
       <p>Change your password</p>
       <br>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="Email">
           <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="Password">
-          <el-input v-model="form.password" type="password" placeholder="new password" ></el-input>
+        <el-form-item label="New Password">
+          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

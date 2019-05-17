@@ -31,20 +31,35 @@ exports.index = function (req, res) {
 /**
  * Creates a new user
  */
-exports.create = async function (req, res, next) {
-  var newUser = new User(req.body)
-  newUser.provider = 'local'
-  newUser.role = 'user'
-  newUser.roles = ['user']
-  const newToken = await new Promise((resolve, reject) => {
-    newUser.save(function (err, user) {
-      //if (err) return validationError(res, err)
-      if (err) reject(err)
-      var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-      resolve(token)
+exports.create = function (req, res, next) {
+  try {
+    /*
+    * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
+    */
+    User.findOne({email: req.body.email}, async function (err, user) {
+      if(user===null) {
+        var newUser = new User(req.body)
+        newUser.provider = 'local'
+        newUser.role = 'user'
+        newUser.roles = ['user']
+        const newToken = await new Promise((resolve, reject) => {
+          newUser.save(function (err, user) {
+            //if (err) return validationError(res, err)
+            if (err) reject(err)
+            var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+            resolve(token)
+          })
+        })
+        res.json({ token: newToken })
+      }
+      else {
+        res.status(403).json({ message: 'This email exists already' })
+      }
     })
-  })
-  res.json({ token: newToken })
+  }
+  catch (err) {
+     return next(err)
+  }
 }
 /**
  * Create a guest account - a guest have to reset his password during the first connection

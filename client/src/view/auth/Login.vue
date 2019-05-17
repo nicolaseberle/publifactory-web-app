@@ -42,7 +42,6 @@
 
     </el-form>
     <div class='register' style='float:right'>
-      <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end;margin:0 20px 0 0px">Forgot username?</a>
       <a href='/login/forgot' style="font-size=0.6rem;text-decoration:underline;text-align:end">Forgot password?</a>
     </div>
   </div>

@@ -52,6 +52,15 @@ export const constantRouterMap = [{
   }
 },
 {
+  path: '/recover/password/:id',
+  component: (resolve) => {
+    import('../view/auth/recoverPassword.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',
