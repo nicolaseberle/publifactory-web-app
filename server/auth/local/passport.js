@@ -26,13 +26,15 @@ exports.setupLogin = function (User, config) {
 }
 
 exports.setupOrcid = function (User, config) {
+  console.log("BEFORE")
   passport.use(new OrcidStrategy({
     sandbox: process.env.NODE_ENV !== 'production',
     clientID: configStrategy.clientId,
     clientSecret: configStrategy.clientSecret,
     callbackURL: configStrategy.callbackUrl
   }, function(accessToken, refreshToken, params, profile, done) {
-    User.findOne({ orcid: params.id }, function (err, user) {
+    console.log("AFTER")
+    User.findOne({ email: params.id }, function (err, user) {
       console.log("user :: " + user);
       return done(err, user);
     });

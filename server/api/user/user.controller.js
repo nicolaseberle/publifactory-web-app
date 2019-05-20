@@ -39,7 +39,7 @@ exports.create = function (req, res, next) {
     User.findOne({email: req.body.email}, async function (err, user) {
       if(user===null) {
         var newUser = new User(req.body)
-        newUser.provider = 'local'
+        newUser.provider = req.body.provider
         newUser.role = 'user'
         newUser.roles = ['user']
         const newToken = await new Promise((resolve, reject) => {

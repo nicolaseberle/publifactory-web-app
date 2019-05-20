@@ -74,14 +74,14 @@ export default {
     onSubmitOrcid () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          axios.post('/api/users/', { "email": this.form.email, "password": this.form.password })
+          axios.post('/api/users/', { "email": this.form.email, "password": this.form.password, provider: 'orcid' })
             .then(response => {
               this.$message({
                 title: this.$t('message.created'),
                 message: this.$t('message.created'),
                 type: 'success'
               })
-              this.$router.push('/')
+              this.$router.push(this.$route.query.redirect || '/')
             }).catch((err) => {
             this.$message({
               title: this.$t('message.error'),
@@ -100,7 +100,7 @@ export default {
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password})
+            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
             .then(response => {
               this.$message({
                 title: this.$t('message.created'),
