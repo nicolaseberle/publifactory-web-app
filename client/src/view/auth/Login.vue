@@ -7,8 +7,7 @@
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>Login</h1>
     <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
-    <el-form class="login-form" ref="form" :model="form" :rules="rules"
-      @submit.native.prevent="onSubmit">
+    <el-form class="login-form" ref="form" :model="form" :rules="rules">
       <el-form-item>
         <!--<el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
@@ -28,7 +27,7 @@
 
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="primary"
-          native-type="submit" :loading="loading">{{$t('login.button')}}</el-button>
+          v-on:click="onSubmit()" :loading="loading">{{$t('login.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
 <!--
@@ -37,7 +36,7 @@
       </el-form-item>
     -->
       <el-form-item>
-          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.orcidButton')}}</el-button>
+          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading" v-on:click="onOrcidSubmit()">{{$t('login.orcidButton')}}</el-button>
       </el-form-item>
 
     </el-form>
@@ -75,7 +74,33 @@ export default {
     ...mapGetters(['loggedIn', 'globalConfig'])
   },
   methods: {
-    ...mapActions(['login', 'changeLang']),
+    ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    onOrcidSubmit () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.loginOrcid({
+            orcidId: this.form.email,
+            password: this.form.password
+          }).then((data) => {
+            this.loading = false
+            this.$router.push(this.$route.query.redirect || '/')
+          }).catch((err) => {
+            const h = this.$createElement;
+            this.$message({
+              title: this.$t('message.error'),
+              message: err.message || this.$t('login.authFail'),
+              type: 'error'
+            })
+            this.loading = false
+            this.loginError = true
+            setTimeout(() => {
+              this.loginError = false
+            }, 500)
+          })
+        }
+      })
+    },
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {

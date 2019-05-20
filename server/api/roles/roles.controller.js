@@ -12,6 +12,7 @@ const Roles = require('./roles.model')
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function getArticleUsers (req, res, next) {
   try {
@@ -34,6 +35,7 @@ async function getArticleUsers (req, res, next) {
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function getUserRoles (req, res, next) {
   try {
@@ -53,6 +55,7 @@ async function getUserRoles (req, res, next) {
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function getRoleById (req, res, next) {
   try {
@@ -73,6 +76,7 @@ async function getRoleById (req, res, next) {
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function deleteRole (req, res, next) {
   try {
@@ -93,6 +97,7 @@ async function deleteRole (req, res, next) {
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function modifyRight (req, res, next) {
   try {
@@ -123,6 +128,7 @@ async function modifyRight (req, res, next) {
  * @param res
  * @param next
  * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
  */
 async function createRole (req, res, next) {
   try {

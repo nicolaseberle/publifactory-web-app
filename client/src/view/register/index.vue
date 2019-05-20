@@ -6,8 +6,7 @@
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
 
     <!--<h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>-->
-    <el-form class="login-form" ref="form" :model="form" :rules="rules"
-      @submit.native.prevent="onSubmit">
+    <el-form class="login-form" ref="form" :model="form" :rules="rules">
       <el-form-item>
         <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
@@ -25,7 +24,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
-          native-type="submit" :loading="loading">{{$t('register.button')}}</el-button>
+          v-on:click="onSubmit()" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
       <!--
@@ -34,7 +33,8 @@
       </el-form-item>
     -->
       <el-form-item>
-        <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.orcidButton')}}</el-button>
+        <el-button class="login-button"    type="primary" native-type="submit" v-on:click="onSubmitOrcid()"
+                   :loading="loading">{{$t('register.orcidButton')}}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -70,7 +70,33 @@ export default {
     ...mapGetters(['loggedIn', 'globalConfig'])
   },
   methods: {
-    ...mapActions(['login', 'changeLang']),
+    ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    onSubmitOrcid () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          axios.post('/api/users/', { "email": this.form.email, "password": this.form.password })
+            .then(response => {
+              this.$message({
+                title: this.$t('message.created'),
+                message: this.$t('message.created'),
+                type: 'success'
+              })
+              this.$router.push('/')
+            }).catch((err) => {
+            this.$message({
+              title: this.$t('message.error'),
+              message: err.message || this.$t('register.authFail'),
+              type: 'error'
+            })
+            this.loading = false
+            this.loginError = true
+            setTimeout(() => {
+              this.loginError = false
+            }, 500)
+          })
+        }
+      })
+    },
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {

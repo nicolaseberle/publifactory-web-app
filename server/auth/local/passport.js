@@ -33,6 +33,7 @@ exports.setupOrcid = function (User, config) {
     callbackURL: configStrategy.callbackUrl
   }, function(accessToken, refreshToken, params, profile, done) {
     User.findOne({ orcid: params.id }, function (err, user) {
+      console.log("user :: " + user);
       return done(err, user);
     });
   }))

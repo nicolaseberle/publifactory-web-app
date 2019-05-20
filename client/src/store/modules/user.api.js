@@ -8,6 +8,12 @@ export function login (email, password) {
   }).then(res => res.json())
 }
 
+export function loginOrcid (orcidId, password) {
+  return Vue.http.post('auth/local/orcid', {
+    orcidId, password
+  }).then(res => res.json())
+}
+
 export function resetGuestPassword (id, password, token) {
   return Vue.http.put('users/' + id + '/guestPassword', {
     password
