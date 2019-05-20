@@ -149,7 +149,7 @@ var optimizedResize = (function () {
   }
 }())
 
-// setup event listeners
+// setupLogin event listeners
 function completed () {
   document.removeEventListener('DOMContentLoaded', completed)
 	window.removeEventListener('load', positionMarginpars)

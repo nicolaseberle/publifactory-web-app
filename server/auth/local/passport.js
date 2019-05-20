@@ -1,7 +1,9 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
+const OrcidStrategy = require('passport-orcid').Strategy;
+const configStrategy = require('../../../config').orcid;
 
-exports.setup = function (User, config) {
+exports.setupLogin = function (User, config) {
   passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password' // this is the virtual field on the model
@@ -20,5 +22,18 @@ exports.setup = function (User, config) {
       }
       return done(null, user)
     })
+  }))
+}
+
+exports.setupOrcid = function (User, config) {
+  passport.use(new OrcidStrategy({
+    sandbox: process.env.NODE_ENV !== 'production',
+    clientID: configStrategy.clientId,
+    clientSecret: configStrategy.clientSecret,
+    callbackURL: configStrategy.callbackUrl
+  }, function(accessToken, refreshToken, params, profile, done) {
+    User.findOne({ orcid: params.id }, function (err, user) {
+      return done(err, user);
+    });
   }))
 }

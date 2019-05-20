@@ -17,5 +17,15 @@ router.post('/', function (req, res, next) {
   })(req, res, next)
 })
 
+router.post('/orcid', function (req, res, next) {
+  passport.authenticate('orcid', function (err, user, info) {
+    const error = err || info
+    if (error) return res.status(401).json(error)
+    if (!user) return res.status(404).json({ message: 'Something went wrong, please try again.' })
+    const token = auth.signToken(user);
+    res.json({ success: true, token: token })
+  })(req, res, next)
+})
+
 
 module.exports = router

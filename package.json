@@ -93,6 +93,7 @@
     "parchment": "^1.1.4",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "passport-orcid": "0.0.3",
     "plotly.js": "^1.47.4",
     "plotly.js-dist": "^1.47.4",
     "postcss-loader": "^3.0.0",

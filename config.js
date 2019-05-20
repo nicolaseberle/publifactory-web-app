@@ -35,6 +35,11 @@ var development = {
     user: "publifactory.noreply@gmail.com",
     pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
   },
+  orcid: {
+    clientId: 'APP-HCKHJYQTALPVGUJ1',
+    clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
+    callbackUrl: 'http://localhost:9001/login'
+  },
   frontend: {
     port: 9001,
     assetsRoot: path.resolve(__dirname, './client/src'),

@@ -142,7 +142,8 @@ exports.changeGuestPassword = function (req, res, next) {
       Invitation.findById( user.invitationId , (err,invite)=>{
         console.log(invite)
         if (err) {
-          // handler error
+          console.log(err);
+          next(err);
         }
         if (user.authenticate(invite.senderId)) {
           user.password = newPass
@@ -227,7 +228,7 @@ exports.resetPassword = function (req, res, next) {
       })
       // temporary password is newLink - a random key
       user.password = newLink
-      user.role = 'guest'
+      //user.role = 'guest'
       user.roles = ['guest']
       user.save(function (err) {
         if (err) return validationError(res, err)
