@@ -47,6 +47,7 @@ exports.create = function (req, res, next) {
             //if (err) return validationError(res, err)
             if (err) reject(err)
             var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+
             resolve(token)
           })
         })
@@ -277,4 +278,16 @@ exports.me = function (req, res, next) {
     if (!user) return res.json(401)
     res.json(user)
   })
+}
+
+/**
+ * This method will be use to check if a user has verified his email !
+ */
+export function emailConfirmation (req, res, next) {
+  try {
+    if (!req.params.idUser)
+      throw { code: 422, message: "Missing parameter."}
+  } catch (e) {
+    next(e);
+  }
 }

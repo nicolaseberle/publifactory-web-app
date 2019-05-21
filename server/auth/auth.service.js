@@ -28,6 +28,7 @@ function isAuthenticated () {
       User.findById(req.user._id, function (err, user) {
         if (err) return next(err)
         if (!user) return res.sendStatus(401)
+        if (!user.isVerified) return res.sendStatus(401)
 
         req.user = user
         next()
