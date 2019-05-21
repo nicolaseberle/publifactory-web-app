@@ -49,6 +49,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/login'
+import axios from 'axios'
 
 export default {
   locales,
@@ -76,11 +77,42 @@ export default {
   methods: {
     ...mapActions(['login', 'loginOrcid', 'changeLang']),
     onOrcidSubmit () {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          this.loading = true
+          await new Promise((resolve, reject) => {
+            /*
+            axios.get('https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=code&scope=/authenticate&redirect_uri=http://localhost:9001/orcid', {
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+              },
+            })
+              .then(response => this.alert("WORKED"))
+              .catch(error => this.alert("DONT WORK"))
+              .finally(() => this.alert('AXIOS DONE'));
+              */
+
+            $.ajax({
+              url: 'https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=code&scope=/authenticate&redirect_uri=http://localhost:9001/orcid',
+              type: 'GET',
+              headers: {
+                "Access-Control-Allow-Origin": "*"
+              },
+              xhrFields: {
+                withCredentials: true,
+                crossDomain: true
+              },
+              success: function (result, status, xhr) {
+                alert("Logged In: " + result.loggedIn);
+              },
+              error: function (xhr, status, error) {
+                alert(status);
+              }
+            });
+            resolve('OK')
+          })
+          /*this.loading = true
           this.loginOrcid({
-            orcidId: this.form.email,
+            email: this.form.email,https://sandbox.orcid.org/userStatus.json?logUserOut=true
             password: this.form.password
           }).then((data) => {
             this.loading = false
@@ -97,7 +129,8 @@ export default {
             setTimeout(() => {
               this.loginError = false
             }, 500)
-          })
+          }) */
+
         }
       })
     },

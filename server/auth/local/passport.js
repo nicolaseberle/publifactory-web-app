@@ -26,17 +26,17 @@ exports.setupLogin = function (User, config) {
 }
 
 exports.setupOrcid = function (User, config) {
-  console.log("BEFORE")
   passport.use(new OrcidStrategy({
-    sandbox: process.env.NODE_ENV !== 'production',
+    sandbox: false,
     clientID: configStrategy.clientId,
     clientSecret: configStrategy.clientSecret,
     callbackURL: configStrategy.callbackUrl
   }, function(accessToken, refreshToken, params, profile, done) {
-    console.log("AFTER")
+    console.log("PARAMS : " + params.toString());
+    console.log("PROFILE : " + profile.toString());
     User.findOne({ email: params.id }, function (err, user) {
-      console.log("user :: " + user);
-      return done(err, user);
+      console.log('USER : ' + user)
+      return done(null, user);
     });
   }))
 }
