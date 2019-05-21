@@ -36,26 +36,20 @@
           <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.googleButton')}}</el-button>
       </el-form-item>
     -->
-    <el-row :gutter='20'>
-      <el-col :md='24'>
-        <div class="login-or">
-           <hr class="hr-or">
-           <span class="span-or">or</span>
-        </div>
-      </el-col>
+    <h2>or</h2>
     </el-row>
-
       <el-form-item>
       </el-row>
           <el-row>
           <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading">
-            <i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>
+            <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>
+            <!--<i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>-->
             {{$t('login.orcidButton')}}
           </el-button>
       </el-row>
       <el-row>
         <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading">
-          <i class="fab fa-google" style='color: white;font-size:1em;margin-right:3em'></i>
+          <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
           {{$t('login.googleButton')}}
         </el-button>
       </el-row>

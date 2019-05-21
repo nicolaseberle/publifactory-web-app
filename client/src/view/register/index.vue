@@ -30,13 +30,13 @@
       <el-form-item>
         <el-row>
           <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitOrcid()">
-            <i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>
+            <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>
             {{$t('register.orcidButton')}}
           </el-button>
         </el-row>
         <el-row>
           <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitGoogle()">
-            <i class="fab fa-google" style='color: white;font-size:1em;margin-right:3em'></i>
+            <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
             {{$t('register.googleButton')}}
           </el-button>
         </el-row>
