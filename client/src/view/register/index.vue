@@ -27,14 +27,19 @@
           v-on:click="onSubmit()" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
       <h2>or</h2>
-      <!--
       <el-form-item>
-          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.googleButton')}}</el-button>
-      </el-form-item>
-    -->
-      <el-form-item>
-        <el-button class="login-button"    type="primary" native-type="submit" v-on:click="onSubmitOrcid()"
-                   :loading="loading">{{$t('register.orcidButton')}}</el-button>
+        <el-row>
+          <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitOrcid()">
+            <i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>
+            {{$t('register.orcidButton')}}
+          </el-button>
+        </el-row>
+        <el-row>
+          <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitGoogle()">
+            <i class="fab fa-google" style='color: white;font-size:1em;margin-right:3em'></i>
+            {{$t('register.googleButton')}}
+          </el-button>
+        </el-row>
       </el-form-item>
     </el-form>
   </div>
@@ -71,6 +76,9 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    onSubmitGoogle () {
+
+    },
     onSubmitOrcid () {
       this.$refs.form.validate(valid => {
         if (valid) {
