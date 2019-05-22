@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import { authSocket } from '../../socket'
 
-export function login (email, password) {
-  return Vue.http.post('auth/local', {
-    email,
-    password
-  }).then(res => res.json())
+export async function login (email, password) {
+  return await new Promise((resolve, reject) => {
+    Vue.http.post('auth/local', {
+      email,
+      password
+    }).then(res => resolve(res.json()))
+      .catch(err => reject(err))
+  })
 }
 
 export function resetGuestPassword (id, password, token) {

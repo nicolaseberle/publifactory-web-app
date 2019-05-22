@@ -52,7 +52,7 @@ async function createVerificationEmailInvitation (user) {
         throw console.log(error);
       } else {
         // We send an email to make a confirmation link
-        const clientUrl = `${configEmail.rootHTML}/confirmation/${senderName}-${newLink}`;
+        const clientUrl = `${configEmail.rootHTML}/login?userId=${senderName}-${newLink}`;
         const gmail = new Email(email);
         gmail.sendEmailConfirmation(clientUrl);
       }
@@ -296,7 +296,9 @@ function me(req, res, next) {
 function emailConfirmation (req, res, next) {
   try {
     if (!req.params.idUser)
-      throw { code: 422, message: "Missing parameter."}
+      throw { code: 422, message: "Missing parameter." }
+    const regExp = /(.*?)-(.*?)$/g
+    
     res.json({ success: true });
   } catch (e) {
     next(e);

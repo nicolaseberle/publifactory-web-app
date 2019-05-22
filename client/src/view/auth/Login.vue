@@ -77,10 +77,10 @@ export default {
   methods: {
     ...mapActions(['login', 'changeLang']),
     onSubmit () {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          this.login({
+          await this.login({
             email: this.form.email,
             password: this.form.password
           }).then((data) => {
