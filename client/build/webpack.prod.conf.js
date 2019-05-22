@@ -1,16 +1,64 @@
-var path = require('path')
-var config = require('../../config').frontend
-var utils = require('./utils')
-var webpack = require('webpack')
-var merge = require('webpack-merge')
-var baseWebpackConfig = require('./webpack.base.conf')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
-var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const path = require('path')
+const config = require('../../config').frontend
+const utils = require('./utils')
+const webpack = require('webpack')
+const merge = require('webpack-merge')
+const baseWebpackConfig = require('./webpack.base.conf')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 var webpackConfig = merge(baseWebpackConfig, {
+  mode: "production",
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.cssSourceMap, extract: true })
+    //rules: utils.styleLoaders({ sourceMap: config.cssSourceMap, extract: true })
+    rules: [{
+      test: /\.css$/,
+      use: [
+        {
+          loader: ExtractTextPlugin.loader,
+          options: {
+            publicPath: (resourcePath, context) => {
+              // publicPath is the relative path of the resource to the context
+              // e.g. for ./css/admin/main.css the publicPath will be ../../
+              // while for ./css/main.css the publicPath will be ../
+              return path.relative(path.dirname(resourcePath), context) + '/';
+            },
+          },
+        },
+        'css-loader',
+      ],
+    }]
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        uglifyOptions: {
+          compress: false,
+          ecma: 6,
+          mangle: true
+        },
+        sourceMap: true
+      })
+    ],
+    runtimeChunk: "single", // enable "runtime" chunk
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "all"
+        },
+        element: {
+          test: /[\\/]node_modules\/element-ui[\\/]/,
+          name: 'element',
+          chunks: 'all'
+        }
+      }
+    }
   },
   devtool: config.cssSourceMap ? '#source-map' : false,
   output: {
@@ -29,12 +77,6 @@ var webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': '"production"',
       'process.env.NODE_ENV': JSON.stringify('production')
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
     }),
     // extract css into its own file
     new ExtractTextPlugin({
@@ -71,37 +113,6 @@ var webpackConfig = merge(baseWebpackConfig, {
           return 0
         }
       }
-    }),
-    // split vendor js into its own file
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: function (module, count) {
-        // any required modules inside node_modules are extracted to vendor
-        return (
-          module.resource &&
-          /\.js$/.test(module.resource) &&
-          module.resource.indexOf(
-            path.join(__dirname, '../../node_modules')
-          ) === 0
-        )
-      }
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'element',
-      minChunks: function (module, count) {
-        // element-ui will extracted to element
-        return (
-          module.resource.indexOf(
-            path.join(__dirname, '../../node_modules/element-ui')
-          ) === 0
-        )
-      }
-    }),
-    // extract webpack runtime and module manifest to its own file in order to
-    // prevent vendor hash from being updated whenever app bundle is updated
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'manifest',
-      chunks: ['vendor', 'element']
     })
   ]
 })

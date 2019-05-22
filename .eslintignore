@@ -3,3 +3,4 @@ client/src/utils/js/toolbarjquery
 client/src/utils/zotero
 /client/src/utils/js/latex/
 /client/src/components/ImageCropper/utils
+/client/**/*

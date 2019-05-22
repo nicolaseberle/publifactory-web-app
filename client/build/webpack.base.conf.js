@@ -2,6 +2,7 @@ var path = require('path')
 var config = require('../../config').frontend
 var vueLoaderConfig = require('./vue-loader.conf')
 var utils = require('./utils')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 function resolve (dir) {
@@ -32,6 +33,20 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === 'development',
+            },
+          },
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      },
       {
         test: /\.svg$/,
         loader: 'svg-sprite-loader',
