@@ -18,14 +18,14 @@ module.exports = class Email {
     })();
   }
 
-  sendEmailConfirmation(code) {
+  sendEmailConfirmation(link) {
     const gmail = require('gmail-send')({
       user: configEmail.user,
       pass: configEmail.pass,
       to: this.email,
       subject: "PubliFactory | Confirmation e-mail",
-      text: "Voici votre mot de passe à utiliser avec votre compte PubliFactory : " + code + "\n" +
-        "Ce mot de passe pourra être modifier dans la section profil de l'application."
+      text: `Bonjour,\nVous trouverez ci-après le lien vous permettant de confirmer votre compte Publifactory :\n${link}\n
+      Une fois activé vous disposerez des droits et privilèges utilisateur.`
     })();
   }
 
