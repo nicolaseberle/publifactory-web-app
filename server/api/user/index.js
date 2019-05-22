@@ -17,6 +17,6 @@ router.put('/resetPassword', controller.resetPassword)
 router.get('/:id', auth.isAuthenticated(), controller.show)
 router.post('/', controller.create)
 router.post('/guest', controller.createGuest)
-router.get('/confirmation', controller.emailConfirmation)
+router.patch('/confirmation', controller.emailConfirmation)
 
 module.exports = router
