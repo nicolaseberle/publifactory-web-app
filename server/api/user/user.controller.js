@@ -295,10 +295,10 @@ function me(req, res, next) {
  */
 function emailConfirmation (req, res, next) {
   try {
-    if (!req.body.idUser)
+    if (!req.body.userId)
       throw { code: 422, message: "Missing parameter." }
     const regExp = /(.*?)-(.*?)$/g
-    const match = regExp.exec(req.body.idUser);
+    const match = regExp.exec(req.body.userId);
     const query = { _id: match[1] };
     const toReplace = { $set: { isVerified: true } };
     User.updateOne(query, toReplace, (err, result) => {

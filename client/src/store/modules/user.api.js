@@ -11,6 +11,12 @@ export async function login (email, password) {
   })
 }
 
+export function checkEmail (userId) {
+  return Vue.http.patch('users/confirmation', {
+    userId
+  }).then(res => res.json())
+}
+
 export function resetGuestPassword (id, password, token) {
   return Vue.http.put('users/' + id + '/guestPassword', {
     password

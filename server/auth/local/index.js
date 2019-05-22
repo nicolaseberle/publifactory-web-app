@@ -22,7 +22,7 @@ router.post('/', async function (req, res, next) {
         // We send an email confirmation because the first link hasn't been activated yet
         // The older mail could be removed or loose for any reasons, then we send another one
         await UserController.createVerificationEmailInvitation(user)
-        return res.sendStatus(401)
+        return res.status(401)
           .json({ message: 'You didn\'t verify your email. Confirm your email first before to log in.' })
       }
       const token = auth.signToken(user)
