@@ -17,7 +17,8 @@ export const constantRouterMap = [{
   },
   meta: {
     skipAuth: true
-  }
+  },
+  props: (route) => ({ userId: route.query.userId })
 },
 {
   path: '/register',

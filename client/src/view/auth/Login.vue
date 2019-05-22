@@ -83,8 +83,15 @@ import locales from 'locales/login'
 
 export default {
   locales,
+  props: {
+    userId: {
+      type: String,
+      default: null
+    }
+  },
   data () {
     return {
+      id: '',
       form: {
         email: '',
         password: ''
@@ -101,11 +108,15 @@ export default {
       loginError: false
     }
   },
+  created () {
+    if (this.$route.query.userId)
+      this.onCreation()
+  },
   computed: {
     ...mapGetters(['loggedIn', 'globalConfig'])
   },
   methods: {
-    ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    ...mapActions(['login', 'loginOrcid', 'changeLang', 'checkEmail']),
     onOrcidSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -132,18 +143,37 @@ export default {
         }
       })
     },
+    onCreation () {
+      this.checkEmail({
+        userId: this.userId
+      }).then(() => {
+        console.log("LOOOOG GOOD")
+        this.$message({
+          title: this.$t('message.updated'),
+          message: this.$t('emailVerification.success')
+        })
+        console.log("LOOOOG GOOD END")
+      })
+        .catch(() => {
+          console.log("LOOOOG BAAD")
+          this.$message({
+            title: this.$t('message.error'),
+            message: this.$t('emailVerification.failure')
+          })
+          console.log("LOOOOG BAAD END")
+        })
+    },
     onSubmit () {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          this.login({
+          await this.login({
             email: this.form.email,
             password: this.form.password
           }).then((data) => {
             this.loading = false
             this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
-            const h = this.$createElement;
             this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('login.authFail'),

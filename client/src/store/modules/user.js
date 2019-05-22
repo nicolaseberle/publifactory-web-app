@@ -7,7 +7,8 @@ import {
   changePassword,
   resetPassword,
   updateUser,
-  loginOrcid
+  loginOrcid,
+  checkEmail
 } from './user.api'
 // eslint-disable-next-line camelcase
 import { username, email, access_token, refresh_token } from '../../stored'
@@ -204,6 +205,10 @@ const actions = {
   logout ({ commit }, payload) {
     commit('LOGOUT')
     clearMulti([STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN])
+  },
+
+  checkEmail ({ commit }, payload) {
+    checkEmail(payload.userId)
   }
 }
 

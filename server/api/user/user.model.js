@@ -72,6 +72,10 @@ var UserSchema = new Schema({
   invitationId: {
     type: String,
     default: 'None'
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   }
 })
 
