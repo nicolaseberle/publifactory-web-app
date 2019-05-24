@@ -146,7 +146,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
@@ -158,7 +159,9 @@ export default {
     },
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/').then(list => {
+      axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
@@ -181,7 +184,8 @@ export default {
                         }],
           category : String('Biology'),
           id_author : this.userId,
-          published: true
+          published: true,
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
         };
         axios.post('/api/articles/', newArticle)
         .then(response => {

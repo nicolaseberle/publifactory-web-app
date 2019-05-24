@@ -50,6 +50,7 @@
 <script>
 import UploadExcelComponent from '../../../../components/UploadExcel/index.vue'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'UploadExcel',
@@ -63,6 +64,9 @@ export default {
       size: '',
       keyCurrentTableData: 0
     }
+  },
+  computed: {
+    ...mapGetters(['accessToken'])
   },
   created() {
     const id = this.$route.params && this.$route.params.id
@@ -105,7 +109,9 @@ export default {
       })
     },
     loadData(id) {
-      axios.get(`/api/data/${this.id}`)
+      axios.get(`/api/data/${this.id}`, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         if(response.data.length!=0)
         {

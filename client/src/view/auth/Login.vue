@@ -147,20 +147,16 @@ export default {
       this.checkEmail({
         userId: this.userId
       }).then(() => {
-        console.log("LOOOOG GOOD")
         this.$message({
           title: this.$t('message.updated'),
           message: this.$t('emailVerification.success')
         })
-        console.log("LOOOOG GOOD END")
       })
         .catch(() => {
-          console.log("LOOOOG BAAD")
           this.$message({
             title: this.$t('message.error'),
             message: this.$t('emailVerification.failure')
           })
-          console.log("LOOOOG BAAD END")
         })
     },
     onSubmit () {

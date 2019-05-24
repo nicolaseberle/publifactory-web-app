@@ -43,7 +43,8 @@ export default {
   computed: {
     ...mapGetters([
       'userId',
-      'roles'
+      'roles',
+      'accessToken'
     ])
   },
   created() {
@@ -62,7 +63,10 @@ export default {
   },
   methods: {
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      console.log(this.accessToken)
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
         var self = this;
         // we check if article author is the current user to give him the righ to edit the document

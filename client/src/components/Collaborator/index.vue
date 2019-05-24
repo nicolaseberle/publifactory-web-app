@@ -153,7 +153,8 @@ export default {
   computed: {
     ...mapGetters([
       'userId',
-      'roles'
+      'roles',
+      'accessToken'
     ])
   },
   created() {
@@ -256,7 +257,9 @@ export default {
                           'role': 'Author',
                           'email': email
                        }
-      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor} )
+      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      } )
       .then(res => {
         return res
       }).catch((err) => {
@@ -286,7 +289,9 @@ export default {
         });
         this.newList = this.list.map(v => Number(v.rank))
 
-        axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}  ).then(() => {
+        axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')

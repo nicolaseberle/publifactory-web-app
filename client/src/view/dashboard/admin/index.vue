@@ -146,7 +146,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
@@ -158,7 +159,9 @@ export default {
     },
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/').then(list => {
+      axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
@@ -183,7 +186,9 @@ export default {
           id_author : this.userId,
           published: true
         };
-        axios.post('/api/articles/', newArticle)
+        axios.post('/api/articles/', newArticle, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        })
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")

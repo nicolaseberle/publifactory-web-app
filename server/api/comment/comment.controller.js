@@ -92,6 +92,7 @@ async function createArticleComment(req, res, next) {
       return res.status(400).json({ errors: validationResult.array() });
     }
     */
+    console.log(req.user);
     console.log('createArticleComment');
     const commentFlag = req.body.commentFlag;
     const anonymousFlag = req.body.anonymousFlag;
