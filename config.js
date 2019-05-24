@@ -62,7 +62,8 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: 'mongodb://localhost:27017/mevn-dev'
+      uri: 'mongodb://localhost:27017/mevn-dev',
+      useNewUrlParser: true
     }
   })
 }

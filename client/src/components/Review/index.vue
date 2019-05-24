@@ -52,7 +52,7 @@
                 <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
                 <el-button  icon="el-icon-share" circle></el-button>
                 <el-button circle><font-awesome-icon icon="reply" /></el-button>
-                <el-button icon="el-icon-edit" circle></el-button>
+                <el-button icon="el-icon-edit" circle ></el-button>
                 <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
               </footer>
           </article>

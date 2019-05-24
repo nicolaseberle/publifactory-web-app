@@ -28,7 +28,7 @@ const DEFAULT_LIMIT = 10;
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-module.exports.getArticleComments = async (req, res, next) => {
+async function getArticleComments(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
@@ -53,7 +53,7 @@ module.exports.getArticleComments = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-};
+}
 
 /**
  *
@@ -64,7 +64,7 @@ module.exports.getArticleComments = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-module.exports.getArticleComment = async (req, res, next) => {
+async function getArticleComment(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
@@ -72,7 +72,7 @@ module.exports.getArticleComment = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-};
+}
 
 /**
  *
@@ -83,7 +83,7 @@ module.exports.getArticleComment = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-module.exports.createArticleComment = async (req, res, next) => {
+async function createArticleComment(req, res, next) {
   try {
     /*
     req.check(CommentValidator.checkCommentData);
@@ -124,18 +124,18 @@ module.exports.createArticleComment = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-};
+}
 
 /**
  *
- * @function updateComment
+ * @function updateScoreVote
  * @memberof module:controllers/comments
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-module.exports.updateComment = async (req, res, next) => {
+async function updateScoreVote(req, res, next) {
   try {
     console.log('updateScores');
     const upvote = req.body.upvote;
@@ -146,12 +146,32 @@ module.exports.updateComment = async (req, res, next) => {
       { $inc: { 'scores.upvote': upvote,'scores.downvote': downvote} }
     ).exec();
 
-    return res.status(200).json(comment);
+    return res.json(comment);
   } catch (err) {
     return next(err);
   }
-};
+}
 
+/**
+ * @function updateComment
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+async function updateComment(req, res, next) {
+  try {
+    if (!req.body.content)
+      throw { code: 422, message: "Missing parameter in the body field." };
+    const toFind = { _id: req.params.uuid };
+    const toUpdate = { $set: { content: req.body.content } };
+    await Comment.findOneAndUpdate(toFind, toUpdate).exec();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
 
 /**
  *
@@ -161,7 +181,7 @@ module.exports.updateComment = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findCommentAndDelete = async (req, res, next) => {
+async function findCommentAndDelete(req, res, next) {
   try {
     const comment = await Comment.delete({ _id: req.params.uuid });
 
@@ -171,4 +191,13 @@ module.exports.findCommentAndDelete = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+}
+
+module.exports = {
+  getArticleComments: getArticleComments,
+  getArticleComment: getArticleComment,
+  createArticleComment: createArticleComment,
+  updateComment: updateScoreVote,
+  updateCommentContent: updateComment,
+  findCommentAndDelete: findCommentAndDelete
 };
