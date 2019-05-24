@@ -99,7 +99,7 @@ async function createArticleComment(req, res, next) {
     const uuidComment = req.body.uuidComment;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag });
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag })
     const comment = await newComment.save();
 
     //console.log('newComment : ' + comment);
@@ -110,7 +110,7 @@ async function createArticleComment(req, res, next) {
       { $push: { comments: comment._id } }
     );
     // if it's a review
-    if(commentFlag == false) {
+    if (commentFlag === false) {
       article.nbReviews = article.nbReviews + 1;
       await article.save();
 
@@ -193,11 +193,47 @@ async function findCommentAndDelete(req, res, next) {
   }
 }
 
+/**
+ * @function answerComment
+ *
+ * This function is used to answer a comment
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
+ */
+async function answerComment(req, res, next) {
+  try {
+    const commentFlag = false;
+    const anonymousFlag = req.body.anonymousFlag ? req.body.anonymous : false;
+    const reviewRequest = req.body.reviewRequest;
+    const uuidComment = req.body.uuidComment;
+    const content = req.body.content.trim();
+    const userId = await User.findById( req.body.userId ).exec();
+    const reference = req.params.uuid;
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag, reference });
+    const comment = await newComment.save();
+    const article = await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $push: { comments: comment._id } }
+    );
+    console.log(article);
+    article.nbComments++;
+    await article.save();
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+}
+
 module.exports = {
   getArticleComments: getArticleComments,
   getArticleComment: getArticleComment,
   createArticleComment: createArticleComment,
   updateComment: updateScoreVote,
   updateCommentContent: updateComment,
-  findCommentAndDelete: findCommentAndDelete
+  findCommentAndDelete: findCommentAndDelete,
+  answerComment: answerComment
 };

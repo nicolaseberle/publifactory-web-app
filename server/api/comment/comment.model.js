@@ -43,6 +43,11 @@ var CommentSchema = new Schema({
       type: Number,
       default: 0
     }
+  },
+  reference: {
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: null
   }
   }
 );
