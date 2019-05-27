@@ -104,7 +104,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
@@ -119,7 +120,9 @@ export default {
   methods: {
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/journals/').then(list => {
+      axios.get('/api/journals/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.journals = list.data.journals
       }).catch(err => {
         console.error(err)

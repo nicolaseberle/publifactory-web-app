@@ -96,7 +96,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar', 'accessToken']),
     closeSidebar() {
       this.sidebar.opened = false
     }
@@ -120,7 +120,9 @@ export default {
       })
     },
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
       }).catch(err => {
         console.log(err)
@@ -142,5 +144,5 @@ div.md{
     color: red;
   }
 }
-*/ 
+*/
 </style>

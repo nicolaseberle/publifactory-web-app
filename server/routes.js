@@ -8,16 +8,23 @@ var errors = require('./components/errors')
 var config = require('../config').backend
 var path = require('path')
 
+const jwtCheck = require('./auth/jwt');
+
 module.exports = function (app) {
   // Insert routes below
-  app.use('/api/things', require('./api/thing'))
   app.use('/api/users', require('./api/user'))
+  app.use('/api/auth', require('./auth'))
+
+  app.use(function(req, res, next) {
+    jwtCheck(req, res, next);
+  })
+
+  app.use('/api/things', require('./api/thing'))
   app.use('/api/articles', require('./api/article'))
   app.use('/api/journals', require('./api/journal'))
   app.use('/api/comments', require('./api/comment'))
   app.use('/api/data', require('./api/data'))
   app.use('/api/figure', require('./api/figure'))
-  app.use('/api/auth', require('./auth'))
   app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
   app.use('/api/roles', require('./api/roles'))

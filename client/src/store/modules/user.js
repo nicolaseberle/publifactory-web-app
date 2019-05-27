@@ -106,8 +106,8 @@ const actions = {
   },
   // login action
   login ({ commit, dispatch }, payload) {
-    return new Promise((resolve, reject) => {
-      login(payload.email, payload.password).then(data => {
+    return new Promise(async (resolve, reject) => {
+      await login(payload.email, payload.password).then(data => {
         if (!data) {
           reject('error')
         }
@@ -138,8 +138,11 @@ const actions = {
             value: userInfo.refresh_token // eslint-disable-line
           }])
           resolve()
-        }).catch(() => {})
-      }).catch(err => { reject(err) })
+        }).catch(() => {
+        })
+      }).catch(err => {
+        reject(err)
+      })
     })
   },
   // resetPassword action

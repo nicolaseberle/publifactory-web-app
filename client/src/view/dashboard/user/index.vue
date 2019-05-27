@@ -142,7 +142,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
@@ -164,14 +165,18 @@ export default {
       }
     },
     fetch (current = 1) {
-      axios.get('/api/articles/').then(list => {
+      axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
       })
     },
     fetchMyArticles () {
-      axios.get(`/api/articles/mine/${this.userId}`).then(list => {
+      axios.get(`/api/articles/mine/${this.userId}`, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
@@ -208,23 +213,23 @@ Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu
 \\end{document}
       `
       const newArticle = {
-          title: String('Article title'),
-          abstract:  String('abstract'),
-          status: String('Draft'),
-          arr_content: [{
-                          name:"titre_1",
-                          title:"Titre 1",
-                          title_placeholder:"Titre 1",
-                          block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
-                          content:"Type the text",
-                          display:true
-                        }],
-          content: gen_text,
-          category : String('physics'),
-          id_author : this.userId,
-          published: true
-        };
-        axios.post('/api/articles/', newArticle)
+        title: String('Article title'),
+        abstract: String('abstract'),
+        status: String('Draft'),
+        arr_content: [{
+          name: "titre_1",
+          title: "Titre 1",
+          title_placeholder: "Titre 1",
+          block: [[{ type: 'tbd', uuid: uuid_block, content: '' }]],
+          content: "Type the text",
+          display: true
+        }],
+        content: gen_text,
+        category: String('physics'),
+        id_author: this.userId,
+        published: true
+      };
+        axios.post('/api/articles/', newArticle, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")
@@ -273,7 +278,9 @@ Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu
       this.$confirm(`This action will remove the selected article forever, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
-        axios.delete('/api/articles/' + articleId ).then(() => {
+        axios.delete('/api/articles/' + articleId, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')

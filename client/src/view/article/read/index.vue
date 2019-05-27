@@ -162,7 +162,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar', 'accessToken']),
     contentShortLength() {
       return this.postForm.content_short.length
     },
@@ -225,7 +225,9 @@ export default {
     },
     fetchData(id) {
       console.log(id)
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
         // Just for test
         //this.postForm.title += `   Article Id:${this.postForm.id}`

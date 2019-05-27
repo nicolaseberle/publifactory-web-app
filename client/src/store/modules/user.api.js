@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { authSocket } from '../../socket'
 
 export async function login (email, password) {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     Vue.http.post('auth/local', {
       email,
       password
@@ -25,8 +25,7 @@ export function loginOrcid (orcidId, password) {
 
 export function resetGuestPassword (id, password, token) {
   return Vue.http.put('users/' + id + '/guestPassword', {
-    password
-  }, {
+    password,
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -35,9 +34,7 @@ export function resetGuestPassword (id, password, token) {
 
 export function changePassword (id, oldPassword, newPassword, token) {
   return Vue.http.put('users/' + id + '/changePassword', {
-    oldPassword, newPassword
-  }, {
-    headers: {
+    oldPassword, newPassword, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())
@@ -51,9 +48,7 @@ export function resetPassword (email) {
 
 export function updateUser (id, firstname, lastname, field, token) {
   return Vue.http.put('users/' + id + '/updateUser', {
-    firstname, lastname, field
-  }, {
-    headers: {
+    firstname, lastname, field, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())

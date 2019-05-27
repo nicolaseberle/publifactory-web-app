@@ -43,7 +43,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar', 'accessToken']),
     closeSidebar() {
       this.sidebar.opened = false
     }
@@ -91,7 +91,9 @@ export default {
       this.postForm.content
     },
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
         this.content = this.postForm.content
       }).catch(err => {
@@ -99,7 +101,8 @@ export default {
       })
     },
     save () {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"tags": this.postForm.tags,"arr_content": this.postForm.arr_content,"tags" : '' ,"published": true })
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"tags": this.postForm.tags,"arr_content": this.postForm.arr_content,"tags" : '' ,"published": true
+      }, { headers: {'Authorization': `Bearer ${this.accessToken}`} })
       .then(response => {
         console.log("article saved")
       })

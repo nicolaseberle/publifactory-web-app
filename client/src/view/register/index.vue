@@ -72,7 +72,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedIn', 'globalConfig'])
+    ...mapGetters(['loggedIn', 'globalConfig', 'accessToken'])
   },
   methods: {
     ...mapActions(['login', 'loginOrcid', 'changeLang']),

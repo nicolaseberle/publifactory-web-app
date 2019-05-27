@@ -148,6 +148,10 @@ async function createRole (req, res, next) {
   }
 }
 
+async function doYouHaveThisRight () {
+
+}
+
 /**
  * All functions with their declarations and their implementation in this file.
  * @type {{getRoleById: getRoleById, createRole: createRole, modifyRight: modifyRight, getUserRoles: getUserRoles, deleteRole: deleteRole, getArticleUsers: getArticleUsers}}

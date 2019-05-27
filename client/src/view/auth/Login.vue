@@ -147,27 +147,23 @@ export default {
       this.checkEmail({
         userId: this.userId
       }).then(() => {
-        console.log("LOOOOG GOOD")
         this.$message({
           title: this.$t('message.updated'),
           message: this.$t('emailVerification.success')
         })
-        console.log("LOOOOG GOOD END")
       })
         .catch(() => {
-          console.log("LOOOOG BAAD")
           this.$message({
             title: this.$t('message.error'),
             message: this.$t('emailVerification.failure')
           })
-          console.log("LOOOOG BAAD END")
         })
     },
     onSubmit () {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          await this.login({
+          const sth = await this.login({
             email: this.form.email,
             password: this.form.password
           }).then((data) => {
@@ -185,6 +181,7 @@ export default {
               this.loginError = false
             }, 500)
           })
+          console.log("THE VALUE OF THE PROMISE : " + sth);
         }
       })
     }

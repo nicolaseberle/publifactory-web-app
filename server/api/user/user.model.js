@@ -136,16 +136,18 @@ UserSchema
 // Validate username is not taken
 UserSchema
   .path('username')
-  .validate(function (value, respond) {
-    var self = this
-    this.constructor.findOne({ username: value }, function (err, user) {
-      if (err) throw err
-      if (user) {
-        if (self.id === user.id) return respond(true)
-        return respond(false)
-      }
-      respond(true)
-    })
+  .validate(function (value) {
+    return new Promise((resolve, reject) => {
+      var self = this
+      this.constructor.findOne({ username: value }, function (err, user) {
+        if (err) reject(err)
+        if (user) {
+          if (self.id === user.id) resolve(true)
+          else reject(false);
+        }
+        resolve(true)
+      })
+    });
   }, 'The specified username is already in use.')
 
 var validatePresenceOf = function (value) {

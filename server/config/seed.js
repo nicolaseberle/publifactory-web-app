@@ -315,7 +315,8 @@ function createUsers() {
         email: 'nicolas@example.com',
         password: 'nicolas',
         avatar: '/static/img/Nicolas_Eberle.png',
-        field: 'Physics'
+        field: 'Physics',
+        isVerified: true
       }, {
         provider: 'local',
         role: 'admin',
@@ -328,7 +329,8 @@ function createUsers() {
         email: 'admin@example.com',
         password: 'admin',
         avatar: '/static/img/Defaut.png',
-        field: 'Administrator'
+        field: 'Administrator',
+        isVerified: true
       }, {
         provider: 'local',
         role: 'user',
@@ -342,7 +344,8 @@ function createUsers() {
         password: 'michael',
         avatar: '/static/img/Michael_Rera.png',
         field: 'Biology',
-        tags: ['Developmental Biology','Agging','Drosophila']
+        tags: ['Developmental Biology','Agging','Drosophila'],
+          isVerified: true
       }, {
         provider: 'local',
         role: 'editor',
@@ -356,7 +359,8 @@ function createUsers() {
         password: 'bill',
         avatar: '/static/img/Bill_Gates.jpeg',
         field: 'Computer Science',
-        tags: ['Computer science','software','SaaS']
+        tags: ['Computer science','software','SaaS'],
+          isVerified: true
       },{
         provider: 'local',
         role: 'user',
@@ -369,7 +373,8 @@ function createUsers() {
         email: 'emilie@example.com',
         password: 'emilie',
         avatar: '/static/img/Emilie_Dambroise_Mugniery.png',
-        field: 'Biology'
+        field: 'Biology',
+          isVerified: true
       }, {
         provider: 'local',
         role: 'user',
@@ -382,7 +387,8 @@ function createUsers() {
         email: 'herve@example.com',
         password: 'herve',
         avatar: '/static/img/Herve_Tricoire.png',
-        field: 'Biology'
+        field: 'Biology',
+          isVerified: true
       },{
         provider: 'local',
         role: 'user',
@@ -395,7 +401,8 @@ function createUsers() {
         email: 'alex@example.com',
         password: 'alex',
         avatar: '/static/Default.png',
-        field: 'Physics'
+        field: 'Physics',
+          isVerified: true
       },
       {
         provider: 'local',
@@ -409,7 +416,8 @@ function createUsers() {
         email: 'cate@example.com',
         password: 'cate',
         avatar: '/static/Default.png',
-        field: 'Physics'
+        field: 'Physics',
+        isVerified: true
       },
       {
         provider: 'local',
@@ -423,7 +431,8 @@ function createUsers() {
         email: 'leo.riberon-piatyszek@epitech.eu',
         password: 'Vtqlf&wD',
         avatar: '/static/Default.png',
-        field: 'Developer'
+        field: 'Developer',
+        isVerified: true
       });
       return users;
 }

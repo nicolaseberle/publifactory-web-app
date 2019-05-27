@@ -11,6 +11,7 @@ var CommentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
+  // TODO Déprécié : utiliser l'_id à partir de l'article
   uuidComment: {
     type: String
   },
@@ -42,6 +43,11 @@ var CommentSchema = new Schema({
       type: Number,
       default: 0
     }
+  },
+  reference: {
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: null
   }
   }
 );

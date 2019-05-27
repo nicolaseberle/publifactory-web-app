@@ -80,6 +80,7 @@ import tracesMenu from '../../components/Charts/Menu/TracesMenu'
 import generalMenu from '../../components/Charts/Menu/GeneralMenu'
 import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
 import { HotTable } from '@handsontable/vue';
+import { mapGetters } from 'vuex'
 
 import axios from 'axios'
 
@@ -175,6 +176,9 @@ export default {
       tableHeader: [],
       hotRef: null
     }
+  },
+  computed: {
+    ...mapGetters(['accessToken'])
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
@@ -350,7 +354,9 @@ export default {
   methods: {
     saveFigure () {
       console.log("saveFigure ", this.currentData.y)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
+      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         console.log("figure saved")
       })
@@ -360,7 +366,9 @@ export default {
     },
     fetchFigure(id) {
       var self = this
-      axios.get('/api/figure/' + id ).then(response => {
+      axios.get('/api/figure/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         self.currentData = response.data.data
         self.layout = response.data.layout
         self.option = response.data.option
@@ -370,7 +378,9 @@ export default {
       })
     },
     loadData() {
-      axios.get(`/api/data/${this.id}`)
+      axios.get(`/api/data/${this.id}`, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         if(response.data.length!=0)
         {
