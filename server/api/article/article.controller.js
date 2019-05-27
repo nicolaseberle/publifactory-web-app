@@ -2,6 +2,7 @@
 
 var User = require('../user/user.model');
 var Article = require('./article.model');
+const Roles = require('../roles/roles.model');
 var Data = require('../data/data.model');
 
 var config = require('../../../config').backend
@@ -211,12 +212,12 @@ module.exports.addAuthorOfArticle = async (req, res, next) => {
       'role': req.body.author.role,
       'author': author
     }
-    const article = await Article
-      .findOneAndUpdate(
+    await Article.findOneAndUpdate(
         { _id: req.params.id },
         { $push: { authors: newAuthor } },
         { new: true }
-      );
+        );
+    await Roles.insertOne({ id_user: author._id, id_article: req.params.id, right: 'author' });
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -241,6 +242,9 @@ module.exports.removeAuthorOfArticle = async (req, res, next) => {
         { $pull: { authors: { _id: authorToRemove._id } } },
         {multi: false}
       );
+    const query = { id_user: req.body.authorId, id_article: req.params.id };
+    const toReplace = { $set: { right: "guest" } };
+    await Roles.updateOne(query, toReplace);
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -283,6 +287,7 @@ module.exports.createArticle = async (req, res, next) => {
     // console.log(JSON.stringify(author, null, "\t"));
     newArticle.authors[0] = {"rank":1,"role":"Lead","author":author};
     const article = await newArticle.save();
+    new Roles({ id_user: req.body.id_author, id_article: article._id, right: 'author' }).save();
 
     // console.log(JSON.stringify(article._id, null, "\t"));
 

@@ -2,15 +2,26 @@
 
 var express = require('express')
 const articlesController = require('./article.controller');
+const roles = require('../roles/roles.controller');
 
 var auth = require('../../auth/auth.service')
 
 var router = express.Router()
 
-router.post('/', articlesController.createArticle);
 router.get('/', articlesController.getArticles);
 router.get('/mine/:id', articlesController.getMyArticles);
 router.get('/:id', articlesController.findArticleById);
+router.post('/', articlesController.createArticle);
+
+router.use('/:id', async function (req, res, next) {
+  try {
+    req.route = 'articleModify';
+    await roles.doYouHaveThisRight(req, res, next);
+  } catch (e) {
+    res.status(401).json({ success: false, message: e.message });
+  }
+})
+
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
 router.put('/:id/authors', articlesController.updateAuthorOfArticle);
 router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
