@@ -5,6 +5,7 @@
  * @type {*|*[]|(function(*, *): (null|*))|(function(*, *): *)|(function(*, *=, *=): *)|(function(*=, *, *): boolean)|{preTransformNode}|string}
  */
 const Roles = require('./roles.model')
+const Article = require('../article/article.model')
 
 /**
  * This route permit to get all the users of an article with their rights.
@@ -156,13 +157,22 @@ async function doYouHaveThisRight (req, res, next) {
         else resolve(data);
       })
     });
-    if (req.route === 'comment') {
-      if (articleInfo.right !== 'author' && articleInfo.right !== 'associate_editor'
-        && articleInfo.right !== 'reviewer')
-        throw { message: "Guests can't publish a review / comment." }
-    } else if (req.route === 'articleModify') {
-      if (articleInfo.right !== 'author')
-        throw { message: "Only the author can modify the article." }
+    if (req.route === 'comment' && articleInfo.right === 'guest') {
+      throw { message: "Guests can't publish a review / comment." }
+    } else if (req.route === 'articleModify' && articleInfo.right !== 'author') {
+      throw { message: "Only the author can modify the article." }
+    } else if (req.route === 'articleRead') {
+      const status = await new Promise((resolve, reject) => {
+        const query = { _id: req.params.id }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if (status === 'Reviewing' && articleInfo.right === 'guest') {
+        throw { message: "A guest can't access to a submitted article." }
+      } else if (status === 'Draft' && articleInfo.right !== 'author')
+        throw { message: "Only the author can access a drafted article." }
     }
     // Next to continue to the next middleware
     next();

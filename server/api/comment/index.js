@@ -11,7 +11,7 @@ router.use('/:id', async function (req, res, next) {
     req.route = 'comment';
     await roles.doYouHaveThisRight(req, res, next);
   } catch (e) {
-    res.status(401).json({ success: false, message: e.message });
+    return res.status(401).json({ success: false, message: e.message });
   }
 })
 
