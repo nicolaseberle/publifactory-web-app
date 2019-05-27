@@ -453,7 +453,8 @@ export default {
       this.reports[key].scores.upvote = ++this.reports[key].scores.upvote
       axios.put('/api/comments/'  + this.id + '/comments/' + idComment,{"upvote": 1, "downvote": 0 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
+      })
+        .then(response => {
       }).catch(err => {
         console.log(err)
       })
@@ -463,7 +464,8 @@ export default {
       this.reports[key].scores.downvote = ++this.reports[key].scores.downvote
       axios.put('/api/comments/'  + this.id + '/comments/' + idComment,{"upvote": 0, "downvote": 1 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
+      })
+        .then(response => {
       }).catch(err => {
         console.log(err)
       })

@@ -583,14 +583,17 @@ export default {
         { complete: done })
     },
     save (ev) {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
-                                               "abstract":this.postForm.abstract,
-                                               "content": this.postForm.content,
-                                               "arr_content": this.postForm.arr_content,
-                                               "tags": this.postForm.tags,
-                                               "published": true
-                                             }, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      axios.put('/api/articles/'  + this.id, {
+        "title": this.postForm.title,
+        "abstract": this.postForm.abstract,
+        "content": this.postForm.content,
+        "arr_content": this.postForm.arr_content,
+        "tags": this.postForm.tags,
+        "published": true
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
       })
       .then(response => {
         console.log("article saved")
@@ -720,22 +723,21 @@ export default {
     },
     createFigure () {
       const newFigure = {
-        data : [{
-                x: ['Sample A','Sample B','Sample C','Sample D'],
-                y: [ 10, 9, 12, 13],
-                type: 'bar',
-                orientation: 'v'
+        data: [{
+          x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
+          y: [10, 9, 12, 13],
+          type: 'bar',
+          orientation: 'v'
         }],
-        option : {},
+        option: {},
         layout: {
           title: 'Title',
           showlegend: false
-        }
+        },
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
       };
 
-      return axios.post('/api/figure/', newFigure, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
+      return axios.post('/api/figure/', newFigure)
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)
@@ -746,9 +748,10 @@ export default {
       })
     },
     createImage () {
-      return axios.post('/api/image/', newImage, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
+      const newImage = {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      }
+      return axios.post('/api/image/', newImage)
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)

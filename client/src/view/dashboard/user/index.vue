@@ -213,25 +213,23 @@ Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu
 \\end{document}
       `
       const newArticle = {
-          title: String('Article title'),
-          abstract:  String('abstract'),
-          status: String('Draft'),
-          arr_content: [{
-                          name:"titre_1",
-                          title:"Titre 1",
-                          title_placeholder:"Titre 1",
-                          block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
-                          content:"Type the text",
-                          display:true
-                        }],
-          content: gen_text,
-          category : String('physics'),
-          id_author : this.userId,
-          published: true
-        };
-        axios.post('/api/articles/', newArticle, {
-          headers: {'Authorization': `Bearer ${this.accessToken}`}
-        })
+        title: String('Article title'),
+        abstract: String('abstract'),
+        status: String('Draft'),
+        arr_content: [{
+          name: "titre_1",
+          title: "Titre 1",
+          title_placeholder: "Titre 1",
+          block: [[{ type: 'tbd', uuid: uuid_block, content: '' }]],
+          content: "Type the text",
+          display: true
+        }],
+        content: gen_text,
+        category: String('physics'),
+        id_author: this.userId,
+        published: true
+      };
+        axios.post('/api/articles/', newArticle, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")

@@ -163,7 +163,7 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loading = true
-          await this.login({
+          const sth = await this.login({
             email: this.form.email,
             password: this.form.password
           }).then((data) => {
@@ -181,6 +181,7 @@ export default {
               this.loginError = false
             }, 500)
           })
+          console.log("THE VALUE OF THE PROMISE : " + sth);
         }
       })
     }

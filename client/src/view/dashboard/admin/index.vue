@@ -186,9 +186,7 @@ export default {
           id_author : this.userId,
           published: true
         };
-        axios.post('/api/articles/', newArticle, {
-          headers: {'Authorization': `Bearer ${this.accessToken}`}
-        })
+        axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")

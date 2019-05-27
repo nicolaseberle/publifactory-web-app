@@ -184,10 +184,9 @@ export default {
                         }],
           category : String('Biology'),
           id_author : this.userId,
-          published: true,
-          headers: {'Authorization': `Bearer ${this.accessToken}`}
+          published: true
         };
-        axios.post('/api/articles/', newArticle)
+        axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
         .then(response => {
           let new_article_id = response.data
           console.log("create successfully ")

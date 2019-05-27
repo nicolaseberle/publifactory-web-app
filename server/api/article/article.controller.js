@@ -46,6 +46,7 @@ exports.getArticles = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
   try {
+    console.log(req.decoded);
     const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors.author reviewers',lean: true });
     console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');

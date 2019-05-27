@@ -235,7 +235,7 @@ export default {
               "link": link,
               "to": inviteTo,
               "msg": message,
-              "name": name})
+              "name": name}, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
               .then(async (res) => {
                 //if the email is not in the db -> create guest account
                 if(res.data == null){
@@ -259,7 +259,7 @@ export default {
                        }
       axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      } )
+      })
       .then(res => {
         return res
       }).catch((err) => {
@@ -291,7 +291,8 @@ export default {
 
         axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
-        }).then(() => {
+        })
+          .then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')

@@ -354,7 +354,9 @@ export default {
   methods: {
     saveFigure () {
       console.log("saveFigure ", this.currentData.y)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout, headers: {'Authorization': `Bearer ${this.accessToken}`} },)
+      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         console.log("figure saved")
       })
