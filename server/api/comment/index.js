@@ -2,8 +2,18 @@
 
 var express = require('express')
 const commentsController = require('./comment.controller');
+const roles = require('../roles/roles.controller');
 
 var router = express.Router()
+
+router.use('/:id', async function (req, res, next) {
+  try {
+    req.route = 'comment';
+    await roles.doYouHaveThisRight(req, res, next);
+  } catch (e) {
+    res.status(401).json({ success: false, message: e.message });
+  }
+})
 
 router.get('/:id/comments', commentsController.getArticleComments);
 router.get('/:id/comment/:uuid', commentsController.getArticleComment);

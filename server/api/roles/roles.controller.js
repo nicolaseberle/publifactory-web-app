@@ -139,7 +139,6 @@ async function createRole (req, res, next) {
     const id_user = req.body.id_user;
     const id_article = req.body.id_article;
     const right = req.body.right;
-    console.log('User : %s, Article : %s, Right : %s', id_user, id_article, right);
     const roles = new Roles({ id_user, id_article, right });
     roles.save();
     res.json({ success: true })
@@ -148,8 +147,30 @@ async function createRole (req, res, next) {
   }
 }
 
-async function doYouHaveThisRight () {
-
+async function doYouHaveThisRight (req, res, next) {
+  try {
+    const articleInfo = await new Promise((resolve, reject) => {
+      const query = { id_user: req.decoded._id, id_article: req.params.id }
+      Roles.findOne(query, function(err, data) {
+        if (err) reject(err)
+        else resolve(data);
+      })
+    });
+    if (req.route === 'comment') {
+      if (articleInfo.right !== 'author' && articleInfo.right !== 'associate_editor'
+        && articleInfo.right !== 'reviewer')
+        throw { message: "Guests can't publish a review / comment." }
+    } else if (req.route === 'articleModify') {
+      if (articleInfo.right !== 'author')
+        throw { message: "Only the author can modify the article." }
+    }
+    // Next to continue to the next middleware
+    next();
+  } catch (e) {
+    // Throw to catch the error and transmit it to the router.use route.
+    // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
+    throw e;
+  }
 }
 
 /**
@@ -162,5 +183,6 @@ module.exports = {
   modifyRight: modifyRight,
   getArticleUsers: getArticleUsers,
   getUserRoles: getUserRoles,
-  getRoleById: getRoleById
+  getRoleById: getRoleById,
+  doYouHaveThisRight: doYouHaveThisRight
 };
