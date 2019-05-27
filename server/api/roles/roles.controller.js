@@ -5,6 +5,7 @@
  * @type {*|*[]|(function(*, *): (null|*))|(function(*, *): *)|(function(*, *=, *=): *)|(function(*=, *, *): boolean)|{preTransformNode}|string}
  */
 const Roles = require('./roles.model')
+const Article = require('../article/article.model')
 
 /**
  * This route permit to get all the users of an article with their rights.
@@ -139,7 +140,6 @@ async function createRole (req, res, next) {
     const id_user = req.body.id_user;
     const id_article = req.body.id_article;
     const right = req.body.right;
-    console.log('User : %s, Article : %s, Right : %s', id_user, id_article, right);
     const roles = new Roles({ id_user, id_article, right });
     roles.save();
     res.json({ success: true })
@@ -148,8 +148,65 @@ async function createRole (req, res, next) {
   }
 }
 
-async function doYouHaveThisRight () {
+async function switchRoute (route, articleInfo) {
+  let status;
+  switch (route) {
+    case 'comment':
+      status = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if (status !== 'published' && articleInfo.right === 'guest')
+        throw { message: "Guests can't publish a review / comment." }
+      break;
+    case 'articleModify':
+      if (articleInfo.right !== 'author')
+        throw { message: "Only the author can modify the article." }
+      break;
+    case 'articleRead':
+      status = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if ((status === 'Reviewing' || status === 'Submited') && articleInfo.right === 'guest')
+        throw { message: "A guest can't access to a submitted / reviewing article." }
+      else if (status === 'Draft' && articleInfo.right !== 'author')
+        throw { message: "Only the author can access a drafted article." }
+      break;
+    case 'submit':
+      if (articleInfo.right !== 'author')
+        throw { message: 'Only the authors can submit an artcle.' };
+      break;
+    case 'review':
+    case 'publish':
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate editor is able to set status in review / publish.' };
+      break;
+  }
+}
 
+async function doYouHaveThisRight (req, res, next) {
+  try {
+    const articleInfo = await new Promise((resolve, reject) => {
+      const query = { id_user: req.decoded._id, id_article: req.params.id }
+      Roles.findOne(query, function(err, data) {
+        if (err) reject(err)
+        else resolve(data);
+      })
+    });
+    await switchRoute(req.route, articleInfo);
+    next();
+  } catch (e) {
+    // Throw to catch the error and transmit it to the router.use route.
+    // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
+    throw e;
+  }
 }
 
 /**
@@ -162,5 +219,6 @@ module.exports = {
   modifyRight: modifyRight,
   getArticleUsers: getArticleUsers,
   getUserRoles: getUserRoles,
-  getRoleById: getRoleById
+  getRoleById: getRoleById,
+  doYouHaveThisRight: doYouHaveThisRight
 };
