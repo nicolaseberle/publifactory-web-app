@@ -26,6 +26,7 @@
         <el-button class="login-button" :class="{error: loginError}" type="success"
           v-on:click="onSubmit()" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
+      <!--
       <h2>or</h2>
       <el-form-item>
         <el-row>
@@ -41,6 +42,7 @@
           </el-button>
         </el-row>
       </el-form-item>
+      -->
     </el-form>
   </div>
 </div>

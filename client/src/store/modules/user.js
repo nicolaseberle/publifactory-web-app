@@ -74,11 +74,6 @@ const actions = {
           reject('error')
         }
         getUserInfo(data.token).then(user => {
-          /* const userInfo = merge({}, user, {
-            email: payload.email,
-            access_token: data.token, // eslint-disable-line
-            refresh_token: '' // eslint-disable-line
-          }) */
           const userInfo = Object.assign({}, user, {
             email: payload.orcidId,
             access_token: data.token, // eslint-disable-line

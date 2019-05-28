@@ -38,7 +38,7 @@ var development = {
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
     clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
-    callbackUrl: 'http://localhost:9001/'
+    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
   },
   frontend: {
     port: 9001,
