@@ -38,12 +38,14 @@ export default {
 
   },
   computed: {
-    ...mapGetters(['loggedIn', 'globalConfig'])
+    ...mapGetters(['loggedIn', 'globalConfig', 'accessToken'])
   },
   methods: {
     ...mapActions(['login']),
     fetch(id) {
-      var data = axios.get('/api/invitations/invite/' + id ).then(response => {
+      var data = axios.get('/api/invitations/invite/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
          return response.data
       }).catch(err => {
         console.log(err)

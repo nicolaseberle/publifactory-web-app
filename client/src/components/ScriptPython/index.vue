@@ -25,6 +25,7 @@ import CodeMirror from 'codemirror'
 import 'codemirror/mode/python/python.js'
 import 'codemirror/lib/codemirror.css'
 import '../../styles/one-dark.css'
+import { mapGetters } from 'vuex'
 
 
 import axios from 'axios'
@@ -87,6 +88,9 @@ py.iplot(data)
   },
   created () {
 
+  },
+  computed: {
+    ...mapGetters(['accessToken'])
   },
   mounted () {
     this.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -154,7 +158,9 @@ py.iplot(data)
   methods: {
     saveFigure () {
       console.log('saveFigure: ',this.idfigure)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
+      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         console.log("figure saved")
       })
@@ -164,7 +170,9 @@ py.iplot(data)
     },
     fetchFigure(id) {
       var self = this
-      axios.get('/api/figure/' + id ).then(response => {
+      axios.get('/api/figure/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         self.currentData = response.data.data
         self.layout = response.data.layout
         self.option = response.data.option

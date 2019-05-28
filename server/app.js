@@ -25,11 +25,8 @@ require('./config/seed')
 
 // Setup server
 var app = express()
-app.use(cors({
-  credentials: true,
-  origin: '*'
-}))
-app.use(logger(process.env.NODE_ENV === 'development' ? 'dev' : 'prod'));
+app.use(cors())
+app.use(logger('dev'));
 var server = require('http').createServer(app)
 var socketio = require('socket.io')(server)
 require('./config/socketio')(socketio)

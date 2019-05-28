@@ -1,10 +1,19 @@
 import Vue from 'vue'
 import { authSocket } from '../../socket'
 
-export function login (email, password) {
-  return Vue.http.post('auth/local', {
-    email,
-    password
+export async function login (email, password) {
+  return new Promise((resolve, reject) => {
+    Vue.http.post('auth/local', {
+      email,
+      password
+    }).then(res => resolve(res.json()))
+      .catch(err => reject(err))
+  })
+}
+
+export function checkEmail (userId) {
+  return Vue.http.patch('users/confirmation', {
+    userId
   }).then(res => res.json())
 }
 
@@ -16,8 +25,7 @@ export function loginOrcid (orcidId, password) {
 
 export function resetGuestPassword (id, password, token) {
   return Vue.http.put('users/' + id + '/guestPassword', {
-    password
-  }, {
+    password,
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -26,9 +34,7 @@ export function resetGuestPassword (id, password, token) {
 
 export function changePassword (id, oldPassword, newPassword, token) {
   return Vue.http.put('users/' + id + '/changePassword', {
-    oldPassword, newPassword
-  }, {
-    headers: {
+    oldPassword, newPassword, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())
@@ -42,9 +48,7 @@ export function resetPassword (email) {
 
 export function updateUser (id, firstname, lastname, field, token) {
   return Vue.http.put('users/' + id + '/updateUser', {
-    firstname, lastname, field
-  }, {
-    headers: {
+    firstname, lastname, field, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())

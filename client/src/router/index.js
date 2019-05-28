@@ -17,7 +17,8 @@ export const constantRouterMap = [{
   },
   meta: {
     skipAuth: true
-  }
+  },
+  props: (route) => ({ userId: route.query.userId })
 },
 {
   path: '/register',
@@ -150,6 +151,7 @@ export const constantRouterMap = [{
     {
       path: '/articles/:id',
       name: 'Article',
+      props: { newsletterPopup: false },
       meta: { title: 'Articles', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/article/index.vue').then(resolve)

@@ -29,7 +29,7 @@
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button type="" round disabled>Download the article</el-button>
-            <el-button type="" round >Submit your article</el-button>
+            <el-button type="" @click="changeStatus()" round >Submit your article</el-button>
           </el-button-group>
         </div>
       </el-col>
@@ -48,6 +48,7 @@ import velocity from 'velocity-animate'
 import lightEditorComponent from './LightEditor'
 import markdownEditorComponent from './MarkdownEditorComponent'
 import latexEditorComponent from './LatexEditorComponent'
+import axios from 'axios'
 
 export default {
   name: 'ArticleDetail',
@@ -64,14 +65,16 @@ export default {
       currentEditor: 'lightEditorComponent',
       valueTypeEditor: 1,
       flagHidePDF:1,
-      editorType: false
+      editorType: false,
+      id: ''
     }
   },
   computed: {
-    ...mapGetters(['sidebar'])
+    ...mapGetters(['sidebar', 'accessToken'])
   },
   created() {
     if (1) {
+      this.id = this.$route.params && this.$route.params.id
       this.currentEditor = 'lightEditorComponent'
     }
   },
@@ -107,6 +110,24 @@ export default {
            this.valueTypeEditor = 3
          }
       }
+    },
+    async changeStatus () {
+      const articleInfo = await new Promise((resolve, reject) => {
+        axios.get('/api/articles/' + this.id, { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
+          .then(data => resolve(data.data))
+          .catch(err => reject(err))
+      });
+      console.log(articleInfo);
+      if (articleInfo.status === 'Submited')
+        axios.patch(`/api/articles/${this.id}/review`, {},
+          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+      else if (articleInfo.status === 'Reviewing')
+        axios.patch(`/api/articles/${this.id}/publish`, {},
+          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+      else if (articleInfo.status === 'Draft')
+        axios.patch(`/api/articles/${this.id}/submit`, {},
+          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+      this.$router.push(this.$route.query.redirect || '/')
     }
   }
 }

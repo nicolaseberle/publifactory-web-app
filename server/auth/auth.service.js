@@ -2,16 +2,16 @@
 
 // var mongoose = require('mongoose')
 // var passport = require('passport')
-var config = require('../../config').backend
-var jwt = require('jsonwebtoken')
-var expressJwt = require('express-jwt')
-var compose = require('composable-middleware')
-var User = require('../api/user/user.model')
-var validateJwt = expressJwt({ secret: config.secrets.session })
+const config = require('../../config').backend
+const jwt = require('jsonwebtoken')
+const expressJwt = require('express-jwt')
+const compose = require('composable-middleware')
+const UserModel = require('../api/user/user.model')
+const validateJwt = expressJwt({ secret: config.secrets.session })
 
 /**
  * Attaches the user object to the request if authenticated
- * Otherwise returns 403
+ * Otherwise returns 401
  */
 function isAuthenticated () {
   return compose()
@@ -24,13 +24,14 @@ function isAuthenticated () {
       validateJwt(req, res, next)
     })
     // Attach user to request
-    .use(function (req, res, next) {
-      User.findById(req.user._id, function (err, user) {
-        if (err) return next(err)
-        if (!user) return res.sendStatus(401)
-
-        req.user = user
-        next()
+    .use(async function (req, res, next) {
+      await new Promise((resolve, reject) => {
+        UserModel.findById(req.user._id, async function (err, user) {
+          if (err) reject(err)
+          if (!user) return res.sendStatus(401)
+          req.user = user
+          next()
+        })
       })
     })
 }
@@ -69,7 +70,9 @@ function setTokenCookie (req, res) {
   res.redirect('/')
 }
 
-exports.isAuthenticated = isAuthenticated
-exports.hasRole = hasRole
-exports.signToken = signToken
-exports.setTokenCookie = setTokenCookie
+module.exports = {
+  isAuthenticated: isAuthenticated,
+  hasRole: hasRole,
+  signToken: signToken,
+  setTokenCookie: setTokenCookie
+}

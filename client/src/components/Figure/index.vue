@@ -18,6 +18,7 @@ import Vue from 'vue';
 import locales from 'locales/charts'
 import VuePlotly from '@statnett/vue-plotly'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'figureComponent',
@@ -39,6 +40,9 @@ export default {
       }]
     }
   },
+  computed: {
+    ...mapGetters(['accessToken'])
+  },
   created() {
     this.id = this.$route.params && this.$route.params.id
     console.log("FigureComponent:: idfigure : " + this.idfigure)
@@ -53,7 +57,9 @@ export default {
   methods: {
     fetchFigure(id) {
       var self = this
-      axios.get('/api/figure/' + id ).then(response => {
+      axios.get('/api/figure/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         self.currentData = response.data.data
         self.layout = response.data.layout
         self.option = response.data.option

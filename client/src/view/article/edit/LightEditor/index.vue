@@ -441,7 +441,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar','userId','username']),
+    ...mapGetters(['sidebar','userId','username', 'accessToken']),
     contentShortLength() {
       return this.postForm.content_short.length
     },
@@ -480,7 +480,9 @@ export default {
     },
     diagAuthorVisible (val) {
       if(val==false) {
-        axios.get('/api/articles/' + this.id ).then(response => {
+        axios.get('/api/articles/' + this.id , {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(response => {
           this.postForm.authors = response.data.authors
         }).catch(err => {
           console.log(err)
@@ -555,7 +557,9 @@ export default {
         if (this.dialogStepActive-- < 0 ) this.dialogStepActive = 0;
     },
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
       }).catch(err => {
         console.log(err)
@@ -579,13 +583,18 @@ export default {
         { complete: done })
     },
     save (ev) {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
-                                               "abstract":this.postForm.abstract,
-                                               "content": this.postForm.content,
-                                               "arr_content": this.postForm.arr_content,
-                                               "tags": this.postForm.tags,
-                                               "published": true
-                                             })
+      axios.put('/api/articles/'  + this.id, {
+        "title": this.postForm.title,
+        "abstract": this.postForm.abstract,
+        "content": this.postForm.content,
+        "arr_content": this.postForm.arr_content,
+        "tags": this.postForm.tags,
+        "published": true
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
       .then(response => {
         console.log("article saved")
       })
@@ -714,17 +723,18 @@ export default {
     },
     createFigure () {
       const newFigure = {
-        data : [{
-                x: ['Sample A','Sample B','Sample C','Sample D'],
-                y: [ 10, 9, 12, 13],
-                type: 'bar',
-                orientation: 'v'
+        data: [{
+          x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
+          y: [10, 9, 12, 13],
+          type: 'bar',
+          orientation: 'v'
         }],
-        option : {},
+        option: {},
         layout: {
           title: 'Title',
           showlegend: false
-        }
+        },
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
       };
 
       return axios.post('/api/figure/', newFigure)
@@ -738,6 +748,9 @@ export default {
       })
     },
     createImage () {
+      const newImage = {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      }
       return axios.post('/api/image/', newImage)
       .then(response => {
         let _idFigure = response.data;
