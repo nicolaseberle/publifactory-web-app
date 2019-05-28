@@ -37,22 +37,22 @@
       </el-form-item>
     -->
     <h2>or</h2>
-    </el-row>
+    <el-row>
       <el-form-item>
-      </el-row>
+        <el-row>
           <el-row>
-          <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading">
+          <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onOrcidSubmit()">
             <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>
             <!--<i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>-->
             {{$t('login.orcidButton')}}
           </el-button>
-      </el-row>
-      <el-row>
-        <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading">
-          <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
-          {{$t('login.googleButton')}}
-        </el-button>
-      </el-row>
+        </el-row>
+        <el-row>
+          <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading">
+            <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
+            {{$t('login.googleButton')}}
+          </el-button>
+        </el-row>
 
 <!--
       <div class='logo'>
@@ -67,8 +67,10 @@
           </el-button>->
         </div>
         </div>
-          <!--<el-button class="login-button" circle   type="primary" native-type="submit" :loading="loading" style='background-color:#A6CE3A ; vertical-align: middle;' v-on:click="onOrcidSubmit()" ></el-button>-->
+          <el-button class="login-button" circle   type="primary" native-type="submit" :loading="loading" style='background-color:#A6CE3A ; vertical-align: middle;' v-on:click="onOrcidSubmit()" ></el-button>-->
+        </el-row>
       </el-form-item>
+    </el-row>
 
     </el-form>
     <div class='register' style='float:right'>
@@ -93,6 +95,7 @@ export default {
   data () {
     return {
       id: '',
+      redirect: '',
       form: {
         email: '',
         password: ''
@@ -112,6 +115,10 @@ export default {
   created () {
     if (this.$route.query.userId)
       this.onCreation()
+    if (this.$route.query.redirect) {
+      this.redirect = this.$route.query.redirect
+      this.onOrcidLogin()
+    }
   },
   computed: {
     ...mapGetters(['loggedIn', 'globalConfig'])
@@ -122,45 +129,35 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           await new Promise((resolve, reject) => {
-            /*
-            axios.get('https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=code&scope=/authenticate&redirect_uri=http://localhost:9001/orcid', {
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-              },
+            axios.post('/api/users/orcid',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
+              .then(response => {
+                this.$message({
+                  title: this.$t('message.created'),
+                  message: this.$t('message.created'),
+                  type: 'success'
+                })
+                resolve("OK")
+              }).catch((err) => {
+              this.$message({
+                title: this.$t('message.error'),
+                message: err.message || this.$t('register.authFail'),
+                type: 'error'
+              })
+              this.loading = false
+              this.loginError = true
+              reject(err)
+              setTimeout(() => {
+                this.loginError = false
+              }, 500)
             })
-              .then(response => this.alert("WORKED"))
-              .catch(error => this.alert("DONT WORK"))
-              .finally(() => this.alert('AXIOS DONE'));
-              */
-
-            $.ajax({
-              url: 'https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=code&scope=/authenticate&redirect_uri=http://localhost:9001/orcid',
-              type: 'GET',
-              headers: {
-                "Access-Control-Allow-Origin": "*"
-              },
-              xhrFields: {
-                withCredentials: true,
-                crossDomain: true
-              },
-              success: function (result, status, xhr) {
-                alert("Logged In: " + result.loggedIn);
-              },
-              error: function (xhr, status, error) {
-                alert(status);
-              }
-            });
-            resolve('OK')
           })
-          /*this.loading = true
-          this.loginOrcid({
-            email: this.form.email,https://sandbox.orcid.org/userStatus.json?logUserOut=true
+          await this.login({
+            email: this.form.email,
             password: this.form.password
           }).then((data) => {
             this.loading = false
-            this.$router.push(this.$route.query.redirect || '/')
+            window.location.href = 'https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=token&scope=openid&redirect_uri=http://localhost:9001/'
           }).catch((err) => {
-            const h = this.$createElement;
             this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('login.authFail'),
@@ -171,8 +168,7 @@ export default {
             setTimeout(() => {
               this.loginError = false
             }, 500)
-          }) */
-
+          })
         }
       })
     },
@@ -217,6 +213,12 @@ export default {
           console.log("THE VALUE OF THE PROMISE : " + sth);
         }
       })
+    },
+    onOrcidLogin() {
+      const regExp = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
+      if (regExp.exec(this.redirect).length === 6) {
+
+      }
     }
   }
 }
