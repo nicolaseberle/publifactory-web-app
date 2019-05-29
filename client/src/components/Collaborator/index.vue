@@ -215,7 +215,6 @@ export default {
         newAuthor.author.lastname);
       this.list.push(newAuthor)
       this.newList = this.list.map(v => Number(v.rank))
-      console.log(this.list)
       this.$forceUpdate()
       this.cleanForm()
     },
