@@ -6,7 +6,6 @@
 
 const shortid = require('shortid')
 const configEmail = require('../../../config.js').email
-const nodemailer = require('nodemailer')
 
 const User = require('../user/user.model')
 const Invitation = require('./invitations.model')
@@ -30,10 +29,10 @@ async function createInvitation(req, res, next) {
         receiverEmail = req.body.to,
         senderName = req.body.name,
         newLink = shortid.generate();
-        //to avoid '-' in the link
-        while(newLink.indexOf('-')>=0){
-             newLink = shortid.generate();
-        }
+    //to avoid '-' in the link
+    while(newLink.indexOf('-')>=0){
+      newLink = shortid.generate();
+    }
     let current = new Date().toISOString()
     const newInvitation = new Invitation({
       "created_at": current,
@@ -49,7 +48,6 @@ async function createInvitation(req, res, next) {
         return console.log(error);
       } else {
         //we send the email to invite the new author to access
-        //sendEmail(receiverEmail, senderId, newLink, senderName);
         const mail = new Email(receiverEmail);
         const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
         req.params.role === 'collaborator' ?
@@ -57,11 +55,10 @@ async function createInvitation(req, res, next) {
           await mail.sendInvitationReviewer(req.body.sender, clientUrl);
       }
     })
-    const reciever = await User.findOne({ email: receiverEmail }).exec()
-    return res.status(200).json(reciever)
-
+    const receiver = await User.findOne({ email: receiverEmail }).exec()
+    res.json(receiver)
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
 /**

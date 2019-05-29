@@ -217,7 +217,7 @@ module.exports.addAuthorOfArticle = async function (req, res, next) {
         { $push: { authors: newAuthor } },
         { new: true }
         );
-    await Roles.insertOne({ id_user: author._id, id_article: req.params.id, right: 'author' });
+    new Roles({ id_user: author._id, id_article: req.params.id, right: 'author' }).save();
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -316,3 +316,20 @@ module.exports.changeStatus = async function (req, res, next) {
     next(e);
   }
 }
+
+module.exports.updateAuthorRights = async function (req, res, next) {
+  try {
+    if (req.body.newAuthors === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const query = { _id: req.params.id };
+    const toReplace = { $set: { authors: req.body.newAuthors } };
+    console.log(req.body.newAuthors)
+    await Article.updateOne(query, toReplace, (err, data) => {
+      if (err) throw err
+      else console.log(data)
+    });
+    res.status(201).json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+};
