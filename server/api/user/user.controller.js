@@ -145,7 +145,7 @@ function createGuest(req, res, next) {
       return validationError(res, err)
     }
     var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-    res.json({token: token })
+    res.json({ user: newUser })
   })
 }
 /**

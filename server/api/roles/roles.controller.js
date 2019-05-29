@@ -188,6 +188,24 @@ async function switchRoute (route, articleInfo) {
       if (articleInfo.right !== 'associate_editor')
         throw { message: 'Only the associate editor is able to set status in review / publish.' };
       break;
+    case 'inviteReviewer':
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate editor is able to invite reviewers.' };
+      break;
+    case 'inviteCollaborator':
+      if (articleInfo.right !== 'author')
+        throw { message: 'Only the lead author is able to invite other collaborator' };
+      const authors = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.authors)
+        })
+      })
+      for (let i = 0, len = authors.length; i < len; ++i)
+        if (authors[i].author._id.toString() === articleInfo.id_user.toString() && authors[i].role === 'Lead')
+          return;
+      throw { message: 'Only the lead author is able to invite other collaborator' };
   }
 }
 
@@ -203,6 +221,7 @@ async function doYouHaveThisRight (req, res, next) {
     await switchRoute(req.route, articleInfo);
     next();
   } catch (e) {
+    console.error(e);
     // Throw to catch the error and transmit it to the router.use route.
     // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
     throw e;

@@ -33,9 +33,11 @@ router.use('/:id', async function (req, res, next) {
 })
 
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
+// TODO set deprecated, to replace with PATCH /:id/
 router.put('/:id/authors', articlesController.updateAuthorOfArticle);
 router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
 router.put('/:id/removeAuthor', articlesController.removeAuthorOfArticle);
+router.patch('/:id/authorRights', articlesController.updateAuthorRights);
 router.delete('/:id', articlesController.deleteArticle);
 
 router.use('/:id/:status', async function (req, res, next) {
