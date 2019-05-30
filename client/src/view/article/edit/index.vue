@@ -62,6 +62,22 @@
       show-icon>
     </el-alert>
     <el-form>
+      <el-form-item label="Have you uploaded your article to a preprint server?" label-width="200">
+          <el-radio v-model="formSubmArticle.preprint" label="yes">Yes</el-radio>
+            <el-radio v-model="formSubmArticle.preprint" label="no">No</el-radio>
+      </el-form-item>
+
+
+        <el-input placeholder="Please enter the DOI" v-model="formSubmArticle.doi" :disabled="formSubmArticle.preprint === 'no'">
+          <template slot="prepend">DOI</template>
+        </el-input>
+
+
+        <el-form-item label="Would you like us to handle the request for a DOI?" label-width="200" :disabled="formSubmArticle.preprint === 'yes'">
+            <el-radio v-model="formSubmArticle.wishDOI" label="yes" :disabled="formSubmArticle.preprint === 'yes'">Yes</el-radio>
+              <el-radio v-model="formSubmArticle.wishDOI" label="no" :disabled="formSubmArticle.preprint === 'yes'">No</el-radio>
+        </el-form-item>
+
       <el-form-item label="Which Peer reviewing do you want?" label-width="200">
         <el-checkbox-group v-model="formSubmArticle.options">
             <el-checkbox label="Classic peer-reviewing"></el-checkbox>
@@ -113,7 +129,7 @@ export default {
       id: '',
       articleInfo : '',
       diagSubmProcess: false,
-      formSubmArticle: {journal:'',options:['Classic peer-reviewing']}
+      formSubmArticle: {journal:'',options:['Open peer-reviewing'],preprint: 'no',wishDOI:'yes'}
     }
   },
   computed: {
