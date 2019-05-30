@@ -61,36 +61,50 @@
       type="warning"
       show-icon>
     </el-alert>
-    <el-form>
-      <el-form-item label="Have you uploaded your article to a preprint server?" label-width="200">
-          <el-radio v-model="formSubmArticle.preprint" label="yes">Yes</el-radio>
-            <el-radio v-model="formSubmArticle.preprint" label="no">No</el-radio>
-      </el-form-item>
+    <el-form style='text-align:left'>
+      <el-row style='margin-top:20px'>
 
-
-        <el-input placeholder="Please enter the DOI" v-model="formSubmArticle.doi" :disabled="formSubmArticle.preprint === 'no'">
-          <template slot="prepend">DOI</template>
-        </el-input>
-
-
-        <el-form-item label="Would you like us to handle the request for a DOI?" label-width="200" :disabled="formSubmArticle.preprint === 'yes'">
-            <el-radio v-model="formSubmArticle.wishDOI" label="yes" :disabled="formSubmArticle.preprint === 'yes'">Yes</el-radio>
-              <el-radio v-model="formSubmArticle.wishDOI" label="no" :disabled="formSubmArticle.preprint === 'yes'">No</el-radio>
+        <el-form-item label="Have you uploaded your article to a preprint server?" label-width="200px">
+          <el-col :span='10' :offset='1'>
+            <el-radio v-model="formSubmArticle.preprint" label="yes">Yes</el-radio>
+              <el-radio v-model="formSubmArticle.preprint" label="no">No</el-radio>
+          </el-col>
+          <el-col :span='12' >
+            <el-input placeholder="Please enter the DOI" v-model="formSubmArticle.doi" :disabled="formSubmArticle.preprint === 'no'">
+              <template slot="prepend">DOI</template>
+            </el-input>
+          </el-col>
         </el-form-item>
-
-      <el-form-item label="Which Peer reviewing do you want?" label-width="200">
-        <el-checkbox-group v-model="formSubmArticle.options">
-            <el-checkbox label="Classic peer-reviewing"></el-checkbox>
-            <el-checkbox label="Open peer-reviewing"></el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Journal" label-width="200">
-        <el-select v-model="formSubmArticle.journal" placeholder="Please select the journal">
-          <el-option label="PCI Evol Biol" value="pci_evol_bio"></el-option>
-          <el-option label="PCI Ecology" value="pci_ecology"></el-option>
-          <el-option label="PCI Paleo" value="pci_paleo"></el-option>
-        </el-select>
-      </el-form-item>
+      </el-row>
+      <el-row style='margin-top:10px'>
+        <el-form-item label="Would you like us to handle the request for a DOI?" label-width="200px" :disabled="formSubmArticle.preprint === 'yes'">
+          <el-col :span='10' :offset='1'>
+            <el-radio v-model="formSubmArticle.wishDOI" label="yes" :disabled="formSubmArticle.preprint === 'yes'">Yes</el-radio>
+            <el-radio v-model="formSubmArticle.wishDOI" label="no" :disabled="formSubmArticle.preprint === 'yes'">No</el-radio>
+          </el-col>
+        </el-form-item>
+      </el-row>
+      <el-row style='margin-top:10px'>
+        <el-form-item label="Which Peer reviewing do you want?" label-width="200px">
+          <el-col :span='23' :offset='1'>
+            <el-radio v-model="formSubmArticle.options" label="classic">Classic peer-reviewing</el-radio>
+            </el-col>
+            <el-col :span='23' :offset='1'>
+              <el-radio v-model="formSubmArticle.options" label="open">Open peer-reviewing</el-radio>
+              </el-col>
+        </el-form-item>
+        </el-row>
+        <el-row style='margin-top:10px'>
+          <el-form-item label="Journal" label-width="200px">
+            <el-col :span='23' :offset='1'>
+            <el-select v-model="formSubmArticle.journal" placeholder="Please select the journal" style='width:100%'>
+              <el-option label="PCI Evol Biol" value="pci_evol_bio"></el-option>
+              <el-option label="PCI Ecology" value="pci_ecology"></el-option>
+              <el-option label="PCI Paleo" value="pci_paleo"></el-option>
+            </el-select>
+            </el-col>
+          </el-form-item>
+      </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="diagSubmProcess = false">Cancel</el-button>
@@ -129,7 +143,7 @@ export default {
       id: '',
       articleInfo : '',
       diagSubmProcess: false,
-      formSubmArticle: {journal:'',options:['Open peer-reviewing'],preprint: 'no',wishDOI:'yes'}
+      formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'}
     }
   },
   computed: {
@@ -178,8 +192,11 @@ export default {
     },
     onSubmit() {
       // formSubmArticle.options
+      // formSubmArticle.preprint
+      // formSubmArticle.wishDOI
       // formSubmArticle.journal
       this.changeStatus ()
+      this.sendNotificationByMail()
       this.diagSubmProcess = false
     },
     async getStatus() {
@@ -205,6 +222,13 @@ export default {
         axios.patch(`/api/articles/${this.id}/submit`, {},
           { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       this.$router.push(this.$route.query.redirect || '/')
+    },
+    sendNotificationByMail () {
+      //send a notification to authors
+
+
+      //send notification to editor/publisher/associate editor
+
     }
   }
 }
