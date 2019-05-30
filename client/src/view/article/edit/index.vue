@@ -29,7 +29,7 @@
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button type="" round disabled>Download the article</el-button>
-            <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="diagSubmProcess=true" round >Submit your article</el-button>
+            <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" round >Submit your article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round disabled>Submitted</el-button>
             <el-button v-if="  this.articleInfo.status === 'Reviewing' " type="" @click="changeStatus()" round >Validate the article</el-button>
           </el-button-group>
@@ -54,7 +54,7 @@
   </div>
   <el-dialog
     title="Submission process"
-    :visible.sync="diagSubmProcess"
+    :visible.sync="visibleDialogSubmProcess"
     width="50%">
     <el-alert
       title="You are about to submit your article"
@@ -107,7 +107,7 @@
       </el-row>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="diagSubmProcess = false">Cancel</el-button>
+      <el-button @click="visibleDialogSubmProcess = false">Cancel</el-button>
       <el-button type="primary" @click="onSubmit()">Submit</el-button>
     </span>
   </el-dialog>
@@ -142,7 +142,7 @@ export default {
       editorType: false,
       id: '',
       articleInfo : '',
-      diagSubmProcess: false,
+      visibleDialogSubmProcess: false,
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'}
     }
   },
@@ -191,13 +191,14 @@ export default {
       }
     },
     onSubmit() {
+
       // formSubmArticle.options
       // formSubmArticle.preprint
       // formSubmArticle.wishDOI
       // formSubmArticle.journal
       this.changeStatus ()
       this.sendNotificationByMail()
-      this.diagSubmProcess = false
+      this.visibleDialogSubmProcess = false
     },
     async getStatus() {
         this.articleInfo = await new Promise((resolve, reject) => {
