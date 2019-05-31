@@ -191,14 +191,14 @@ export default {
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addAuthor()
+            this.addReviewer()
           } else {
             console.log('error submit!!');
             return false;
           }
         });
     },
-    async addAuthor () {
+    async addReviewer () {
       const nbAuthors = this.list.length + 1
       const newAuthor = {
         rank: nbAuthors,
@@ -280,7 +280,7 @@ export default {
       this.dynamicValidateForm.firstname = ''
       this.dynamicValidateForm.lastname = ''
     },
-    removeAuthor(_removedAuthorId) {
+    removeReviewer(_removedAuthorId) {
       this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {

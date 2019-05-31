@@ -40,10 +40,7 @@
     </el-form>
 
     <div style='margin-top:60px;margin-bottom:40px'>
-      <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" align="left" :default-sort = "{prop: 'rank', order: 'ascending'}">
-
-        <el-table-column prop='rank' align="left" label="Rank" width="65" >
-        </el-table-column>
+      <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" align="left" >
 
         <el-table-column align="left" min-width="140px" label="Firstname">
           <template slot-scope="scope">
@@ -55,18 +52,6 @@
             <span>{{ scope.row.author.lastname }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="Role" width="140">
-          <template slot-scope="scope">
-            <el-select v-model="scope.row.role" >
-              <el-option
-                v-for="item in optionsEditRole"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>
         <el-table-column align="center" label="Drag" width="80">
           <template slot-scope="scope">
             <svg-icon class="drag-handler" icon-class="drag"/>
@@ -74,7 +59,7 @@
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeAuthor(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeReviewer(scope.row._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -98,7 +83,34 @@
     name: 'addReviewer',
     components: {},
     props: {
-      authors: {}
+      id_article : [String]
+    },
+    data () {
+      return {
+        dynamicValidateForm: {
+          email: '',
+          firstname: '',
+          lastname: ''
+        }
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'userId',
+        'roles',
+        'accessToken'
+      ])
+    },
+    created() {
+      this.idArticle = this.$route.params && this.$route.params.id
+    },
+    mounted() {
+      this.list = this.authors
+      this.oldList = this.list.map(v => Number(v.rank))
+      this.newList = this.oldList.slice()
+      this.$nextTick(() => {
+        this.setSort()
+      })
     },
     /*
     data() {
@@ -109,11 +121,6 @@
         listLoading: false,
         oldList: [],
         newList: [],
-        dynamicValidateForm: {
-          email: '',
-          firstname: '',
-          lastname: ''
-        },
         optionsEditRole: [{
           value: 'Lead',
           label: 'Lead'
@@ -163,43 +170,20 @@
       this.idArticle = this.$route.params && this.$route.params.id
       this.total = 2
     },
-    mounted() {
-      this.list = this.authors
-      this.oldList = this.list.map(v => Number(v.rank))
-      this.newList = this.oldList.slice()
-      this.$nextTick(() => {
-        this.setSort()
-      })
-    },
-    methods: {
-      setSort() {
-        const el = document.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
-        this.sortable = Sortable.create(el, {
-          ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
-          setData: function(dataTransfer) {
-            dataTransfer.setData('Text', '')
-          },
-          onEnd: evt => {
-            const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
-            this.newList.splice(evt.newIndex, 0, tempIndex)
 
-            this.newList.forEach((id_rank,key)=>{
-              this.list[key].rank = Number(id_rank)
-            })
-          }
-        })
-      },
+    */
+    methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addAuthor()
+            this.addReviewer()
           } else {
             console.log('error submit!!');
             return false;
           }
         });
       },
-      async addAuthor () {
+      async addReviewer () {
         const nbAuthors = this.list.length + 1
         const newAuthor = {
           rank: nbAuthors,
@@ -281,7 +265,7 @@
         this.dynamicValidateForm.firstname = ''
         this.dynamicValidateForm.lastname = ''
       },
-      removeAuthor(_removedAuthorId) {
+      removeReviewer(_removedAuthorId) {
         this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
           type: 'warning'
         }).then(() => {
@@ -319,7 +303,7 @@
         })
         this.$emit('close')
       }
-    }*/
+    }
   }
 </script>
 <style>

@@ -4,9 +4,9 @@
       <el-row :gutter="20">
         <el-col :span='6'>
           <el-button-group>
-          <el-button round v-on:click="createArticle()">Create Article</el-button>
-          <el-button round v-on:click="importArticle()">Import</el-button>
-        </el-button-group>
+            <el-button round v-on:click="createArticle()">Create Article</el-button>
+            <el-button round v-on:click="importArticle()">Import</el-button>
+          </el-button-group>
         </el-col>
       </el-row>
       <div class='dashboard-tab'>
@@ -14,7 +14,7 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
-        <el-table :data="articles" fit highlight-current-row style="width: 100%">
+        <el-table :data="articles" @row-click="setSelectedRow"  fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
             <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
@@ -64,7 +64,9 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer">Assign a reviewer</el-dropdown-item>
+                  <el-dropdown-item  command="assignReviewer" :click="flagVisibleAddReviewer=true">
+                    Assign a reviewer
+                  </el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
@@ -72,10 +74,6 @@
                   <el-dropdown-item  command="remove" style="{color:'red'}">Remove the article</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-
-
-              </el-button>
-            </el-select>
             <!--</router-link>-->
           </template>
         </el-table-column>
@@ -93,6 +91,13 @@
   </el-tabs>
   </div>
   </div>
+
+      <el-dialog
+        title="Add reviewers"
+        :visible.sync="flagVisibleAddReviewer"
+        width="70%">
+        <addReviewer id_article="selectedArticleId" v-on:close="flagVisibleAddReviewer=false"/>
+      </el-dialog>
 </content-module>
 <!--
 <el-dialog :title="Titre" :visible.sync="formVisible">
@@ -114,6 +119,7 @@ import moment from 'moment'
 import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
+import addReviewer from '../../../components/Reviewer'
 import axios from 'axios'
 
 var uuidv4 = require('uuid/v4');
@@ -122,6 +128,7 @@ export default {
   locales,
   data () {
     return {
+      flagVisibleAddReviewer: false,
       activeName: 'first',
       options:{
         value:"option 1",
@@ -141,7 +148,9 @@ export default {
         }]
       },
       formVisible: false,
-      articles: []
+      articles: [],
+      selectedRow: '',
+      selectedArticleId: ''
     }
   },
   computed: {
@@ -151,9 +160,14 @@ export default {
     ])
   },
   components: {
-    DataTable
+    DataTable,
+    addReviewer
   },
   methods: {
+    setSelectedRow (row, event, column) {
+      this.selectedRow = row
+      this.selectedArticleId = row.id
+    },
     handleClick(tab, event) {
         console.log(tab, event);
     },

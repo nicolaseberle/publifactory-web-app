@@ -244,7 +244,7 @@ export default {
         }
       })
     },
-    addAuthor () {
+    addReviewer () {
       var nbAuthors = this.list.length+1;
       var newAuthor = {
                           rank: nbAuthors,
