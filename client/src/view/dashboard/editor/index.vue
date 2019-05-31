@@ -93,11 +93,11 @@
     title="Add Reviewer"
     :visible.sync="flagAddReviewer"
     width="70%">
-    <addReviewer v-if="flagAddReviewer" />
-    <span slot="footer" class="dialog-footer">
+    <addReviewer v-if="flagAddReviewer" :article_id="selectedArticleId" v-on:close="flagAddReviewer = false"/>
+    <!--<span slot="footer" class="dialog-footer">
       <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
       <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
-    </span>
+    </span>-->
   </el-dialog>
 </content-module>
 
@@ -180,6 +180,8 @@ export default {
     actionHandleCommand (action) {
       if(action=='settings'){
         //this.diagAccessCompVisible = true
+      }else if(action=='openArticle'){
+        this.$router.push({ path: `/articles/${this.selectedArticleId}` })
       }else if(action=='assignReviewer'){
         this.flagAddReviewer = true
       }
