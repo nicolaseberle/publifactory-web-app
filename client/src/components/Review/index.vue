@@ -56,50 +56,7 @@
                 <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
               </footer>
           </article>
-          <article v-for="report in report_tmp">
-              <header>
-                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ form.firstname }} {{ form.lastname }}</a>
-                  <a v-if='report.anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
-                  <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ form.creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
-                  <el-tag class="no-revision" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="minor-revision" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="major-revision" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="rejection" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="simple-comment" v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
-              </header>
-              <section>
-                <div class='card-review'>
-                  <div class='col-vote'>
-                    <div class='vote-icon'>
-                      <!--<el-button plain type="" icon="el-icon-caret-top" circle></el-button>-->
-                      <!--<i class='el-icon-caret-top'></i>-->
-                      <div class="arrow-up"></div>
-                    </div>
-                    <div class='vote-counter'>
-                      0
-                    </div>
-                    <div class='vote-icon'>
-                      <!--<i class='el-icon-caret-bottom'></i>-->
-                      <!--<el-button plain type="" icon="el-icon-caret-bottom" circle></el-button>-->
-                      <div class="arrow-down"></div>
-                    </div>
-                  </div>
-                  <div class='col-content'>
-                    <div data-review="report.uuidComment" v-on:click="focusOnCommentedText($event,report.uuidComment)">
-                      <p>
-                          {{ report.content}}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <footer style='text-align: right'>
-                <el-button  icon="el-icon-share" circle></el-button>
-                <el-button circle><font-awesome-icon icon="reply" /></el-button>
-                <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
 
-              </footer>
-          </article>
 
 
           <el-card id="card-form-report">
@@ -359,10 +316,9 @@ export default {
 
   },
   created() {
-    const id = this.$route.params && this.$route.params.id
-    this.id = id
-    this.fetchReport(id)
-    this.fetchArticle(id)
+    this.id = this.$route.params && this.$route.params.id
+    this.fetchReport(this.id)
+    this.fetchArticle(this.id)
   },
   mounted () {
     asideRightAnimation()
@@ -443,6 +399,7 @@ export default {
       .then(response => {
         response__ = response.data;
         this.errors.message = 'createReport success ';
+        this.fetchReport(this.id)
       })
       .catch(err => {
         this.errors.message = 'createReport fails';
