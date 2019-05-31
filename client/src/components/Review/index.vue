@@ -38,9 +38,12 @@
                   </div>
                   <div class='col-content'>
                     <div data-review="report.uuidComment" v-on:click="focusOnCommentedText($event,report.uuidComment)">
-                      <p>
-                          {{ report.content}}
-                      </p>
+                      <el-input
+                        type="textarea"
+                        :autosize="{ minRows: 2, maxRows: 10}"
+                        placeholder="Please input"
+                        v-model="report.content" disabled>
+                      </el-input>
                     </div>
                   </div>
                 </div>
@@ -445,6 +448,16 @@ export default {
 }
 </script>
 <style>
+.el-textarea.is-disabled .el-textarea__inner {
+    background-color: white;
+    border-color: white;
+    color: #333;
+    cursor: auto;
+    font-family: 'Calibri-regular';
+    font-size: 1.1rem;
+    font-weight: normal;
+    padding: 0px 9px;
+}
 .card-review{
   display: flex;
   flex-direction: row;
