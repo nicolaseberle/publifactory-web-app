@@ -165,7 +165,7 @@ async function updateComment(req, res, next) {
   try {
     if (!req.body.content)
       throw { code: 422, message: "Missing parameter in the body field." };
-    const toFind = { _id: req.params.uuid };
+    const toFind = { uuidComment: req.params.uuid };
     const toUpdate = { $set: { content: req.body.content } };
     await Comment.findOneAndUpdate(toFind, toUpdate).exec();
     res.json({ success: true });
@@ -184,7 +184,7 @@ async function updateComment(req, res, next) {
  */
 async function findCommentAndDelete(req, res, next) {
   try {
-    const comment = await Comment.delete({ _id: req.params.uuid });
+    const comment = await Comment.findOneAndRemove({ uuidComment: req.params.uuid });
 
     if (comment.n === 0) return res.sendStatus(404);
 

@@ -42,8 +42,9 @@
                         type="textarea"
                         :autosize="{ minRows: 2, maxRows: 10}"
                         placeholder="Please input"
-                        v-model="report.content" disabled>
+                        v-model="report.content" :disabled='report.edit == false'>
                       </el-input>
+                      <div v-if='selectedComment==key'>{{report.edit}}</div>
                     </div>
                   </div>
                 </div>
@@ -53,10 +54,12 @@
                 </footer>-->
                 <!--<el-button plain type="success" icon="el-icon-arrow-up" circle></el-button>
                 <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
-                <el-button  icon="el-icon-share" circle></el-button>
-                <el-button circle><font-awesome-icon icon="reply" /></el-button>
-                <el-button icon="el-icon-edit" circle ></el-button>
-                <el-button type='warning' plain icon="el-icon-delete" style='float:right;' circle></el-button>
+                <el-button v-show='report.edit == false' icon="el-icon-share" circle></el-button>
+                <el-button v-show='report.edit == false' circle><font-awesome-icon icon="reply" /></el-button>
+                <el-button v-show='report.edit == true' icon="el-icon-close" type="primary" v-on:click='cancelComment(key)' circle ></el-button>
+                <el-button v-show='report.edit == true' icon="el-icon-check" type="success" v-on:click='saveComment(key)' circle ></el-button>
+                <el-button v-show='report.edit == false' icon="el-icon-edit" v-on:click='editComment(key)' circle ></el-button>
+                <el-button type='warning' plain icon="el-icon-delete" style='float:right;' v-on:click='deleteComment(key)' circle></el-button>
               </footer>
           </article>
 
@@ -297,7 +300,8 @@ export default {
         reviewRequest: 'Simple comment',
         currentData: {},
         layout: {},
-        options:  {}
+        options:  {},
+        selectedComment: -1
     }
   },
   computed: {
@@ -354,6 +358,12 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.reports = response.data
+        const _allReports = [];
+        for (var i=0, _report; _report = this.reports[i]; i++){
+          _report.edit = false;
+          _allReports.push(_report);
+        }
+        this.reports = _allReports
       }).catch(err => {
         console.log(err)
         this.errors.message = 'fetchReport fails';
@@ -407,6 +417,42 @@ export default {
       .catch(err => {
         this.errors.message = 'createReport fails';
       });
+    },
+    editComment (key) {
+      this._originalComment = Object.assign({}, this.reports[key])
+      this.reports[key].edit = true
+      this.selectedComment = key
+    },
+    saveComment (key) {
+      axios.put('/api/comments/'  + this.id + '/comments/' + this.reports[key].uuidComment + '/content',{'content':this.reports[key].content}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
+        .then(response => {
+      }).catch(err => {
+        console.log(err)
+      })
+      this.reports[key].edit = false
+      this.selectedComment = -1
+    },
+    cancelComment (key) {
+      Object.assign(this.reports[key], this._originalComment)
+      this.reports[key].edit = false
+      this.selectedComment = -1
+    },
+    deleteComment (key) {
+      this.$confirm(`This action will remove the selected comment forever, still going on?`, this.$t('confirm.title'), {
+        type: 'warning'
+      }).then(() => {
+        axios.delete('/api/comments/'+this.id+'/comments/'+ this.reports[key].uuidComment, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: this.$t('message.removed')
+          })
+        this.fetchReport(this.id)
+        })
+      }).catch(() => {})
     },
     upvoteComment (ev,idComment,key) {
       console.log('upvoteComment')
