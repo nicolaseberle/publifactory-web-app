@@ -44,7 +44,7 @@
                         placeholder="Please input"
                         v-model="report.content" :disabled='report.edit == false'>
                       </el-input>
-                      <div v-if='selectedComment==key'>{{report.edit}}</div>
+                      <div v-if='selectedComment==key'></div>
                     </div>
                   </div>
                 </div>
