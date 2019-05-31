@@ -95,12 +95,11 @@
   const shortid = require('shortid');
 
   export default {
-    name: 'addReviewer',
+    name: 'viewReviewer',
     components: {},
     props: {
       authors: {}
     },
-    /*
     data() {
       return {
         list: null,
@@ -319,7 +318,7 @@
         })
         this.$emit('close')
       }
-    }*/
+    }
   }
 </script>
 <style>
