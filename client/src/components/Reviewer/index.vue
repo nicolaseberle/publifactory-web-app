@@ -3,9 +3,10 @@
   <div>
     <div style='margin: 0px 0px 20px 0px'>
       <el-alert
-        title="A email will be sent to invite authors to access to the article"
+        title="A email will be sent to invite reviewers to review the article"
         type="info">
       </el-alert>
+      ID de l'article : {{article_id}}
     </div>
     <el-form :model="dynamicValidateForm" :rules="rules" ref="dynamicValidateForm" label-width="120px" >
       <el-row :gutter="5">
@@ -38,8 +39,9 @@
       </el-row>
 
     </el-form>
-
+<!--
     <div style='margin-top:60px;margin-bottom:40px'>
+
       <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%" align="left" :default-sort = "{prop: 'rank', order: 'ascending'}">
 
         <el-table-column prop='rank' align="left" label="Rank" width="65" >
@@ -78,11 +80,11 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </div>-->
     <div style='text-align:right'>
       <span slot="footer" class="dialog-footer">
-        <el-button type=""  @click="$emit('close')" >Cancel</el-button>
-        <el-button type="primary"  @click="onChange" >OK</el-button>
+        <el-button type=""  @click="$emit('close')" round>Cancel</el-button>
+        <el-button type="primary"  @click="onChange" round>OK</el-button>
       </span>
     </div>
   </div>
@@ -98,7 +100,7 @@
     name: 'viewReviewer',
     components: {},
     props: {
-      authors: {}
+      article_id: {}
     },
     data() {
       return {
@@ -160,15 +162,15 @@
     },
     created() {
       this.idArticle = this.$route.params && this.$route.params.id
-      this.total = 2
+      //this.total = 2
     },
     mounted() {
-      this.list = this.authors
-      this.oldList = this.list.map(v => Number(v.rank))
-      this.newList = this.oldList.slice()
-      this.$nextTick(() => {
-        this.setSort()
-      })
+      //this.list = this.authors
+      //this.oldList = this.list.map(v => Number(v.rank))
+      //this.newList = this.oldList.slice()
+      //this.$nextTick(() => {
+      //  this.setSort()
+      //})
     },
     methods: {
       setSort() {
@@ -303,7 +305,7 @@
       },
       onChange() {
         const newAuthors = this.list
-        axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: newAuthors },
+        /*axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: newAuthors },
           { headers: {'Authorization': `Bearer ${this.accessToken}`} })
           .then(() => {
             this.$message({
@@ -315,7 +317,7 @@
             type: "error",
             message: this.$t('message.changeRoleFail')
           })
-        })
+        })*/
         this.$emit('close')
       }
     }
