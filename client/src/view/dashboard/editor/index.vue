@@ -13,8 +13,8 @@
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
-      <data-table ref="articles" @page-change="fetch">
-        <el-table :data="articles" @row-click="setSelectedRow"  fit highlight-current-row style="width: 100%">
+      <data-table ref="articles" @page-change="fetchArticles" >
+        <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
             <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
@@ -56,17 +56,15 @@
           <template slot-scope="scope">
             <!--<router-link :to="'/example/edit/'+scope.row.id">-->
               <!--<el-button type="primary" size="small" icon="el-icon-edit">Edit</el-button>-->
-              <el-dropdown trigger="click" class="international">
+              <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
                 <div>
                   <el-button class="el-button-action" icon="el-icon-more" circle>
                   </el-button>
                 </div>
-                <el-dropdown-menu slot="dropdown">
+                <el-dropdown-menu slot="dropdown" >
                   <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer" :click="flagVisibleAddReviewer=true">
-                    Assign a reviewer
-                  </el-dropdown-item>
+                  <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
@@ -91,14 +89,18 @@
   </el-tabs>
   </div>
   </div>
-
-      <el-dialog
-        title="Add reviewers"
-        :visible.sync="flagVisibleAddReviewer"
-        width="70%">
-        <addReviewer id_article="selectedArticleId" v-on:close="flagVisibleAddReviewer=false"/>
-      </el-dialog>
+  <el-dialog
+    title="Add Reviewer"
+    :visible.sync="flagAddReviewer"
+    width="70%">
+    <addReviewer v-if="flagAddReviewer" />
+    <span slot="footer" class="dialog-footer">
+      <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
+      <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
+    </span>
+  </el-dialog>
 </content-module>
+
 <!--
 <el-dialog :title="Titre" :visible.sync="formVisible">
   <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -121,6 +123,7 @@ import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
 import addReviewer from '../../../components/Reviewer'
 import axios from 'axios'
+import addReviewer from '../../../components/Reviewer'
 
 var uuidv4 = require('uuid/v4');
 
@@ -149,8 +152,7 @@ export default {
       },
       formVisible: false,
       articles: [],
-      selectedRow: '',
-      selectedArticleId: ''
+      flagAddReviewer: false
     }
   },
   computed: {
@@ -171,7 +173,18 @@ export default {
     handleClick(tab, event) {
         console.log(tab, event);
     },
-    fetch (current = 1) {
+    setSelectedRow (row, event, column) {
+        this.selectedRow = row
+        this.selectedArticleId = row.id
+      },
+    actionHandleCommand (action) {
+      if(action=='settings'){
+        //this.diagAccessCompVisible = true
+      }else if(action=='assignReviewer'){
+        this.flagAddReviewer = true
+      }
+    },
+    fetchArticles (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -227,7 +240,7 @@ export default {
               type: 'success',
               message: this.$t('message.created')
             })
-            this.fetch()
+            this.fetchArticles()
           }).catch((err) => {
             this.$message({
               type: 'error',
@@ -246,14 +259,14 @@ export default {
             type: 'success',
             message: this.$t('message.removed')
           })
-          this.fetch()
+          this.fetchArticles()
         })
       }).catch(() => {})
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.fetch()
+      this.fetchArticles()
     })
   }
 }

@@ -80,7 +80,7 @@
   const shortid = require('shortid');
 
   export default {
-    name: 'addReviewer',
+    name: 'viewReviewer',
     components: {},
     props: {
       id_article : [String]
@@ -112,7 +112,6 @@
         this.setSort()
       })
     },
-    /*
     data() {
       return {
         list: null,
