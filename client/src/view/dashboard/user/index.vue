@@ -63,7 +63,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
+                  <el-dropdown-item  command="assignReviewer" disabled>Assign a reviewer</el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
