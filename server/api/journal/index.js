@@ -8,23 +8,11 @@ var auth = require('../../auth/auth.service')
 var router = express.Router()
 
 router.post('/', journalController.createJournal);
-router.get('/', journalController.getJournals);
-router.get('/:id', journalController.findJournalById);
+router.get('/:id?', journalController.getJournals);
 router.put('/:id', journalController.findJournalByIdAndUpdate);
-/*router.get('/:slug', articlesController.findArticleBySlug);
-router.get('/draft/:slug', articlesController.findEditedArticleBySlug);
-router.post('/', articlesController.createArticle);
-router.put('/:slug', articlesController.findArticlebySlugAndUpdate);
-router.delete('/:slug', articlesController.findArticleBySlugAndDelete);
 
-router.put('/:slug/toggle', articlesController.findArticleBySlugAndTogglePublished);
+router.post('/:id_journal/article', journalController.addArticleToJournal);
+router.delete('/:id', journalController.deleteJournal);
+router.delete('/:id_journal/article/:id_article', journalController.removeArticleFromJournal);
 
-router.get('/:slug/categories', articlesController.findArticleBySlugAndFetchCategories);
-router.put('/:slug/categories', articlesController.findArticleBySlugAndAddCategoryBySlug);
-router.delete('/:slug/categories', articlesController.findArticleBySlugAndRemoveCategoryBySlug);
-
-router.get('/feed/:id', articlesController.getArticlesOfFollowedUsers);
-router.get('/myfeed/:id', articlesController.getArticlesOfUser);
-router.get('/:id/selectedArticles', articlesController.getSelectedArticles);
-*/
 module.exports = router;

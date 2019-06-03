@@ -57,7 +57,9 @@ function hasRole (roleRequired) {
  * Returns a jwt token signed by the app secret
  */
 function signToken (user) {
-  return jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+  const token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+  console.log(token)
+  return token
 }
 
 /**

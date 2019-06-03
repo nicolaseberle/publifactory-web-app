@@ -1,17 +1,8 @@
 'use strict';
 
-var User = require('../user/user.model');
-var Article = require('../article/article.model');
-var Journal = require('./journal.model');
-
-var config = require('../../../config').backend
-var jwt = require('jsonwebtoken')
-var paging = require('../paging')
-var _ = require('lodash')
-
-var validationError = function (res, err) {
-  return res.status(422).json(err)
-}
+const User = require('../user/user.model')
+const Article = require('../article/article.model')
+const Journal = require('./journal.model')
 
 /**
  * Get list of articles
@@ -44,38 +35,27 @@ exports.getJournals = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
   try {
-    const journals = await Journal.paginate({ deleted: false, published: true }, { page, limit,populate: 'editor',lean: true });
-    console.log(JSON.stringify(journals, null, "\t"))
-    renameObjectProperty(journals, 'docs', 'journals');
-
+    let journals;
+    if (req.params.id === undefined) {
+      journals = await Journal.paginate({ deleted: false, published: true }, {
+        page,
+        limit,
+        populate: 'editor',
+        lean: true
+      });
+      console.log(JSON.stringify(journals, null, "\t"))
+      renameObjectProperty(journals, 'docs', 'journals');
+    } else {
+      console.log(JSON.stringify("findJournalById", null, "\t"))
+      journals = await Journal.findById(req.params.id).populate('article').lean();
+      console.log(JSON.stringify(journals, null, "\t"))
+      if (!journals) return res.sendStatus(404);
+    }
     return res.status(200).json(journals);
   } catch (err) {
     return next(err);
   }
 };
-
-/**
- * getArticleBySlug - Returns an article requested by slug
- *
- * @function findJournalBySlug
- * @memberof module:controllers/journals
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-module.exports.findJournalById = async (req, res, next) => {
-  try {
-    console.log(JSON.stringify("findJournalById", null, "\t"))
-    const journal = await Journal.findById(req.params.id).populate('article').lean();
-    console.log(JSON.stringify(journal, null, "\t"))
-    if (!journal) return res.sendStatus(404);
-
-    return res.status(200).json(journal);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 
 /**
  * @function findJournalByIdAndUpdate
@@ -141,8 +121,76 @@ module.exports.createJournal = async (req, res, next) => {
 
     console.log(JSON.stringify(journal._id, null, "\t"));
 
-    return res.status(200).json(journal._id);
+    return res.status(200).json({ success: true, journal: journal });
   } catch (err) {
     return next(err);
   }
 };
+
+/**
+ * @function deleteJournal
+ * @author Léo Riberon-Piatyszek
+ * @memberOf module:controllers/journal
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+module.exports.deleteJournal = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id };
+    await Journal.findOneAndRemove(query);
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
+
+/**
+ * @function addArticleToJournal
+ * @author Léo Riberon-Piatyszek
+ * @memberOf module:controllers/journal
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+module.exports.addArticleToJournal = async (req, res, next) => {
+  try {
+    let query = { _id: req.body.id_article };
+    const article = await Article.findOne(query);
+    if (article === null)
+      throw { success: false, message: 'You can\'t add an article which does\'nt exist.' }
+    query._id = req.params.id_journal;
+    const toUpdate = { $push: { content: article } };
+    const options = { new: true };
+    await Journal.findOneAndUpdate(query, toUpdate, options);
+    res.json({ success: true });
+  } catch (e) {
+    next(e)
+  }
+}
+
+/**
+ * @function removeArticleFromJournal
+ * @author Léo Riberon-Piatyszek
+ * @memberOf module:controllers/journal
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+module.exports.removeArticleFromJournal = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id_journal };
+    const journalInfo = await Journal.findOne(query);
+    for (let i = 0, len = journalInfo.content.length; i < len; ++i)
+      if (journalInfo.content[i]._id.toString() === req.params.id_article.toString()) {
+        console.log("HE FOUND IT")
+        delete journalInfo.content[i];
+      }
+    res.json({ success: true });
+  } catch (e) {
+    next(e)
+  }
+}
