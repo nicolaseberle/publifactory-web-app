@@ -6,6 +6,7 @@
  */
 const Roles = require('./roles.model')
 const Article = require('../article/article.model')
+const User = require('../user/user.model')
 
 /**
  * This route permit to get all the users of an article with their rights.
@@ -189,8 +190,15 @@ async function switchRoute (route, articleInfo) {
         throw { message: 'Only the associate editor is able to set status in review / publish.' };
       break;
     case 'inviteReviewer':
-      if (articleInfo.right !== 'associate_editor')
-        throw { message: 'Only the associate editor is able to invite reviewers.' };
+      const infoAuthor = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_user }
+        User.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data)
+        })
+      })
+      if (infoAuthor.role !== 'editor')
+        throw { message: 'Only the editor and associate_editor are able to invite reviewers.' };
       break;
     case 'inviteCollaborator':
       if (articleInfo.right !== 'author')
@@ -214,7 +222,8 @@ async function doYouHaveThisRight (req, res, next) {
     const articleInfo = await new Promise((resolve, reject) => {
       const query = { id_user: req.decoded._id, id_article: req.params.id }
       Roles.findOne(query, function(err, data) {
-        if (err) reject(err)
+        if (err) reject(err);
+        else if (data === null) resolve({ id_user: req.decoded._id, id_article: req.params.id })
         else resolve(data);
       })
     });

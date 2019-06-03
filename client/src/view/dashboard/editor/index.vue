@@ -121,7 +121,6 @@ import moment from 'moment'
 import { mapGetters } from 'vuex'
 import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
-import addReviewer from '../../../components/Reviewer'
 import axios from 'axios'
 import addReviewer from '../../../components/Reviewer'
 

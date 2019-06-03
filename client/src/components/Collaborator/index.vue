@@ -247,11 +247,11 @@ export default {
               resolve(res)
             }
           }).then(() => {
-          this.addNewAuthor(email)
+          this.addNewReviewer(email)
         })
       })
     },
-    addNewAuthor (email) {
+    addNewReviewer (email) {
       var _newAuthor = {
                           'rank': this.list.length,
                           'role': 'Author',
