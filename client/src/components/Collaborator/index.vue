@@ -247,11 +247,11 @@ export default {
               resolve(res)
             }
           }).then(() => {
-          this.addNewReviewer(email)
+          this.addNewAuthor(email)
         })
       })
     },
-    addNewReviewer (email) {
+    addNewAuthor (email) {
       var _newAuthor = {
                           'rank': this.list.length,
                           'role': 'Author',
@@ -280,7 +280,7 @@ export default {
       this.dynamicValidateForm.firstname = ''
       this.dynamicValidateForm.lastname = ''
     },
-    removeReviewer(_removedAuthorId) {
+    removeAuthor(_removedAuthorId) {
       this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {

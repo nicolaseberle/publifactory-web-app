@@ -52,6 +52,11 @@
             <span>{{ scope.row.lastname }}</span>
           </template>
         </el-table-column>
+        <el-table-column align="center" label="Action" width="80">
+          <template slot-scope="scope">
+            <a @click='removeReviewer(scope.row._id)'><i class="el-icon-delete"></i></a>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div style='text-align:right'>
@@ -164,10 +169,10 @@
                 resolve((await this.createTempAccount(email, link, firstname, lastname)).user)
               else
                 resolve(res)
-            }).then(() => this.addNewReviewer(email))
+            }).then(() => this.addNewAuthor(email))
         })
       },
-      addNewReviewer (email) {
+      addNewAuthor (email) {
         const _newReviewer = {
           'email': email
         }
@@ -199,9 +204,8 @@
           this.list = this.list.filter(function( el ) {
             return el._id !== _removeReviewerId;
           });
-          this.newList = this.list.map(v => Number(v.rank))
 
-          axios.put('/api/articles/' + this.article_id + '/removeAuthor',{ 'authorId' : _removeReviewerId}, {
+          axios.put('/api/articles/' + this.article_id + '/removeReviewer',{ 'reviewerId' : _removeReviewerId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {

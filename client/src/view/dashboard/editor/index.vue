@@ -62,14 +62,14 @@
                   </el-button>
                 </div>
                 <el-dropdown-menu slot="dropdown" >
-                  <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
+                  <el-dropdown-item  command="settings" disabled>Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
                   <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
                   <el-dropdown-item  command="survey">Survey (Scopus, Google Scholar...)</el-dropdown-item>
-                  <el-dropdown-item  command="remove" style="{color:'red'}">Remove the article</el-dropdown-item>
+                  <el-dropdown-item  command="remove" style="{color:'red'}" disabled>Remove the article</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             <!--</router-link>-->
@@ -177,12 +177,15 @@ export default {
         this.selectedArticleId = row.id
       },
     actionHandleCommand (action) {
-      if(action=='settings'){
-        //this.diagAccessCompVisible = true
-      }else if(action=='openArticle'){
-        this.$router.push({ path: `/articles/${this.selectedArticleId}` })
-      }else if(action=='assignReviewer'){
-        this.flagAddReviewer = true
+      switch (action) {
+        case 'settings':
+          break;
+        case 'openArticle':
+          this.$router.push({ path: `/articles/${this.selectedArticleId}` })
+          break;
+        case 'assignReviewer':
+          this.flagAddReviewer = true
+          break;
       }
     },
     fetchArticles (current = 1) {
