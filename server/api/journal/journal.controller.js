@@ -44,38 +44,27 @@ exports.getJournals = async (req, res, next) => {
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
   try {
-    const journals = await Journal.paginate({ deleted: false, published: true }, { page, limit,populate: 'editor',lean: true });
-    console.log(JSON.stringify(journals, null, "\t"))
-    renameObjectProperty(journals, 'docs', 'journals');
-
+    let journals;
+    if (req.params.id === undefined) {
+      journals = await Journal.paginate({ deleted: false, published: true }, {
+        page,
+        limit,
+        populate: 'editor',
+        lean: true
+      });
+      console.log(JSON.stringify(journals, null, "\t"))
+      renameObjectProperty(journals, 'docs', 'journals');
+    } else {
+      console.log(JSON.stringify("findJournalById", null, "\t"))
+      journals = await Journal.findById(req.params.id).populate('article').lean();
+      console.log(JSON.stringify(journals, null, "\t"))
+      if (!journals) return res.sendStatus(404);
+    }
     return res.status(200).json(journals);
   } catch (err) {
     return next(err);
   }
 };
-
-/**
- * getArticleBySlug - Returns an article requested by slug
- *
- * @function findJournalBySlug
- * @memberof module:controllers/journals
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-module.exports.findJournalById = async (req, res, next) => {
-  try {
-    console.log(JSON.stringify("findJournalById", null, "\t"))
-    const journal = await Journal.findById(req.params.id).populate('article').lean();
-    console.log(JSON.stringify(journal, null, "\t"))
-    if (!journal) return res.sendStatus(404);
-
-    return res.status(200).json(journal);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 
 /**
  * @function findJournalByIdAndUpdate
@@ -146,3 +135,42 @@ module.exports.createJournal = async (req, res, next) => {
     return next(err);
   }
 };
+
+module.exports.deleteJournal = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id };
+    await Journal.findOneAndRemove(query);
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.addArticleToJournal = async (req, res, next) => {
+  try {
+    let query = { _id: req.body.id_article };
+    const article = await Article.findOne(query);
+    if (article === null)
+      throw { success: false, message: 'You can\'t add an article which does\'nt exist.' }
+    query._id = req.params.id_journal;
+    const toUpdate = { $push: { article } };
+    const options = { new: true };
+    await Journal.findOneAndUpdate(query, toUpdate, options);
+    res.json({ success: true });
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports.removeArticleFromJournal = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id_journal };
+    const journalInfo = await Journal.findOne(query);
+    for (let i = 0, len = journalInfo.content.length; i < len; ++i)
+      if (journalInfo.content[i]._id === req.params.id_article)
+        delete journalInfo.content[i];
+    res.json({ success: true });
+  } catch (e) {
+    next(e)
+  }
+}

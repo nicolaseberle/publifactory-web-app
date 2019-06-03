@@ -49,6 +49,11 @@ const JournalSchema = new Schema({
   }],
   tags:[{
     type: String,
+  }],
+  content: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Article',
+    unique: true
   }]
 });
 
