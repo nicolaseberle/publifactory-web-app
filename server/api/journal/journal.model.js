@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
 const mongoosePaginate = require('mongoose-paginate');
 const mongooseDelete = require('mongoose-delete');
-
-mongoose.plugin(slug);
 
 const Schema = mongoose.Schema;
 
@@ -53,7 +50,7 @@ const JournalSchema = new Schema({
   content: [{
     type: Schema.Types.ObjectId,
     ref: 'Article',
-    unique: true
+    default: null
   }]
 });
 
