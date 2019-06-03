@@ -2,7 +2,7 @@
 <template>
   <div class="wrapper">
       <header class="wrapper">
-          <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/> {{article.nbReviews}} partial reviews</a>
+          <a href="#" title="Check Reviews of the article" class="showreviews active"><i class="el-icon-edit-outline"/> {{reports.length}} partial reviews</a>
           <a href="#" title="Check Comments of the article" class="showcomments"><img src="/static/icons/Comment.svg" class="comments svg" alt="Comments of the article" style="font-size:1.5rem;"><strong> {{article.nbComments}} global reviews</strong></a>
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
@@ -44,7 +44,7 @@
                         placeholder="Please input"
                         v-model="report.content" :disabled='report.edit == false'>
                       </el-input>
-                      <div v-if='selectedComment==key'>{{report.edit}}</div>
+                      <div v-if='selectedComment==key'></div>
                     </div>
                   </div>
                 </div>
@@ -280,7 +280,6 @@ export default {
       editReport: '',
       errors: {message: ''},
       article: '',
-      report_tmp: [],
       optionsReview: [{
           value: 'No revision',
           label: 'No revision'
@@ -399,7 +398,6 @@ export default {
       this.uuid = ''
       this.checkedAnonymous = false
 
-      this.report_tmp.push(newComment)
       this.article.nbReviews = this.article.nbReviews + 1
 
       if (this.editReport) {

@@ -186,6 +186,21 @@ async function findCommentAndDelete(req, res, next) {
   try {
     const comment = await Comment.findOneAndRemove({ uuidComment: req.params.uuid });
 
+    const article = await Article.findByIdAndUpdate(
+      req.params.id ,
+      { $pull: { comments: comment._id } }
+    )
+    // if it's a review
+    if (comment.commentFlag === false) {
+      article.nbReviews = article.nbReviews - 1;
+      await article.save();
+
+    }// else it's a comment
+    else {
+      article.nbComments = article.nbComments - 1;
+      await article.save();
+    }
+
     if (comment.n === 0) return res.sendStatus(404);
 
     return res.sendStatus(204);
@@ -213,8 +228,8 @@ async function answerComment(req, res, next) {
     const uuidComment = req.body.uuidComment;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const reference = req.params.uuid;
-    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag, reference });
+    const childComment = req.params.uuid;
+    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag, childComment });
     const comment = await newComment.save();
     const article = await Article.findOneAndUpdate(
       { _id: req.params.id },

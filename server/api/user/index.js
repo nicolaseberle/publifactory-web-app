@@ -7,6 +7,7 @@ var auth = require('../../auth/auth.service')
 var router = express.Router()
 
 router.post('/', controller.create)
+router.post('/orcid', controller.orcidCreation)
 router.post('/guest', controller.createGuest)
 router.patch('/confirmation', controller.emailConfirmation)
 router.put('/resetPassword', controller.resetPassword)

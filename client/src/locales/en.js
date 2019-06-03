@@ -46,7 +46,9 @@ export default {
     updated: 'Update successed',
     updateFailed: 'Update failed',
     removed: 'Delete successed',
-    removeFailed: 'Delete failed'
+    removeFailed: 'Delete failed',
+    changeRole: 'The roles have been updated',
+    changeRoleFail: 'The role hasn\'t been updated'
   },
   http: {
     error: {

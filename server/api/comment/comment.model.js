@@ -29,7 +29,7 @@ var CommentSchema = new Schema({
   },
   reviewRequest: {
     type: String,
-    required: 'True'
+    required: true
   },
   scores: {
     voterId:[{
@@ -44,13 +44,12 @@ var CommentSchema = new Schema({
       default: 0
     }
   },
-  reference: {
+  childComment: {
     type: Schema.Types.ObjectId,
     ref: 'Comment',
     default: null
   }
-  }
-);
+});
 
 
 CommentSchema.plugin(mongooseDelete, { deletedAt: true });

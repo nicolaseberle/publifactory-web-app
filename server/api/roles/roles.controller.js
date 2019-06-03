@@ -148,6 +148,67 @@ async function createRole (req, res, next) {
   }
 }
 
+async function switchRoute (route, articleInfo) {
+  let status;
+  switch (route) {
+    case 'comment':
+      status = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if (status !== 'published' && articleInfo.right === 'guest')
+        throw { message: "Guests can't publish a review / comment." }
+      break;
+    case 'articleModify':
+      if (articleInfo.right !== 'author')
+        throw { message: "Only the author can modify the article." }
+      break;
+    case 'articleRead':
+      status = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if ((status === 'Reviewing' || status === 'Submited') && articleInfo.right === 'guest')
+        throw { message: "A guest can't access to a submitted / reviewing article." }
+      else if (status === 'Draft' && articleInfo.right !== 'author')
+        throw { message: "Only the author can access a drafted article." }
+      break;
+    case 'submit':
+      if (articleInfo.right !== 'author')
+        throw { message: 'Only the authors can submit an artcle.' };
+      break;
+    case 'review':
+    case 'publish':
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate editor is able to set status in review / publish.' };
+      break;
+    case 'inviteReviewer':
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate editor is able to invite reviewers.' };
+      break;
+    case 'inviteCollaborator':
+      if (articleInfo.right !== 'author')
+        throw { message: 'Only the lead author is able to invite other collaborator' };
+      const authors = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err) reject(err)
+          else resolve(data.authors)
+        })
+      })
+      for (let i = 0, len = authors.length; i < len; ++i)
+        if (authors[i].author._id.toString() === articleInfo.id_user.toString() && authors[i].role === 'Lead')
+          return;
+      throw { message: 'Only the lead author is able to invite other collaborator' };
+  }
+}
+
 async function doYouHaveThisRight (req, res, next) {
   try {
     const articleInfo = await new Promise((resolve, reject) => {
@@ -157,26 +218,10 @@ async function doYouHaveThisRight (req, res, next) {
         else resolve(data);
       })
     });
-    if (req.route === 'comment' && articleInfo.right === 'guest') {
-      throw { message: "Guests can't publish a review / comment." }
-    } else if (req.route === 'articleModify' && articleInfo.right !== 'author') {
-      throw { message: "Only the author can modify the article." }
-    } else if (req.route === 'articleRead') {
-      const status = await new Promise((resolve, reject) => {
-        const query = { _id: req.params.id }
-        Article.findOne(query, (err, data) => {
-          if (err) reject(err)
-          else resolve(data.status)
-        })
-      })
-      if (status === 'Reviewing' && articleInfo.right === 'guest') {
-        throw { message: "A guest can't access to a submitted article." }
-      } else if (status === 'Draft' && articleInfo.right !== 'author')
-        throw { message: "Only the author can access a drafted article." }
-    }
-    // Next to continue to the next middleware
+    await switchRoute(req.route, articleInfo);
     next();
   } catch (e) {
+    console.error(e);
     // Throw to catch the error and transmit it to the router.use route.
     // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
     throw e;

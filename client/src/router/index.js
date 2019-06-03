@@ -151,6 +151,7 @@ export const constantRouterMap = [{
     {
       path: '/articles/:id',
       name: 'Article',
+      props: { newsletterPopup: false },
       meta: { title: 'Articles', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/article/index.vue').then(resolve)

@@ -20,7 +20,7 @@ export function checkEmail (userId) {
 export function loginOrcid (orcidId, password) {
   return Vue.http.post('auth/local/orcid', {
     orcidId, password
-  }).then(res => res.json())
+  }).then(res => console.log(res.json()))
 }
 
 export function resetGuestPassword (id, password, token) {

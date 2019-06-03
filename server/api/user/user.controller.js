@@ -62,6 +62,38 @@ async function createVerificationEmailInvitation (user) {
   }
 }
 
+function orcidCreation(req, res, next) {
+  try {
+    /*
+    * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
+    */
+    User.findOne({email: req.body.email}, async function (err, user) {
+      if(user===null) {
+        var newUser = new User(req.body)
+        newUser.provider = req.body.provider
+        newUser.role = 'user'
+        newUser.roles = ['user']
+        const newToken = await new Promise((resolve, reject) => {
+          newUser.save(async function (err, user) {
+            //if (err) return validationError(res, err)
+            if (err) reject(err)
+            const token = jwt.sign({
+              _id: user._id,
+              name: user.name,
+              role: user.role
+            }, config.secrets.session, { expiresIn: '7d' })
+            resolve(token)
+          })
+        })
+        res.json({ success: true, token: newToken })
+      } else
+        res.json({ success: true })
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 /**
  * Creates a new user
  */
@@ -113,7 +145,7 @@ function createGuest(req, res, next) {
       return validationError(res, err)
     }
     var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-    res.json({token: token })
+    res.json({ user: newUser })
   })
 }
 /**
@@ -324,5 +356,6 @@ module.exports = {
   createGuest: createGuest,
   show: show,
   changePassword: changePassword,
-  destroy: destroy
+  destroy: destroy,
+  orcidCreation: orcidCreation
 }

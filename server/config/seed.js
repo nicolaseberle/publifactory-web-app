@@ -97,11 +97,13 @@ function createComment(user_tmp) {
       let comments = Comments.create(
       {
         userId: [user_tmp[0]._id],
-        content: 'ceci est un commentaire'
+        content: 'ceci est un commentaire',
+        reviewRequest: 'Simple comment'
       },
       {
         userId: [user_tmp[0]._id],
-        content: 'ceci est un autre commentaire'
+        content: 'ceci est un autre commentaire',
+        reviewRequest: 'Simple comment'
       });
   })
   .then(() => {console.log('finished populating comments');})
