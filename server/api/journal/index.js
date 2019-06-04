@@ -15,9 +15,10 @@ router.delete('/:id/article/:id_article', roles.owner, journalController.removeA
 router.put('/:id', roles.administration, journalController.findJournalByIdAndUpdate);
 router.delete('/:id', roles.administration, journalController.deleteJournal);
 
+router.get('/:id/users/:role(editor|associate_editor|user)', journalController.getJournalsUser)
 router.patch('/:id/article/:id_article', roles.publish, journalController.setArticlePublish)
 router.post('/:id/invite/:right(associate_editor|user)', roles.invite, journalController.inviteUser)
-router.post('/:id/:action(follow|unfollow)', journalController.followJournal)
+router.post('/:id/follow', journalController.followJournal)
 
 
 module.exports = router;

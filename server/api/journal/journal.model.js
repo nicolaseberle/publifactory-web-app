@@ -27,11 +27,6 @@ const JournalSchema = new Schema({
     type: String,
     default: 'No_DOI'
   },
-  slug: {
-    type: String,
-    unique: true,
-    slug: 'title',
-  },
   color_1: {
     type: String,
     default: '#F2DFA6'
@@ -40,7 +35,7 @@ const JournalSchema = new Schema({
     type: String,
     default: '#E0CF5C'
   },
-  editor: [{
+  users: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],

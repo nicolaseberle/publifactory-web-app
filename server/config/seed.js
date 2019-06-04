@@ -121,7 +121,7 @@ function createJournals(user_tmp) {
         tags:['Aging','death rates','curve fitting'],
         color_1: '#B9DAAC',
         color_2: '#B9DA90',
-        editor: [user_tmp[2]._id],
+        users: [user_tmp[2]._id],
         published: true
       },
       {
@@ -130,7 +130,7 @@ function createJournals(user_tmp) {
         tags:['Genetics','DNA'],
         color_1: "#F2DFA6",
         color_2: "#E0CF5C",
-        editor: [user_tmp[3]._id],
+        users: [user_tmp[3]._id],
         published: true
       },
       {
@@ -139,7 +139,7 @@ function createJournals(user_tmp) {
         tags:['Chemistry','Biology'],
         color_1: "#FEECD4",
         color_2: "#FAD2BE",
-        editor: [user_tmp[1]._id],
+        users: [user_tmp[1]._id],
         published: true
       });
       return journals
