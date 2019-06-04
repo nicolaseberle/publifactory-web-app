@@ -112,9 +112,9 @@ module.exports.createJournal = async (req, res, next) => {
     //console.log(published);
 
     const newJournal = new Journal({ title, abstract,published});
-    console.log(JSON.stringify(req.body.id_author, null, "\t"));
+    console.log(JSON.stringify(req.decoded._id, null, "\t"));
     //Add Author to the Journal
-    const editor = await User.findById( req.body.id_author ).exec();
+    const editor = await User.findById( req.decoded._id ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
     newJournal.editor[0] = editor;
     const journal = await newJournal.save();
@@ -183,12 +183,9 @@ module.exports.addArticleToJournal = async (req, res, next) => {
 module.exports.removeArticleFromJournal = async (req, res, next) => {
   try {
     const query = { _id: req.params.id_journal };
-    const journalInfo = await Journal.findOne(query);
-    for (let i = 0, len = journalInfo.content.length; i < len; ++i)
-      if (journalInfo.content[i]._id.toString() === req.params.id_article.toString()) {
-        console.log("HE FOUND IT")
-        delete journalInfo.content[i];
-      }
+    const toPull = { $pull: { content: { $in: [req.params.id_article] } } };
+    const options = { multi: false };
+    await Journal.findOneAndUpdate(query, toPull, options);
     res.json({ success: true });
   } catch (e) {
     next(e)
