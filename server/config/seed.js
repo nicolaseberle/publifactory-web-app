@@ -8,7 +8,7 @@ var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 var Journals = require('../api/journal/journal.model');
-var Roles = require('../api/roles/roles.model');
+var Roles = require('../api/roles/article/roles.article.model');
 var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 

@@ -4,9 +4,9 @@
  * Models of the Roles table
  * @type {*|*[]|(function(*, *): (null|*))|(function(*, *): *)|(function(*, *=, *=): *)|(function(*=, *, *): boolean)|{preTransformNode}|string}
  */
-const Roles = require('./roles.model')
-const Article = require('../article/article.model')
-const User = require('../user/user.model')
+const Roles = require('./roles.article.model')
+const Article = require('../../article/article.model')
+const User = require('../../user/user.model')
 
 /**
  * This route permit to get all the users of an article with their rights.
@@ -32,7 +32,6 @@ async function getArticleUsers (req, res, next) {
 
 /**
  * This route permit to get all the roles of an user on every article he is incorporated.
- * TODO : If the id parameter isn't specified, it will return the roles of the connected user.
  * @param req
  * @param res
  * @param next
@@ -41,7 +40,7 @@ async function getArticleUsers (req, res, next) {
  */
 async function getUserRoles (req, res, next) {
   try {
-    const query = { id_user: (req.params.id ? req.params.id : null) };
+    const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
     const response = await new Promise(async (resolve, reject) => {
       resolve(await Roles.find(query));
     });
