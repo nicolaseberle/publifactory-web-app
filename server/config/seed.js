@@ -423,8 +423,8 @@ function createUsers() {
       },
       {
         provider: 'local',
-        role: 'user',
-        roles : ['user'],
+        role: 'editor',
+        roles : ['editor'],
         name: 'leo',
         firstname: 'Leo',
         username: 'Leo',

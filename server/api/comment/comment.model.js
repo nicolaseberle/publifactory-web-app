@@ -51,10 +51,6 @@ var CommentSchema = new Schema({
   }]
 });
 
-
-
-
-
 CommentSchema.plugin(mongooseDelete, { deletedAt: true });
 CommentSchema.plugin(mongoosePaginate);
 

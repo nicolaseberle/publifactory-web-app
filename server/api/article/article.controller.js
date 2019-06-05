@@ -333,3 +333,19 @@ module.exports.updateAuthorRights = async function (req, res, next) {
     next(e);
   }
 };
+
+module.exports.addReviewer = async function (req, res, next) {
+  try {
+    if (req.body.reviewer === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ email: req.body.reviewer.email }).exec();
+    const query = { _id: req.params.id };
+    const toAdd = { $push: { reviewers: user._id } };
+    const options = { new: true };
+    await Article.findOneAndUpdate(query, toAdd, options);
+    new Roles({ id_user: user._id, id_article: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
