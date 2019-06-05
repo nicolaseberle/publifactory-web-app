@@ -53,7 +53,7 @@
           </el-col>
           <el-col :span="6" :offset="2">
             <strong>Created on : </strong>{{ journal.creationDate | moment("DD/MM/YYYY") }}
-            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.editor" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
+            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.users" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
             <p><strong>Associate Editor:</strong> </p>
           </el-col>
         </el-row>

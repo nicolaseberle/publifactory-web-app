@@ -8,7 +8,8 @@ var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 var Journals = require('../api/journal/journal.model');
-var Roles = require('../api/roles/roles.model');
+var RolesArticle = require('../api/roles/article/roles.article.model');
+var RolesJournal = require('../api/roles/journal/roles.journal.model');
 var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
@@ -73,10 +74,10 @@ var populateUsers = new Promise(
 
 var populateBase = function () {
     populateUsers.then(function (users) {
-      User.find({}, function (err, users) {
+      User.find({}, async function (err, users) {
         if (err) throw err
         createComment(users)
-        createArticles(users);
+        await createArticles(users);
         createJournals(users);
       })
       }).catch(function (error) {
@@ -121,7 +122,7 @@ function createJournals(user_tmp) {
         tags:['Aging','death rates','curve fitting'],
         color_1: '#B9DAAC',
         color_2: '#B9DA90',
-        editor: [user_tmp[2]._id],
+        users: [user_tmp[2]._id],
         published: true
       },
       {
@@ -130,7 +131,7 @@ function createJournals(user_tmp) {
         tags:['Genetics','DNA'],
         color_1: "#F2DFA6",
         color_2: "#E0CF5C",
-        editor: [user_tmp[3]._id],
+        users: [user_tmp[3]._id],
         published: true
       },
       {
@@ -139,7 +140,7 @@ function createJournals(user_tmp) {
         tags:['Chemistry','Biology'],
         color_1: "#FEECD4",
         color_2: "#FAD2BE",
-        editor: [user_tmp[1]._id],
+        users: [user_tmp[1]._id],
         published: true
       });
       return journals
@@ -295,13 +296,14 @@ async function createArticles (user_tmp, comment_tmp) {
 }
 
 function createRole(user, article) {
-  Roles.find({}).remove().then(() => {
-    Roles.create({
+  RolesArticle.find({}).remove().then(() => {
+    RolesArticle.create({
       id_user: user[0]._id,
       id_article: article._id,
       right: 'author'
     });
-  })
+  });
+  RolesJournal.find({}).remove().exec();
 }
 
 function createUsers() {

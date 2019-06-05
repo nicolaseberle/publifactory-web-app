@@ -2,14 +2,14 @@
 
 var express = require('express')
 const commentsController = require('./comment.controller');
-const roles = require('../roles/roles.controller');
+const rolesArticle = require('../roles/article/roles.article.controller');
 
 var router = express.Router()
 
 router.use('/:id', async function (req, res, next) {
   try {
     req.route = 'comment';
-    await roles.doYouHaveThisRight(req, res, next);
+    await rolesArticle.doYouHaveThisRight(req, res, next);
   } catch (e) {
     return res.status(401).json({ success: false, message: e.message });
   }

@@ -40,7 +40,7 @@ const JournalSchema = new Schema({
     type: String,
     default: '#E0CF5C'
   },
-  editor: [{
+  users: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],
@@ -48,9 +48,15 @@ const JournalSchema = new Schema({
     type: String,
   }],
   content: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Article',
-    default: null
+    published: {
+      type: Boolean,
+      default: false
+    },
+    reference: {
+      type: Schema.Types.ObjectId,
+      ref: 'Article',
+      default: null
+    }
   }]
 });
 

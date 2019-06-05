@@ -3,6 +3,12 @@
 const User = require('../user/user.model')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
+const Roles = require('../roles/journal/roles.journal.model')
+const Invitation = require('../invitations/invitations.model')
+const Email = require('../email/email.controller')
+
+const shortid = require('shortid')
+const configEmail = require('../../../config.js').email
 
 /**
  * Get list of articles
@@ -40,7 +46,7 @@ exports.getJournals = async (req, res, next) => {
       journals = await Journal.paginate({ deleted: false, published: true }, {
         page,
         limit,
-        populate: 'editor',
+        populate: 'users',
         lean: true
       });
       console.log(JSON.stringify(journals, null, "\t"))
@@ -114,10 +120,11 @@ module.exports.createJournal = async (req, res, next) => {
     const newJournal = new Journal({ title, abstract,published});
     console.log(JSON.stringify(req.decoded._id, null, "\t"));
     //Add Author to the Journal
-    const editor = await User.findById( req.decoded._id ).exec();
+    const user = await User.findById( req.decoded._id ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
-    newJournal.editor[0] = editor;
+    newJournal.users[0] = req.decoded._id;
     const journal = await newJournal.save();
+    new Roles({ id_user: req.decoded._id, id_journal: journal, right: 'editor' }).save();
 
     console.log(JSON.stringify(journal._id, null, "\t"));
 
@@ -161,8 +168,8 @@ module.exports.addArticleToJournal = async (req, res, next) => {
     const article = await Article.findOne(query);
     if (article === null)
       throw { success: false, message: 'You can\'t add an article which does\'nt exist.' }
-    query._id = req.params.id_journal;
-    const toUpdate = { $push: { content: article } };
+    query._id = req.params.id;
+    const toUpdate = { $push: { content: { reference: article, published: false } } };
     const options = { new: true };
     await Journal.findOneAndUpdate(query, toUpdate, options);
     res.json({ success: true });
@@ -182,12 +189,98 @@ module.exports.addArticleToJournal = async (req, res, next) => {
  */
 module.exports.removeArticleFromJournal = async (req, res, next) => {
   try {
-    const query = { _id: req.params.id_journal };
-    const toPull = { $pull: { content: { $in: [req.params.id_article] } } };
+    const query = { _id: req.params.id };
+    const toPull = { $pull: { content: { reference: { $in: [req.params.id_article] } } } };
     const options = { multi: false };
     await Journal.findOneAndUpdate(query, toPull, options);
     res.json({ success: true });
   } catch (e) {
     next(e)
+  }
+}
+
+module.exports.getJournalsUser = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id };
+    if (req.params.role !== undefined)
+      query.right = req.params.role;
+    const users = await Roles.find(query);
+    res.json({ success: true, users: users });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.setArticlePublish = async (req, res, next) => {
+  try {
+    const query = { _id: req.params.id, content: { reference: { $in: [req.params.id_article] } } };
+    const toUpdate = { $set: { content: { published: true } } };
+    await Roles.findOneAndUpdate(query, toUpdate);
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.inviteUser = async (req, res, next) => {
+  try {
+    let senderId = req.body.link,
+      senderMsg = req.body.msg,
+      receiverEmail = req.body.to,
+      senderName = req.body.name,
+      newLink = shortid.generate();
+    //to avoid '-' in the link
+    while(newLink.indexOf('-')>=0){
+      newLink = shortid.generate();
+    }
+    let current = new Date().toISOString()
+    const newInvitation = new Invitation({
+      "created_at": current,
+      "updated_at": current,
+      "link": newLink,
+      "recieptEmail": receiverEmail,
+      "senderId": senderId,
+      "senderMsg": senderMsg,
+      "senderName": senderName
+    });
+    await newInvitation.save(async (error, result) => {
+      if (error) {
+        return console.log(error);
+      } else {
+        //we send the email to invite the new author to access
+        const mail = new Email(receiverEmail);
+        const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}?redirect=${req.params.id}`;
+        if (req.params.right === 'user') {
+          await mail.sendInvitationJournalUser(senderId, clientUrl)
+        } else {
+          const userInfo = await User.findOne({ email: req.body.to });
+          const role = new Roles({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
+          await role.save();
+          await mail.sendInvitationJournalAssociateEditor(senderId, clientUrl)
+        }
+      }
+    })
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.followJournal = async (req, res, next) => {
+  try {
+    let instruction, query = { id_journal: req.params.id, id_user: req.decoded._id }
+    const roleInfo = await Roles.findOne(query);
+    if (roleInfo === null) {
+      instruction = { $push: { users: req.decoded._id } }
+      await new Roles({ id_user: req.decoded._id, id_journal: req.params.id }).save()
+    } else {
+      instruction = { $pull: { users: { $in: [req.decoded._id] } } }
+      await Roles.findOneAndDelete(query);
+    }
+    query = { _id: req.params.id };
+    await Journal.findOneAndUpdate(query, instruction);
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
   }
 }
