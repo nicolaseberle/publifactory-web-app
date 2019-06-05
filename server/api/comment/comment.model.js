@@ -54,14 +54,20 @@ var CommentSchema = new Schema({
 CommentSchema.plugin(mongooseDelete, { deletedAt: true });
 CommentSchema.plugin(mongoosePaginate);
 
-var autoPopulateComment = function(next) {
+var autoPopulateChildComment = function(next) {
   this.populate('childComment');
+  next();
+};
+var autoPopulateUser = function(next) {
+  this.populate('userId');
   next();
 };
 
 CommentSchema.
-  pre('findOne', autoPopulateComment).
-  pre('find', autoPopulateComment);
+  pre('findOne', autoPopulateChildComment).
+  pre('find', autoPopulateChildComment).
+  pre('findOne', autoPopulateUser).
+  pre('find', autoPopulateUser);
 /**
  * @class Comment
  */

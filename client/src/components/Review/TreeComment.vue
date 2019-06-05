@@ -37,7 +37,7 @@
                 <div data-review="report.uuidComment" v-on:click="focusOnCommentedText()">
                   <el-input
                     type="textarea"
-                    :autosize="{ minRows: 2, maxRows: 10}"
+                    :autosize="{ minRows: 3, maxRows: 10}"
                     placeholder="Please input"
                     v-model="comment" :disabled='flagEditComment == false'>
                   </el-input>
@@ -46,12 +46,12 @@
               </div>
             </div>
           </section>
-          <footer style='text-align: right'>
+          <footer class='menu-icon-footer'>
             <!--<footer class="grid-header">
             </footer>-->
             <!--<el-button plain type="success" icon="el-icon-arrow-up" circle></el-button>
             <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
-            <el-button v-show='flagEditComment == false' icon="el-icon-share" circle></el-button>
+            <el-button v-show="flagEditComment == false & reviewRequest !='None'" icon="el-icon-share" circle></el-button>
             <el-button v-show='flagEditComment == false' v-on:click='openBoxToReply()' circle><font-awesome-icon icon="reply" /></el-button>
             <el-button v-show='flagEditComment == true' icon="el-icon-close" type="primary" v-on:click='cancelComment()' circle ></el-button>
             <el-button v-show='flagEditComment == true' icon="el-icon-check" type="success" v-on:click='saveComment()' circle ></el-button>
@@ -59,6 +59,23 @@
             <el-button type='warning' plain icon="el-icon-delete" style='float:right;' v-on:click='deleteComment()' circle></el-button>
 
           </footer>
+
+          <footer v-if="reviewRequest == 'Simple comment'" class='reply-footer simple-comment'>
+              Show replies<i class="el-icon-arrow-down"></i>
+          </footer>
+          <footer  v-if="reviewRequest == 'Minor revision'" class='reply-footer minor-revision'>
+              Show replies<i class="el-icon-arrow-down"></i>
+          </footer>
+          <footer v-if="reviewRequest == 'Major revision'" class='reply-footer major-revision'>
+              Show replies<i class="el-icon-arrow-down"></i>
+          </footer>
+          <footer v-if="reviewRequest == 'Rejection'" class='reply-footer rejection'>
+              Show replies<i class="el-icon-arrow-down"></i>
+          </footer>
+          <footer v-if="reviewRequest == 'No revision'" class='reply-footer no-revision'>
+              Show replies<i class="el-icon-arrow-down"></i>
+          </footer>
+
           <el-card v-show='flagToAnswer == true' style='margin-top:10px'>
 
             <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
@@ -66,8 +83,8 @@
             </el-row>
             <el-row type="flex" class="row-bg" style="margin: 5px 0 20px 0;align-items: center;">
               <el-checkbox v-model="checkedAnonymous"><svg-icon icon-class='private'/></el-checkbox>
-              <el-button type="primary" class='button-submit' style="margin-left: 5%; float:right" v-on:click="createAnswer()" icon="el-icon-upload2">Reply</el-button>
-              <el-button type="primary" class='button-submit' style="margin-left: 5%; float:right" v-on:click="closeBoxToReply()" icon="el-icon-close">Cancel</el-button>
+              <el-button type="" class='button-submit' style="float:right" v-on:click="closeBoxToReply()" icon="el-icon-close">Cancel</el-button>
+              <el-button type="primary" class='button-submit' style="float:right" v-on:click="createAnswer()" icon="el-icon-upload2">Reply</el-button>
             </el-row>
             <el-row type="flex" class="row-bg" justify="center">
 
@@ -366,7 +383,7 @@ export default {
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
 
-  border-bottom: 15px solid #8E9FBB;
+  border-bottom: 15px solid rgb(0,150,0);
 }
 .arrow-up:hover {
   border-bottom: 15px solid #475069;
@@ -377,7 +394,7 @@ export default {
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
 
-  border-top: 15px solid #8E9FBB;
+  border-top: 15px solid rgb(150,0,0);
 }
 .arrow-down:hover {
   border-top: 15px solid #475069;
