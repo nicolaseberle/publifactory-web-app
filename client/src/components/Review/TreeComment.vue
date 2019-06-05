@@ -2,7 +2,8 @@
   <div>
 
       <div :style="indent">
-        <article v-if='label'>
+        <transition v-on:enter="enter" v-on:leave="leave">
+        <article v-if='label && (flagShowingComment || depth<2)'>
           <header>
             <a v-if='anonymousFlag==false' href="#" title="OSPR's profile">{{ user.firstname}} {{ user.lastname}}</a>
             <a v-if='anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
@@ -59,21 +60,20 @@
             <el-button type='warning' plain icon="el-icon-delete" style='float:right;' v-on:click='deleteComment()' circle></el-button>
 
           </footer>
-
-          <footer v-if="reviewRequest == 'Simple comment'" class='reply-footer simple-comment'>
-              Show replies<i class="el-icon-arrow-down"></i>
+          <footer v-if="reviewRequest == 'Simple comment' && nodes.length>0" class='reply-footer simple-comment'>
+              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
           </footer>
-          <footer  v-if="reviewRequest == 'Minor revision'" class='reply-footer minor-revision'>
-              Show replies<i class="el-icon-arrow-down"></i>
+          <footer  v-if="reviewRequest == 'Minor revision' && nodes.length>0" class='reply-footer minor-revision'>
+              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
           </footer>
-          <footer v-if="reviewRequest == 'Major revision'" class='reply-footer major-revision'>
-              Show replies<i class="el-icon-arrow-down"></i>
+          <footer v-if="reviewRequest == 'Major revision' && nodes.length>0" class='reply-footer major-revision'>
+              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
           </footer>
-          <footer v-if="reviewRequest == 'Rejection'" class='reply-footer rejection'>
-              Show replies<i class="el-icon-arrow-down"></i>
+          <footer v-if="reviewRequest == 'Rejection' && nodes.length>0" class='reply-footer rejection'>
+              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
           </footer>
-          <footer v-if="reviewRequest == 'No revision'" class='reply-footer no-revision'>
-              Show replies<i class="el-icon-arrow-down"></i>
+          <footer v-if="reviewRequest == 'No revision' && nodes.length>0" class='reply-footer no-revision'>
+              <a @click='changeStateReply()'>Show replies ({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
           </footer>
 
           <el-card v-show='flagToAnswer == true' style='margin-top:10px'>
@@ -81,10 +81,12 @@
             <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
               <div style='font-family:"Calibri-bold";color:#f3f3f3;'>Anonymous peer review</div>
             </el-row>
-            <el-row type="flex" class="row-bg" style="margin: 5px 0 20px 0;align-items: center;">
+            <el-row class="row-bg" style="margin: 5px 0 20px 0;align-items: center;">
               <el-checkbox v-model="checkedAnonymous"><svg-icon icon-class='private'/></el-checkbox>
-              <el-button type="" class='button-submit' style="float:right" v-on:click="closeBoxToReply()" icon="el-icon-close">Cancel</el-button>
-              <el-button type="primary" class='button-submit' style="float:right" v-on:click="createAnswer()" icon="el-icon-upload2">Reply</el-button>
+              <div style='float:right'>
+                <el-button type="" class='button-submit' v-on:click="closeBoxToReply()" icon="el-icon-close">Cancel</el-button>
+                <el-button type="primary"class='button-submit' v-on:click="createAnswer()" icon="el-icon-upload2">Reply</el-button>
+              </div>
             </el-row>
             <el-row type="flex" class="row-bg" justify="center">
 
@@ -99,29 +101,34 @@
 
           </el-card>
         </article>
+
+      </transition>
       </div>
-    <tree-comment
-      v-for="(node,key) in nodes"
-      :key="key"
-      :uuidComment="node.uuidComment"
-      :nodes="node.childComment"
-      :label="node.content"
-      :scores="node.scores"
-      :creationDate="node.creationDate"
-      :reviewRequest="node.reviewRequest"
-      :anonymousFlag="node.anonymousFlag"
-      :user="node.userId"
-      :depth="depth + 1"
-      v-on:post='reload'
-    >
-  </tree-comment>
+
+      <tree-comment
+        v-for="(node,key) in nodes"
+        :key="key"
+        :uuidComment="node.uuidComment"
+        :nodes="node.childComment"
+        :label="node.content"
+        :scores="node.scores"
+        :creationDate="node.creationDate"
+        :reviewRequest="node.reviewRequest"
+        :anonymousFlag="node.anonymousFlag"
+        :user="node.userId"
+        :flagShowingComment="flagShowingComment"
+        :depth="depth + 1"
+        v-on:post='reload'
+      >
+      </tree-comment>
+
   </div>
 </template>
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-
+import velocity from 'velocity-animate'
 var uuidv4 = require('uuid/v4');
 
 export default {
@@ -138,6 +145,7 @@ export default {
             }
 
     }},
+  flagShowingComment: {type: Boolean, default:false},
   depth: {type: Number},
   creationDate: String,
   anonymousFlag: {type: Boolean},
@@ -323,6 +331,18 @@ export default {
     },
     reload () {
       this.$emit('post')
+    },
+    changeStateReply()
+    {
+      this.flagShowingComment = !this.flagShowingComment
+    },
+    enter: function (el, done) {
+      velocity(el, 'slideDown', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
+    },
+    leave: function (el, done) {
+      velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
+        { complete: done })
     }
   }
 }
