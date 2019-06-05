@@ -125,7 +125,7 @@ async function switchRoute (req, journalInfo) {
     case 'owner':
       const query = { id_user: journalInfo.id_user, id_article: req.params.id_article }
       const articleInfo = await RolesArticle.findOne(query);
-      if (articleInfo.right !== 'author')
+      if (!articleInfo || articleInfo.right !== 'author')
         throw { message: 'Only the author can post his article in a journal.' }
       break;
     case 'invite':

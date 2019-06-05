@@ -8,7 +8,8 @@ var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 var Journals = require('../api/journal/journal.model');
-var Roles = require('../api/roles/article/roles.article.model');
+var RolesArticle = require('../api/roles/article/roles.article.model');
+var RolesJournal = require('../api/roles/journal/roles.journal.model');
 var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
@@ -73,10 +74,10 @@ var populateUsers = new Promise(
 
 var populateBase = function () {
     populateUsers.then(function (users) {
-      User.find({}, function (err, users) {
+      User.find({}, async function (err, users) {
         if (err) throw err
         createComment(users)
-        createArticles(users);
+        await createArticles(users);
         createJournals(users);
       })
       }).catch(function (error) {
@@ -295,13 +296,14 @@ async function createArticles (user_tmp, comment_tmp) {
 }
 
 function createRole(user, article) {
-  Roles.find({}).remove().then(() => {
-    Roles.create({
+  RolesArticle.find({}).remove().then(() => {
+    RolesArticle.create({
       id_user: user[0]._id,
       id_article: article._id,
       right: 'author'
     });
-  })
+  });
+  RolesJournal.find({}).remove().exec();
 }
 
 function createUsers() {

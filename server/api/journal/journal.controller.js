@@ -121,7 +121,7 @@ module.exports.createJournal = async (req, res, next) => {
     //Add Author to the Journal
     const user = await User.findById( req.decoded._id ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
-    newJournal.users[0] = user;
+    newJournal.users[0] = req.decoded._id;
     const journal = await newJournal.save();
     new Roles({ id_user: req.decoded._id, id_journal: journal, right: 'editor' }).save();
 
@@ -266,15 +266,22 @@ module.exports.inviteUser = async (req, res, next) => {
 
 module.exports.followJournal = async (req, res, next) => {
   try {
-    let instruction, query = { _id: req.params.id, id_user: req.decoded._id }
+    let instruction, query = { id_journal: req.params.id, id_user: req.decoded._id }
     const roleInfo = await Roles.findOne(query);
-    if (!roleInfo) {
+    console.log('\n')
+    console.log(roleInfo)
+    console.log('\n')
+    if (roleInfo === null) {
+      console.log(":::: DOESN'T EXIST, THEN CREATE ::::")
       instruction = { $push: { users: req.decoded._id } }
+      await new Roles({ id_user: req.decoded._id, id_journal: req.params.id }).save()
     } else {
-      instruction = { $pull: { users: req.decoded._id } }
+      console.log(":::: EXIST, THEN DELETE ::::")
+      instruction = { $pull: { users: { $in: [req.decoded._id] } } }
+      await Roles.findOneAndDelete(query);
     }
     query = { _id: req.params.id };
-    await Roles.findOneAndUpdate(query, instruction);
+    await Journal.findOneAndUpdate(query, instruction);
     res.json({ success: true })
   } catch (e) {
     next(e);

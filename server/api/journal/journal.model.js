@@ -27,6 +27,11 @@ const JournalSchema = new Schema({
     type: String,
     default: 'No_DOI'
   },
+  slug: {
+    type: String,
+    unique: true,
+    slug: 'title',
+  },
   color_1: {
     type: String,
     default: '#F2DFA6'
