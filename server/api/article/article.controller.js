@@ -323,11 +323,8 @@ module.exports.updateAuthorRights = async function (req, res, next) {
       throw { success: false, message: 'Missing parameters in body field.' };
     const query = { _id: req.params.id };
     const toReplace = { $set: { authors: req.body.newAuthors } };
-    console.log(req.body.newAuthors)
-    await Article.updateOne(query, toReplace, (err, data) => {
-      if (err) throw err
-      else console.log(data)
-    });
+    console.log(req.body.newAuthors.data)
+    await Article.updateOne(query, toReplace);
     res.status(201).json({ success: true })
   } catch (e) {
     next(e);

@@ -240,11 +240,9 @@ export default {
           .then(async (res) => {
             //if the email is not in the db -> create guest account
             if (res.data == null) {
-              console.log("creation of the temp account")
               resolve((await this.createTempAccount(email, link, firstname, lastname)).user)
             } else {
-              console.log("this account exists yet")
-              resolve(res)
+              resolve(res.data)
             }
           }).then(() => {
           this.addNewAuthor(email)

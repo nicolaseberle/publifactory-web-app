@@ -170,7 +170,7 @@ async function switchRoute (route, articleInfo) {
       status = await new Promise((resolve, reject) => {
         const query = { _id: articleInfo.id_article }
         Article.findOne(query, (err, data) => {
-          if (err) reject(err)
+          if (err || !data) reject(err)
           else resolve(data.status)
         })
       })
