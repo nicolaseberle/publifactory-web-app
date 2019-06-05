@@ -395,6 +395,7 @@ aside.content-comments-reviews {
                 //overflow-x:scroll;
                 //max-height: 300px;
 
+
                 header {
                     height: 68px;
                     display: flex;
@@ -490,6 +491,7 @@ aside.content-comments-reviews {
                         /*margin: 7px 0;*/
                     }
                 }
+
             }
         }
         .button-submit{
@@ -582,17 +584,36 @@ aside.content-comments-reviews {
             }
         }
 
-        footer.wrapper {
-            box-sizing: border-box;
-            grid-row: 3;
-            grid-column: 1;
-            display: block;
-            height: $asideRightFooterHeight;
-            width: 100%;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            border-top: solid 1px greyBorderColor(0.3);
+        footer.menu-icon-footer{
+          text-align: right;
+          margin-top:5px;
         }
+        footer.reply-footer{
+          justify-content: center;
+          font-family: 'DNLTPro-bold';
+          align-items: center;
+          vertical-align: middle;
+          color:black;
+          height:40px;
+          margin:10px -10px -10px -10px;
+          text-align:center;
+          display: flex;
+        }
+        footer.minor-revision {
+          background-color:rgba(230, 162, 60,0.3);
+        }
+        footer.simple-comment {
+          background-color:rgba(176,196,222,0.3);
+        }
+        footer.no-revision {
+          background-color: rgba(154, 205, 50, 0.3);
+        }
+        footer.major-revision {
+          background-color:rgba(255,0,0,0.2);
+        }
+        footer.rejection {
+          background-color:rgba(0,0,0,0.2);
+        }
+
     }
 }
