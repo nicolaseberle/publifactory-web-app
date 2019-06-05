@@ -44,11 +44,11 @@ var CommentSchema = new Schema({
       default: 0
     }
   },
-  childComment: {
+  childComment: [{
     type: Schema.Types.ObjectId,
     ref: 'Comment',
     default: null
-  }
+  }]
 });
 
 

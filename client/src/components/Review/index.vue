@@ -7,64 +7,7 @@
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
-          <article v-for="(report,key) in reports">
-              <header>
-                  <a v-if='report.anonymousFlag==false' href="#" title="OSPR's profile">{{ report.userId.firstname  }} {{ report.userId.lastname }}</a>
-                  <a v-if='report.anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
-                  <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ report.creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
-                  <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-                  <el-tag class="no-revision" v-if="report.reviewRequest == 'No revision'" type="success">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="minor-revision" v-if="report.reviewRequest == 'Minor revision'" type="warning">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="major-revision" v-if="report.reviewRequest == 'Major revision'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="rejection" v-if="report.reviewRequest == 'Rejection'" type="danger">{{ report.reviewRequest }}</el-tag>
-                  <el-tag class="simple-comment" v-if="report.reviewRequest == 'Simple comment'" type="danger">{{ report.reviewRequest }}</el-tag>
-              </header>
-              <section>
-                <div class='card-review'>
-                  <div class='col-vote'>
-                    <div class='vote-icon'>
-                      <!--<el-button plain type="" icon="el-icon-caret-top" circle></el-button>-->
-                      <!--<i class='el-icon-caret-top'></i>-->
-                      <div class="arrow-up"  v-on:click="upvoteComment($event,report._id,key)"></div>
-                    </div>
-                    <div class='vote-counter'>
-                      {{report.scores.upvote}}
-                    </div>
-                    <div class='vote-icon'>
-                      <!--<i class='el-icon-caret-bottom'></i>-->
-                      <!--<el-button plain type="" icon="el-icon-caret-bottom" circle></el-button>-->
-                      <div class="arrow-down" v-on:click="downvoteComment($event,report._id,key)"></div>
-                    </div>
-                  </div>
-                  <div class='col-content'>
-                    <div data-review="report.uuidComment" v-on:click="focusOnCommentedText($event,report.uuidComment)">
-                      <el-input
-                        type="textarea"
-                        :autosize="{ minRows: 2, maxRows: 10}"
-                        placeholder="Please input"
-                        v-model="report.content" :disabled='report.edit == false'>
-                      </el-input>
-                      <div v-if='selectedComment==key'></div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <footer style='text-align: right'>
-                <!--<footer class="grid-header">
-                </footer>-->
-                <!--<el-button plain type="success" icon="el-icon-arrow-up" circle></el-button>
-                <el-button plain type="warning" icon="el-icon-arrow-down" circle></el-button>-->
-                <el-button v-show='report.edit == false' icon="el-icon-share" circle></el-button>
-                <el-button v-show='report.edit == false' circle><font-awesome-icon icon="reply" /></el-button>
-                <el-button v-show='report.edit == true' icon="el-icon-close" type="primary" v-on:click='cancelComment(key)' circle ></el-button>
-                <el-button v-show='report.edit == true' icon="el-icon-check" type="success" v-on:click='saveComment(key)' circle ></el-button>
-                <el-button v-show='report.edit == false' icon="el-icon-edit" v-on:click='editComment(key)' circle ></el-button>
-                <el-button type='warning' plain icon="el-icon-delete" style='float:right;' v-on:click='deleteComment(key)' circle></el-button>
-              </footer>
-          </article>
-
-
-
+          <tree-comment :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
           <el-card id="card-form-report">
 
           <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
@@ -173,6 +116,8 @@ import VuePlotly from '@statnett/vue-plotly'
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 var uuidv4 = require('uuid/v4');
 
+import TreeComment from './TreeComment.vue'
+
 library.add(faCoffee,faReply)
 
 const layout_1 = {
@@ -211,7 +156,7 @@ const layout_2 = {
 export default {
   name: 'reportComponent',
   locales,
-  components: {'font-awesome-icon': FontAwesomeIcon, VuePlotly},
+  components: {'tree-comment': TreeComment,'font-awesome-icon': FontAwesomeIcon, VuePlotly},
   props: ['uuid'],
   data () {
     return {
@@ -258,26 +203,13 @@ export default {
           fill: 'toself',
           name: 'review 11'
         }]
-      }/*,
-      {
-        name: 'Reviewer 2',
-        id: '3',
-        reviewContent: 'This subject is close to the article of Albeck & Al. He is',
-        layout: layout,
-        currentData: [
-        {
-          type: 'scatterpolar',
-          r: [3, 4, 4, 2, 5, 4, 4, 3],
-          theta: ['Reproducibility', 'Open Data', 'Quality of biblio','Statistic Relevance', 'Rigorous', 'Writing','Innovative', 'Reproducibility'],
-          fill: 'toself',
-          name: 'review 2'
-        }]
-      }*/],
+      }],
       activeComments: ['1'],
       checkedAnonymous: false,
       activeName: 'first',
       reports : '',
       editReport: '',
+      editAnswer: '',
       errors: {message: ''},
       article: '',
       optionsReview: [{
@@ -325,6 +257,7 @@ export default {
     this.id = this.$route.params && this.$route.params.id
     this.fetchReport(this.id)
     this.fetchArticle(this.id)
+
   },
   mounted () {
     asideRightAnimation()
@@ -357,9 +290,11 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.reports = response.data
+
         const _allReports = [];
         for (var i=0, _report; _report = this.reports[i]; i++){
           _report.edit = false;
+          _report.flagToAnswer = false;
           _allReports.push(_report);
         }
         this.reports = _allReports
@@ -377,20 +312,26 @@ export default {
         console.log(err)
       })
     },
+    reload () {
+      this.fetchReport(this.id)
+    },
     createReport() {
       let response__;
       console.log("createReport : " , this.uuid)
-      var self = this;
-      var now = new Date().getTime();
+      let now = new Date().getTime();
       this.form.creationDate = now
+      let uuid = ''
       if (this.uuid==''){
-        this.uuid = String(uuidv4())
+        uuid = String(uuidv4())
+      } else {
+        uuid = this.uuid
       }
+
       const newComment = {
         date: now,
-        userId : self.userId,
+        userId : this.userId,
         content : String(this.editReport),
-        uuidComment: String(this.uuid),
+        uuidComment: String(uuid),
         reviewRequest : String(this.reviewRequest),
         commentFlag : false, //it's a review,
         anonymousFlag: this.checkedAnonymous
@@ -415,78 +356,6 @@ export default {
       .catch(err => {
         this.errors.message = 'createReport fails';
       });
-    },
-    editComment (key) {
-      this._originalComment = Object.assign({}, this.reports[key])
-      this.reports[key].edit = true
-      this.selectedComment = key
-    },
-    saveComment (key) {
-      axios.put('/api/comments/'  + this.id + '/comments/' + this.reports[key].uuidComment + '/content',{'content':this.reports[key].content}, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-        .then(response => {
-      }).catch(err => {
-        console.log(err)
-      })
-      this.reports[key].edit = false
-      this.selectedComment = -1
-    },
-    cancelComment (key) {
-      Object.assign(this.reports[key], this._originalComment)
-      this.reports[key].edit = false
-      this.selectedComment = -1
-    },
-    deleteComment (key) {
-      this.$confirm(`This action will remove the selected comment forever, still going on?`, this.$t('confirm.title'), {
-        type: 'warning'
-      }).then(() => {
-        axios.delete('/api/comments/'+this.id+'/comments/'+ this.reports[key].uuidComment, {
-          headers: {'Authorization': `Bearer ${this.accessToken}`}
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t('message.removed')
-          })
-        this.fetchReport(this.id)
-        })
-      }).catch(() => {})
-    },
-    upvoteComment (ev,idComment,key) {
-      console.log('upvoteComment')
-      this.reports[key].scores.upvote = ++this.reports[key].scores.upvote
-      axios.put('/api/comments/'  + this.id + '/comments/' + idComment,{"upvote": 1, "downvote": 0 , "userId":[this.userId]}, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-        .then(response => {
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    downvoteComment (ev,idComment,key) {
-      console.log('downvoteComment')
-      this.reports[key].scores.downvote = ++this.reports[key].scores.downvote
-      axios.put('/api/comments/'  + this.id + '/comments/' + idComment,{"upvote": 0, "downvote": 1 , "userId":[this.userId]}, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-        .then(response => {
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    focusOnCommentedText (ev,idComment) {
-      console.log('focusOnCommentedText')
-      const markup = idComment
-      const articleText = $("span[datareview='" + markup + "']")
-      if (articleText.length > 0){
-        console.log(articleText)
-        var offset = 200
-        var delay = 1000
-        $('html, body').animate({
-          scrollTop: $(articleText).offset().top - offset
-        }, delay, 'swing')
-      }
-
     }
   }
 }
