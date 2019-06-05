@@ -4,6 +4,7 @@ const User = require('../user/user.model')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
 const Roles = require('../roles/journal/roles.journal.model')
+const Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
 
 const shortid = require('shortid')
@@ -249,12 +250,13 @@ module.exports.inviteUser = async (req, res, next) => {
         //we send the email to invite the new author to access
         const mail = new Email(receiverEmail);
         const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}?redirect=${req.params.id}`;
-        if (req.params.right === 'user')
-          await mail.sendInvitationJournalUser(req.body.sender, clientUrl)
-        else {
+        if (req.params.right === 'user') {
+          await mail.sendInvitationJournalUser(senderId, clientUrl)
+        } else {
           const userInfo = await User.findOne({ email: req.body.to });
-          await new Roles({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
-          await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl)
+          const role = new Roles({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
+          await role.save();
+          await mail.sendInvitationJournalAssociateEditor(senderId, clientUrl)
         }
       }
     })
@@ -268,15 +270,10 @@ module.exports.followJournal = async (req, res, next) => {
   try {
     let instruction, query = { id_journal: req.params.id, id_user: req.decoded._id }
     const roleInfo = await Roles.findOne(query);
-    console.log('\n')
-    console.log(roleInfo)
-    console.log('\n')
     if (roleInfo === null) {
-      console.log(":::: DOESN'T EXIST, THEN CREATE ::::")
       instruction = { $push: { users: req.decoded._id } }
       await new Roles({ id_user: req.decoded._id, id_journal: req.params.id }).save()
     } else {
-      console.log(":::: EXIST, THEN DELETE ::::")
       instruction = { $pull: { users: { $in: [req.decoded._id] } } }
       await Roles.findOneAndDelete(query);
     }

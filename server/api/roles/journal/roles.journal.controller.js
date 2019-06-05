@@ -86,7 +86,8 @@ module.exports.invite = async function (req, res, next) {
     if (req.params.right !== 'user') {
       req.route = 'invite'
       await doYouHaveThisRight(req, res, next);
-    }
+    } else
+      next()
   } catch (e) {
     return res.status(401).json({ success: false, message: e.message });
   }
@@ -146,7 +147,8 @@ async function doYouHaveThisRight (req, res, next) {
     const journalInfo = await new Promise((resolve, reject) => {
       const query = { id_user: req.decoded._id, id_journal: req.params.id }
       RolesJournal.findOne(query, function(err, data) {
-        if (err) reject(err);
+        if (err) reject(err)
+        else if (data === null) resolve({id_user: req.decoded._id, id_journal: req.params.id, right: 'user'})
         else resolve(data);
       })
     });
