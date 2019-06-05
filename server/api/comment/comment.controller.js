@@ -39,7 +39,9 @@ async function getArticleComments(req, res, next) {
         path: 'comments',
         populate: [{ path: 'userId'},
                    { path: 'childComment',
-                     populate: {path: 'userId'}}]
+                     populate: [{path: 'userId'},
+                                {path: 'childComment',
+                                 populate: {path: 'userId'}}]}]
       })
       .exec();
 

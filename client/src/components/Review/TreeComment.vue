@@ -8,11 +8,13 @@
             <a v-if='anonymousFlag' href="#" title="OSPR's profile">Reviewer 1</a>
             <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23">{{ creationDate  | moment("DD/MM/YYYY - LT") }}</time></p>
             <p class="font-dnltp-regular font-style-normal"><time datetime="2017-02-23"></time></p>
-            <el-tag class="no-revision" v-if="reviewRequest == 'No revision'" type="success">{{ reviewRequest }}</el-tag>
-            <el-tag class="minor-revision" v-if="reviewRequest == 'Minor revision'" type="warning">{{ reviewRequest }}</el-tag>
-            <el-tag class="major-revision" v-if="reviewRequest == 'Major revision'" type="danger">{{ reviewRequest }}</el-tag>
-            <el-tag class="rejection" v-if="reviewRequest == 'Rejection'" type="danger">{{ reviewRequest }}</el-tag>
-            <el-tag class="simple-comment" v-if="reviewRequest == 'Simple comment'" type="danger">{{ reviewRequest }}</el-tag>
+            <div v-show="reviewRequest !='None' ">
+              <el-tag class="no-revision" v-if="reviewRequest == 'No revision'" type="success">{{ reviewRequest }}</el-tag>
+              <el-tag class="minor-revision" v-if="reviewRequest == 'Minor revision'" type="warning">{{ reviewRequest }}</el-tag>
+              <el-tag class="major-revision" v-if="reviewRequest == 'Major revision'" type="danger">{{ reviewRequest }}</el-tag>
+              <el-tag class="rejection" v-if="reviewRequest == 'Rejection'" type="danger">{{ reviewRequest }}</el-tag>
+              <el-tag class="simple-comment" v-if="reviewRequest == 'Simple comment'" type="danger">{{ reviewRequest }}</el-tag>
+            </div>
         </header>
           <section>
             <div class='card-review'>
@@ -172,7 +174,7 @@ export default {
     ]),
     indent() {
       if(this.depth>1)
-        return { "padding-left": `${this.depth * 30-30}px` , "transform" : "translateY(-15px)" }
+        return { "padding-left": `${this.depth * 30-30}px` , "transform" : "translateY(-15px)","margin-bottom":"-15px" }
       else
         return { "padding-left": `${this.depth * 30-30}px` }
     }
@@ -218,7 +220,7 @@ export default {
         userId : this.userId,
         content : String(this.editAnswer),
         uuidComment: String(uuid),
-        reviewRequest : 'Simple comment',
+        reviewRequest : 'None',
         commentFlag : false, //it's a review,
         anonymousFlag: this.checkedAnonymous,
         uuidParentComment: this.uuidComment
