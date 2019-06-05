@@ -34,15 +34,15 @@ async function getArticleComments(req, res, next) {
 
   try {
     console.log('getArticleComments');
-    const article = await Article.findOne({ _id: req.params.id })
-      .populate({
+    const article = await Article.findOne({ _id: req.params.id }).populate('comments')
+      /*.populate({
         path: 'comments',
         populate: [{ path: 'userId'},
                    { path: 'childComment',
                      populate: [{path: 'userId'},
                                 {path: 'childComment',
                                  populate: {path: 'userId'}}]}]
-      })
+      })*/
       .exec();
 
     if (!article) return res.boom.notFound();
