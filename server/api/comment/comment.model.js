@@ -44,17 +44,24 @@ var CommentSchema = new Schema({
       default: 0
     }
   },
-  childComment: {
+  childComment: [{
     type: Schema.Types.ObjectId,
     ref: 'Comment',
     default: null
-  }
+  }]
 });
-
 
 CommentSchema.plugin(mongooseDelete, { deletedAt: true });
 CommentSchema.plugin(mongoosePaginate);
 
+var autoPopulateComment = function(next) {
+  this.populate('childComment');
+  next();
+};
+
+CommentSchema.
+  pre('findOne', autoPopulateComment).
+  pre('find', autoPopulateComment);
 /**
  * @class Comment
  */

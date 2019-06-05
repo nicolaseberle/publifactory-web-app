@@ -34,17 +34,13 @@ async function getArticleComments(req, res, next) {
 
   try {
     console.log('getArticleComments');
-    const article = await Article.findOne({ _id: req.params.id })
-      .populate({
-        path: 'comments',
-        populate: { path: 'userId' }
-      })
-      .lean();
+    const article = await Article.findOne({ _id: req.params.id }).populate('comments').exec();
 
     if (!article) return res.boom.notFound();
 
     const comments = await article.comments;
-    console.log(comments);
+    const childComments = await comments.childComment
+    console.log(childComments)
 
     //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
     renameObjectProperty(comments, 'docs', 'comments');
@@ -143,7 +139,7 @@ async function updateScoreVote(req, res, next) {
     const downvote = req.body.downvote;
     console.log(upvote,downvote);
     const comment = await Comment.findOneAndUpdate(
-      { _id: req.params.uuid },
+      { uuidComment: req.params.uuid },
       { $inc: { 'scores.upvote': upvote,'scores.downvote': downvote} }
     ).exec();
 
@@ -226,18 +222,18 @@ async function answerComment(req, res, next) {
     const anonymousFlag = req.body.anonymousFlag ? req.body.anonymous : false;
     const reviewRequest = req.body.reviewRequest;
     const uuidComment = req.body.uuidComment;
+    const uuidParentComment = req.body.uuidParentComment;
+    console.log("uuidParentComment : ",uuidParentComment)
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
-    const childComment = req.params.uuid;
-    const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag, childComment });
-    const comment = await newComment.save();
-    const article = await Article.findOneAndUpdate(
-      { _id: req.params.id },
-      { $push: { comments: comment._id } }
-    );
-    console.log(article);
-    article.nbComments++;
-    await article.save();
+    const childComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag });
+    console.log("childComment", childComment)
+    const newComment = await childComment.save()
+    const parentComment = await Comment.findOneAndUpdate(
+      { uuidComment: uuidParentComment },
+      { $push: { childComment: newComment } }
+    )
+    console.log("parentComment", parentComment)
     res.json({ success: true })
   } catch (e) {
     next(e);
