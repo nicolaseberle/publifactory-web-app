@@ -136,7 +136,7 @@
         <p>Show comments &amp; reviews</p>
     </aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <reviewComponent :uuid='uuid_comment'/>
+          <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
     </aside>
 
     <el-dialog
@@ -456,6 +456,7 @@ export default {
 
     this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
     this.cursors.update()
+
   },
   mounted() {
       asideRightAnimation()
@@ -494,6 +495,10 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
+    
+    onChangeComment(commentStateVector) {
+      this.$emit("changecomment",commentStateVector)
+    },
     updateUserList (editor) {
       // Wipe the slate clean
 

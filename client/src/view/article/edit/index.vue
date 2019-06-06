@@ -2,7 +2,7 @@
   <div>
   <div class="components-container-article">
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white" :gutter="40">
-      <el-col :span="12">
+      <el-col :span="8">
         <el-button-group>
           <el-button v-if="valueTypeEditor==1" type="primary" round  @click="changeEditor('LightEditor')">Light Editor</el-button>
           <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
@@ -23,7 +23,16 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
-      <el-col :span="12">
+      <el-col :span='8'>
+        <el-button-group>
+
+          <el-button v-if="this.articleInfo.status === 'Submited'" type="info"  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited'" type="warning" icon='el-icon-warning' round>{{commentStateVector.nbWarning}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited'" type="danger" icon='el-icon-remove' round>{{commentStateVector.nbDanger}}</el-button>
+        </el-button-group>
+
+      </el-col>
+      <el-col :span="8">
         <div style='text-align:right'>
           <el-button-group>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
@@ -50,7 +59,7 @@
   </div>
   <div>
 
-      <component v-bind:is="currentEditor" :hidePDF="flagHidePDF"/>
+      <component v-bind:is="currentEditor" :hidePDF="flagHidePDF" v-on:changecomment='onChangeComment'/>
   </div>
   <el-dialog
     title="Submission process"
@@ -143,6 +152,7 @@ export default {
       id: '',
       articleInfo : '',
       visibleDialogSubmProcess: false,
+      commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'}
     }
   },
@@ -206,6 +216,10 @@ export default {
           .then(data => resolve(data.data))
           .catch(err => reject(err))
       });
+    },
+
+    onChangeComment (commentStateVector) {
+      this.commentStateVector = commentStateVector
     },
     async changeStatus () {
       this.articleInfo = await new Promise((resolve, reject) => {
