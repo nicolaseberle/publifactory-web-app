@@ -337,7 +337,7 @@ export default {
     },
     changeStateReply()
     {
-      this.flagShowingComment = !this.flagShowingComment
+      //this.flagShowingComment = !this.flagShowingComment
       this.flagShowingComment__ = !this.flagShowingComment__
     },
     enter: function (el, done) {
