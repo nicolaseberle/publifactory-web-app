@@ -42,7 +42,7 @@
                     placeholder="Please input"
                     v-model="comment" :disabled='flagEditComment == false'>
                   </el-input>
-                  <div v-if='selectedComment==true'></div>
+                  <!--<div v-if='selectedComment==true'></div>-->
                 </div>
               </div>
             </div>
@@ -60,21 +60,27 @@
             <el-button type='warning' plain icon="el-icon-delete" style='float:right;' v-on:click='deleteComment()' circle></el-button>
 
           </footer>
-          <footer v-if="reviewRequest == 'Simple comment' && nodes.length>0" class='reply-footer simple-comment'>
-              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
-          </footer>
-          <footer  v-if="reviewRequest == 'Minor revision' && nodes.length>0" class='reply-footer minor-revision'>
-              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
-          </footer>
-          <footer v-if="reviewRequest == 'Major revision' && nodes.length>0" class='reply-footer major-revision'>
-              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
-          </footer>
-          <footer v-if="reviewRequest == 'Rejection' && nodes.length>0" class='reply-footer rejection'>
-              <a @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
-          </footer>
-          <footer v-if="reviewRequest == 'No revision' && nodes.length>0" class='reply-footer no-revision'>
-              <a @click='changeStateReply()'>Show replies ({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
-          </footer>
+
+            <footer v-if="reviewRequest == 'Simple comment' && nodes.length>0" class='reply-footer simple-comment'>
+                <a v-if='!flagShowingComment__' @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
+                <a v-if='flagShowingComment__' @click='changeStateReply()'>Hide replies({{nodes.length}})  <i class="el-icon-arrow-up"></i></a>
+            </footer>
+            <footer  v-if="reviewRequest == 'Minor revision' && nodes.length>0" class='reply-footer minor-revision'>
+                <a v-if='!flagShowingComment__' @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
+                <a v-if='flagShowingComment__' @click='changeStateReply()'>Hide replies({{nodes.length}})  <i class="el-icon-arrow-up"></i></a>
+            </footer>
+            <footer v-if="reviewRequest == 'Major revision' && nodes.length>0" class='reply-footer major-revision'>
+                <a v-if='!flagShowingComment__' @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
+                <a v-if='flagShowingComment__' @click='changeStateReply()'>Hide replies({{nodes.length}})  <i class="el-icon-arrow-up"></i></a>
+            </footer>
+            <footer v-if="reviewRequest == 'Rejection' && nodes.length>0" class='reply-footer rejection'>
+                <a v-if='!flagShowingComment__' @click='changeStateReply()'>Show replies({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
+                <a v-if='flagShowingComment__' @click='changeStateReply()'>Hide replies({{nodes.length}})  <i class="el-icon-arrow-up"></i></a>
+            </footer>
+            <footer v-if="reviewRequest == 'No revision' && nodes.length>0" class='reply-footer no-revision'>
+                <a v-if='!flagShowingComment__' @click='changeStateReply()'>Show replies ({{nodes.length}})  <i class="el-icon-arrow-down"></i></a>
+                <a v-if='flagShowingComment__' @click='changeStateReply()'>Hide replies({{nodes.length}})  <i class="el-icon-arrow-up"></i></a>
+            </footer>
 
           <el-card v-show='flagToAnswer == true' style='margin-top:10px'>
 
@@ -116,7 +122,7 @@
         :reviewRequest="node.reviewRequest"
         :anonymousFlag="node.anonymousFlag"
         :user="node.userId"
-        :flagShowingComment="flagShowingComment"
+        :flagShowingComment="flagShowingComment__"
         :depth="depth + 1"
         v-on:post='reload'
       >
@@ -145,7 +151,7 @@ export default {
             }
 
     }},
-  flagShowingComment: {type: Boolean, default:false},
+  flagShowingComment: {type: Boolean},
   depth: {type: Number},
   creationDate: String,
   anonymousFlag: {type: Boolean},
@@ -182,14 +188,15 @@ export default {
       flagToAnswer: false,
       editAnswer: '',
       _originalComment: Object,
-      selectedComment: false,
       checkedAnonymous: false,
       errors: {message: ''},
-      comment : this.label
+      comment : this.label,
+      flagShowingComment__ : false
     }
   },
   created (){
     this.id = this.$route.params && this.$route.params.id
+
   },
   computed: {
     ...mapGetters([
@@ -218,22 +225,18 @@ export default {
   methods: {
     openBoxToReply () {
       this.flagToAnswer = true
-      this.selectedComment = true
     },
     closeBoxToReply () {
       this.flagToAnswer = false
-      this.selectedComment = false
     },
     editComment () {
       this._originalComment = Object.assign({}, this.nodes)
       this.flagEditComment = true
-      this.selectedComment = true
       this.$emit('post')
     },
     cancelComment () {
       Object.assign(this.nodes, this._originalComment)
       this.flagEditComment = false
-      this.selectedComment = false
       this.$emit('post')
     },
     createAnswer ( ) {
@@ -275,7 +278,7 @@ export default {
       })
       this.flagEditComment = false
       this.editAnswer = ''
-      this.selectedComment = -1
+      //this.selectedComment = -1
     },
     deleteComment () {
       const self = this
@@ -335,6 +338,7 @@ export default {
     changeStateReply()
     {
       this.flagShowingComment = !this.flagShowingComment
+      this.flagShowingComment__ = !this.flagShowingComment__
     },
     enter: function (el, done) {
       velocity(el, 'slideDown', { duration: 400, easing: 'easeInBack' },
@@ -403,10 +407,10 @@ export default {
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
 
-  border-bottom: 15px solid rgb(0,150,0);
+  border-bottom: 15px solid rgba(0,150,0,1);
 }
 .arrow-up:hover {
-  border-bottom: 15px solid #475069;
+  border-bottom: 15px solid rgba(0,150,0,0.8);
 }
 .arrow-down {
   width: 0;
@@ -414,10 +418,10 @@ export default {
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
 
-  border-top: 15px solid rgb(150,0,0);
+  border-top: 15px solid rgba(150,0,0,1);
 }
 .arrow-down:hover {
-  border-top: 15px solid #475069;
+  border-top: 15px solid rgba(150,0,0,0.8);
 }
 
 
