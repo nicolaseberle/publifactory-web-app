@@ -4,20 +4,20 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 /**
- * Role Schema
+ * Role Article Schema
  */
-const RolesSchema = new Schema({
+const RolesJournalSchema = new Schema({
   id_user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  id_article: {
+  id_journal: {
     type: Schema.Types.ObjectId,
-    ref: 'Article'
+    ref: 'Journal'
   },
   right: {
     type: String,
-    default: 'guest'
+    default: 'user'
   }
 })
 
@@ -25,6 +25,6 @@ const RolesSchema = new Schema({
  *
  * @type {*|*[]|(function(*, *): (null|*))|(function(*, *): *)|(function(*, *): *)|(function(*, *): *)|(function(*, *=, *=): *)|(function(*=, *, *): boolean)|(function(*, *=, *=): *)|{preTransformNode}|string}
  */
-const Roles = mongoose.model('Role', RolesSchema);
+const RolesJournal = mongoose.model('RoleJournal', RolesJournalSchema);
 
-module.exports = Roles;
+module.exports = RolesJournal;

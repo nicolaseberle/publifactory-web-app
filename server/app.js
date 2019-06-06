@@ -33,7 +33,7 @@ require('./config/socketio')(socketio)
 require('./config/express')(app)
 require('./routes')(app)
 
-if(process.env.NODE_ENV == 'production'){
+if(process.env.NODE_ENV === 'production'){
   //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
   //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
   app.use(serveStatic(__dirname + "/../client/dist"));

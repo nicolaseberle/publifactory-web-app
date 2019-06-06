@@ -56,4 +56,35 @@ module.exports = class Email {
       Vous trouverez l'article ici : ${link}.`
     })();
   }
+
+  async sendInvitationJournalUser (authorId, link) {
+    const author = await new Promise(async (resolve, reject) => {
+      resolve(await User.findOne({ _id: authorId }));
+    });
+    const gmail = require('gmail-send')({
+      user: configEmail.user,
+      pass: configEmail.pass,
+      to: this.email,
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} vous a partagé un journal !`,
+      text: `Bonjour,\n
+      L'utilisateur ${author.firstname} ${author.lastname} vous a invité à consulté un journal.\n
+      Vous trouverez le journal ici : ${link}.`
+    })();
+  }
+
+  async sendInvitationJournalAssociateEditor (authorId, link) {
+    const author = await new Promise(async (resolve, reject) => {
+      resolve(await User.findOne({ _id: authorId }));
+    });
+    const gmail = require('gmail-send')({
+      user: configEmail.user,
+      pass: configEmail.pass,
+      to: this.email,
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} vous a défini comme éditeur sur un journal !`,
+      text: `Bonjour,\n
+      L'utilisateur ${author.firstname} ${author.lastname} vous a défini comme un co-éditeur d'un journal.\n
+      Vos choix et décisions permettront d'approuver les articles des utilisateurs.\n
+      Vous trouverez le journal ici : ${link}.`
+    })();
+  }
 };

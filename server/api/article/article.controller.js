@@ -2,7 +2,7 @@
 
 var User = require('../user/user.model');
 var Article = require('./article.model');
-const Roles = require('../roles/roles.model');
+const RolesArticle = require('../roles/article/roles.article.model');
 var Data = require('../data/data.model');
 
 var config = require('../../../config').backend
@@ -217,7 +217,7 @@ module.exports.addAuthorOfArticle = async function (req, res, next) {
         { $push: { authors: newAuthor } },
         { new: true }
         );
-    new Roles({ id_user: author._id, id_article: req.params.id, right: 'author' }).save();
+    new RolesArticle({ id_user: author._id, id_article: req.params.id, right: 'author' }).save();
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -244,7 +244,7 @@ module.exports.removeAuthorOfArticle = async function (req, res, next) {
       );
     const query = { id_user: req.body.authorId, id_article: req.params.id };
     const toReplace = { $set: { right: "guest" } };
-    await Roles.updateOne(query, toReplace);
+    await RolesArticle.updateOne(query, toReplace);
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -287,7 +287,7 @@ module.exports.createArticle = async function (req, res, next) {
     // console.log(JSON.stringify(author, null, "\t"));
     newArticle.authors[0] = {"rank":1,"role":"Lead","author":author};
     const article = await newArticle.save();
-    new Roles({ id_user: req.body.id_author, id_article: article._id, right: 'author' }).save();
+    new RolesArticle({ id_user: req.body.id_author, id_article: article._id, right: 'author' }).save();
 
     // console.log(JSON.stringify(article._id, null, "\t"));
 
@@ -323,11 +323,8 @@ module.exports.updateAuthorRights = async function (req, res, next) {
       throw { success: false, message: 'Missing parameters in body field.' };
     const query = { _id: req.params.id };
     const toReplace = { $set: { authors: req.body.newAuthors } };
-    console.log(req.body.newAuthors)
-    await Article.updateOne(query, toReplace, (err, data) => {
-      if (err) throw err
-      else console.log(data)
-    });
+    console.log(req.body.newAuthors.data)
+    await Article.updateOne(query, toReplace);
     res.status(201).json({ success: true })
   } catch (e) {
     next(e);
@@ -343,7 +340,7 @@ module.exports.addReviewer = async function (req, res, next) {
     const toAdd = { $push: { reviewers: user._id } };
     const options = { new: true };
     await Article.findOneAndUpdate(query, toAdd, options);
-    new Roles({ id_user: user._id, id_article: req.params.id, right: 'associate_editor' }).save();
+    new RolesArticle({ id_user: user._id, id_article: req.params.id, right: 'associate_editor' }).save();
     res.json({ success: true });
   } catch (e) {
     next(e);
