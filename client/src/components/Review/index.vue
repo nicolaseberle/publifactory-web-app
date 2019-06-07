@@ -292,12 +292,23 @@ export default {
         this.reports = response.data
 
         const _allReports = [];
+        let stateVector_ = {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0}
         for (var i=0, _report; _report = this.reports[i]; i++){
           _report.edit = false;
           _report.flagToAnswer = false;
+          _report.flagShowingComment = false;
           _allReports.push(_report);
+          stateVector_.nbComment = stateVector_.nbComment + 1
+          if(_report.reviewRequest === 'Minor revision')
+            stateVector_.nbWarning = stateVector_.nbWarning + 1
+          if(_report.reviewRequest === 'Major revision')
+            stateVector_.nbDanger = stateVector_.nbDanger + 1
+          if(_report.reviewRequest === 'Resolved')
+              stateVector_.nbResolved = stateVector_.nbResolved + 1
         }
+
         this.reports = _allReports
+        this.$emit('changecomment',stateVector_)
       }).catch(err => {
         console.log(err)
         this.errors.message = 'fetchReport fails';
