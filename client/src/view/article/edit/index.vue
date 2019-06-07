@@ -24,11 +24,15 @@
         </el-dropdown>
       </el-col>
       <el-col :span='8'>
-        <el-button-group>
+        <el-button-group >
 
-          <el-button v-if="this.articleInfo.status === 'Submited'" type="info"  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited'" type="warning" icon='el-icon-warning' round>{{commentStateVector.nbWarning}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited'" type="danger" icon='el-icon-remove' round>{{commentStateVector.nbDanger}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved !== 0" alt='Number of comments' type="info" @click='showCOmmentReviewPanel'  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved == 0" alt='Number of resolved reviews' type="success" icon='el-icon-success' @click='showCOmmentReviewPanel'  round>{{commentStateVector.nbResolved}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning !== 0" alt='Number of minor reviews' type="warning" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning == 0" alt='Number of minor reviews' type="" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
+
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger !== 0" alt='Number of major reviews' type="danger" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger == 0" alt='Number of major reviews' type="" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
         </el-button-group>
 
       </el-col>
@@ -132,7 +136,6 @@ import markdownEditorComponent from './MarkdownEditorComponent'
 import latexEditorComponent from './LatexEditorComponent'
 import axios from 'axios'
 
-
 export default {
   name: 'ArticleDetail',
   components: { lightEditorComponent, markdownEditorComponent, latexEditorComponent },
@@ -152,7 +155,7 @@ export default {
       id: '',
       articleInfo : '',
       visibleDialogSubmProcess: false,
-      commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0},
+      commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'}
     }
   },
@@ -160,6 +163,7 @@ export default {
     ...mapGetters(['sidebar', 'accessToken'])
   },
   created() {
+
     if (1) {
       this.id = this.$route.params && this.$route.params.id
       this.currentEditor = 'lightEditorComponent'
@@ -168,8 +172,12 @@ export default {
   },
   mounted() {
 
+
   },
   methods: {
+    showCOmmentReviewPanel () {
+      $("aside.content-comments-reviews").css('display', 'block')
+    },
     actionHandleCommand (action) {
 
     },

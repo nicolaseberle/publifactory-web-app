@@ -292,7 +292,7 @@ export default {
         this.reports = response.data
 
         const _allReports = [];
-        let stateVector_ = {nbComment:0,nbWarning:0,nbDanger:0}
+        let stateVector_ = {nbComment:0,nbWarning:0,nbDanger:0,nbResolved:0}
         for (var i=0, _report; _report = this.reports[i]; i++){
           _report.edit = false;
           _report.flagToAnswer = false;
@@ -303,6 +303,8 @@ export default {
             stateVector_.nbWarning = stateVector_.nbWarning + 1
           if(_report.reviewRequest === 'Major revision')
             stateVector_.nbDanger = stateVector_.nbDanger + 1
+          if(_report.reviewRequest === 'Resolved')
+              stateVector_.nbResolved = stateVector_.nbResolved + 1
         }
 
         this.reports = _allReports
