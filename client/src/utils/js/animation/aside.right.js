@@ -4,6 +4,7 @@ function asideRightAnimation () {
     // Selectors object
     // ----------------
   var asideRight = {
+    tags: $('.header-comments-reviews'),
     button: $('aside.comments-reviews'),
     pannel: {
       all: $('aside.content-comments-reviews'),
@@ -63,6 +64,12 @@ function asideRightAnimation () {
     // ------------------------
   asideRight.button.on('click', () => {
     console.log('asideRight_button_click')
+    showCommentsReviewsPannel()
+    goPreviousScrollPosition()
+  })
+
+  asideRight.tags.on('click', () => {
+    console.log('tags_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
   })
