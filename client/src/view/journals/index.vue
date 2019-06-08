@@ -19,8 +19,6 @@
           :trigger-on-focus="false"
           @select="handleSelect"
         ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
-
-
       </div>
     </el-col>
     <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
