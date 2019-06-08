@@ -2,10 +2,14 @@
   <div>
     <el-form ref="form" :model="form" label-width="120px" class="dialog-create-journal" style='text-align:left'>
       <el-form-item label="Title" :label-width="formLabelWidth">
-        <el-input  v-model="dynamicForm.title" autocomplete="off"></el-input>
+        <el-col :span='12'>
+          <el-input  v-model="dynamicForm.title" autocomplete="off"></el-input>
+        </el-col>
       </el-form-item>
       <el-form-item label="Description" :label-width="formLabelWidth">
-        <el-input  v-model="dynamicForm.asbtract" autocomplete="off"></el-input>
+        <el-col :span='12'>
+          <el-input  v-model="dynamicForm.asbtract" autocomplete="off"></el-input>
+        </el-col>
       </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth">
         <el-tag
@@ -57,7 +61,6 @@
         },
         formLabelWidth: '120px',
         settings: {access: 'open_access' },
-        dynamicTags: ['Tag 1', 'Tag 2', 'Tag 3'],
         inputVisible: false,
         inputValue: ''
       }
