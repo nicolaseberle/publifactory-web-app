@@ -184,4 +184,7 @@ export default {
 
 </script>
 <style>
+.el-card .el-card__header{
+  background-color:white;
+}
 </style>
