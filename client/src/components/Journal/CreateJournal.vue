@@ -20,6 +20,11 @@
           <el-input  v-model="dynamicForm.abstract" autocomplete="off"></el-input>
         </el-col>
       </el-form-item>
+      <el-form-item label="Editors" :label-width="formLabelWidth">
+        <el-col :span='12'>
+          <el-input  v-model="dynamicForm.editor" autocomplete="off"></el-input>
+        </el-col>
+      </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth" prop="keywords">
         <el-tag
           :key="tag"
@@ -86,6 +91,7 @@ import { mapGetters } from 'vuex'
           title: '',
           logo: '',
           abstract: '',
+          editor: [],
           published: false,
           tags: ['biology','genetics'],
           access:  'open_access'
