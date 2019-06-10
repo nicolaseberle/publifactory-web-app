@@ -24,7 +24,7 @@
     <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
-          <span>{{journal.title}}</span>
+          <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
           <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
         </div>
