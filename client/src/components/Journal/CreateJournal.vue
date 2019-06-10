@@ -145,7 +145,8 @@ import { mapGetters } from 'vuex'
         };
         axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
-          let new_journal_id = response.data
+          let new_journal_id = response.data.journal._id
+          console.log(response.data)
           console.log("create successfully ")
           this.$router.push({ path: `/journals/${new_journal_id}` })
         })
