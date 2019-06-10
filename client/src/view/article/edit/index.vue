@@ -156,7 +156,8 @@ export default {
       articleInfo : '',
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
-      formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'}
+      formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
+      journalList: []
     }
   },
   computed: {
@@ -172,7 +173,7 @@ export default {
   },
   mounted() {
 
-
+    this.getJournalList()
   },
   methods: {
     showCOmmentReviewPanel () {
@@ -245,6 +246,9 @@ export default {
         axios.patch(`/api/articles/${this.id}/submit`, {},
           { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       this.$router.push(this.$route.query.redirect || '/')
+    },
+    getJournalList () {
+
     },
     sendNotificationByMail () {
       //send a notification to authors

@@ -53,7 +53,10 @@ exports.getJournals = async (req, res, next) => {
       renameObjectProperty(journals, 'docs', 'journals');
     } else {
       console.log(JSON.stringify("findJournalById", null, "\t"))
-      journals = await Journal.findById(req.params.id).populate('article').lean();
+      journals = await Journal.findById(req.params.id)
+        .populate('users')
+        .populate('article')
+        .lean();
       console.log(JSON.stringify(journals, null, "\t"))
       if (!journals) return res.sendStatus(404);
     }
@@ -114,10 +117,11 @@ module.exports.createJournal = async (req, res, next) => {
 
     const title = req.body.title.trim();
     const abstract = req.body.abstract.trim();
+    const tags = req.body.tags;
     const published = req.body.published;
     //console.log(published);
 
-    const newJournal = new Journal({ title, abstract,published});
+    const newJournal = new Journal({ title, abstract, tags, published});
     console.log(JSON.stringify(req.decoded._id, null, "\t"));
     //Add Author to the Journal
     const user = await User.findById( req.decoded._id ).exec();

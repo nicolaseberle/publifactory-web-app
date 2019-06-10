@@ -22,7 +22,7 @@
       </el-form-item>
       <el-form-item label="Editors" :label-width="formLabelWidth">
         <el-col :span='12'>
-          <el-input  v-model="dynamicForm.editor" autocomplete="off"></el-input>
+          <el-input  v-model="dynamicForm.editor.name" autocomplete="off" :disabled="true">{{dynamicForm.editor.firstname}} {{dynamicForm.editor.lastname}}</el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth" prop="keywords">
@@ -91,7 +91,7 @@ import { mapGetters } from 'vuex'
           title: '',
           logo: '',
           abstract: '',
-          editor: [],
+          editor: {firstname:'',lastname:'',name:''},
           published: false,
           tags: ['biology','genetics'],
           access:  'open_access'
@@ -115,7 +115,13 @@ import { mapGetters } from 'vuex'
       ...mapGetters(['sidebar','userId', 'accessToken'])
     },
     created () {
-
+      axios.get('/api/users/me',{headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+        this.dynamicForm.editor.firstname = response.data.firstname
+        this.dynamicForm.editor.lastname = response.data.lastname
+        this.dynamicForm.editor.name = this.dynamicForm.editor.firstname + ' ' + this.dynamicForm.editor.lastname
+      }).catch(()=>{})
     },
     mounted () {
 
@@ -147,6 +153,7 @@ import { mapGetters } from 'vuex'
         const newJournal = {
           title: this.dynamicForm.title,
           abstract: this.dynamicForm.abstract,
+          tags: this.dynamicForm.tags,
           published: true
         };
         axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })

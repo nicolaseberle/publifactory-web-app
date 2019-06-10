@@ -19,20 +19,65 @@
         </svg>
       </div>
       <div class='journal-header'>
-        <h1 class='title'>Biology - functional cell</h1>
+        <h1 class='title'>{{journal.title}}</h1>
+
         <div class='description'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.
+          <div class='block-with-text'>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.
+          </div>
+          <el-button>Read All</el-button>
         </div>
-        <el-divider content-position="right"></el-divider>
+        <div class='description'>
+          <el-tag
+            v-for="tag in journal.tags"
+            :key="tag"
+            type="info" style='margin-right:10px'>
+            {{ tag }}
+          </el-tag>
+        </div>
         <div class='details'>
-          Editor: moi
+          Editor:
+          <div style='float: right;margin-bottom:3px'>
+            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+          </div>
+          <li>
+            <div v-for='user in journal.users'>{{user.firstname}} {{user.lastname}}</div>
+          </li>
         </div>
+        <div class='details'>
+          Associate Editor:
+          <div style='float: right;margin-bottom:3px'>
+            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+          </div>
+          <li>
+            <div v-if='journal.users.length==0'>None</div>
+            <div v-for='user in journal.users'>{{user.firstname}} {{user.lastname}}</div>
+          </li>
+        </div>
+        <div class='details'>
+          <li>
+            Licence: CC
+          </li>
+          <li>
+            Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
+          </li>
+        </div>
+
       </div>
     </div>
     </el-col>
     <el-col :span='17'>
+      <div class='journal-container'>
       <div class='journal-list-articles'>
-        {{test}} {{journal}}
+        <el-card :body-style="{ padding: '0px' }" v-for='article in journal.content'>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.
+
+          {{article}}
+          <!--<div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
+            <a :href="'/article/' + artcile._id "><span>{{artcile.title}}</span></a>
+          </div>-->
+        </el-card>
+      </div>
       </div>
     </el-col>
 
@@ -48,6 +93,7 @@ export default {
       test : 'on est sur la page du journal',
       journalId: '',
       journal: ''
+
     }
   },
   computed: {
@@ -91,19 +137,99 @@ export default {
       word-break: break-word;
   }
   .description{
-    font-family: 'DNLTPro-regular';
-    width: 100%;
-    float: left;
     margin-bottom: 30px;
-    font-size: 18px;
-    line-height: 22px;
-    text-align: justify;
-    text-justify: inter-word;
+
+    .block-with-text {
+      font-family: 'DNLTPro-regular';
+      width: 100%;
+      float: left;
+      /* hide text if it more than N lines  */
+      overflow: hidden;
+      /* for set '...' in absolute position */
+      position: relative;
+      /* use this value to count block height */
+      line-height: 1.2em;
+      /* max-height = line-height (1.2) * lines max number (3) */
+      max-height: 6.0em;
+      /* fix problem when last visible word doesn't adjoin right side  */
+      text-align: justify;
+      /* place for '...' */
+      margin-right: -1em;
+      padding-right: 1em;
+      margin-bottom: 20px
+    }
+    /* create the ... */
+    .block-with-text:before {
+      /* points in the end */
+      content: '...';
+      /* absolute position */
+      position: absolute;
+      /* set position to right bottom corner of block */
+      right: 0;
+      bottom: 0;
+    }
+    /* hide ... if we have text, which is less than or equal to max lines */
+    .block-with-text:after {
+      /* points in the end */
+      content: '';
+      /* absolute position */
+      position: absolute;
+      /* set position to right bottom corner of text */
+      right: 0;
+      /* set width and height */
+      width: 1em;
+      height: 1em;
+      margin-top: 0.2em;
+      /* bg color = bg color under block */
+      background: white;
+    }
+  }
+  .details{
+    padding-bottom: 70px;
+
+     li:first-of-type {
+       border-top: 1px solid #ddd;
+    }
+    li{
+      width: 100%;
+      float: left;
+      clear: both;
+      padding: 6px 0px;
+      // border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-align: baseline;
+      align-items: baseline;
+    }
   }
 }
+
+.tag-small {
+    margin: 0 10px 10px 0;
+    padding: 0 10px;
+    height: 32px;
+    line-height: 30px;
+    border: 1px solid #666;
+    color: #000;
+    background-color: transparent;
+    font-family: 'DNLTPro-regular';
+    font-size: 14px;
+    overflow: hidden;
+}
+
 }
 
 .journal-list-articles{
     margin: 40px;
+}
+.container{
+
+}
+
+@media (min-width: 1200px){
+  .container {
+      max-width: 888px;
+  }
 }
 </Style>
