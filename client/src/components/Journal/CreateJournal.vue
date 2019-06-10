@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="Description" :label-width="formLabelWidth" prop="abstract">
         <el-col :span='12'>
-          <el-input  v-model="dynamicForm.asbtract" autocomplete="off"></el-input>
+          <el-input  v-model="dynamicForm.abstract" autocomplete="off"></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth" prop="keywords">
@@ -118,9 +118,13 @@ import { mapGetters } from 'vuex'
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.createJournal()
-            alert('submit!')
-            this.$emit('close')
+            this.$confirm(`By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them.`, this.$t('confirm.title'), {
+                type: 'warning'
+              }).then(()=>{
+                this.createJournal()
+                this.$emit('close')
+            }).catch(() => {})
+
           } else {
             console.log('error submit!!')
             return false;
@@ -141,9 +145,9 @@ import { mapGetters } from 'vuex'
         };
         axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
-          let new_article_id = response.data
+          let new_journal_id = response.data
           console.log("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
+          this.$router.push({ path: `/journals/${new_journal_id}` })
         })
         .catch(e => {
           console.log(e)
