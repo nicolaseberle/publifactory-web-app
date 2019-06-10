@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-col :span='6' style='border-right: 1px solid #f4f4f4;'>
+    <el-col :span='7' style='border-right: 1px solid #e8e8e8;'>
       <div class='sidebar-wrap__panel'>
         <div class='journal-logo'>
           <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="300px">
@@ -19,14 +19,18 @@
         </svg>
       </div>
       <div class='journal-header'>
-        <h1>Biology - functional cell</h1>
+        <h1 class='title'>Biology - functional cell</h1>
         <div class='description'>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.
+        </div>
+        <el-divider content-position="right"></el-divider>
+        <div class='details'>
+          Editor: moi
         </div>
       </div>
     </div>
     </el-col>
-    <el-col :span='18'>
+    <el-col :span='17'>
       <div class='journal-list-articles'>
         {{test}} {{journal}}
       </div>
@@ -68,31 +72,37 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .sidebar-wrap__panel{
   margin: 40px;
 
 .journal-logo{
-  text-align: center;
-}
+
+  }
 .journal-header {
   float: left;
   display: block;
-  h1{
-    font-size: 32px;
-    line-height: 34px;
-    margin-bottom: 60px;
-    word-break: break-word;
+  margin-top: 20px;
+  h1.title{
+      font-family: 'DNLTPro-bold';
+      font-size: 1.4rem;
+      line-height: 1.2rem;
+      margin-bottom: 60px;
+      word-break: break-word;
   }
   .description{
+    font-family: 'DNLTPro-regular';
     width: 100%;
     float: left;
     margin-bottom: 30px;
     font-size: 18px;
     line-height: 22px;
+    text-align: justify;
+    text-justify: inter-word;
   }
 }
 }
+
 .journal-list-articles{
     margin: 40px;
 }
