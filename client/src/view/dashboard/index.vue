@@ -56,6 +56,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'sidebar',
       'roles',
       'userId',
       'accessToken'
@@ -79,6 +80,7 @@ export default {
       this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = true
     }
+    this.sidebar.opened = true
   },
   mounted () {
     axios.get('/api/users/me',{headers: {

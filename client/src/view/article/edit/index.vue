@@ -111,9 +111,12 @@
           <el-form-item label="Journal" label-width="200px">
             <el-col :span='23' :offset='1'>
             <el-select v-model="formSubmArticle.journal" placeholder="Please select the journal" style='width:100%'>
-              <el-option label="PCI Evol Biol" value="pci_evol_bio"></el-option>
+              <div v-for='journal in journalList'>
+                <el-option :label="journal.name" :value="journal._id"></el-option>
+              </div>
+              <!--<el-option label="PCI Evol Biol" value="pci_evol_bio"></el-option>
               <el-option label="PCI Ecology" value="pci_ecology"></el-option>
-              <el-option label="PCI Paleo" value="pci_paleo"></el-option>
+              <el-option label="PCI Paleo" value="pci_paleo"></el-option>-->
             </el-select>
             </el-col>
           </el-form-item>
@@ -157,7 +160,7 @@ export default {
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
-      journalList: []
+      journalList: [{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
     }
   },
   computed: {
@@ -172,7 +175,6 @@ export default {
     }
   },
   mounted() {
-
     this.getJournalList()
   },
   methods: {

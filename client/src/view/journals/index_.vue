@@ -41,7 +41,7 @@
             <el-button  icon="el-icon-plus" size="mini" circle></el-button>
           </div>
           <li>
-            <div v-for='user in journal.users'>{{user.firstname}} {{user.lastname}}</div>
+            <div v-for='editor in editors'>{{editor.id_user.firstname}} {{editor.id_user.lastname}}</div>
           </li>
         </div>
         <div class='details'>
@@ -50,8 +50,8 @@
             <el-button  icon="el-icon-plus" size="mini" circle></el-button>
           </div>
           <li>
-            <div v-if='journal.users.length==0'>None</div>
-            <div v-for='user in journal.users'>{{user.firstname}} {{user.lastname}}</div>
+            <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
+            <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
           </li>
         </div>
         <div class='details'>
@@ -61,6 +61,7 @@
           <li>
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
+          <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
         </div>
 
       </div>
@@ -69,6 +70,7 @@
     <el-col :span='17'>
       <div class='journal-container'>
       <div class='journal-list-articles'>
+
         <el-card :body-style="{ padding: '0px' }" v-for='article in journal.content'>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.
 
@@ -92,7 +94,9 @@ export default {
     return {
       test : 'on est sur la page du journal',
       journalId: '',
-      journal: ''
+      journal: '',
+      editors: '',
+      associate_editors: ''
 
     }
   },
@@ -102,15 +106,37 @@ export default {
   created (){
     this.sidebar.opened = false
     this.journalId = this.$route.params && this.$route.params.id
+  },
+  mounted () {
     this.fetch()
+    this.fetchEditor()
+    this.fetchAssociateEditor()
   },
   methods:{
     fetch () {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       axios.get('/api/journals/' + this.journalId, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.journal = list.data
+      }).then(res => {
+        this.journal = res.data
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    fetchEditor () {
+      axios.get('/api/roles/journal/' + this.journalId + '/editor', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(res => {
+        this.editors = res.data.users
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    fetchAssociateEditor () {
+      axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(res => {
+        this.associate_editors = res.data.users
       }).catch(err => {
         console.error(err)
       })
