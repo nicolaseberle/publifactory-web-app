@@ -159,6 +159,21 @@ export const constantRouterMap = [{
     }]
 },
 {
+  path: '',
+  component: Layout,
+  hidden: true,
+  children: [
+    {
+      path: '/journals/:id',
+      name: 'Journal',
+      props: { newsletterPopup: false },
+      meta: { title: 'Journal', icon: 'edit', noCache: true },
+      component: (resolve) => {
+        import('../view/journals/index_.vue').then(resolve)
+      }
+    }]
+},
+{
   path: '*',
   component: {
     render (h) {

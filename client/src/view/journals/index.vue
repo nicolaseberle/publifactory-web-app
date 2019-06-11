@@ -3,7 +3,10 @@
   <el-row :gutter="10" @page-change="fetch">
     <el-col :span="12">
       <div>
-        <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+        <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
+          <CreateJournal v-if="flagCreateJournal" @close="flagCreateJournal=false"></CreateJournal>
+        </el-dialog>
       </div>
     </el-col>
     <el-col :span="10">
@@ -16,14 +19,12 @@
           :trigger-on-focus="false"
           @select="handleSelect"
         ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
-
-
       </div>
     </el-col>
     <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
-          <span>{{journal.title}}</span>
+          <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
           <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
         </div>
@@ -83,6 +84,7 @@ import moment from 'moment'
 import { mapGetters } from 'vuex'
 import locales from '../../locales/article'
 import axios from 'axios'
+import CreateJournal from '../../components/Journal/CreateJournal'
 
 export default {
   locales,
@@ -99,7 +101,8 @@ export default {
       journals: [],
       dialogCreationJournal : false,
       links: [],
-      state2: ''
+      state2: '',
+      flagCreateJournal: false
     }
   },
   computed: {
@@ -109,7 +112,7 @@ export default {
     ])
   },
   components: {
-
+    CreateJournal
   },
   mounted () {
     this.$nextTick(() => {
@@ -181,4 +184,7 @@ export default {
 
 </script>
 <style>
+.el-card .el-card__header{
+  background-color:white;
+}
 </style>
