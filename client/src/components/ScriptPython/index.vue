@@ -14,7 +14,7 @@
         </el-col>
 
     </el-row>
-    <el-button @click="execCode()" round>PREVIEW</el-button>
+    <el-button v-on:click="execCode()" round>PREVIEW</el-button>
 
   </div>
 </template>
@@ -29,19 +29,18 @@ import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
 
 
-import axios from 'axios'
+  import axios from 'axios'
 
 
 export default {
   name: 'ScriptPython',
   locales,
+  props: ["idfigure"],
   components: {VuePlotly},
-  props: ['idfigure'],
   data () {
     return {
       postForm: {},
       editor: {},
-      content: '',
       html: '',
       id: '',
       currentData: [{
@@ -55,7 +54,7 @@ export default {
         title: 'Distribution',
         showlegend: false
       },
-      content:`
+      content: `
 import plotly.graph_objs as go
 import plotly.io as plio
 
@@ -128,6 +127,10 @@ if __name__ == "__main__":
         theme: 'one-dark',
         mode: "text/x-python"
      })
+    this.editor.on('change', instance => {
+      this.content = instance.getDoc().getValue()
+      console.log(this.content)
+    })
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -185,7 +188,7 @@ if __name__ == "__main__":
   methods: {
     saveFigure () {
       console.log('saveFigure: ',this.idfigure)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
+      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(response => {
@@ -196,45 +199,36 @@ if __name__ == "__main__":
       })
     },
     fetchFigure(id) {
-      var self = this
-      axios.get('/api/figure/' + id , {
+      axios.get('http://localhost:4000/api/figure/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        self.currentData = response.data.data
-        self.layout = response.data.layout
-        self.option = response.data.option
+        this.currentData = response.data.data
+        this.layout = response.data.layout
+        this.option = response.data.option
 
       }).catch(err => {
         console.log(err)
       })
     },
-    execCode: async function () {
-      const response = await new Promise((resolve, reject) => {
-        axios.post('/api/figure/python', {
-          content: this.content
-        }, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
-          .then(done => {
-            resolve(done.data)
-          })
-          .catch(err => {
-            reject(err)
-          })
+    async execCode () {
+      const done = await axios.post('http://localhost:4000/api/figure/python', {
+        content: this.content
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
       })
-      if (!response.data || !response.layout)
-        this.$message({
-          type: 'error',
-          message: this.$t('message.scriptFailure')
-        })
-      else
-        this.$message({
-          type: 'success',
-          message: this.$t('message.scriptSuccess')
-        })
-      this.currentData = response.data
-      this.layout = response.layout
-      if (response.options)
-        this.options = response.options
+      console.log(done)
+      this.currentData = done.data.values.data
+      this.layout.title = done.data.values.layout.title.text.toString()
+      console.log(this.layout)
+      if (done.data.options)
+        this.options = done.data.values.options
       this.$forceUpdate()
+      this.$message({
+        type: 'success',
+        message: this.$t('message.scriptSuccess')
+      })
     }
   }
 }

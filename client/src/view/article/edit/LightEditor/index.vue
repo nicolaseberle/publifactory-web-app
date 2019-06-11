@@ -495,7 +495,7 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
-    
+
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
     },
@@ -738,11 +738,10 @@ export default {
         layout: {
           title: 'Title',
           showlegend: false
-        },
-        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+        }
       };
 
-      return axios.post('/api/figure/', newFigure)
+      return axios.post('/api/figure/', newFigure, {headers: { 'Authorization': `Bearer ${this.accessToken}` }})
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)

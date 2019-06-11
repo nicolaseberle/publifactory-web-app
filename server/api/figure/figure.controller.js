@@ -133,16 +133,15 @@ module.exports.pythonExec = async (req, res, next) => {
         scriptPath: './',
         args: []
       };
-      PythonShell.run('./example.py', options, function (err) {
+      PythonShell.run('./example.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
       })
     });
     await fs.unlinkSync('./example.py');
-    const json = require('../../../example')
+    const jsonRawData = fs.readFileSync('./example.json')
+    const json = JSON.parse(jsonRawData);
     await fs.unlinkSync('./example.json');
-    console.log('=====RESULT VALUES=====')
-    console.log(json)
     res.json({ success: true, values: json });
   } catch (e) {
     next(e);
