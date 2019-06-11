@@ -10,6 +10,8 @@ var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
 var mongoose = require('mongoose');
+const fs = require('fs');
+let {PythonShell} = require('python-shell');
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -48,7 +50,7 @@ exports.getFigure = async (req, res, next) => {
     let data = [];
     console.log("getFigure");
     const figureId = req.params.id.trim()
-    const figure = await Figure.findById(figureId).lean();
+    let figure = await Figure.findById(figureId).lean();
     if (figure === undefined) {
       figure = []
     }
@@ -115,5 +117,34 @@ module.exports.updateFigure = async (req, res, next) => {
     return res.status(200).json(updatedFigure._id);
   } catch (err) {
     return next(err);
+  }
+};
+
+module.exports.pythonExec = async (req, res, next) => {
+  try {
+    if (req.body.content === undefined)
+      throw { code: 422, message: "Missing parameters in body field." };
+    await fs.writeFileSync('./example.py', req.body.content);
+    await new Promise((resolve, reject) => {
+      const options = {
+        mode: 'text',
+        pythonPath: '/usr/bin/python3.7',
+        pythonOptions: ['-u'],
+        scriptPath: './',
+        args: []
+      };
+      PythonShell.run('./example.py', options, function (err) {
+        if (err) reject(err);
+        resolve('OK')
+      })
+    });
+    await fs.unlinkSync('./example.py');
+    const json = require('../../../example')
+    await fs.unlinkSync('./example.json');
+    console.log('=====RESULT VALUES=====')
+    console.log(json)
+    res.json({ success: true, values: json });
+  } catch (e) {
+    next(e);
   }
 };

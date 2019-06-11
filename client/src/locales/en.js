@@ -48,7 +48,9 @@ export default {
     removed: 'Delete successed',
     removeFailed: 'Delete failed',
     changeRole: 'The roles have been updated',
-    changeRoleFail: 'The role hasn\'t been updated'
+    changeRoleFail: 'The role hasn\'t been updated',
+    scriptSuccess: 'The script has been executed correctly!',
+    scriptFailure: 'The script hasn\'t worked ; check if you don\'t make a mistake.'
   },
   http: {
     error: {

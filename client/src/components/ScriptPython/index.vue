@@ -14,6 +14,7 @@
         </el-col>
 
     </el-row>
+    <el-button @click="execCode()" round>PREVIEW</el-button>
 
   </div>
 </template>
@@ -55,34 +56,60 @@ export default {
         showlegend: false
       },
       content:`
-import plotly.plotly as py
 import plotly.graph_objs as go
+import plotly.io as plio
 
 import numpy as np
 
-y0 = np.random.randn(50)+1.2
-y1 = np.random.randn(50)+1
-y2 = np.random.randn(50)*2
-y3 = np.random.randn(50)*0.8+1
 
-trace0 = go.Box(
-    y=y0,
-    name = 'Sample A'
-)
-trace1 = go.Box(
-    y=y1,
-    name = 'Sample B'
-)
-trace3 = go.Box(
-    y=y2,
-    name = 'Sample C'
-)
-trace4 = go.Box(
-    y=y3,
-    name = 'Sample D'
-)
-data = [trace0, trace1, trace2, trace3]
-py.iplot(data)
+# This function is used to insert your values into the plotly graph.
+# This function is called in the main to populate data.
+def plotly_values():
+    y0 = np.random.randn(50) + 1.2
+    y1 = np.random.randn(50) + 1
+    y2 = np.random.randn(50) * 2
+    y3 = np.random.randn(50) * 0.8 + 1
+
+    trace0 = go.Box(
+        y=y0,
+        name='Sample A'
+    )
+    trace1 = go.Box(
+        y=y1,
+        name='Sample B'
+    )
+    trace2 = go.Box(
+        y=y2,
+        name='Sample C'
+    )
+    trace3 = go.Box(
+        y=y3,
+        name='Sample D'
+    )
+    data = [trace0, trace1, trace2, trace3]
+    return data
+
+
+# This function is used to modify the title of the graph.
+# This function return the layout, and only this variable should be modified.
+def plotly_layout():
+    layout = "INSERT TITLE HERE"
+    return layout
+
+
+# This function is the main of the project.
+# This function call plotly_values to get the data for the plotly graph.
+# This part musn't be modified.
+def main():
+    data = plotly_values()
+    layout = go.Layout(title=plotly_layout())
+    figure = go.Figure(data=data, layout=layout)
+    plio.write_json(figure, './example.json')
+    exit(0)
+
+
+if __name__ == "__main__":
+    main()
 `
     }
   },
@@ -180,8 +207,35 @@ py.iplot(data)
       }).catch(err => {
         console.log(err)
       })
+    },
+    execCode: async function () {
+      const response = await new Promise((resolve, reject) => {
+        axios.post('/api/figure/python', {
+          content: this.content
+        }, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+          .then(done => {
+            resolve(done.data)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      })
+      if (!response.data || !response.layout)
+        this.$message({
+          type: 'error',
+          message: this.$t('message.scriptFailure')
+        })
+      else
+        this.$message({
+          type: 'success',
+          message: this.$t('message.scriptSuccess')
+        })
+      this.currentData = response.data
+      this.layout = response.layout
+      if (response.options)
+        this.options = response.options
+      this.$forceUpdate()
     }
-
   }
 }
 

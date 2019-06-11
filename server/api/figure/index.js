@@ -10,5 +10,6 @@ var router = express.Router()
 router.post('/', figureController.createFigure);
 router.put('/:id', figureController.updateFigure);
 router.get('/:id', figureController.getFigure);
+router.post('/python', figureController.pythonExec)
 
 module.exports = router;
