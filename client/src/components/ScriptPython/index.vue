@@ -14,6 +14,7 @@
         </el-col>
 
     </el-row>
+    <el-button v-on:click="execCode()" round>PREVIEW</el-button>
 
   </div>
 </template>
@@ -28,19 +29,18 @@ import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
 
 
-import axios from 'axios'
+  import axios from 'axios'
 
 
 export default {
   name: 'ScriptPython',
   locales,
+  props: ["idfigure"],
   components: {VuePlotly},
-  props: ['idfigure'],
   data () {
     return {
       postForm: {},
       editor: {},
-      content: '',
       html: '',
       id: '',
       currentData: [{
@@ -54,35 +54,61 @@ export default {
         title: 'Distribution',
         showlegend: false
       },
-      content:`
-import plotly.plotly as py
+      content: `
 import plotly.graph_objs as go
+import plotly.io as plio
 
 import numpy as np
 
-y0 = np.random.randn(50)+1.2
-y1 = np.random.randn(50)+1
-y2 = np.random.randn(50)*2
-y3 = np.random.randn(50)*0.8+1
 
-trace0 = go.Box(
-    y=y0,
-    name = 'Sample A'
-)
-trace1 = go.Box(
-    y=y1,
-    name = 'Sample B'
-)
-trace3 = go.Box(
-    y=y2,
-    name = 'Sample C'
-)
-trace4 = go.Box(
-    y=y3,
-    name = 'Sample D'
-)
-data = [trace0, trace1, trace2, trace3]
-py.iplot(data)
+# This function is used to insert your values into the plotly graph.
+# This function is called in the main to populate data.
+def plotly_values():
+    y0 = np.random.randn(50) + 1.2
+    y1 = np.random.randn(50) + 1
+    y2 = np.random.randn(50) * 2
+    y3 = np.random.randn(50) * 0.8 + 1
+
+    trace0 = go.Box(
+        y=y0,
+        name='Sample A'
+    )
+    trace1 = go.Box(
+        y=y1,
+        name='Sample B'
+    )
+    trace2 = go.Box(
+        y=y2,
+        name='Sample C'
+    )
+    trace3 = go.Box(
+        y=y3,
+        name='Sample D'
+    )
+    data = [trace0, trace1, trace2, trace3]
+    return data
+
+
+# This function is used to modify the title of the graph.
+# This function return the layout, and only this variable should be modified.
+def plotly_layout():
+    layout = "INSERT TITLE HERE"
+    return layout
+
+
+# This function is the main of the project.
+# This function call plotly_values to get the data for the plotly graph.
+# This part musn't be modified.
+def main():
+    data = plotly_values()
+    layout = go.Layout(title=plotly_layout())
+    figure = go.Figure(data=data, layout=layout)
+    plio.write_json(figure, './example.json')
+    exit(0)
+
+
+if __name__ == "__main__":
+    main()
 `
     }
   },
@@ -101,6 +127,10 @@ py.iplot(data)
         theme: 'one-dark',
         mode: "text/x-python"
      })
+    this.editor.on('change', instance => {
+      this.content = instance.getDoc().getValue()
+      console.log(this.content)
+    })
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -158,7 +188,7 @@ py.iplot(data)
   methods: {
     saveFigure () {
       console.log('saveFigure: ',this.idfigure)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
+      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(response => {
@@ -169,19 +199,37 @@ py.iplot(data)
       })
     },
     fetchFigure(id) {
-      var self = this
-      axios.get('/api/figure/' + id , {
+      axios.get('http://localhost:4000/api/figure/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        self.currentData = response.data.data
-        self.layout = response.data.layout
-        self.option = response.data.option
+        this.currentData = response.data.data
+        this.layout = response.data.layout
+        this.option = response.data.option
 
       }).catch(err => {
         console.log(err)
       })
+    },
+    async execCode () {
+      const done = await axios.post('http://localhost:4000/api/figure/python', {
+        content: this.content
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
+      console.log(done)
+      this.currentData = done.data.values.data
+      this.layout.title = done.data.values.layout.title.text.toString()
+      console.log(this.layout)
+      if (done.data.options)
+        this.options = done.data.values.options
+      this.$forceUpdate()
+      this.$message({
+        type: 'success',
+        message: this.$t('message.scriptSuccess')
+      })
     }
-
   }
 }
 

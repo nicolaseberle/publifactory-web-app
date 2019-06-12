@@ -452,13 +452,12 @@ export default {
   created() {
     this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    this.fetchData(this.id)
-
     this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
     this.cursors.update()
 
   },
   mounted() {
+      this.fetchData(this.id)
       asideRightAnimation()
       this.updateUserList()
   },
@@ -495,7 +494,7 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
-    
+
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
     },
@@ -738,11 +737,10 @@ export default {
         layout: {
           title: 'Title',
           showlegend: false
-        },
-        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+        }
       };
 
-      return axios.post('/api/figure/', newFigure)
+      return axios.post('/api/figure/', newFigure, {headers: { 'Authorization': `Bearer ${this.accessToken}` }})
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)
