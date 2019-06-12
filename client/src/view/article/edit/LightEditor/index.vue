@@ -224,7 +224,7 @@
       <el-row :gutter="20" style='margin-top:1rem'>
         <el-col :span="3">
           <el-card shadow="hover">
-            <img src="/../../static/img/R_logo.png" style="width: 90%;" alt="R_script">
+            <img src="/../../static/img/R_logo.png" style="width: 90%;" alt="R_script" @click="addNewFigureR($event)">
           </el-card>
         </el-col>
         <el-col :span="20">
@@ -292,6 +292,23 @@
       <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible"/>
     </el-dialog>
 
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigureRVisible"
+      width="100%"
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type=""  @click="diagInsertFigureRVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="" >Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureRVisible=false" >Insert Figure</el-button>
+        </div>
+      </span>
+      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible"/>
+    </el-dialog>
+
     <div id="container"></div>
 
   </div>
@@ -313,6 +330,7 @@ import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
 import imageComponent from '../../../../components/Image'
 import scriptPython from '../../../../components/ScriptPython'
+import scriptR from '../../../../components/ScriptR'
 
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
@@ -373,7 +391,7 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData, scriptR},
   data() {
     return {
       inputTagsVisible : false,
@@ -388,6 +406,7 @@ export default {
       diagAuthorVisible : false,
       diagInsertFigurePlotlyVisible: false,
       diagInsertFigurePythonVisible: false,
+      diagInsertFigureRVisible: false,
       userListOptions: [],
       html: '',
       activeNames: ['1'],
@@ -471,6 +490,14 @@ export default {
       }
     },
     diagInsertFigurePythonVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+      }
+    },
+    diagInsertFigureRVisible (val) {
       if(val==false) {
         var idfigure = this.editidfigure
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
@@ -722,6 +749,14 @@ export default {
       if(this.dialogStepActive == 2){
         this.dialogVisible = false;
         this.diagInsertFigurePythonVisible = true;
+        this.dialogStepActive = 0;
+      }
+    },
+    addNewFigureR (ev,key,subkey,subsubkey){
+      this.dialogStepActive++;
+      if(this.dialogStepActive == 2){
+        this.dialogVisible = false;
+        this.diagInsertFigureRVisible = true;
         this.dialogStepActive = 0;
       }
     },
