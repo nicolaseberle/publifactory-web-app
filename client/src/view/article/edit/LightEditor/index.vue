@@ -688,10 +688,19 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    editChartBlock (ev,key,subkey,subsubkey,idFigure) {
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
-      this.diagInsertFigurePlotlyVisible = true;
+      const response = await axios.get('http://localhost:4000/api/figure/' + this.editidfigure, {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      })
+      console.log(response)
+      if (response.data.script.language === 'Python')
+        this.diagInsertFigurePythonVisible = true
+      else if (response.data.script.language === 'R')
+        this.diagInsertFigureRVisible = true
+      else
+        this.diagInsertFigurePlotlyVisible = true
     },
     editImageBlock () {
       //this.editidfigure = idFigure
