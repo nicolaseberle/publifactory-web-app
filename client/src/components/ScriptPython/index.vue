@@ -1,21 +1,17 @@
 <template>
   <div style='width:100%'>
     <el-row :gutter="40" >
-
-        <el-col :span="12">
-          <textarea id="code" name="code">
-            {{content}}
-          </textarea>
-        </el-col>
-        <el-col :span="12">
-          <div style='width:100%'>
-            <vue-plotly :data="currentData" :layout="layout" :options="options"/>
-          </div>
-        </el-col>
-
+      <el-col :span="12">
+        <textarea id="code" name="code">
+          {{content}}
+        </textarea>
+      </el-col>
+      <el-col :span="12">
+        <div style='width:100%'>
+          <vue-plotly :data="currentData" :layout="layout" :options="options"/>
+        </div>
+      </el-col>
     </el-row>
-    <el-button v-on:click="execCode()" round>PREVIEW</el-button>
-
   </div>
 </template>
 <script>
@@ -54,7 +50,13 @@ export default {
         title: 'Distribution',
         showlegend: false
       },
+      timer: null,
       content: `
+# This file has been formatted to be functional with plotly Python
+# Every modification will modify the graphic at the right of your screen.
+# You can find some information about plotly and how to make
+# good charts here : https://plot.ly/python/
+
 import plotly.graph_objs as go
 import plotly.io as plio
 
@@ -129,7 +131,12 @@ if __name__ == "__main__":
      })
     this.editor.on('change', instance => {
       this.content = instance.getDoc().getValue()
-      console.log(this.content)
+      if (!this.timer) {
+        this.timer = setTimeout(() => {
+          this.execCode()
+          this.timer = null
+        }, 3000)
+      }
     })
     var y0 = [];
     var y1 = [];
@@ -211,24 +218,37 @@ if __name__ == "__main__":
       })
     },
     async execCode () {
-      const done = await axios.post('http://localhost:4000/api/figure/python', {
-        content: this.content
-      }, {
-        headers: {
-          'Authorization': `Bearer ${this.accessToken}`
-        }
-      })
-      console.log(done)
-      this.currentData = done.data.values.data
-      this.layout.title = done.data.values.layout.title.text.toString()
-      console.log(this.layout)
-      if (done.data.options)
-        this.options = done.data.values.options
-      this.$forceUpdate()
-      this.$message({
-        type: 'success',
-        message: this.$t('message.scriptSuccess')
-      })
+      try {
+        const done = await axios.post('http://localhost:4000/api/figure/python', {
+          content: this.content
+        }, {
+          headers: {
+            'Authorization': `Bearer ${this.accessToken}`
+          }
+        })
+        this.currentData = done.data.values.data
+        this.layout.title = done.data.values.layout.title.text.toString()
+        console.log(this.layout)
+        if (done.data.options)
+          this.options = done.data.values.options
+        this.$forceUpdate()
+        this.$notify({
+          title: 'Script ran well !',
+          type: 'success',
+          message: this.$t('message.scriptSuccess'),
+          offset: 100,
+          showClose: false
+        })
+        console.log(done)
+      } catch (e) {
+        this.$notify({
+          title: 'Error during the script.',
+          type: 'error',
+          message: e.response.data.message.traceback,
+          offset: 100,
+          showClose: false
+        })
+      }
     }
   }
 }

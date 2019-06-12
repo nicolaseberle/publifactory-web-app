@@ -69,6 +69,7 @@
     "html-generator": "0.0.0",
     "iframe-resizer": "^3.6.6",
     "ify-loader": "^1.1.0",
+    "js-call-r": "0.0.4",
     "js-cookie": "^2.2.0",
     "jsonwebtoken": "^7.1.9",
     "katex": "^0.10.1",
