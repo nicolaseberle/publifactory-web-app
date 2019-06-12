@@ -37,6 +37,9 @@ export default {
             y: [ 10, 9, 12, 13],
             type: 'bar',
             orientation: 'v'
+      }],
+      currentData: [{
+
       }]
     }
   },
@@ -48,22 +51,18 @@ export default {
     console.log("FigureComponent:: idfigure : " + this.idfigure)
 
     this.currentData = this.currentData1
-
-    this.fetchFigure(this.idfigure)
   },
   mounted () {
     this.fetchFigure(this.idfigure)
   },
   methods: {
     fetchFigure(id) {
-      var self = this
       axios.get('/api/figure/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        self.currentData = response.data.data
-        self.layout = response.data.layout
-        self.option = response.data.option
-
+        this.currentData = response.data.data
+        this.layout = response.data.layout
+        this.option = response.data.option
       }).catch(err => {
         console.log(err)
       })
