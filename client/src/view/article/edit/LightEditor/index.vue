@@ -452,13 +452,12 @@ export default {
   created() {
     this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    this.fetchData(this.id)
-
     this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
     this.cursors.update()
 
   },
   mounted() {
+      this.fetchData(this.id)
       asideRightAnimation()
       this.updateUserList()
   },
