@@ -195,10 +195,18 @@ if __name__ == "__main__":
   methods: {
     saveFigure () {
       console.log('saveFigure: ',this.idfigure)
-      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
+      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
+        data: this.currentData,
+        option:this.option,
+        layout: this.layout,
+        script: {
+          language: "Python",
+          content: this.content
+        }
+      }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
-      .then(response => {
+      .then(() => {
         console.log("figure saved")
       })
       .catch(e => {
@@ -212,7 +220,7 @@ if __name__ == "__main__":
         this.currentData = response.data.data
         this.layout = response.data.layout
         this.option = response.data.option
-
+        this.content = response.data.script.content
       }).catch(err => {
         console.log(err)
       })

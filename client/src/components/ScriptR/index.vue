@@ -182,7 +182,15 @@ print(toJSON(json))
     methods: {
       saveFigure () {
         console.log('saveFigure: ',this.idfigure)
-        axios.put('http://localhost:4000/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout }, {
+        axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
+          data: this.currentData,
+          option:this.option,
+          layout: this.layout,
+          script: {
+            language: "R",
+            content: this.content
+          }
+        }, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         })
           .then(response => {

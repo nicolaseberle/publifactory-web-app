@@ -98,11 +98,12 @@ module.exports.updateFigure = async (req, res, next) => {
     const data = req.body.data;
     const layout = req.body.layout;
     const option = req.body.option;
+    const script = req.body.script;
     console.log("updateFigure");
     const updatedFigure = await Figure
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { data, layout, option} },
+        { $set: { data, layout, option, script } },
         { new: true }
       );
 

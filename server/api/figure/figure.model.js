@@ -15,6 +15,16 @@ const FigureSchema = new Schema({
   },
   option:{
     type: {String}
+  },
+  script: {
+    language: {
+      type: String,
+      default: "Light"
+    },
+    content: {
+      type: String,
+      default: null
+    }
   }
 });
 
