@@ -401,7 +401,7 @@ export default {
         font-weight: normal;
         min-width: 0;
       }
-      .mark-as-read:hover{
+      .mark-as-read:hover{ 
         background-color: inherit;
         opacity: 0.8;
         color: #636363;
