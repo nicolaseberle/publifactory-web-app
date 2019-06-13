@@ -155,6 +155,7 @@
     </el-steps>
     <div v-if='dialogStepActive==0'>
       <h2 style="text-align:left;">Import</h2>
+
       <el-tabs stretch type="border-card" style='vertical-align:middle'>
         <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
         <el-tab-pane label="by URL">(not yet)</el-tab-pane>
@@ -259,11 +260,12 @@
     </el-dialog>
 
     <el-dialog
-      show-close
+      show-close="false"
       top="0"
       :visible.sync="diagInsertFigurePlotlyVisible"
+      fullscreen="true"
       width="100%"
-      center>
+      center="true">
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
@@ -276,11 +278,13 @@
     </el-dialog>
 
     <el-dialog
-      show-close
+      show-close="false"
       top="0"
       :visible.sync="diagInsertFigurePythonVisible"
+      fullscreen="true"
       width="100%"
-      center>
+      lock-scroll="false"
+      center="true">
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
@@ -302,11 +306,12 @@
     </el-dialog>
 
     <el-dialog
-      show-close
+      show-close="false"
       top="0"
       :visible.sync="diagInsertFigureRVisible"
+      fullscreen="true"
       width="100%"
-      center>
+      center="true">
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>

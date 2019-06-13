@@ -1,14 +1,32 @@
 <template>
   <div style='width:100%'>
-    <el-row :gutter="40" >
-      <el-col :span="12">
-        <textarea id="code" name="code">
-          {{content}}
-        </textarea>
+    <el-row >
+      <el-col :span="11">
+        <div style='width:100%'>
+          <textarea id="code" name="code">{{content}}</textarea>
+        </div>
       </el-col>
       <el-col :span="12">
-        <div style='width:100%'>
+        <div class='plotly_js'>
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
+        </div>
+        <div class="plotly_js">
+          <div class="legend">
+            <el-form ref="postForm" :label-position="top" :model="form">
+              <el-form-item label="Name of the figure">
+                <el-input v-model="postForm.name" disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="Universal Unique IDentifier of the figure">
+                <el-input v-model="postForm.uuid_figure" disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="Legend">
+                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"></el-input>
+              </el-form-item>
+              <el-form-item label="Source" placeholder="Enter the graph DOI">
+                <el-input v-model="postForm.source"></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -31,7 +49,12 @@ export default {
   components: {VuePlotly},
   data () {
     return {
-      postForm: {},
+      postForm: {
+        legend: '',
+        source: 'http://dx.doi.org/00.0000/e0000000',
+        name: 'INSERT TITLE HERE',
+        uuid_figure: this.idfigure
+      },
       editor: {},
       html: '',
       id: '',
@@ -124,7 +147,8 @@ if __name__ == "__main__":
         styleActiveLine: true,
         matchBrackets: true,
         theme: 'one-dark',
-        mode: "text/x-python"
+        mode: "text/x-python",
+        lineWrapping: true
      })
     this.editor.on('change', instance => {
       this.content = instance.getDoc().getValue()
@@ -245,6 +269,7 @@ if __name__ == "__main__":
         })
         this.currentData = done.data.values.data
         this.layout.title = done.data.values.layout.title.text.toString()
+        this.postForm.name = this.layout.title
         console.log(this.layout)
         if (done.data.options)
           this.options = done.data.values.options
@@ -274,9 +299,26 @@ if __name__ == "__main__":
 }
 
 </script>
-<style>
+<style lang="scss">
 
-  .CodeMirror {border: 1px solid silver; margin-bottom: 1em; }
+  .plotly_js {
+    width:100%;
+    border-left-style: solid;
+    border-left-width: 5px;
+    border-left-color: #2c3e50;
+  }
+
+  .legend {
+    width:auto;
+    margin-left: 1em;
+  }
+
+  .CodeMirror {
+    border: 1px solid silver;
+    height: auto;
+    margin-bottom: 1em;
+  }
+
   dt { text-indent: -2em; padding-left: 2em; margin-top: 1em; }
   dd { margin-left: 1.5em; margin-bottom: 1em; }
   dt {margin-top: 1em;}
