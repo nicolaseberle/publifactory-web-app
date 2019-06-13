@@ -119,9 +119,11 @@ print(toJSON(json))
       this.editor.on('change', instance => {
         this.content = instance.getDoc().getValue()
         if (!this.timer) {
-          this.timer = setTimeout(() => {
-            this.execCode()
+          this.$emit('loading', true)
+          this.timer = setTimeout(async () => {
+            await this.execCode()
             this.timer = null
+            this.$emit('loading', true)
           }, 3000)
         }
       })

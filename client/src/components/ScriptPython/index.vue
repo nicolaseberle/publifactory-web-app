@@ -15,7 +15,6 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
 import locales from 'locales/charts'
 import VuePlotly from '@statnett/vue-plotly'
 import CodeMirror from 'codemirror'
@@ -23,10 +22,7 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/lib/codemirror.css'
 import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
-
-
-  import axios from 'axios'
-
+import axios from 'axios'
 
 export default {
   name: 'ScriptPython',
@@ -45,6 +41,7 @@ export default {
             type: 'bar',
             orientation: 'v'
       }],
+      pythonVersion: '3.7',
       options: {},
       layout: {
         title: 'Distribution',
@@ -132,9 +129,11 @@ if __name__ == "__main__":
     this.editor.on('change', instance => {
       this.content = instance.getDoc().getValue()
       if (!this.timer) {
-        this.timer = setTimeout(() => {
-          this.execCode()
+        this.$emit('loading', true)
+        this.timer = setTimeout(async () => {
+          await this.execCode()
           this.timer = null
+          this.$emit('loading', true)
         }, 3000)
       }
     })
@@ -190,6 +189,15 @@ if __name__ == "__main__":
   watch: {
     currentData (newVal) {
       this.saveFigure ()
+    },
+    pythonVersion (newVal) {
+      if (newVal === '2.7')
+        this.$message({
+          message: 'Warning: Python 2.7 will be deprecated in January 2020 and won\'t be maintained anymore.\nThink about to move on Python 3.x version.',
+          type: 'warning',
+          center: true,
+          duration: 5000
+        });
     }
   },
   methods: {
@@ -228,7 +236,8 @@ if __name__ == "__main__":
     async execCode () {
       try {
         const done = await axios.post('http://localhost:4000/api/figure/python', {
-          content: this.content
+          content: this.content,
+          version: this.pythonVersion
         }, {
           headers: {
             'Authorization': `Bearer ${this.accessToken}`
@@ -252,11 +261,14 @@ if __name__ == "__main__":
         this.$notify({
           title: 'Error during the script.',
           type: 'error',
-          message: e.response.data.message.traceback,
+          message: e.response.data.message.traceback || this.$t('message.scriptFailure'),
           offset: 100,
           showClose: false
         })
       }
+    },
+    setVersion (version) {
+      this.pythonVersion = version
     }
   }
 }

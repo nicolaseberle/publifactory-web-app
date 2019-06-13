@@ -272,7 +272,7 @@
           <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
         </div>
       </span>
-      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible"/>
+      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible" ref="lightChild"/>
     </el-dialog>
 
     <el-dialog
@@ -284,12 +284,21 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type=""  @click="diagInsertFigurePythonVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="" >Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" >Insert Figure</el-button>
+          <el-dropdown trigger="click" @command="changePythonVersion">
+            <el-button type="primary">Python version<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="3.7">Python 3.7</el-dropdown-item>
+              <el-dropdown-item command="3.6">Python 3.6</el-dropdown-item>
+              <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible"/>
+      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+                    v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
     <el-dialog
@@ -301,12 +310,13 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type=""  @click="diagInsertFigureRVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="" >Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigureRVisible=false" >Insert Figure</el-button>
+          <el-button type=""  @click="diagInsertFigureRVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click="execRCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible"/>
+      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+               v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
     <div id="container"></div>
@@ -423,6 +433,7 @@ export default {
       checkedExData1: false,
       checkedExData2: false,
       checkedExData3: false,
+      renderLoading: false,
       id: 0,
       form: {
           name: '',
@@ -819,11 +830,34 @@ export default {
         if (!response.data.items) return
         this.userListOptions = response.data.items.map(v => v.name)
       })
+    },
+    async execPythonCode () {
+      this.renderLoading = true
+      await this.$refs.pythonChild.execCode()
+      this.renderLoading = false
+    },
+    async execRCode () {
+      this.renderLoading = true
+      await this.$refs.rChild.execCode()
+      this.renderLoading = false
+    },
+    changePythonVersion (newValue) {
+      this.$refs.pythonChild.setVersion(newValue)
     }
   }
 }
 </script>
 <style>
+  .el-dropdown {
+    vertical-align: top;
+  }
+  .el-dropdown + .el-dropdown {
+    margin-left: 15px;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+
 .el-dialog--center .el-dialog__body{
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
