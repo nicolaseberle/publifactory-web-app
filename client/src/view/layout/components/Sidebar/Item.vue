@@ -29,3 +29,8 @@ export default {
   }
 }
 </script>
+<style>
+.el-menu-item .svg-icon{
+  margin-right:10px;
+}
+</style>

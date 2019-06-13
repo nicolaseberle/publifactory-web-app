@@ -66,18 +66,18 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'dashboard',
   // hidden: true,
-  meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
+  meta: { title: 'Board', icon: 'appsbutton', noCache: true },
   children: [
     {
       path: '',
       name: 'Articles',
-      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      meta: { title: 'My Articles', icon: 'edit', noCache: true },
       component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
       name: 'Journals',
-      meta: { title: 'Journals', icon: 'book', noCache: true },
+      meta: { title: 'My Journals', icon: 'book', noCache: true },
       component: () => import('../view/journals/index.vue')
     },
     {
@@ -97,7 +97,21 @@ export const constantRouterMap = [{
       component: () => import('../view/dashboard/index.vue')
     }
   ]
-},
+},//
+{
+  path: '/feeds',
+  component: Layout,
+  redirect: 'feeds',
+  // hidden: true,
+  meta: { title: 'Feeds', icon: 'layers', noCache: true },
+  children: [
+    {
+      path: 'feeds',
+      hidden: true,
+      component: () => import('../view/journals/index.vue')
+    }
+  ]
+},//
 {
   path: '/applications',
   component: Layout,
