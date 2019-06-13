@@ -16,7 +16,7 @@
       <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item
           v-if="child.children&&child.children.length>0"
-          :is-nest="true"
+          :is-nest="false"
           :item="child"
           :key="child.path"
           :base-path="resolvePath(child.path)"
@@ -123,3 +123,8 @@ export default {
   }
 }
 </script>
+<style>
+.menu-wrapper{
+  margin-bottom: 30px;
+}
+</style>

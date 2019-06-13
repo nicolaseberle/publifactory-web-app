@@ -29,3 +29,8 @@ export default {
   }
 }
 </script>
+<style>
+.svg-icon{
+  margin-right:10px;
+}
+</style>
