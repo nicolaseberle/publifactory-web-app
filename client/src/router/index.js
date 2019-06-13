@@ -106,36 +106,6 @@ export const constantRouterMap = [{
   meta: { title: 'Feeds', icon: 'layers', noCache: true },
   children: [
     {
-      path: '/journal/BioRxiv',
-      name: 'BioRxiv',
-      meta: { title: 'BioRxiv', icon: 'checked', noCache: true },
-        component: () => import('../view/journals/index.vue')
-    },
-    {
-      path: '/journal/HAL',
-      name: 'HAL',
-      meta: { title: 'HAL', icon: 'checked', noCache: true },
-        component: () => import('../view/journals/index.vue')
-    },
-    {
-      path: '/journal/pci_evol_bio',
-      name: 'PCI Evol Bio',
-      meta: { title: 'PCI Evol Bio', icon: 'book', noCache: true },
-        component: () => import('../view/journals/index.vue')
-    },
-    {
-      path: '/journal/publiscience_bio',
-      name: 'Publiscience - Bio',
-      meta: { title: 'Publiscience - Bio', icon: 'book', noCache: true },
-        component: () => import('../view/journals/index.vue')
-    },
-    {
-      path: '/journal/addJournal',
-      name: 'Add Journal +',
-      meta: { title: 'Add Journal +', icon: '', noCache: true },
-      component: () => import('../view/journals/index.vue')
-    },
-    {
       path: 'feeds',
       hidden: true,
       component: () => import('../view/journals/index.vue')

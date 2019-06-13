@@ -125,6 +125,6 @@ export default {
 </script>
 <style>
 .menu-wrapper{
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 </style>
