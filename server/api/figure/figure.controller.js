@@ -70,10 +70,11 @@ module.exports.createFigure = async (req, res, next) => {
     const layout = req.body.layout;
     const option = req.body.option;
     console.log("createFigure");
-    const newFigure = new Figure({ "data": JSON.stringify(data),
-                                  "layout": JSON.stringify(layout),
-                                  "option": JSON.stringify(option)
-                                });
+    const newFigure = new Figure({
+      data: data,
+      layout: layout,
+      option: option
+    });
 
     //const article = await Article.findById(req.body.id).populate('arr_data').lean();
     //console.log(JSON.stringify(article, null, "\t"));

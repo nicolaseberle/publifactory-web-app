@@ -208,7 +208,7 @@ print(toJSON(json))
     methods: {
       saveFigure () {
         console.log('saveFigure: ',this.idfigure)
-        axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
+        axios.put('/api/figure/'  + this.idfigure, {
           data: this.currentData,
           option:this.option,
           layout: this.layout,
@@ -227,7 +227,7 @@ print(toJSON(json))
           })
       },
       fetchFigure(id) {
-        axios.get('http://localhost:4000/api/figure/' + id , {
+        axios.get('/api/figure/' + id , {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(response => {
           this.currentData = response.data.data
@@ -240,7 +240,7 @@ print(toJSON(json))
       },
       async execCode () {
         try {
-          const done = await axios.post('http://localhost:4000/api/figure/r', {
+          const done = await axios.post('/api/figure/r', {
             content: this.content
           }, {
             headers: {

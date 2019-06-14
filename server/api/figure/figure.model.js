@@ -10,8 +10,11 @@ const FigureSchema = new Schema({
     orientation: {type:String}
   },
   layout:{
-    title:{String},
-    showlegend: {Boolean}
+    title:{
+      type:String,
+      required: true
+    },
+    showlegend: {type:Boolean}
   },
   option:{
     type: {String}

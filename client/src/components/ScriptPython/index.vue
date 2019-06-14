@@ -3,7 +3,7 @@
     <el-row >
       <el-col :span="11">
         <div style='width:100%'>
-          <textarea id="code" name="code">{{content}}</textarea>
+          <textarea id="code" name="code">{{content}} </textarea>
         </div>
       </el-col>
       <el-col :span="12">
@@ -12,12 +12,12 @@
         </div>
         <div class="plotly_js">
           <div class="legend">
-            <el-form ref="postForm" :label-position="top" :model="form">
+            <el-form ref="postForm" label-position="top" :model="postForm">
               <el-form-item label="Name of the figure">
-                <el-input v-model="postForm.name" disabled="true"></el-input>
+                <el-input v-model="postForm.name" disabled></el-input>
               </el-form-item>
               <el-form-item label="Universal Unique IDentifier of the figure">
-                <el-input v-model="postForm.uuid_figure" disabled="true"></el-input>
+                <el-input v-model="postForm.uuid_figure" disabled></el-input>
               </el-form-item>
               <el-form-item label="Legend">
                 <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"></el-input>
@@ -55,22 +55,6 @@ export default {
         name: 'INSERT TITLE HERE',
         uuid_figure: this.idfigure
       },
-      editor: {},
-      html: '',
-      id: '',
-      currentData: [{
-            x: ['Sample A','Sample B','Sample C','Sample D'],
-            y: [ 10, 16, 12, 13],
-            type: 'bar',
-            orientation: 'v'
-      }],
-      pythonVersion: '3.7',
-      options: {},
-      layout: {
-        title: 'Distribution',
-        showlegend: false
-      },
-      timer: null,
       content: `
 # This file has been formatted to be functional with plotly Python
 # Every modification will modify the graphic at the right of your screen.
@@ -131,7 +115,23 @@ def main():
 
 if __name__ == "__main__":
     main()
-`
+`,
+      editor: {},
+      html: '',
+      id: '',
+      currentData: [{
+            x: ['Sample A','Sample B','Sample C','Sample D'],
+            y: [ 10, 16, 12, 13],
+            type: 'bar',
+            orientation: 'v'
+      }],
+      pythonVersion: '3.7',
+      options: {},
+      layout: {
+        title: 'Distribution',
+        showlegend: false
+      },
+      timer: null
     }
   },
   created () {
@@ -225,9 +225,37 @@ if __name__ == "__main__":
     }
   },
   methods: {
+    handleTabsEdit(targetName, action) {
+      if (action === 'add') {
+        let newTabName = ++this.tabIndex + '';
+        this.editableTabs.push({
+          title: 'Nouvel onglet',
+          name: newTabName,
+          content: 'Contenu du nouvel onglet'
+        });
+        this.editableTabsValue = newTabName;
+      }
+      if (action === 'remove') {
+        let tabs = this.editableTabs;
+        let activeName = this.editableTabsValue;
+        if (activeName === targetName) {
+          tabs.forEach((tab, index) => {
+            if (tab.name === targetName) {
+              let nextTab = tabs[index + 1] || tabs[index - 1];
+              if (nextTab) {
+                activeName = nextTab.name;
+              }
+            }
+          });
+        }
+
+        this.editableTabsValue = activeName;
+        this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+      }
+    },
     saveFigure () {
       console.log('saveFigure: ',this.idfigure)
-      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
+      axios.put('/api/figure/'  + this.idfigure, {
         data: this.currentData,
         option:this.option,
         layout: this.layout,
@@ -246,7 +274,7 @@ if __name__ == "__main__":
       })
     },
     fetchFigure(id) {
-      axios.get('http://localhost:4000/api/figure/' + id , {
+      axios.get('/api/figure/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.currentData = response.data.data
@@ -259,7 +287,7 @@ if __name__ == "__main__":
     },
     async execCode () {
       try {
-        const done = await axios.post('http://localhost:4000/api/figure/python', {
+        const done = await axios.post('/api/figure/python', {
           content: this.content,
           version: this.pythonVersion
         }, {
