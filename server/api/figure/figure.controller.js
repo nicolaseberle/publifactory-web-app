@@ -119,7 +119,7 @@ module.exports.updateFigure = async (req, res, next) => {
 
 module.exports.scripts = async (req, res, next) => {
   try {
-    if (req.body.content === undefined)
+    if (req.body.content === undefined || (req.params.script === 'python' && req.body.version === undefined))
       throw { code: 422, message: "Missing parameters in body field." };
     req.params.script === 'r' ? rExec(req, res, next) : pythonExec(req, res, next);
   } catch (e) {
@@ -129,15 +129,16 @@ module.exports.scripts = async (req, res, next) => {
 
 async function pythonExec(req, res, next) {
   try {
+    const version = `python${req.body.version}`
+    const options = {
+      mode: 'text',
+      pythonPath: `/usr/bin/${version}`,
+      pythonOptions: ['-u'],
+      scriptPath: './',
+      args: []
+    };
     await fs.writeFileSync('./example.py', req.body.content);
     await new Promise((resolve, reject) => {
-      const options = {
-        mode: 'text',
-        pythonPath: '/usr/bin/python3.7',
-        pythonOptions: ['-u'],
-        scriptPath: './',
-        args: []
-      };
       PythonShell.run('./example.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
