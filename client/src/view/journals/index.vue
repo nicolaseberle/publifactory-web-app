@@ -146,8 +146,10 @@ export default {
     handleCreateJournal () {
       this.dialogCreationJournal = true
     },
-    handleFollowJournal (idSelectedJournal){
-      // axios.put('api/journals')
+    async handleFollowJournal (idSelectedJournal){
+      const response = await axios.post('/api/journals/' + idSelectedJournal + '/follow' , {}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
     },
     closeCreationDialog () {
       this.dialogCreationJournal = false

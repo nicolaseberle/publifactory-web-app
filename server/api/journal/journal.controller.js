@@ -285,6 +285,7 @@ module.exports.followJournal = async (req, res, next) => {
     await Journal.findOneAndUpdate(query, instruction);
     res.json({ success: true })
   } catch (e) {
+    console.log(e)
     next(e);
   }
 }

@@ -1,9 +1,9 @@
 'use strict';
 
-var express = require('express')
+const express = require('express')
 const journalController = require('./journal.controller');
 
-var auth = require('../../auth/auth.service')
+const auth = require('../../auth/auth.service')
 const roles = require('../roles/journal/roles.journal.controller')
 
 var router = express.Router()
