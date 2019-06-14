@@ -1,21 +1,38 @@
 <template>
   <div style='width:100%'>
-    <el-row :gutter="40" >
-      <el-col :span="12">
-        <textarea id="code" name="code">
-          {{content}}
-        </textarea>
+    <el-row >
+      <el-col :span="11">
+        <div style='width:100%'>
+          <textarea id="code" name="code">{{content}}</textarea>
+        </div>
       </el-col>
       <el-col :span="12">
-        <div style='width:100%'>
+        <div class='plotly_js'>
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
+        </div>
+        <div class="plotly_js">
+          <div class="legend">
+            <el-form ref="postForm" :label-position="top" :model="form">
+              <el-form-item label="Name of the figure">
+                <el-input v-model="postForm.name" disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="Universal Unique IDentifier of the figure">
+                <el-input v-model="postForm.uuid_figure" disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="Legend">
+                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"></el-input>
+              </el-form-item>
+              <el-form-item label="Source" placeholder="Enter the graph DOI">
+                <el-input v-model="postForm.source"></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
-import Vue from 'vue';
 import locales from 'locales/charts'
 import VuePlotly from '@statnett/vue-plotly'
 import CodeMirror from 'codemirror'
@@ -23,10 +40,7 @@ import 'codemirror/mode/python/python.js'
 import 'codemirror/lib/codemirror.css'
 import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
-
-
-  import axios from 'axios'
-
+import axios from 'axios'
 
 export default {
   name: 'ScriptPython',
@@ -35,7 +49,12 @@ export default {
   components: {VuePlotly},
   data () {
     return {
-      postForm: {},
+      postForm: {
+        legend: '',
+        source: 'http://dx.doi.org/00.0000/e0000000',
+        name: 'INSERT TITLE HERE',
+        uuid_figure: this.idfigure
+      },
       editor: {},
       html: '',
       id: '',
@@ -45,6 +64,7 @@ export default {
             type: 'bar',
             orientation: 'v'
       }],
+      pythonVersion: '3.7',
       options: {},
       layout: {
         title: 'Distribution',
@@ -127,14 +147,17 @@ if __name__ == "__main__":
         styleActiveLine: true,
         matchBrackets: true,
         theme: 'one-dark',
-        mode: "text/x-python"
+        mode: "text/x-python",
+        lineWrapping: true
      })
     this.editor.on('change', instance => {
       this.content = instance.getDoc().getValue()
       if (!this.timer) {
-        this.timer = setTimeout(() => {
-          this.execCode()
+        this.$emit('loading', true)
+        this.timer = setTimeout(async () => {
+          await this.execCode()
           this.timer = null
+          this.$emit('loading', true)
         }, 3000)
       }
     })
@@ -190,6 +213,15 @@ if __name__ == "__main__":
   watch: {
     currentData (newVal) {
       this.saveFigure ()
+    },
+    pythonVersion (newVal) {
+      if (newVal === '2.7')
+        this.$message({
+          message: 'Warning: Python 2.7 will be deprecated in January 2020 and won\'t be maintained anymore.\nThink about to move on Python 3.x version.',
+          type: 'warning',
+          center: true,
+          duration: 5000
+        });
     }
   },
   methods: {
@@ -228,7 +260,8 @@ if __name__ == "__main__":
     async execCode () {
       try {
         const done = await axios.post('http://localhost:4000/api/figure/python', {
-          content: this.content
+          content: this.content,
+          version: this.pythonVersion
         }, {
           headers: {
             'Authorization': `Bearer ${this.accessToken}`
@@ -236,6 +269,7 @@ if __name__ == "__main__":
         })
         this.currentData = done.data.values.data
         this.layout.title = done.data.values.layout.title.text.toString()
+        this.postForm.name = this.layout.title
         console.log(this.layout)
         if (done.data.options)
           this.options = done.data.values.options
@@ -252,19 +286,39 @@ if __name__ == "__main__":
         this.$notify({
           title: 'Error during the script.',
           type: 'error',
-          message: e.response.data.message.traceback,
+          message: e.response.data.message.traceback || this.$t('message.scriptFailure'),
           offset: 100,
           showClose: false
         })
       }
+    },
+    setVersion (version) {
+      this.pythonVersion = version
     }
   }
 }
 
 </script>
-<style>
+<style lang="scss">
 
-  .CodeMirror {border: 1px solid silver; margin-bottom: 1em; }
+  .plotly_js {
+    width:100%;
+    border-left-style: solid;
+    border-left-width: 5px;
+    border-left-color: #2c3e50;
+  }
+
+  .legend {
+    width:auto;
+    margin-left: 1em;
+  }
+
+  .CodeMirror {
+    border: 1px solid silver;
+    height: auto;
+    margin-bottom: 1em;
+  }
+
   dt { text-indent: -2em; padding-left: 2em; margin-top: 1em; }
   dd { margin-left: 1.5em; margin-bottom: 1em; }
   dt {margin-top: 1em;}
