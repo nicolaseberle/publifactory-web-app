@@ -108,13 +108,14 @@ var utils = require('../../utils/js/collaboration/utils')// cursor
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-import QuillCursors from 'quill-cursors/src/cursors';
-Quill.register('modules/cursors', QuillCursors);
+//import QuillCursors from 'quill-cursors/src/cursors';
+//Quill.register('modules/cursors', QuillCursors);
 
-ShareDB.types.register(require('rich-text').type);
+//ShareDB.types.register(require('rich-text').type);
+
 const Embed = Quill.import('blots/embed');
 var sharedbWSAddress = ''
-
+/*
 if (process.env.NODE_ENV === 'production'){
   sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
 } else {
@@ -123,7 +124,7 @@ if (process.env.NODE_ENV === 'production'){
 
 var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
 var shareDBConnection = new ShareDB.Connection(shareDBSocket);
-
+*/
 /*Zotero, highlight button in quill toolbar*/
 class ProcLink extends Embed {
     static create(value) {
@@ -246,7 +247,7 @@ export default {
 
     this.editor = quill
 
-    var cursorsModule = this.editor.getModule('cursors');
+    //var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
@@ -423,9 +424,9 @@ export default {
 
     // DEBUG
 
-    var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
-    var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator');
-
+    //var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
+    //var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator');
+    /*
     shareDBConnection.on('state', function(state, reason) {
       var indicatorColor;
 
@@ -449,6 +450,7 @@ export default {
 
       sharedbSocketIndicatorEl.style.backgroundColor = indicatorColor;
     });
+    */
 
   },
   watch: {

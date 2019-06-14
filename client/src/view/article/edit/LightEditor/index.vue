@@ -395,14 +395,14 @@ export default {
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
-    this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
-    this.cursors.update()
+    //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
+    //this.cursors.update()
 
   },
   mounted() {
       this.fetchData(this.id)
       asideRightAnimation()
-      this.updateUserList()
+      //this.updateUserList()
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
@@ -460,7 +460,7 @@ export default {
 
       var usersListEl = document.getElementById('id-users-list');
       usersListEl.innerHTML = null;
-      var _cursors = this.cursors
+      //var _cursors = this.cursors
       _cursors.connections.forEach(function(connection) {
         //var userItemEl = document.createElement('li');
         var userNameEl = document.createElement('div');
@@ -573,7 +573,7 @@ export default {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
       this.save(this.$event)
-      this.updateUserList(editor)
+      //this.updateUserList(editor)
     },
     addNewRow (ev,key) {
       var uuid_ = String(uuidv4())

@@ -46,9 +46,9 @@ server.listen(config.port, config.ip, function () {
 })
 
 // init websockets servers
-var wssShareDB = require('./helpers/wss-sharedb')(server);
-var wssCursors = require('./helpers/wss-cursors')(server);
-
+// var wssShareDB = require('./helpers/wss-sharedb')(server);
+// var wssCursors = require('./helpers/wss-cursors')(server);
+/*
 server.on('upgrade', (request, socket, head) => {
   const pathname = url.parse(request.url).pathname;
   console.log(pathname)
@@ -67,6 +67,6 @@ server.on('upgrade', (request, socket, head) => {
     socket.destroy();
   }
 });
-
+*/
 // Expose app
 exports = module.exports = app

@@ -59,7 +59,7 @@ export default {
               let componentRoute = '../view/journals/' + this.followedJournals[i].id
               let _route = {
                 'path': '/journals/' + this.followedJournals[i].id,
-                'name': 'Publiscience - Bio',
+                'name':  this.followedJournals[i].title,
                 'meta': { 'title': this.followedJournals[i].title, 'icon': 'book', 'noCache': 'true' },
               }
               parentRoute.children.push(_route)
