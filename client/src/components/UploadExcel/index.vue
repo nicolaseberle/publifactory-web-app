@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input id="excel-upload-input" ref="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
+    <input id="excel-upload-input" ref="excel-upload-input" type="file" accept=".xlsx, .xls, .csv" @change="handleClick">
     <div id="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
       Drop excel file here or
       <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleUpload">Browse</el-button>
@@ -84,22 +84,19 @@ export default {
     },
     readerData(rawFile) {
       this.loading = true
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = e => {
-          const data = e.target.result
-          const fixedData = this.fixData(data)
-          const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
-          const firstSheetName = workbook.SheetNames[0]
-          const worksheet = workbook.Sheets[firstSheetName]
-          const header = this.getHeaderRow(worksheet)
-          const results = XLSX.utils.sheet_to_json(worksheet)
-          this.generateData({ header, results })
-          this.loading = false
-          resolve()
-        }
-        reader.readAsArrayBuffer(rawFile)
-      })
+      const reader = new FileReader()
+      reader.onload = e => {
+        const data = e.target.result
+        const fixedData = this.fixData(data)
+        const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
+        const firstSheetName = workbook.SheetNames[0]
+        const worksheet = workbook.Sheets[firstSheetName]
+        const header = this.getHeaderRow(worksheet)
+        const results = XLSX.utils.sheet_to_json(worksheet)
+        this.generateData({ header, results })
+        this.loading = false
+      }
+      reader.readAsArrayBuffer(rawFile)
     },
     fixData(data) {
       let o = ''
