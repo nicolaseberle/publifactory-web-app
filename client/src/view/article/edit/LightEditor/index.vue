@@ -238,7 +238,7 @@
 </template>
 <script>
 import editor from 'vue2-medium-editor'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { validateURL } from '../../../../utils/validate'
 import axios from 'axios'
@@ -387,16 +387,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar','userId','username', 'accessToken']),
+    ...mapGetters(['userId','username', 'accessToken']),
+    ...mapActions(['closeSideBar']),
     contentShortLength() {
       return this.postForm.content_short.length
-    },
-    closeSidebar() {
-      this.sidebar.opened = false
     }
   },
   created() {
-    this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
     this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
     this.cursors.update()

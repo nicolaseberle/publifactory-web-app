@@ -56,10 +56,10 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'sidebar',
       'roles',
       'userId',
-      'accessToken'
+      'accessToken',
+      'sidebar'
     ])
   },
   created() {
@@ -80,7 +80,10 @@ export default {
       this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = true
     }
-    this.sidebar.opened = true
+    if(this.sidebar.opened == false){
+      this.toggleSideBar()
+    }
+
   },
   mounted () {
     axios.get('/api/users/me',{headers: {
@@ -92,7 +95,7 @@ export default {
       })
   },
   methods: {
-    ...mapActions(['resetGuestPassword','logout']),
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')

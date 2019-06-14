@@ -164,7 +164,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'accessToken'])
+    ...mapGetters(['accessToken'])
   },
   created() {
 

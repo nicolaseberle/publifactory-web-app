@@ -112,7 +112,7 @@ import { mapGetters } from 'vuex'
       }
     },
     computed: {
-      ...mapGetters(['sidebar','userId', 'accessToken'])
+      ...mapGetters(['userId', 'accessToken'])
     },
     created () {
       axios.get('/api/users/me',{headers: {

@@ -146,10 +146,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar','userId', 'accessToken'])
+    ...mapGetters(['userId', 'accessToken'])
   },
   created (){
-    // this.sidebar.opened = false
     this.journalId = this.$route.params && this.$route.params.id
   },
   mounted () {
