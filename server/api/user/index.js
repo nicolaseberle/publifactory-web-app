@@ -18,5 +18,6 @@ router.put('/:id/guestPassword', auth.isAuthenticated(), controller.changeGuestP
 router.put('/:id/updateUser', auth.isAuthenticated(), controller.updateUser)
 router.put('/:id/changePassword', auth.isAuthenticated(), controller.changePassword)
 router.get('/:id', auth.isAuthenticated(), controller.show)
+router.get('/journals', auth.isAuthenticated(), controller.getUsersJournal)
 
 module.exports = router

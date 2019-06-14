@@ -10,6 +10,7 @@ const shortid = require('shortid');
 const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model');
 const Email = require('../email/email.controller');
+const rolesJournal = require('../roles/journal/roles.journal.model')
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -344,6 +345,15 @@ function emailConfirmation (req, res, next) {
   }
 }
 
+async function getUsersJournal(req, res, next) {
+  try {
+    const journals = rolesJournal.find({id_user: req.decoded._id})
+    res.json({success: true, journals: journals});
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
   createVerificationEmailInvitation: createVerificationEmailInvitation,
   emailConfirmation: emailConfirmation,
@@ -357,5 +367,6 @@ module.exports = {
   show: show,
   changePassword: changePassword,
   destroy: destroy,
-  orcidCreation: orcidCreation
+  orcidCreation: orcidCreation,
+  getUsersJournal: getUsersJournal
 }
