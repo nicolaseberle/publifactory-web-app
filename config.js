@@ -68,7 +68,7 @@ var development = {
   })
 }
 var production = {
-  email : {
+  /*email : {
     host: process.env.EMAIL_HOST,
     port : 587,
     rootHTML: process.env.ROOT_HTML,
@@ -77,7 +77,7 @@ var production = {
       'user' : process.env.EMAIL_ACCOUNT,
       'pass' : process.env.EMAIL_PASS
     }
-  },
+  },*/
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
