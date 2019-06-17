@@ -73,6 +73,7 @@
   import { mapGetters } from 'vuex'
 
   const shortid = require('shortid');
+  const debug = require('debug')('frontend');
 
   export default {
     name: 'viewAddReviewer',
@@ -117,7 +118,7 @@
           })
           .catch(err => reject(err))
       })
-      console.log(this.list)
+      debug(this.list)
     },
     methods: {
       submitForm(formName) {
@@ -125,7 +126,7 @@
           if (valid) {
             this.addReviewer()
           } else {
-            console.log('error submit!!');
+            debug('error submit!!');
             return false;
           }
         });

@@ -117,6 +117,7 @@ import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 var uuidv4 = require('uuid/v4');
 
 import TreeComment from './TreeComment.vue'
+const debug = require('debug')('frontend');
 
 library.add(faCoffee,faReply)
 
@@ -328,7 +329,7 @@ export default {
     },
     createReport() {
       let response__;
-      console.log("createReport : " , this.uuid)
+      debug("createReport : " , this.uuid)
       let now = new Date().getTime();
       this.form.creationDate = now
       let uuid = ''

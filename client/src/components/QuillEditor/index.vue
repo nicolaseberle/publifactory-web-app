@@ -113,6 +113,8 @@ var uuidv4 = require('uuid/v4');
 
 //ShareDB.types.register(require('rich-text').type);
 
+const debug = require('debug')('frontend');
+
 const Embed = Quill.import('blots/embed');
 var sharedbWSAddress = ''
 /*
@@ -137,7 +139,7 @@ class ProcLink extends Embed {
     }
 
     static value(node) {
-      console.log(node  )
+      debug(node  )
       return {
         value: node.getAttribute('datareview'),
         text: node.innerHTML
@@ -330,7 +332,7 @@ export default {
       var debouncedSendCursorData = utils.debounce(function() {
         var range = self.editor.getSelection();
         if (range) {
-          console.log('[cursors] Stopped typing, sending a cursor update/refresh.');
+          debug('[cursors] Stopped typing, sending a cursor update/refresh.');
           sendCursorData(range);
         }
       }, 3000);
@@ -406,10 +408,10 @@ export default {
         $("#"+self.idButton).toggle();
         self.editor.on('selection-change', function(range, oldRange, source) {
         if (range === null && oldRange !== null) {
-          // console.log('blur');
+          // debug('blur');
           $("#"+self.idButton).toggle()
         } else if (range !== null && oldRange === null)
-          // console.log('focus');
+          // debug('focus');
           $("#"+self.idButton).toggle()
         });
     });
@@ -430,7 +432,7 @@ export default {
     shareDBConnection.on('state', function(state, reason) {
       var indicatorColor;
 
-      console.log('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+      debug('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
 
       sharedbSocketStateEl.innerHTML = state.toString();
 
@@ -483,7 +485,7 @@ export default {
     },
     showZoteroMenu (button) {
       var offset = this.mouse_pos
-      console.log(offset.offsetY)
+      debug(offset.offsetY)
 
       $('.questions')
         .fadeIn()

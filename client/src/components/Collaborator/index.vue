@@ -1,4 +1,4 @@
-
+debug
 <template>
   <div>
     <div style='margin: 0px 0px 20px 0px'>
@@ -88,11 +88,12 @@
   </div>
 </template>
 <script>
-  import axios from 'axios'
-  import Sortable from 'sortablejs'
-  import { mapGetters } from 'vuex'
+import axios from 'axios'
+import Sortable from 'sortablejs'
+import { mapGetters } from 'vuex'
+const debug = require('debug')('frontend');
 
-  const shortid = require('shortid');
+const shortid = require('shortid');
 
 export default {
   name: 'addCollaborator',
@@ -193,7 +194,7 @@ export default {
           if (valid) {
             this.addReviewer()
           } else {
-            console.log('error submit!!');
+            debug('error submit!!');
             return false;
           }
         });

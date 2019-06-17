@@ -41,6 +41,10 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+    },
+    UPDATE_ROUTERS: (state, routers) => {
+      state.addRouters = routers
+      state.routers = routers
     }
   },
   actions: {
@@ -54,6 +58,50 @@ const permission = {
           accessedRouters = filterAsyncRouter(constantRouterMap, roles)
         }
         commit('SET_ROUTERS', accessedRouters)
+        resolve()
+      })
+    },
+    updateRoutes ({commit}, data) {
+      return new Promise((resolve,reject)=>{
+        //TO DO, inout needs to be the array of journals
+        const followedJournals = [
+            {'id': '5d0264a4d0738816c96658ca', 'title':'Genetics'},
+            {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}
+          ]
+
+        let  routes = filterAsyncRouter(constantRouterMap, ['user'])
+        routes.forEach((parentRoute)=>{
+          if(parentRoute.path==='/feeds'){
+
+              parentRoute.children = [
+                {
+                  'path': 'feeds',
+                  'hidden': 'true',
+                  'component': "() => import('../view/journals/index.vue')"
+                }]
+
+              for (let i = 0; i < followedJournals.length; i++){
+                let componentRoute = '../view/journals/' + followedJournals[i].id
+                let _route = {
+                  'path': '/journals/' + followedJournals[i].id,
+                  'name':  followedJournals[i].title,
+                  'meta': { 'title': followedJournals[i].title, 'icon': 'book', 'noCache': 'true' },
+                }
+                parentRoute.children.push(_route)
+              }
+              //we add a route to add other journals
+
+              const journal = () => import('../../view/journals/index.vue')
+              parentRoute.children.push(
+              {
+                'path': '/journal',
+                'name': 'Add Journals',
+                'meta': { 'title': 'Add Journals', 'icon': 'plus', 'noCache': 'true' },
+                "component": journal
+              })
+          }
+        })
+        commit('UPDATE_ROUTERS', routes)
         resolve()
       })
     }

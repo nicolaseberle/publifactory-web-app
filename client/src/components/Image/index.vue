@@ -21,6 +21,8 @@
 <script>
 // import PictureInput from 'vue-picture-input'
 
+const debug = require('debug')('frontend');
+
 export default {
   name: 'app',
   data () {
@@ -32,12 +34,12 @@ export default {
   },
   methods: {
     onChange (image) {
-      console.log('New picture selected!')
+      debug('New picture selected!')
       if (image) {
-        console.log('Picture loaded.',image)
+        debug('Picture loaded.',image)
         this.image = image
       } else {
-        console.log('FileReader API not supported: use the <form>, Luke!')
+        debug('FileReader API not supported: use the <form>, Luke!')
       }
     }
   }

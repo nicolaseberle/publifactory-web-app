@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import SidebarItem from './SidebarItem'
 
 export default {
@@ -42,9 +42,11 @@ export default {
     }
   },
   mounted (){
-    this.updateJournalRouter()
+    //this.updateJournalRouter()
+    this.updateRoutes(this.permissionrouters)
   },
   methods:{
+    ...mapActions(['updateRoutes'])/*,
     updateJournalRouter() {
       this.permissionrouters.forEach((parentRoute)=>{
         if(parentRoute.path==='/feeds'){
@@ -78,7 +80,7 @@ export default {
         }
 
       })
-    }
+    }*/
   }
 }
 </script>
