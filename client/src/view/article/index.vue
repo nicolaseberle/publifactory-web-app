@@ -45,17 +45,16 @@ export default {
   computed: {
     ...mapGetters([
       'userId',
-      'roles',
       'accessToken'
     ])
   },
   created() {
     if (1) {
-      const id = this.$route.params && this.$route.params.id
-      this.id = id
+      this.id = this.$route.params && this.$route.params.id
+
       debug("creation de la page")
 
-      this.fetchData(id)
+      this.fetchData(this.id)
       //console.log(this.postForm.authors)
 
       //}

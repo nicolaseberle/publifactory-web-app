@@ -142,12 +142,6 @@ import axios from 'axios'
 export default {
   name: 'ArticleDetail',
   components: { lightEditorComponent, markdownEditorComponent, latexEditorComponent },
-  props: {
-    isEdit: {
-      type: Boolean,
-      default: false
-    }
-  },
   data() {
     return {
       // postForm: Object.assign({}, defaultForm),

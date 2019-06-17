@@ -108,8 +108,8 @@ var utils = require('../../utils/js/collaboration/utils')// cursor
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-//import QuillCursors from 'quill-cursors/src/cursors';
-//Quill.register('modules/cursors', QuillCursors);
+import QuillCursors from 'quill-cursors/src/cursors';
+Quill.register('modules/cursors', QuillCursors);
 
 //ShareDB.types.register(require('rich-text').type);
 
@@ -157,7 +157,7 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
-    cursors: [Object],
+    //cursors: [Object],
     content: [String],
     uuid: [String],
     numBlock: {},
@@ -249,7 +249,7 @@ export default {
 
     this.editor = quill
 
-    //var cursorsModule = this.editor.getModule('cursors');
+    var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
@@ -458,7 +458,7 @@ export default {
   watch: {
     content (newContent) {
       if (this.content !== this.editor.root.innerHTML) {
-        this.editor.root.innerHTML = this.content
+        this.editor.root.innerHTML = newContent
       }
     }
   },
