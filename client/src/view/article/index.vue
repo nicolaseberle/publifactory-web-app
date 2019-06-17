@@ -8,6 +8,8 @@ import editComponent from './edit'
 import readComponent from './read'
 import axios from 'axios'
 
+const debug = require('debug')('frontend')
+
 const defaultForm = {
   status: 'draft',
   title: '',
@@ -43,17 +45,16 @@ export default {
   computed: {
     ...mapGetters([
       'userId',
-      'roles',
       'accessToken'
     ])
   },
   created() {
     if (1) {
-      const id = this.$route.params && this.$route.params.id
-      this.id = id
-      console.log("creation de la page")
+      this.id = this.$route.params && this.$route.params.id
 
-      this.fetchData(id)
+      debug("creation de la page")
+
+      this.fetchData(this.id)
       //console.log(this.postForm.authors)
 
       //}
@@ -63,7 +64,6 @@ export default {
   },
   methods: {
     fetchData(id) {
-      console.log(this.accessToken)
       axios.get('/api/articles/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {

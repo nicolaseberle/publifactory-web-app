@@ -80,6 +80,7 @@
 
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+const debug = require('debug')('frontend');
 
   export default {
     name: 'CreateJournal',
@@ -138,7 +139,7 @@ import { mapGetters } from 'vuex'
             }).catch(() => {})
 
           } else {
-            console.log('error submit!!')
+            debug('error submit!!')
             return false;
           }
         });
@@ -159,8 +160,8 @@ import { mapGetters } from 'vuex'
         axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_journal_id = response.data.journal._id
-          console.log(response.data)
-          console.log("create successfully ")
+          debug(response.data)
+          debug("create successfully ")
           this.$router.push({ path: `/journals/${new_journal_id}` })
         })
         .catch(e => {

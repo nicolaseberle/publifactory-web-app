@@ -135,6 +135,8 @@ import axios from 'axios'
 import Sortable from 'sortablejs'
 import { mapGetters } from 'vuex'
 
+const debug = require('debug')('frontend');
+
 export default {
   name: 'accessComponent',
   components: {},
@@ -221,7 +223,7 @@ export default {
       return axios.get('/api/articles/' + id, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        // console.log(response.data.authors)
+        debug(response.data.authors)
         return response.data.authors
       }).catch(err => {
         console.log(err)

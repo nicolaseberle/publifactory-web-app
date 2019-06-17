@@ -1,4 +1,19 @@
 export default {
+  route:{
+    board: 'Board',
+    my_articles: 'My Articles',
+    my_journals: 'My Journals',
+    my_data: 'My Data',
+    dashboard: 'Dashboard',
+    feeds: 'Feeds',
+    settings: 'Settings',
+    applications: 'Applications',
+    reviewer_matcher: 'Reviewer Matcher',
+    preprint_search: 'Preprint Search',
+    services: 'Services',
+    articles: 'Articles',
+    journal: 'Journal'
+  },
   title: 'Editorial Manager',
   registerTitle: 'Register',
   constant: {

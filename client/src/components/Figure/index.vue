@@ -20,6 +20,9 @@ import VuePlotly from '@statnett/vue-plotly'
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 
+const debug = require('debug')('frontend');
+
+
 export default {
   name: 'figureComponent',
   locales,
@@ -48,7 +51,7 @@ export default {
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
-    console.log("FigureComponent:: idfigure : " + this.idfigure)
+    debug("FigureComponent:: idfigure : " + this.idfigure)
 
     this.currentData = this.currentData1
   },

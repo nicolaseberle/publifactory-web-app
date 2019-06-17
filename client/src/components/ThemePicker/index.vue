@@ -9,6 +9,7 @@
 
 const version = require('element-ui/package.json').version // element-ui version from node_modules
 const ORIGINAL_THEME = '#409EFF' // default color
+const debug = require('debug')('frontend');
 
 export default {
   data() {
@@ -22,7 +23,7 @@ export default {
       if (typeof val !== 'string') return
       const themeCluster = this.getThemeCluster(val.replace('#', ''))
       const originalCluster = this.getThemeCluster(oldVal.replace('#', ''))
-      console.log(themeCluster, originalCluster)
+      debug(themeCluster, originalCluster)
       const getHandler = (variable, id) => {
         return () => {
           const originalCluster = this.getThemeCluster(ORIGINAL_THEME.replace('#', ''))

@@ -108,10 +108,12 @@ var utils = require('../../utils/js/collaboration/utils')// cursor
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-//import QuillCursors from 'quill-cursors/src/cursors';
-//Quill.register('modules/cursors', QuillCursors);
+import QuillCursors from 'quill-cursors/src/cursors';
+Quill.register('modules/cursors', QuillCursors);
 
 //ShareDB.types.register(require('rich-text').type);
+
+const debug = require('debug')('frontend');
 
 const Embed = Quill.import('blots/embed');
 var sharedbWSAddress = ''
@@ -137,7 +139,7 @@ class ProcLink extends Embed {
     }
 
     static value(node) {
-      console.log(node  )
+      debug(node  )
       return {
         value: node.getAttribute('datareview'),
         text: node.innerHTML
@@ -155,7 +157,7 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
-    cursors: [Object],
+    //cursors: [Object],
     content: [String],
     uuid: [String],
     numBlock: {},
@@ -247,7 +249,7 @@ export default {
 
     this.editor = quill
 
-    //var cursorsModule = this.editor.getModule('cursors');
+    var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
@@ -330,7 +332,7 @@ export default {
       var debouncedSendCursorData = utils.debounce(function() {
         var range = self.editor.getSelection();
         if (range) {
-          console.log('[cursors] Stopped typing, sending a cursor update/refresh.');
+          debug('[cursors] Stopped typing, sending a cursor update/refresh.');
           sendCursorData(range);
         }
       }, 3000);
@@ -406,10 +408,10 @@ export default {
         $("#"+self.idButton).toggle();
         self.editor.on('selection-change', function(range, oldRange, source) {
         if (range === null && oldRange !== null) {
-          // console.log('blur');
+          // debug('blur');
           $("#"+self.idButton).toggle()
         } else if (range !== null && oldRange === null)
-          // console.log('focus');
+          // debug('focus');
           $("#"+self.idButton).toggle()
         });
     });
@@ -430,7 +432,7 @@ export default {
     shareDBConnection.on('state', function(state, reason) {
       var indicatorColor;
 
-      console.log('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+      debug('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
 
       sharedbSocketStateEl.innerHTML = state.toString();
 
@@ -456,7 +458,7 @@ export default {
   watch: {
     content (newContent) {
       if (this.content !== this.editor.root.innerHTML) {
-        this.editor.root.innerHTML = this.content
+        this.editor.root.innerHTML = newContent
       }
     }
   },
@@ -483,7 +485,7 @@ export default {
     },
     showZoteroMenu (button) {
       var offset = this.mouse_pos
-      console.log(offset.offsetY)
+      debug(offset.offsetY)
 
       $('.questions')
         .fadeIn()

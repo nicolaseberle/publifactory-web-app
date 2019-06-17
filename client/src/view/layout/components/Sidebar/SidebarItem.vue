@@ -39,6 +39,7 @@ import { generateTitle } from '../../../../utils/i18n'
 import { validateURL } from '../../../../utils/validate'
 import Item from './Item'
 
+
 export default {
   name: 'SidebarItem',
   components: { Item },

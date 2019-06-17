@@ -7,7 +7,7 @@
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
-          <tree-comment :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
+          <tree-comment v-if='reports' :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
           <el-card id="card-form-report">
 
           <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
@@ -117,6 +117,7 @@ import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 var uuidv4 = require('uuid/v4');
 
 import TreeComment from './TreeComment.vue'
+const debug = require('debug')('frontend');
 
 library.add(faCoffee,faReply)
 
@@ -328,7 +329,7 @@ export default {
     },
     createReport() {
       let response__;
-      console.log("createReport : " , this.uuid)
+      debug("createReport : " , this.uuid)
       let now = new Date().getTime();
       this.form.creationDate = now
       let uuid = ''

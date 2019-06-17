@@ -41,6 +41,7 @@ import 'codemirror/lib/codemirror.css'
 import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
+const debug = require('debug')('frontend');
 
 export default {
   name: 'ScriptPython',
@@ -226,7 +227,7 @@ if __name__ == "__main__":
   },
   methods: {
     saveFigure () {
-      console.log('saveFigure: ',this.idfigure)
+      debug('saveFigure: ',this.idfigure)
       axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
         data: this.currentData,
         option:this.option,
@@ -239,7 +240,7 @@ if __name__ == "__main__":
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(() => {
-        console.log("figure saved")
+        debug("figure saved")
       })
       .catch(e => {
         console.log(e)
@@ -270,7 +271,7 @@ if __name__ == "__main__":
         this.currentData = done.data.values.data
         this.layout.title = done.data.values.layout.title.text.toString()
         this.postForm.name = this.layout.title
-        console.log(this.layout)
+        debug(this.layout)
         if (done.data.options)
           this.options = done.data.values.options
         this.$forceUpdate()
@@ -281,7 +282,7 @@ if __name__ == "__main__":
           offset: 100,
           showClose: false
         })
-        console.log(done)
+        debug(done)
       } catch (e) {
         this.$notify({
           title: 'Error during the script.',

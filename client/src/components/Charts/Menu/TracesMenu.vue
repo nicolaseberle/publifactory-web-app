@@ -88,6 +88,8 @@
 </template>
 <script>
 import locales from 'locales/charts'
+const debug = require('debug')('frontend');
+
 export default {
   name: 'tracesMenu',
   locales,
@@ -163,14 +165,14 @@ export default {
   },
   methods: {
     updatechartOption_ () {
-      console.log(this.chartOption.type)
+      debug(this.chartOption.type)
       this.$emit('input', this.chartOption.type)
     }
   },
   computed: {
     chartOption_: {
       set(val){
-        console.log(val)
+        debug(val)
       }
     }
   }

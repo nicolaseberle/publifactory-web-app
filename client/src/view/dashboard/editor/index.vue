@@ -123,7 +123,7 @@ import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
 import axios from 'axios'
 import addReviewer from '../../../components/Reviewer'
-
+const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {
@@ -220,7 +220,7 @@ export default {
         axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
         .then(response => {
           let new_article_id = response.data
-          console.log("create successfully ")
+          debug("create successfully ")
           this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
         })
         .catch(e => {

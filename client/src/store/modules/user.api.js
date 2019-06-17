@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { authSocket } from '../../socket'
+const debug = require('debug')('frontend');
 
 export async function login (email, password) {
   return new Promise((resolve, reject) => {
@@ -62,7 +63,7 @@ export function getUserInfo (token) {
       }
     }).then(data => data.json()).then(data => {
       authSocket(token, () => {
-        console.log('Token authenticated.')
+        debug('Token authenticated.')
       })
       resolve(data)
     }).catch(() => {

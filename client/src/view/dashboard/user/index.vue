@@ -121,6 +121,7 @@ import axios from 'axios'
 import accessComponent from '../../../components/AccessComponent'
 
 var uuidv4 = require('uuid/v4');
+const debug = require('debug')('frontend')
 
 export default {
   locales,
@@ -232,7 +233,7 @@ Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu
         axios.post('/api/articles/', newArticle, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_article_id = response.data
-          console.log("create successfully ")
+          debug("create successfully ")
           this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
         })
         .catch(e => {

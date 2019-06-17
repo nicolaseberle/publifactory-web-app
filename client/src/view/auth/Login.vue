@@ -84,6 +84,8 @@ import { mapGetters, mapActions } from 'vuex'
 import locales from 'locales/login'
 import axios from 'axios'
 
+const debug = require('debug')('frontend')
+
 export default {
   locales,
   props: {
@@ -210,7 +212,7 @@ export default {
               this.loginError = false
             }, 500)
           })
-          console.log("THE VALUE OF THE PROMISE : " + sth);
+          debug("THE VALUE OF THE PROMISE : " + sth);
         }
       })
     },
