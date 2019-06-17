@@ -144,12 +144,12 @@
     </el-dialog>
 
     <el-dialog
-      show-close="false"
+      show-close
       top="0"
       :visible.sync="diagInsertFigurePlotlyVisible"
-      fullscreen="true"
+      fullscreen
       width="100%"
-      center="true">
+      center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
@@ -163,13 +163,13 @@
     </el-dialog>
 
     <el-dialog
-      show-close="false"
+      show-close
       top="0"
       :visible.sync="diagInsertFigurePythonVisible"
-      fullscreen="true"
+      fullscreen
       width="100%"
-      lock-scroll="false"
-      center="true">
+      lock-scroll
+      center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
@@ -192,12 +192,12 @@
     </el-dialog>
 
     <el-dialog
-      show-close="false"
+      show-close
       top="0"
       :visible.sync="diagInsertFigureRVisible"
-      fullscreen="true"
+      fullscreen
       width="100%"
-      center="true">
+      center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>

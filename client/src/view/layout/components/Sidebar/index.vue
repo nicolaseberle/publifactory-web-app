@@ -23,8 +23,10 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import SidebarItem from './SidebarItem'
+import locales from  '../../../../locales/menu'
 
 export default {
+  locales,
   components: { SidebarItem },
   data(){
     return {
@@ -35,52 +37,18 @@ export default {
   computed: {
     ...mapGetters([
       'permissionrouters',
-      'sidebar'
+      'sidebar',
+      'roles'
     ]),
     isCollapse() {
       return !this.sidebar.opened
     }
   },
   mounted (){
-    //this.updateJournalRouter()
-    this.updateRoutes(this.permissionrouters)
+    this.updateRoutes(this.roles)
   },
   methods:{
-    ...mapActions(['updateRoutes'])/*,
-    updateJournalRouter() {
-      this.permissionrouters.forEach((parentRoute)=>{
-        if(parentRoute.path==='/feeds'){
-
-          parentRoute.children = [
-            {
-              'path': 'feeds',
-              'hidden': 'true',
-              'component': "() => import('../view/journals/index.vue')"
-            }]
-            for (let i = 0; i < this.followedJournals.length; i++){
-              let componentRoute = '../view/journals/' + this.followedJournals[i].id
-              let _route = {
-                'path': '/journals/' + this.followedJournals[i].id,
-                'name':  this.followedJournals[i].title,
-                'meta': { 'title': this.followedJournals[i].title, 'icon': 'book', 'noCache': 'true' },
-              }
-              parentRoute.children.push(_route)
-            }
-            //we add a route to add other journals
-
-            const journal = () => import('../../../../view/journals/index.vue')
-            parentRoute.children.push(
-            {
-              'path': '/journal',
-              'name': 'Add Journals',
-              'meta': { 'title': 'Add Journals', 'icon': 'plus', 'noCache': 'true' },
-              "component": journal
-            })
-
-        }
-
-      })
-    }*/
+    ...mapActions(['updateRoutes'])
   }
 }
 </script>

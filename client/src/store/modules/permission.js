@@ -69,7 +69,7 @@ const permission = {
             {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}
           ]
 
-        let  routes = filterAsyncRouter(constantRouterMap, ['user'])
+        let  routes = filterAsyncRouter(constantRouterMap, data)
         routes.forEach((parentRoute)=>{
           if(parentRoute.path==='/feeds'){
 

@@ -1,4 +1,5 @@
 import $ from 'jquery'
+const debug = require('debug')('frontend');
 
 function asideRightAnimation () {
     // Selectors object
@@ -37,10 +38,10 @@ function asideRightAnimation () {
   function majScrollPosition () {
     if (asideRight.comments.css('display') === 'block') {
       asideRight.scroll.comments = asideRight.comments.scrollTop()
-      console.log(asideRight.scroll.comments)
+      debug(asideRight.scroll.comments)
     } else {
       asideRight.scroll.reviews = asideRight.reviews.scrollTop()
-      console.log(asideRight.scroll.reviews)
+      debug(asideRight.scroll.reviews)
     }
   }
 
@@ -63,13 +64,13 @@ function asideRightAnimation () {
     // Show the pannel on click
     // ------------------------
   asideRight.button.on('click', () => {
-    console.log('asideRight_button_click')
+    debug('asideRight_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
   })
 
   asideRight.tags.on('click', () => {
-    console.log('tags_button_click')
+    debug('tags_button_click')
     showCommentsReviewsPannel()
     goPreviousScrollPosition()
   })
@@ -77,7 +78,7 @@ function asideRightAnimation () {
   // Close the pannel on click
   // -------------------------
   asideRight.pannel.close.on('click', () => {
-    console.log('asideRight_pannel_close')
+    debug('asideRight_pannel_close')
     majScrollPosition()
     hideCommentsReviewsPannel()
   })
@@ -106,9 +107,9 @@ function asideRightAnimation () {
   // -----------------------------------------------------
   asideRight.pannel.article.on('click', function () {
     const markup = $(this).attr('data-review')
-    console.log('markup : ' + markup)
+    debug('markup : ' + markup)
     const articleText = $("main article span[data-review='" + markup + "'")
-    console.log('articleText : ' + articleText)
+    debug('articleText : ' + articleText)
     const accordionPannel = articleText.parents('div.accordion-panel').get(0)
     accordionPannel.style.display = 'block'
     accordionPannel.previousElementSibling.classList.remove('collapsed-180deg', 'collapsed-90deg')
@@ -121,7 +122,7 @@ function asideRightAnimation () {
   })
   asideRight.pannel.article.mouseenter(function () {
     const markup = $(this).attr('data-review')
-    console.log('markup : ' + markup)
+    debug('markup : ' + markup)
     const articleText = $("main article span[data-review='" + markup + "'")
     articleText.css('background-color', 'rgba(92, 115, 141, 0.3)')
   })

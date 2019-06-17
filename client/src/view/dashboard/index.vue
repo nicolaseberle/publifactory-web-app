@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <component :is="currentRole"/>
 
-    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" show-close>
       <h1>Welcome </h1>
       <h2></h2>
       <p>Change your password</p>
@@ -29,8 +29,10 @@ import axios from 'axios'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
 import userDashboard from './user'
+import locales from '../../locales/register'
 
 export default {
+  locales,
   name: 'Dashboard',
   components: { adminDashboard, userDashboard, editorDashboard },
   data() {
