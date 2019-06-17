@@ -126,7 +126,7 @@
         :depth="depth + 1"
         v-on:post='reload'
       >
-      </tree-comment>
+    </tree-comment>
 
   </div>
 </template>
@@ -140,45 +140,45 @@ var uuidv4 = require('uuid/v4');
 
 export default {
   props: {
-  uuidComment: {type: String},
-  label: {type: String},
-  nodes: {type: Array,
-          validator: function (value) {
-            if(typeof value == "") {
-              return []
+    uuidComment: {type: String},
+    label: {type: String},
+    nodes: {type: Array,
+            validator: function (value) {
+              if(value) {
+                return value
+              }
+              else {
+                return []
+              }
             }
-            else {
-              return value
-            }
-
-    }},
-  flagShowingComment: {type: Boolean},
-  depth: {type: Number},
-  creationDate: String,
-  anonymousFlag: {type: Boolean},
-  reviewRequest: {type: String},
-  scores:{
-    type:Object,
-    validator: function (value) {
-      if(value) {
-        return value
+    },
+    flagShowingComment: {type: Boolean},
+    depth: {type: Number},
+    creationDate: String,
+    anonymousFlag: {type: Boolean},
+    reviewRequest: {type: String},
+    scores:{
+      type:Object,
+      validator: function (value) {
+        if(value) {
+          return value
+        }
+        else {
+          return ""
+        }
       }
-      else {
-        return ""
+    },
+    user: {
+      type:Object,
+      validator: function (value) {
+        if(value) {
+          return value
+        }
+        else {
+          return ""
+        }
       }
     }
-  },
-  user: {
-    type:Object,
-    validator: function (value) {
-      if(value) {
-        return value
-      }
-      else {
-        return ""
-      }
-    }
-  }
   },
   name: 'tree-comment',
   components:{'font-awesome-icon': FontAwesomeIcon},

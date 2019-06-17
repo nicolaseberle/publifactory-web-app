@@ -7,7 +7,7 @@
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
-          <tree-comment :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
+          <tree-comment v-if='reports' :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
           <el-card id="card-form-report">
 
           <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">

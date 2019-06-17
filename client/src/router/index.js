@@ -164,9 +164,9 @@ export const constantRouterMap = [{
   children: [
     {
       path: '/articles/:id',
-      name: 'Article',
+      name: 'article',
       props: { newsletterPopup: false },
-      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      meta: { title: 'article', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/article/index.vue').then(resolve)
       }
@@ -179,9 +179,9 @@ export const constantRouterMap = [{
   children: [
     {
       path: '/journals/:id',
-      name: 'Journal',
+      name: 'journal',
       props: { newsletterPopup: false },
-      meta: { title: 'Journal', icon: 'edit', noCache: true },
+      meta: { title: 'journal', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/journals/index_.vue').then(resolve)
       }

@@ -10,7 +10,9 @@ export default {
     applications: 'Applications',
     reviewer_matcher: 'Reviewer Matcher',
     preprint_search: 'Preprint Search',
-    services: 'Services'
+    services: 'Services',
+    articles: 'Articles',
+    journal: 'Journal'
   },
   title: 'Editorial Manager',
   registerTitle: 'Register',
