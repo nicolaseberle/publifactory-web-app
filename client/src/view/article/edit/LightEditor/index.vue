@@ -684,7 +684,6 @@ export default {
           showlegend: false
         }
       };
-
       const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
       let _idFigure = response.data;
       console.log("createFigure::idFigure: " + _idFigure)

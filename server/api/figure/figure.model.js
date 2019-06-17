@@ -24,10 +24,20 @@ const FigureSchema = new Schema({
       type: String,
       default: "Light"
     },
-    content: {
-      type: String,
-      default: null
-    }
+    content: [{
+      title: {
+        type: String,
+        default: null
+      },
+      name: {
+        type: String,
+        default: null
+      },
+      content: {
+        type: String,
+        default: null
+      }
+    }]
   }
 });
 

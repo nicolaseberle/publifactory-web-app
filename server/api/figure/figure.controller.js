@@ -138,14 +138,16 @@ async function pythonExec(req, res, next) {
       scriptPath: './',
       args: []
     };
-    await fs.writeFileSync('./example.py', req.body.content);
+    for (let i = 0, len = req.body.content.length; i < len; i++)
+      await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
     await new Promise((resolve, reject) => {
-      PythonShell.run('./example.py', options, (err) => {
+      PythonShell.run('./main.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
       })
     });
-    await fs.unlinkSync('./example.py');
+    for (let i = 0, len = req.body.content.length; i < len; ++i)
+      await fs.unlinkSync(req.body.content[i].title);
     const jsonRawData = fs.readFileSync('./example.json')
     const json = JSON.parse(jsonRawData);
     await fs.unlinkSync('./example.json');

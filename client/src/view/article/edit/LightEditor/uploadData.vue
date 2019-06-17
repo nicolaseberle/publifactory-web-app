@@ -59,7 +59,7 @@ export default {
     return {
       tableData: [],
       tableHeader: [],
-      tableFiles:[],
+      tableFiles:[{}],
       name : '',
       size: '',
       keyCurrentTableData: 0
@@ -96,6 +96,7 @@ export default {
       this.name = name
       this.size = size
       this.tableFiles.push({name: JSON.stringify(name), file: JSON.stringify(name),size: JSON.stringify(size)})
+      console.log(this.tableFiles)
       this.save(name, header, results, size)
     },
     save(name, header, results,size) {
