@@ -63,6 +63,7 @@ export default {
       axios.get('/api/figure/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
+        console.log(response.data)
         this.currentData = response.data.data
         this.layout = response.data.layout
         this.option = response.data.option

@@ -238,38 +238,74 @@ print(toJSON(json))
         console.log(err)
       })
     },
-    async execCode () {
-      try {
-        const done = await axios.post('http://localhost:4000/api/figure/r', {
-          content: this.content
+    methods: {
+      saveFigure () {
+        console.log('saveFigure: ',this.idfigure)
+        axios.put('/api/figure/'  + this.idfigure, {
+          data: this.currentData,
+          option:this.option,
+          layout: this.layout,
+          script: {
+            language: "R",
+            content: this.content
+          }
         }, {
           headers: {
             'Authorization': `Bearer ${this.accessToken}`
           }
         })
-        debug(done)
-        this.currentData = done.data.values.data
-        this.layout.title = done.data.values.layout.title
-        this.postForm.name = this.layout.title
-        debug(this.layout)
-        if (done.data.options)
-          this.options = done.data.values.options
-        this.$forceUpdate()
-        this.$notify({
-          title: 'Script ran well !',
-          type: 'success',
-          message: this.$t('message.scriptSuccess'),
-          offset: 100,
-          showClose: false
+          .then(response => {
+            console.log("figure saved")
+          })
+          .catch(e => {
+            console.log(e)
+          })
+      },
+      fetchFigure(id) {
+        axios.get('/api/figure/' + id , {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(response => {
+          this.currentData = response.data.data
+          this.layout = response.data.layout
+          this.option = response.data.option
+
+        }).catch(err => {
+          console.log(err)
         })
-      } catch (e) {
-        this.$notify({
-          title: 'Error during the script.',
-          type: 'error',
-          message: e.response.data.message.traceback,
-          offset: 100,
-          showClose: false
-        })
+      },
+      async execCode () {
+        try {
+          const done = await axios.post('/api/figure/r', {
+            content: this.content
+          }, {
+            headers: {
+              'Authorization': `Bearer ${this.accessToken}`
+            }
+          })
+          console.log(done)
+          this.currentData = done.data.values.data
+          this.layout.title = done.data.values.layout.title
+          this.postForm.name = this.layout.title
+          console.log(this.layout)
+          if (done.data.options)
+            this.options = done.data.values.options
+          this.$forceUpdate()
+          this.$notify({
+            title: 'Script ran well !',
+            type: 'success',
+            message: this.$t('message.scriptSuccess'),
+            offset: 100,
+            showClose: false
+          })
+        } catch (e) {
+          this.$notify({
+            title: 'Error during the script.',
+            type: 'error',
+            message: e.response.data.message.traceback,
+            offset: 100,
+            showClose: false
+          })
+        }
       }
     }
   }
