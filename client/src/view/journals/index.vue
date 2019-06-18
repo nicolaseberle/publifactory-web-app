@@ -5,7 +5,7 @@
       <div>
         <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
         <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
-          <CreateJournal v-if="flagCreateJournal" @close="flagCreateJournal=false"></CreateJournal>
+          <CreateJournal v-if="flagCreateJournal" v-on:close="flagCreateJournal=false"></CreateJournal>
         </el-dialog>
       </div>
     </el-col>
@@ -62,14 +62,6 @@
       </el-card>
     </el-col>
   </el-row>
-
-  <el-dialog :title="Warning" :visible.sync="dialogCreationJournal" center>
-    Soon
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="closeCreationDialog()" round>Cancel</el-button>
-      <el-button type="primary" @click="dialogCreationJournal = false" round>OK</el-button>
-    </span>
-  </el-dialog>
 </div>
 
 
@@ -90,14 +82,6 @@ export default {
   locales,
   data () {
     return {
-      rules: {
-        title: [{
-          required: true, message: this.$t('article.rules.title'), trigger: 'blur'
-        }],
-        abstract: [{
-          required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
-        }]
-      },
       journals: [],
       dialogCreationJournal : false,
       links: [],

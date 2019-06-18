@@ -1,14 +1,5 @@
 <template>
   <div>
-    <!--<el-row style='margin-bottom:10px'>
-      <el-col :span="24">
-        <el-alert
-          title="Don't worry, you can change these settings later"
-          type="info"
-          show-icon>
-        </el-alert>
-      </el-col>
-    </el-row>-->
     <el-form  :model="dynamicForm" :rules="rules" ref="dynamicForm" label-width="120px" class="dialog-create-journal" style='text-align:left'>
       <el-form-item label="Title" :label-width="formLabelWidth" prop="title">
         <el-col :span='12'>
@@ -22,7 +13,7 @@
       </el-form-item>
       <el-form-item label="Editors" :label-width="formLabelWidth">
         <el-col :span='12'>
-          <el-input  v-model="dynamicForm.editor.name" autocomplete="off" :disabled="true">{{dynamicForm.editor.firstname}} {{dynamicForm.editor.lastname}}</el-input>
+          <el-input  v-model="dynamicForm.editor.name" autocomplete="off" disabled>{{dynamicForm.editor.firstname}} {{dynamicForm.editor.lastname}}</el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth" prop="keywords">
@@ -44,7 +35,7 @@
           @blur="handleInputConfirm"
         >
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New keypoint</el-button>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput()">+ New keypoint</el-button>
 
       </el-form-item>
       <el-form-item label="Access Policy" :label-width="formLabelWidth">
@@ -52,27 +43,10 @@
       <el-radio v-model="dynamicForm.access" label="close_access">Close Access</el-radio>
       </el-form-item>
       <el-form-item style='text-align:right'>
-        <el-button type="primary" @click="submitForm('dynamicForm')">Create</el-button>
+        <el-button type="primary" @click="submitForm()">Create</el-button>
         <el-button @click="$emit('close')">Cancel</el-button>
       </el-form-item>
     </el-form>
-    <!--
-    <el-row style='margin-bottom:10px'>
-      <el-col :span="24">
-        <el-alert
-          title="General Conditions of Use"
-          description="By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them."
-          type="info"
-          style='text-align:left'
-          >
-        </el-alert>
-      </el-col>
-    </el-row>-->
-
-    <!--<span slot="footer" class="dialog-footer">
-      <el-button @click="$emit('close')">Cancel</el-button>
-      <el-button type="primary" @click="$emit('close')">Create</el-button>
-    </span>-->
   </div>
 </template>
 
@@ -128,8 +102,8 @@ const debug = require('debug')('frontend');
 
     },
     methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+      submitForm() {
+        this.$refs[this.dynamicForm].validate((valid) => {
           if (valid) {
             this.$confirm(`By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them.`, this.$t('confirm.title'), {
                 type: 'warning'
@@ -143,9 +117,6 @@ const debug = require('debug')('frontend');
             return false;
           }
         });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
       },
       handleClose(tag) {
         this.dynamicForm.tags.splice(this.dynamicForm.tags.indexOf(tag), 1);
