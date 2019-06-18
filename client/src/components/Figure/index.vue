@@ -9,7 +9,11 @@
             <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
             <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
         </div>
-        <p><span class="font-dnltp-medium">Fig 1. </span></p>
+      <div class="font-dnltp-medium">
+        <span>Legends: {{infos.legend}}</span><br>
+        <span>Source: "{{infos.name}}" from figure n°{{infos.uuid_figure}}</span><br>
+        <span>DOI: {{infos.source}}</span>
+      </div>
     </figure>
   </div>
 </template>
@@ -40,7 +44,13 @@ export default {
       }],
       currentData: [{
 
-      }]
+      }],
+      infos: {
+        legend: '',
+        source: '',
+        name: '',
+        uuid_figure: ''
+      }
     }
   },
   computed: {
@@ -64,6 +74,7 @@ export default {
         this.currentData = response.data.data
         this.layout = response.data.layout
         this.option = response.data.option
+        this.infos = response.data.infos
       }).catch(err => {
         console.log(err)
       })

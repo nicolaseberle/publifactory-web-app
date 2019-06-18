@@ -100,30 +100,6 @@
     },
     async mounted () {
       await this.fetchFigure(this.idfigure)
-      /*this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-        value: '',
-        lineNumbers: true,
-        styleActiveLine: true,
-        matchBrackets: true,
-        indentUnit: 4,
-        smartIndentationFix: true,
-        theme: 'one-dark',
-        lineWrapping: true,
-        mime: "text/x-rsrc"
-      })
-      this.editor.on('change', instance => {
-        this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-        if (!this.timer) {
-          this.$emit('loading', true)
-          this.timer = setTimeout(async () => {
-            await this.execCode()
-            this.timer = null
-            this.$emit('loading', true)
-          }, 3000)
-        }
-      })
-
-       */
       var y0 = [];
       var y1 = [];
       var y2 = [];
@@ -223,7 +199,8 @@
             script: {
               language: "R",
               content: this.editableTabs
-            }
+            },
+            infos: this.postForm
           }, {
             headers: { 'Authorization': `Bearer ${this.accessToken}` }
           })
@@ -244,7 +221,6 @@
       },
       async fetchFigure (id) {
         const response = await axios.get('/api/figure/' + id, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
-        console.log(response)
         if (response.data.script.content.length !== 0) {
           this.currentData = response.data.data
           this.layout = response.data.layout

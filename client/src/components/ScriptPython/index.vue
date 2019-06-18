@@ -105,28 +105,6 @@ export default {
   },
   async mounted () {
     await this.fetchFigure(this.idfigure)
-    this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-      value: '',
-      lineNumbers: true,
-      styleActiveLine: true,
-      matchBrackets: true,
-      indentUnit: 4,
-      smartIndentationFix: true,
-      theme: 'one-dark',
-      mode: "text/x-python",
-      lineWrapping: true
-    })
-    this.editor.on('change', instance => {
-      this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-      if (!this.timer) {
-        this.$emit('loading', true)
-        this.timer = setTimeout(async () => {
-          await this.execCode()
-          this.timer = null
-          this.$emit('loading', true)
-        }, 3000)
-      }
-    })
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -236,7 +214,8 @@ export default {
           script: {
             language: "R",
             content: this.content
-          }
+          },
+          infos: this.postForm
         }, {
           headers: { 'Authorization': `Bearer ${this.accessToken}` }
         })
@@ -290,7 +269,7 @@ export default {
         this.editableTabsValue = '1'
         this.tabIndex = response.data.script.content.length
         if (this.tabIndex > 1)
-          for (let i = 1, len = this.tabIndex; i < len; ++i)
+          for (let i = 0, len = this.tabIndex; i < len; ++i)
             this.codemirrorOptions(response.data.script.content[i].name)
         if (response.data.infos.uuid_figure)
           this.postForm = this.response.data.infos
@@ -309,7 +288,6 @@ export default {
         this.currentData = done.data.values.data
         this.layout.title = done.data.values.layout.title.text.toString()
         this.postForm.name = this.layout.title
-        console.log(this.layout)
         if (done.data.options)
           this.options = done.data.values.options
         this.$forceUpdate()
@@ -320,7 +298,6 @@ export default {
           offset: 100,
           showClose: false
         })
-        console.log(done)
       } catch (e) {
         this.$notify({
           title: 'Error during the script.',
