@@ -12,6 +12,7 @@ Object.keys(baseWebpackConfig.entry).forEach(function (name) {
 })
 
 module.exports = merge(baseWebpackConfig, {
+  mode: 'development',
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.cssSourceMap,
@@ -28,7 +29,8 @@ module.exports = merge(baseWebpackConfig, {
       jQuery: 'jquery'
     }),
     new webpack.DefinePlugin({
-      'process.env': '"development"'
+      'process.env': '"development"',
+      'process.env.NODE_ENV': JSON.stringify('development')
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
     new webpack.HotModuleReplacementPlugin(),
@@ -39,6 +41,7 @@ module.exports = merge(baseWebpackConfig, {
       template: 'client/index.html',
       inject: true
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    new webpack.LoaderOptionsPlugin({ options: {} })
   ]
 })

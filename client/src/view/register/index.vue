@@ -6,8 +6,7 @@
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
 
     <!--<h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>-->
-    <el-form class="login-form" ref="form" :model="form" :rules="rules"
-      @submit.native.prevent="onSubmit">
+    <el-form class="login-form" ref="form" :model="form" :rules="rules">
       <el-form-item>
         <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
@@ -25,17 +24,25 @@
       </el-form-item>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
-          native-type="submit" :loading="loading">{{$t('register.button')}}</el-button>
+          v-on:click="onSubmit()" :loading="loading">{{$t('register.button')}}</el-button>
       </el-form-item>
-      <h2>or</h2>
       <!--
+      <h2>or</h2>
       <el-form-item>
-          <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.googleButton')}}</el-button>
+        <el-row>
+          <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitOrcid()">
+            <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>
+            {{$t('register.orcidButton')}}
+          </el-button>
+        </el-row>
+        <el-row>
+          <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onSubmitGoogle()">
+            <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
+            {{$t('register.googleButton')}}
+          </el-button>
+        </el-row>
       </el-form-item>
-    -->
-      <el-form-item>
-        <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('register.orcidButton')}}</el-button>
-      </el-form-item>
+      -->
     </el-form>
   </div>
 </div>
@@ -67,14 +74,43 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedIn', 'globalConfig'])
+    ...mapGetters(['loggedIn', 'globalConfig', 'accessToken'])
   },
   methods: {
-    ...mapActions(['login', 'changeLang']),
+    ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    onSubmitGoogle () {
+
+    },
+    onSubmitOrcid () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          axios.post('/api/users/', { "email": this.form.email, "password": this.form.password, provider: 'orcid' })
+            .then(response => {
+              this.$message({
+                title: this.$t('message.created'),
+                message: this.$t('message.created'),
+                type: 'success'
+              })
+              this.$router.push(this.$route.query.redirect || '/')
+            }).catch((err) => {
+            this.$message({
+              title: this.$t('message.error'),
+              message: err.message || this.$t('register.authFail'),
+              type: 'error'
+            })
+            this.loading = false
+            this.loginError = true
+            setTimeout(() => {
+              this.loginError = false
+            }, 500)
+          })
+        }
+      })
+    },
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password})
+            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
             .then(response => {
               this.$message({
                 title: this.$t('message.created'),

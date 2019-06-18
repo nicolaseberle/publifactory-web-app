@@ -5,6 +5,7 @@
 <script>
 import echarts from 'echarts'
 import resize from './mixins/resize'
+const debug = require('debug')('frontend');
 
 export default {
   mixins: [resize],
@@ -44,7 +45,7 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(document.getElementById(this.id))
-      this.chart.on('click', () => { console.log('click');});
+      this.chart.on('click', () => { debug('initChart::click');});
       var option = {
       tooltip : {
       trigger: 'axis',

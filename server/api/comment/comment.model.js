@@ -11,6 +11,7 @@ var CommentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
+  // TODO Déprécié : utiliser l'_id à partir de l'article
   uuidComment: {
     type: String
   },
@@ -28,7 +29,7 @@ var CommentSchema = new Schema({
   },
   reviewRequest: {
     type: String,
-    required: 'True'
+    required: true
   },
   scores: {
     voterId:[{
@@ -42,14 +43,31 @@ var CommentSchema = new Schema({
       type: Number,
       default: 0
     }
-  }
-  }
-);
-
+  },
+  childComment: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: []
+  }]
+});
 
 CommentSchema.plugin(mongooseDelete, { deletedAt: true });
 CommentSchema.plugin(mongoosePaginate);
 
+var autoPopulateChildComment = function(next) {
+  this.populate('childComment');
+  next();
+};
+var autoPopulateUser = function(next) {
+  this.populate('userId');
+  next();
+};
+
+CommentSchema.
+  pre('findOne', autoPopulateChildComment).
+  pre('find', autoPopulateChildComment).
+  pre('findOne', autoPopulateUser).
+  pre('find', autoPopulateUser);
 /**
  * @class Comment
  */

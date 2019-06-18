@@ -1,25 +1,17 @@
 {
   "presets": [
     [
-      "es2015",
+      "@babel/preset-env",
       {
-        "modules": false
-      }
-    ],
-    "stage-2"
-  ],
-  "plugins": [
-    'transform-vue-jsx',
-    "transform-runtime",
-    [
-      "component",
-      [
-        {
-          "libraryName": "element-ui",
-          "styleLibraryName": "theme-chalk"
+        "modules": false,
+        "targets": {
+          "browsers": ["> 1%", "last 2 versions", "not ie <= 8", "ie >= 11"]
         }
-      ]
+      }
     ]
   ],
-  "comments": false
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "transform-vue-jsx"
+  ]
 }

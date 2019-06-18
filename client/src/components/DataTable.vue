@@ -16,7 +16,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { merge } from 'lodash'
+// import { merge } from 'lodash'
 import ContentLoading from 'components/ContentLoading'
 import Pagination from 'components/Pagination'
 
@@ -64,7 +64,8 @@ export default {
     customQuery (resource, method, current, ...rest) {
       current = current || this.page.current
       this.pending = true
-      const condition = merge(this.showPagination ? { page: { current, limit: this.globalConfig.pageLimit }} : {}, ...rest)
+      const condition = Object.assign(this.showPagination ? { page: { current, limit: this.globalConfig.pageLimit }} : {}, ...rest)
+      // const condition = merge(this.showPagination ? { page: { current, limit: this.globalConfig.pageLimit }} : {}, ...rest)
       return resource[method](condition)
       .then(res => res.json()).then(data => {
         this.pending = false

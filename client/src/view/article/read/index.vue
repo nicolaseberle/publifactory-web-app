@@ -89,6 +89,9 @@ import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../components/Figure'
 import reviewComponent from '../../../components/Review'
 
+const debug = require('debug')('frontend')
+
+
 const defaultForm = {
   status: 'draft',
   title: '',
@@ -162,7 +165,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar', 'accessToken']),
     contentShortLength() {
       return this.postForm.content_short.length
     },
@@ -175,7 +178,7 @@ export default {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id
       this.id = id
-      console.log("creation de la page")
+      debug("creation de la page")
       this.fetchData(id)
     } else {
       this.postForm = Object.assign({}, defaultForm)
@@ -221,11 +224,13 @@ export default {
   },
   methods: {
     handleChange(val) {
-      console.log(val)
+      debug(val)
     },
     fetchData(id) {
-      console.log(id)
-      axios.get('/api/articles/' + id ).then(response => {
+      debug(id)
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
         // Just for test
         //this.postForm.title += `   Article Id:${this.postForm.id}`

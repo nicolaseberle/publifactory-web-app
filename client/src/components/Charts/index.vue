@@ -45,7 +45,7 @@
       <el-col :span="6">
         <transition name="slide-fade">
           <generalMenu v-model="parentTitleChart"  v-if='visibleGeneralMenu'/>
-          <tracesMenu v-if='visibleTracesMenu' />
+          <tracesMenu v-model="parentFigureType" v-if='visibleTracesMenu' />
           <styletracesMenu v-if='visibleStyleTracesMenu' />
         </transition>
       </el-col>
@@ -80,9 +80,10 @@ import tracesMenu from '../../components/Charts/Menu/TracesMenu'
 import generalMenu from '../../components/Charts/Menu/GeneralMenu'
 import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
 import { HotTable } from '@handsontable/vue';
+import { mapGetters } from 'vuex'
 
 import axios from 'axios'
-
+const debug = require('debug')('frontend');
 //var Handsontable = require('handsontable');
 
 export default {
@@ -105,6 +106,7 @@ export default {
         }],
       tabIndex: 1,
       parentTitleChart: 'Title',
+      parentFigureType: 'bar',
       options: {},
       layout: {
         title: 'Title',
@@ -112,22 +114,44 @@ export default {
       },
       settings3: {
           data: [
-            ["", "Ford", "Volvo", "Toyota", "Honda"],
-            ["2016", 10, 11, 12, 13]
+            ["Ford", "Volvo", "Toyota", "Honda"],
+            [10, 11, 12, 13]
           ],
           colHeaders: true,
           rowHeaders: true,
           contextMenu: true,
           minCols: 20,
           afterChange: () => {
-            console.log("afterChange")
+            debug("afterChange")
             if (this.hotRef) {
               var __data = this.hotRef.getSourceData()
-              console.log(__data)
-              console.log(__data[0])
-              console.log(__data[1].map(Number))
+              debug(__data)
+              debug(__data[0])
+              debug(__data[1].map(Number))
+
               this.currentData[0].x = __data[0]
-              this.currentData[0].y = __data[1].map(Number)
+              if (this.parentFigureType == 'bar'){
+                this.currentData[0].y = __data[1].map(Number)
+              }
+              if (this.parentFigureType == 'box'){
+
+                //this.currentData[0].y = __data[1].map(Number)
+                var y0 = [];
+                var y1 = [];
+                var y2 = [];
+                for (var i = 0; i < 50; i ++) {
+                	y0[i] = Math.random();
+                  y1[i] = Math.random() + 1;
+                  y2[i] = Math.random()*3 ;
+                }
+                this.currentData[0].x = '';
+                this.currentData[0].y = y0;
+                this.currentData[1].x = '';
+                this.currentData[1].y = y1;
+                this.currentData[2].x = '';
+                this.currentData[2].y = y2;
+                this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
+              }
               this.saveFigure()
             }
           }
@@ -153,13 +177,16 @@ export default {
       hotRef: null
     }
   },
+  computed: {
+    ...mapGetters(['accessToken'])
+  },
   created() {
     this.id = this.$route.params && this.$route.params.id
     this.loadData()
   },
   mounted() {
         this.hotRef = this.$refs.hotTableComponent.hotInstance;
-        console.log(this.idfigure)
+        debug("mounted:: ",this.idfigure)
 
 
     // var container = document.getElementById('tabFactory');
@@ -176,7 +203,7 @@ export default {
       contextMenu: {
             callback: function (key, selection, clickEvent) {
               // Common callback for all options
-              console.log(key, selection, clickEvent);
+              debug(key, selection, clickEvent);
             },
             items: {
               "newtrace": { // Own custom option
@@ -208,9 +235,9 @@ export default {
                         let vm = this
                         setTimeout(function() {
                           let arr_Cell = vm.getSelected()
-                          console.log(arr_Cell[0])
+                          debug(arr_Cell[0])
                           vm.colHeaders = vm.getDataAtRow(arr_Cell[0][0])
-                          console.log(vm.getDataAtRow(arr_Cell[0][0]))
+                          debug(vm.getDataAtRow(arr_Cell[0][0]))
                         }, 0);
 
                           // alert('You select this row to be header!');
@@ -270,9 +297,9 @@ export default {
 /*
     hot.addHook('afterInit', function(changes, src) {
         this.loadData(new Array([this.tableHeader[0],this.tableData]))
-        console.log('afterInit')
+        debug('afterInit')
 
-        console.log(this.tableHeader[0])
+        debug(this.tableHeader[0])
         /*this.colHeaders = this.tableHeader
         vm.currentData[0].x = this.tableHeader[0]
         vm.currentData[0].y = [10, 6 , 4 ,5]*/
@@ -286,19 +313,60 @@ export default {
 
   },
   watch:{
-    parentTitleChart () {
+    parentTitleChart (newVal) {
       this.layout = {'title': this.parentTitleChart}
       this.saveFigure ()
     },
-    settings3 () {
-      console.log(this.settings3)
+    parentFigureType (newVal) {
+      // WARNING [0] for Trace 1 [1] for Trace 2...
+      debug("parentFigureType change : ", this.parentFigureType)
+      this.currentData[0] = {'type': this.parentFigureType}
+      if (this.parentFigureType == 'box'){
+        this.currentData = [{
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample A'
+        },
+        {
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample B'
+        },
+        {
+          'y': this.currentData.y,
+          'type': 'box',
+          'name': 'Sample C'
+        }]
+      }else {
+        this.currentData = [{
+              x: ['Sample A','Sample B','Sample C','Sample D'],
+              y: [ 10, 9, 12, 13],
+              type: 'bar',
+              orientation: 'v'
+        }]
+      }
+      this.saveFigure ()
+    },
+    settings3 (newVal) {
+      debug(this.settings3)
     }
   },
   methods: {
     saveFigure () {
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout })
+      console.log("saveFigure ", this.currentData.y)
+      axios.put('/api/figure/'  + this.idfigure, {
+        data: this.currentData,
+        option:this.option,
+        layout: this.layout,
+        script: {
+          language: "Light",
+          content: null
+        }
+      }, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
-        console.log("figure saved")
+        debug("figure saved")
       })
       .catch(e => {
         console.log(e)
@@ -306,7 +374,9 @@ export default {
     },
     fetchFigure(id) {
       var self = this
-      axios.get('/api/figure/' + id ).then(response => {
+      axios.get('/api/figure/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         self.currentData = response.data.data
         self.layout = response.data.layout
         self.option = response.data.option
@@ -316,7 +386,9 @@ export default {
       })
     },
     loadData() {
-      axios.get(`/api/data/${this.id}`)
+      axios.get(`/api/data/${this.id}`, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(response => {
         if(response.data.length!=0)
         {
@@ -325,10 +397,10 @@ export default {
           this.tableData = new Array(JSON.parse(response.data[0].content))
           this.tableHeader = new Array(JSON.parse(response.data[0].header))
           this.currentData[0].x = this.tableHeader[0]
-          console.log("loadData")
-          console.log(this.currentData[0].x)
-          this.currentData[0].y = [10, 6 , 4 ,5]
-          console.log(this.currentData[0].y)
+          debug("loadData")
+          debug(this.currentData[0].x)
+          this.currentData[0].y = [10, 6 , 4]
+          debug(this.currentData[0].y)
           this.settings.data = new Array(this.currentData[0].x,this.currentData[0].y)
           this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
 
@@ -386,7 +458,6 @@ export default {
               }
             });
           }
-
           this.editableTabsValue = activeName;
           this.editableTabs = tabs.filter(tab => tab.name !== targetName);
         }

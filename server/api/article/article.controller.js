@@ -2,12 +2,15 @@
 
 var User = require('../user/user.model');
 var Article = require('./article.model');
+const RolesArticle = require('../roles/article/roles.article.model');
 var Data = require('../data/data.model');
 
 var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')
+
+var fs = require('fs')
 
 var validationError = function (res, err) {
   return res.status(422).json(err)
@@ -39,11 +42,12 @@ const DEFAULT_LIMIT = 10;
  * @param {Function} next - Express next middleware function
  */
 
-exports.getArticles = async (req, res, next) => {
+exports.getArticles = async function (req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
   try {
+    console.log(req.decoded);
     const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors.author reviewers',lean: true });
     console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
@@ -67,7 +71,7 @@ exports.getArticles = async (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 
-exports.getMyArticles = async (req, res, next) => {
+exports.getMyArticles = async function (req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
@@ -92,7 +96,7 @@ exports.getMyArticles = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findArticleById = async (req, res, next) => {
+module.exports.findArticleById = async function (req, res, next) {
   try {
     // console.log(JSON.stringify("findArticleById", null, "\t"))
     const article = await Article.findById(req.params.id).populate('authors.author reviewers').lean();
@@ -113,7 +117,7 @@ module.exports.findArticleById = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
+module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
   try {
     /*req.check(ArticleValidator.checkArticleData);
     const validationResult = await req.getValidationResult();
@@ -123,12 +127,14 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
     // console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
     const title = req.body.title.trim();
     const abstract = req.body.abstract;
+    const content = req.body.content;
     const arr_content = req.body.arr_content;
+    const tags = req.body.tags;
     const published = req.body.published;
     const article = await Article
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { title, abstract, arr_content, published } },
+        { $set: { title, abstract, content, arr_content, tags, published } },
         { new: true }
       );
 
@@ -146,7 +152,7 @@ module.exports.findArticlebyIdAndUpdate = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.deleteArticle = async (req, res, next) => {
+module.exports.deleteArticle = async function (req, res, next) {
   try {
     Article.findOneAndRemove({ _id: req.params.id }).exec();
     return res.sendStatus(200);
@@ -163,7 +169,7 @@ module.exports.deleteArticle = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.updateAuthorOfArticle = async (req, res, next) => {
+module.exports.updateAuthorOfArticle = async function (req, res, next) {
   try {
     /*req.check(ArticleValidator.checkArticleData);
     const validationResult = await req.getValidationResult();
@@ -196,7 +202,7 @@ module.exports.updateAuthorOfArticle = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.addAuthorOfArticle = async (req, res, next) => {
+module.exports.addAuthorOfArticle = async function (req, res, next) {
   try {
     const author = await User.findOne({'email' : req.body.author.email}  ).exec();
     console.log(author)
@@ -206,18 +212,17 @@ module.exports.addAuthorOfArticle = async (req, res, next) => {
       'role': req.body.author.role,
       'author': author
     }
-    const article = await Article
-      .findOneAndUpdate(
+    await Article.findOneAndUpdate(
         { _id: req.params.id },
         { $push: { authors: newAuthor } },
         { new: true }
-      );
+        );
+    new RolesArticle({ id_user: author._id, id_article: req.params.id, right: 'author' }).save();
     return res.status(200);
   } catch (err) {
     return next(err);
   }
 };
-
 
 /**
  * @function removeAuthorOfArticle
@@ -226,7 +231,7 @@ module.exports.addAuthorOfArticle = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.removeAuthorOfArticle = async (req, res, next) => {
+module.exports.removeAuthorOfArticle = async function (req, res, next) {
   try {
     console.log(req.body.authorId)
     const authorToRemove = await User.findById( req.body.authorId  ).exec();
@@ -237,6 +242,9 @@ module.exports.removeAuthorOfArticle = async (req, res, next) => {
         { $pull: { authors: { _id: authorToRemove._id } } },
         {multi: false}
       );
+    const query = { id_user: req.body.authorId, id_article: req.params.id };
+    const toReplace = { $set: { right: "guest" } };
+    await RolesArticle.updateOne(query, toReplace);
     return res.status(200);
   } catch (err) {
     return next(err);
@@ -249,7 +257,7 @@ module.exports.removeAuthorOfArticle = async (req, res, next) => {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.createArticle = async (req, res, next) => {
+module.exports.createArticle = async function (req, res, next) {
   try {
     //req.check(ArticleValidator.checkArticleData);
     //const validationResult = await req.getValidationResult();
@@ -258,16 +266,13 @@ module.exports.createArticle = async (req, res, next) => {
     }*/
 
     const title = req.body.title.trim();
-    //console.log(title);
     const abstract = req.body.abstract.trim();
-    //console.log(abstract);
     const arr_content = req.body.arr_content;
-    //console.log(arr_content);
+    const content = req.body.content;
     const status = req.body.status;
-    //console.log(content);
     const published = req.body.published;
-    //console.log(published);
-    const newArticle = new Article({ title, abstract, arr_content, status, published});
+
+    const newArticle = new Article({ title, abstract, content, arr_content, status, published});
 
     //Add category to the Article
     //Catch the good category
@@ -276,17 +281,68 @@ module.exports.createArticle = async (req, res, next) => {
     //newArticle.categories[0] = category;
     //const article = await newArticle.save();
     //console.log(JSON.stringify(category, null, "\t"));
-    console.log(JSON.stringify(req.body.id_author, null, "\t"));
+    // console.log(JSON.stringify(req.body.id_author, null, "\t"));
     //Add Author to the Article
     const author = await User.findById( req.body.id_author ).exec();
     // console.log(JSON.stringify(author, null, "\t"));
     newArticle.authors[0] = {"rank":1,"role":"Lead","author":author};
     const article = await newArticle.save();
+    new RolesArticle({ id_user: req.body.id_author, id_article: article._id, right: 'author' }).save();
 
-    console.log(JSON.stringify(article._id, null, "\t"));
+    // console.log(JSON.stringify(article._id, null, "\t"));
 
     return res.status(200).json(article._id);
   } catch (err) {
     return next(err);
   }
 };
+
+module.exports.changeStatus = async function (req, res, next) {
+  try {
+    const query = { _id: req.params.id };
+    let status;
+    if (req.params.status === 'review')
+      status = { status: 'Reviewing' };
+    else if (req.params.status === 'submit')
+      status = { status: 'Submited' };
+    else
+      status = { status: 'Published' };
+    const toReplace = { $set: status };
+    await Article.updateOne(query, toReplace, function (err, data) {
+      if (err) throw err;
+    })
+    res.status(201).json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.updateAuthorRights = async function (req, res, next) {
+  try {
+    if (req.body.newAuthors === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const query = { _id: req.params.id };
+    const toReplace = { $set: { authors: req.body.newAuthors } };
+    console.log(req.body.newAuthors.data)
+    await Article.updateOne(query, toReplace);
+    res.status(201).json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports.addReviewer = async function (req, res, next) {
+  try {
+    if (req.body.reviewer === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ email: req.body.reviewer.email }).exec();
+    const query = { _id: req.params.id };
+    const toAdd = { $push: { reviewers: user._id } };
+    const options = { new: true };
+    await Article.findOneAndUpdate(query, toAdd, options);
+    new RolesArticle({ id_user: user._id, id_article: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}

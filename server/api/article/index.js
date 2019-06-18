@@ -2,6 +2,7 @@
 
 var express = require('express')
 const articlesController = require('./article.controller');
+const rolesArticle = require('../roles/article/roles.article.controller');
 
 var auth = require('../../auth/auth.service')
 
@@ -10,27 +11,55 @@ var router = express.Router()
 router.post('/', articlesController.createArticle);
 router.get('/', articlesController.getArticles);
 router.get('/mine/:id', articlesController.getMyArticles);
+
+router.use('/:id/:status', async function (req, res, next) {
+  try {
+    req.route = req.params.status;
+    await rolesArticle.doYouHaveThisRight(req, res, next);
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+});
+
+router.patch('/:id/:status(review|submit|publish)', articlesController.changeStatus);
+
+router.use('/:id/addReviewer', async function (req, res, next) {
+  try {
+    req.route = 'inviteReviewer'
+    await rolesArticle.doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+})
+
+router.put('/:id/addReviewer', articlesController.addReviewer);
+
+router.use('/:id', async function (req, res, next) {
+  try {
+    req.route = 'articleRead';
+    await rolesArticle.doYouHaveThisRight(req, res, next);
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+})
+
 router.get('/:id', articlesController.findArticleById);
+
+router.use('/:id', async function (req, res, next) {
+  try {
+    req.route = 'articleModify';
+    await rolesArticle.doYouHaveThisRight(req, res, next);
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+})
+
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
+// TODO set deprecated, to replace with PATCH /:id/
 router.put('/:id/authors', articlesController.updateAuthorOfArticle);
 router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
 router.put('/:id/removeAuthor', articlesController.removeAuthorOfArticle);
+router.patch('/:id/authorRights', articlesController.updateAuthorRights);
 router.delete('/:id', articlesController.deleteArticle);
 
-/*router.get('/:slug', articlesController.findArticleBySlug);
-router.get('/draft/:slug', articlesController.findEditedArticleBySlug);
-router.post('/', articlesController.createArticle);
-router.put('/:slug', articlesController.findArticlebySlugAndUpdate);
-router.delete('/:slug', articlesController.findArticleBySlugAndDelete);
-
-router.put('/:slug/toggle', articlesController.findArticleBySlugAndTogglePublished);
-
-router.get('/:slug/categories', articlesController.findArticleBySlugAndFetchCategories);
-router.put('/:slug/categories', articlesController.findArticleBySlugAndAddCategoryBySlug);
-router.delete('/:slug/categories', articlesController.findArticleBySlugAndRemoveCategoryBySlug);
-
-router.get('/feed/:id', articlesController.getArticlesOfFollowedUsers);
-router.get('/myfeed/:id', articlesController.getArticlesOfUser);
-router.get('/:id/selectedArticles', articlesController.getSelectedArticles);
-*/
 module.exports = router;

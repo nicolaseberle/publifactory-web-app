@@ -1,4 +1,19 @@
 export default {
+  route:{
+    board: 'Board',
+    my_articles: 'Articles',
+    my_journals: 'Journals',
+    my_data: 'Data',
+    dashboard: 'Dashboard',
+    feeds: 'Feeds',
+    settings: 'Settings',
+    applications: 'Applications',
+    reviewer_matcher: 'Reviewer Matcher',
+    preprint_search: 'Preprint Search',
+    services: 'Services',
+    articles: 'Articles',
+    journal: 'Journal'
+  },
   title: 'Editorial Manager',
   registerTitle: 'Register',
   constant: {
@@ -46,7 +61,11 @@ export default {
     updated: 'Update successed',
     updateFailed: 'Update failed',
     removed: 'Delete successed',
-    removeFailed: 'Delete failed'
+    removeFailed: 'Delete failed',
+    changeRole: 'The roles have been updated',
+    changeRoleFail: 'The role hasn\'t been updated',
+    scriptSuccess: 'The script has been executed correctly!',
+    scriptFailure: 'The script hasn\'t worked ; check if you don\'t make a mistake.'
   },
   http: {
     error: {

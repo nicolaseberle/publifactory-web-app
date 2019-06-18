@@ -1,17 +1,17 @@
 <template>
   <div class="components-container-article">
     <el-row :gutter="40" style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);'>
-      <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="800" :z-index="20" @input='markdown2Html'/>
-      <!--<Split style="height: 1000px; overflow:hidden">
-      <SplitArea :size="75">
+      <!--<markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="800" :z-index="20" @input='markdown2Html'/>-->
+      <Split style="height: 1000px; overflow:hidden">
+      <SplitArea :size="50">
            <markdown-editor id="contentEditor" ref="contentEditor" v-model="content" :height="800" :z-index="20" @input='markdown2Html'/>
         </SplitArea>
-        <SplitArea :size="25" style="background-color: #f3f3f3">
+        <SplitArea :size="50" style="background-color: #f3f3f3">
           <el-card class="box-card" style="margin: 10px 10px 10px 10px;">
-            <div v-html="html"/>
+            <div class='md' v-html="html"/>
           </el-card>
         </SplitArea>
-    </Split>-->
+    </Split>
 <!--
 
       <el-col v-if='hidePDF==1' :span="24">
@@ -37,6 +37,7 @@
 <script>
 import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { mapGetters } from 'vuex'
+import VueSplit from 'vue-split-panel'
 import axios from 'axios'
 
 
@@ -83,7 +84,7 @@ List example:
 
 export default {
   name: 'MarkdownDemo',
-  components: { MarkdownEditor },
+  components: { MarkdownEditor , VueSplit},
   props: {
     hidePDF: Number
   },
@@ -95,7 +96,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['sidebar', 'accessToken']),
     closeSidebar() {
       this.sidebar.opened = false
     }
@@ -119,7 +120,9 @@ export default {
       })
     },
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
       }).catch(err => {
         console.log(err)
@@ -133,5 +136,13 @@ export default {
 .gutter.gutter-vertical {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFAQMAAABo7865AAAABlBMVEVHcEzMzMzyAv2sAAAAAXRSTlMAQObYZgAAABBJREFUeF5jOAMEEAIEEFwAn3kMwcB6I2AAAAAASUVORK5CYII=');
 }
+/*
+div.md{
+  font-family: Helvetica,Arial,sans-serif;
 
+  h1 {
+    color: red;
+  }
+}
+*/
 </style>

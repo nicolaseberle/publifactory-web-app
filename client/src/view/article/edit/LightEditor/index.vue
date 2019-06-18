@@ -1,6 +1,5 @@
 <template>
   <div class="components-container-article">
-
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
       <main class="article">
         <article>
@@ -22,6 +21,7 @@
                 </div>-->
                 <p class="article-doi">DOI : {{postForm.doi}}</p>
                 <!--<h1>{{ postForm.title }} </i></h1>-->
+                <div class='connectedUser'><div id="id-users-list"></div></div>
                 <h1>
                   <form name="article_title_form">
                     <textarea-autosize
@@ -42,11 +42,16 @@
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
-
+                    <div>
+                      <span id="id-cursors-socket-indicator" class='socket-indicator'></span>
+                      <span id="id-cursors-socket-state" class='socket-state'></span>
+                    </div>
                 </div>
 
                 <div class="article-tag">
                     <a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
+                    <div v-show='inputTagsVisible==true'><el-input placeholder="add a new tag" v-model="newTag" @keyup.enter.native="addNewTag($event)"></el-input></div>
+                    <a @click="inputTagsVisible=true"><h4 style='font-size:1.4rem'>+</h4></a>
                 </div>
             </header>
             <section  class="abstract">
@@ -70,8 +75,9 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -86,8 +92,9 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='item.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
+                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -124,156 +131,116 @@
     </main>
 
     </el-card>
-    <aside  class="comments-reviews" >
-        <p>Show comments &amp; reviews</p>
-    </aside>
+    <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <reviewComponent :uuid='uuid_comment'/>
+      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
     </aside>
+
+    <el-dialog
+      title="Add collaborators"
+      :visible.sync="diagAuthorVisible"
+      width="70%">
+    <addCollaborator v-bind:authors='postForm.authors' v-on:close="diagAuthorVisible=false"/>
+    </el-dialog>
+
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigurePlotlyVisible"
+      fullscreen
+      width="100%"
+      lock-scroll
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
+          <el-button type=""  @click="diagInsertFigurePlotlyVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="" >Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
+        </div>
+      </span>
+      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible" ref="lightChild"/>
+    </el-dialog>
+
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigurePythonVisible"
+      fullscreen
+      width="100%"
+      lock-scroll
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-dropdown trigger="click" @command="changePythonVersion">
+            <el-button type="primary">Python version<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="3.7">Python 3.7</el-dropdown-item>
+              <el-dropdown-item command="3.6">Python 3.6</el-dropdown-item>
+              <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
+          <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
+        </div>
+      </span>
+      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+                    v-on:loading="renderLoading=!(renderLoading)"/>
+    </el-dialog>
+
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigureRVisible"
+      fullscreen
+      width="100%"
+      lock-scroll
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
+          <el-button type=""  @click="diagInsertFigureRVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click="execRCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
+        </div>
+      </span>
+      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+               v-on:loading="renderLoading=!(renderLoading)"/>
+    </el-dialog>
+
+    <div id="container"></div>
+
+    <el-dialog
+      title="Insert data"
+      :visible.sync="importDialogVisible"
+      width="80%"
+      top="0">
+      <ImportData ref="importDataDialog"></ImportData>
+    </el-dialog>
 
     <el-dialog
       title="Insert a figure"
       :visible.sync="dialogVisible"
       width="80%"
       top="0">
-      <el-steps align-center :active="dialogStepActive" finish-status="success">
-      <el-step title="Import your data" description="Upload or drop your .xls or .csv file...">
-
-      </el-step>
-      <el-step title="Select a method" description="How to manage your data">
-
-      </el-step>
-      <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
-    </el-steps>
-    <div v-if='dialogStepActive==0'>
-      <h2 style="text-align:left;">Import</h2>
-      <el-tabs stretch type="border-card" style='vertical-align:middle'>
-        <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
-        <el-tab-pane label="by URL">(not yet)</el-tab-pane>
-        <!--<el-tab-pane>
-          <span slot="label">by Drive<img src='/static/icons/drive.svg' style='width:20px'></img></span>
-          (not yet)
-        </el-tab-pane>
-        <el-tab-pane>
-          <span slot="label">by Dropbox<img src='/static/icons/dropbox.svg' style='width:20px'></img></span>
-          (not yet)
-        </el-tab-pane>-->
-        <el-tab-pane label="SQL">(not yet)</el-tab-pane>
-        <el-tab-pane label="Example">
-          <el-row>
-            <el-col :span="2">
-              <el-checkbox v-model="checkedExData1">Exemple 1</el-checkbox>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="2">
-              <el-checkbox v-model="checkedExData2">Exemple 2</el-checkbox>
-            </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="2">
-            <el-checkbox v-model="checkedExData3">Exemple 3</el-checkbox>
-          </el-col>
-        </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    <div v-if='dialogStepActive==1'>
-      <el-row :gutter="20" style='margin-top:3rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/plotly-logo.png" style="width: 90%;" alt="Chart Manager" v-on:click="addNewFigure($event)">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Light Chart Editor</span>
-            </div>
-            <div style='text-align:left'>
-              The easy way to create a simple chart. Intergate it in the text.
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/Python_logo.png" style="width: 90%;" alt="Python_script">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Expert - Python script </span>
-            </div>
-            <div style='text-align:left'>
-              Write your script in Python, generate your figure and integrate it in the text
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/R_logo.png" style="width: 90%;" alt="R_script">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Expert - R script </span>
-            </div>
-            <div style='text-align:left'>
-              Write your script in R, generate your figure and integrate it in the text
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-    <!--
-      <component :is="datatable" v-if='dialogStepActive==0'/>
-      <component :is="mixchart" v-if='dialogStepActive==1'/>
-      <component :is="setupchart" v-if='dialogStepActive==2'/>-->
-      <!--<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>-->
-      <span slot="footer" class="dialog-footer">
-        <!--<el-button @click="previousStep">Previous step</el-button>
-            <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
-        <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigure($event)">Next</el-button>
-      </span>
-
+      <InsertFigure ref="insertFigureDialog"
+                    v-on:changeStatusPythonDiag="(data) => { this.diagInsertFigurePythonVisible = data }"
+                    v-on:changeStatusRDiag="(data) => { this.diagInsertFigureRVisible = data }"
+                    v-on:changeStatusLightDiag="(data) => { this.diagInsertFigurePlotlyVisible = data }"
+                    v-on:changeStatusMainDiag="(data) => { this.dialogVisible = data }"/>
     </el-dialog>
-    <el-dialog
-      title="Add collaborators"
-      :visible.sync="diagAuthorVisible"
-      width="70%">
-    <addCollaborator v-on:close="diagAuthorVisible=false"/>
-    </el-dialog>
-
-    <el-dialog
-      show-close
-      top="0"
-      :visible.sync="diagInsertFigureVisible"
-      width="100%"
-      center>
-
-      <span slot="title" class="dialog-header" >
-        <div style='text-align:right;'>
-          <el-button type=""  @click="diagInsertFigureVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="" >Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigureVisible=false" >Insert Figure</el-button>
-        </div>
-      </span>
-      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigureVisible"/>
-    </el-dialog>
-    <div id="container"></div>
 
   </div>
 
 </template>
 <script>
 import editor from 'vue2-medium-editor'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { validateURL } from '../../../../utils/validate'
 import axios from 'axios'
@@ -285,10 +252,15 @@ import reviewComponent from '../../../../components/Review'
 import quilleditor from '../../../../components/QuillEditor'
 import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
+import imageComponent from '../../../../components/Image'
+import scriptPython from '../../../../components/ScriptPython'
+import scriptR from '../../../../components/ScriptR'
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
 import LoadScript from 'vue-plugin-load-script'
-
+import Cursors from '../../../../utils/js/collaboration/cursors.js'
+import ImportData from '../../../../components/ImportData/index'
+import InsertFigure from '../../../../components/InsertFigure/index'
 //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -344,75 +316,43 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {addCollaborator,figureComponent, VuePlotly, figureFactory, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {
+    InsertFigure,
+    ImportData,
+    addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
   data() {
-    const validateRequire = (rule, value, callback) => {
-      if (value === '') {
-        this.$message({
-          message: rule.field + 'required',
-          type: 'error'
-        })
-        callback(new Error(rule.field + 'required'))
-      } else {
-        callback()
-      }
-    }
-    const validateSourceUri = (rule, value, callback) => {
-      if (value) {
-        if (validateURL(value)) {
-          callback()
-        } else {
-          this.$message({
-            message: 'wrong url chain',
-            type: 'error'
-          })
-          callback(new Error('wrong url chain'))
-        }
-      } else {
-        callback()
-      }
-    }
     return {
+      timeoutId: Number,
+      inputTagsVisible : false,
+      newTag : '',
+      cursors : Object,
       uuid_comment: '',
       zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
-      chartData: [{
-        x:['Exp. A11','Exp. A12','Exp. A21','Exp. A22','Exp. B1','Exp. B2','Exp. C1','Exp. C2', 'Exp. CRTL'],
-        y: [30, 60, 90, 40, 110, 36, 78, 30, 60],
-        type: 'bar',
-        orientation: 'v'
-      }],
-      chartLayout: {
-        title: 'number of samples',
-        showlegend: false
-      },
-      chartOptions: {},
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
-      diagInsertFigureVisible: false,
+      dialogVisible: false,
+      diagInsertFigureRVisible: false,
+      diagInsertFigurePythonVisible: false,
+      diagInsertFigurePlotlyVisible: false,
+      importDialogVisible: false,
       userListOptions: [],
       html: '',
-      rules: {
-        title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
-      },
       activeNames: ['1'],
       activeNames_section: ['1'],
       options: options,
       activeName_tab: 'article',
       dialogTableVisible: false,
       dialogFormVisible: false,
-      dialogVisible: false,
       formLabelWidth: '120px',
-      dialogStepActive: 0,
       addFigureInBlock: 0,
       editorType: false,
       checkedExData1: false,
       checkedExData2: false,
       checkedExData3: false,
+      renderLoading: false,
       id: 0,
       form: {
           name: '',
@@ -450,116 +390,49 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar']),
+    ...mapGetters(['accessToken']),
+    ...mapActions(['closeSideBar']),
     contentShortLength() {
       return this.postForm.content_short.length
-    },
-    closeSidebar() {
-      this.sidebar.opened = false
     }
   },
   created() {
-    this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    this.fetchData(this.id)
-
-    /*var zp = new ZoteroPublications();
-    var promise = zp.getPublications(5476883);
-
-    promise.then(function(data) {
-        //optionally process your data here
-        zp.render(data, document.getElementById('container'));
-    });
-
-    promise.catch(function(reason) {
-        //optionally implement custom error handling here
-        console.warn(reason);
-    });
-    */
+    //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
+    //this.cursors.update()
 
   },
   mounted() {
-      //let zoteroScript = document.createElement('script')
-      //zoteroScript.setAttribute('src', 'chrome://zotero/content/include.js')
-      //document.head.appendChild(zoteroScript)
-
-      asideRightAnimation()
-      //hightlightText()
-
-      //var config = new Zotero.RequestConfig().LibraryType('user').LibraryID(5476883).Target('items').config;
-      //var fetcher = new Zotero.Fetcher(config);
-/*
-      fetcher.next().then((response)=>{
-      	//the parsed json array of items that the api returned is on response.data,
-      	//we can loop through them and create a Zotero.Item for each
-      	console.log('\naccessing the items directly from this response:')
-      	response.data.forEach((itemJson)=>{
-      		var items = new Zotero.Item(itemJson);
-          //this.zoteroitems = items.get('title')
-      	});
-      }).then(()=>{
-      	//the array was also saved in fetcher.results
-      	console.log('\nfetcher.results:');
-      	fetcher.results.forEach((itemJson)=>{
-      		let item = new Zotero.Item(itemJson);
-          this.zoteroitems.push(item.get('title'))
-      		console.log(item.get('title'));
-      	});
-      })*/
-/*
-      const configAxios = {
-          timeout: 1500,
-          baseURL: 'https://127.0.0.1:23119/',
-
-        };
-
-        const instance = axios.create(configAxios);
-        try {
-                const response = instance.post('connector/ping');
-                console.log(response);
-        } catch (e) {
-                console.error(e);
-        }
-
-      axios.get( 'http://127.0.0.1:23119/connector/ping').then(response => {
-        console.log("PING: " + response.data)
-      }).catch(err => {
-        console.log(err)
-      })
-
-        // Send a POST request
-        axios({
-          method: 'post',
-          url:'http://127.0.0.1:23119/connector/document/execCommand',
-          headers: {"Content-Type": "application/json"},
-          data: {
-            'commande': 'getSaveTarget'
-          }
-        }).then(function (response) {
-            console.log(response.data)
-        });*/
-/*
-      axios.get('http://127.0.0.1:23119/connector/document/execCommand', {headers: "Content-Type: application/json" , data: {"commande":"selectItems"}}).then(response => {
-        console.log("resultat de la requete: " + response)
-      }).catch(err => {
-        console.log(err)
-      })*/
-
-      /*var promise = require('zotero-api-client').library('user', 475425).collections('9KH9TNSJ').items().get();
-      promise.then(function(response) {
-          this.zoteroitems = response.getData();
-          console.log(this.zoteroitems.map(i => i.title));
-      });
-
-      promise.catch(function(reason) {
-
-          console.warn(reason);
-      });*/
+    this.fetchData(this.id)
+    asideRightAnimation()
+    //this.updateUserList()
+    /*this.$watch(this.dialogVisible, (val) => {
+      this.$refs.insertFigureDialog.setDialogStatus(val)
+    })*/
   },
   watch: {
-    diagInsertFigureVisible (val) {
+    diagInsertFigurePlotlyVisible (val) {
       if(val==false) {
         var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogLightStatus(true)
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+      }
+    },
+    diagInsertFigurePythonVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogPythonStatus(true)
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+      }
+    },
+    diagInsertFigureRVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogRStatus(true)
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
@@ -567,7 +440,9 @@ export default {
     },
     diagAuthorVisible (val) {
       if(val==false) {
-        axios.get('/api/articles/' + this.id ).then(response => {
+        axios.get('/api/articles/' + this.id , {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(response => {
           this.postForm.authors = response.data.authors
         }).catch(err => {
           console.log(err)
@@ -576,32 +451,79 @@ export default {
     }
   },
   methods: {
-    createComment(uuid_comment){
+    /*signalUpdateUserList (newCursors) {
+      this.updateUserList (editor)
+    },*/
+
+    onChangeComment(commentStateVector) {
+      this.$emit("changecomment",commentStateVector)
+    },
+    updateUserList (editor) {
+      // Wipe the slate clean
+
+      var usersListEl = document.getElementById('id-users-list');
+      usersListEl.innerHTML = null;
+      //var _cursors = this.cursors
+      _cursors.connections.forEach(function(connection) {
+        //var userItemEl = document.createElement('li');
+        var userNameEl = document.createElement('div');
+        var userParagraphEl = document.createElement('p');
+        userNameEl.className = 'circle'
+        //var userDataEl = document.createElement('div');
+
+        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
+        //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
+        //userNameEl.classList.add('user-name');
+
+        if (connection.id == _cursors.localConnection.id) {
+          userParagraphEl.innerHTML = _cursors.localConnection.name.charAt(0);
+        }
+
+        if (connection.range) {
+          if (connection.id == _cursors.localConnection.id)
+            connection.range = editor.getSelection();
+
+          /*userDataEl.innerHTML = [
+            '<div class="user-data">',
+            '  <div>Index: ' + connection.range.index + '</div>',
+            '  <div>Length: ' + connection.range.length + '</div>',
+            '</div>'
+          ].join('');*/
+        } /*else
+          userDataEl.innerHTML = '(Not focusing on editor.)';*/
+
+        userNameEl.style.backgroundColor = connection.color;
+        userNameEl.appendChild(userParagraphEl);
+        usersListEl.appendChild(userNameEl);
+
+      });
+    },
+    createComment (uuid_comment){
       // console.log('signal creation comment :',uuid_comment)
       $('aside.content-comments-reviews').css('display', 'block')
       this.uuid_comment = uuid_comment
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
-    nextStep() {
+    addNewTag (ev) {
+      this.inputTagsVisible = false
+      if (this.newTag !== '') {
+        this.postForm.tags.push(this.newTag)
+        this.save(ev)
+      }
+      this.newTag = ''
+
+    },
+    nextStep () {
         if (this.dialogStepActive++ > 2) this.dialogStepActive = 0;
     },
-    previousStep() {
+    previousStep () {
         if (this.dialogStepActive-- < 0 ) this.dialogStepActive = 0;
     },
-
-    handleClose(done) {
-        this.$confirm('Are you sure to close this dialog?')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      },
-    handleClick(tab, event) {
-
-    },
     fetchData(id) {
-      axios.get('/api/articles/' + id ).then(response => {
+      axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
         this.postForm = response.data
       }).catch(err => {
         console.log(err)
@@ -624,9 +546,19 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
-
     save (ev) {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
+      axios.put('/api/articles/'  + this.id, {
+        "title": this.postForm.title,
+        "abstract": this.postForm.abstract,
+        "content": this.postForm.content,
+        "arr_content": this.postForm.arr_content,
+        "tags": this.postForm.tags,
+        "published": true
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
       .then(response => {
         console.log("article saved")
       })
@@ -634,17 +566,24 @@ export default {
         console.log(e)
       })
     },
-
     applyAbstractEdit (ev) {
       if (ev.event.target) {
         this.postForm.abstract = ev.event.target.innerHTML
-        this.save(ev);
+        //this.save(ev);
+        setTimeout(async ()=>{
+          this.save(ev)
+         },2000);
       }
     },
     applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
-      this.save(this.$event)
+      //this.save(this.$event)
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+       },2000);
+      //this.updateUserList(editor)
     },
     addNewRow (ev,key) {
       var uuid_ = String(uuidv4())
@@ -668,28 +607,38 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       this.save(ev)
     },
-    addChartBlock (ev,key,subkey,subsubkey) {
-    var self = this
-      this.createFigure().then(idFigure => {
-        console.log("addChartBlock::idFigure: " + idFigure)
-        var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure',nbEdit:0}
-        self.editidfigure = idFigure
-        self.poseditfigure = [key, subkey, subsubkey]
-        self.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
-      })
-      this.openEditFigure(ev,key,subkey,subsubkey)
+    async addChartBlock (ev, key, subkey, subsubkey) {
+      const idFigure = await this.createFigure()
+      console.log("addChartBlock::idFigure: " + idFigure)
+      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
+      this.editidfigure = idFigure
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
+      this.openEditFigure(ev, key, subkey, subsubkey)
+    },
+    addPictureBlock (ev,key,subkey,subsubkey) {
+      console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
+      var new_block = { type: 'image', uuid: 'mqlssdfpsdazoizeDSQMKqsdmlk', content: 'New Image',nbEdit:0}
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
     },
     removeBlock (ev,key,subkey,subsubkey) {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    editChartBlock (ev,key,subkey,subsubkey,idFigure) {
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
-      this.diagInsertFigureVisible = true;
-    },
-    forceRerenderBlock (key,subkey,subsubkey) {
-
+      const response = await axios.get('/api/figure/' + this.editidfigure, {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      })
+      if (response.data.script.language === 'Python') {
+        this.diagInsertFigurePythonVisible = true
+      } else if (response.data.script.language === 'R') {
+        this.diagInsertFigureRVisible = true
+      } else {
+        this.diagInsertFigurePlotlyVisible = true
+      }
     },
     addOneBlock (ev,key) {
       var uuid_block = String(uuidv4())
@@ -724,32 +673,32 @@ export default {
 
     },
     openEditFigure (ev,key,subkey,subsubkey) {
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
-    addNewFigure (ev,key,subkey,subsubkey){
-      this.dialogStepActive++;
-      if(this.dialogStepActive == 2){
-        this.dialogVisible = false;
-        this.diagInsertFigureVisible = true;
-        this.dialogStepActive = 0;
-      }
-    },
-    createFigure () {
+    async createFigure () {
       const newFigure = {
-        data : [{
-                x: ['Sample A','Sample B','Sample C','Sample D'],
-                y: [ 10, 9, 12, 13],
-                type: 'bar',
-                orientation: 'v'
+        data: [{
+          x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
+          y: [10, 9, 12, 13],
+          type: 'bar',
+          orientation: 'v'
         }],
-        option : {},
+        option: {},
         layout: {
           title: 'Title',
           showlegend: false
         }
       };
-
-      return axios.post('/api/figure/', newFigure)
+      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      let _idFigure = response.data;
+      console.log("createFigure::idFigure: " + _idFigure)
+      return _idFigure
+    },
+    createImage () {
+      const newImage = {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      }
+      return axios.post('/api/image/', newImage)
       .then(response => {
         let _idFigure = response.data;
         console.log("createFigure::idFigure: " + _idFigure)
@@ -770,11 +719,34 @@ export default {
         if (!response.data.items) return
         this.userListOptions = response.data.items.map(v => v.name)
       })
+    },
+    async execPythonCode () {
+      this.renderLoading = true
+      await this.$refs.pythonChild.execCode()
+      this.renderLoading = false
+    },
+    async execRCode () {
+      this.renderLoading = true
+      await this.$refs.rChild.execCode()
+      this.renderLoading = false
+    },
+    changePythonVersion (newValue) {
+      this.$refs.pythonChild.setVersion(newValue)
     }
   }
 }
 </script>
 <style>
+  .el-dropdown {
+    vertical-align: top;
+  }
+  .el-dropdown + .el-dropdown {
+    margin-left: 15px;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+
 .el-dialog--center .el-dialog__body{
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
@@ -785,6 +757,38 @@ export default {
 }
 .vue-plotly{
 
+}
+
+.socket-indicator {
+  height: 10px;
+  width: 10px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 5px;
+}
+.socket-state {
+  text-transform: capitalize;
+}
+.connectedUser {
+  display: inline-block;
+  float: right;
+  position: inherit;
+}
+
+#users-panel ul > li {
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  margin-bottom: 10px;
+}
+#users-panel .user-name {
+  margin-bottom: 5px;
+}
+#users-panel .user-data {
+  flex-wrap: wrap;
+}
+#users-panel .user-data > div {
+  flex-grow: 1;
 }
 </style>
 <!--<style>

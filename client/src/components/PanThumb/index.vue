@@ -121,8 +121,6 @@ export default {
   margin: 7px auto 0;
   font-family: 'Open Sans', Arial, sans-serif;
   opacity: 0;
-  transition: transform 0.3s ease-in-out 0.2s, opacity 0.3s ease-in-out 0.2s, background 0.2s linear 0s;
-  transform: translateX(60px) rotate(90deg);
 }
 
 .pan-info p a:hover {
@@ -130,11 +128,10 @@ export default {
 }
 
 .pan-item:hover .pan-thumb {
-  transform: rotate(-110deg);
+
 }
 
 .pan-item:hover .pan-info p a {
   opacity: 1;
-  transform: translateX(0px) rotate(0deg);
 }
 </style>

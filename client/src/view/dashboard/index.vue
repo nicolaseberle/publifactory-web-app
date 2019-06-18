@@ -2,17 +2,17 @@
   <div class="dashboard-container">
     <component :is="currentRole"/>
 
-    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" show-close>
       <h1>Welcome </h1>
-      <h2>Michael Rera has invited you to access this article</h2>
+      <h2></h2>
       <p>Change your password</p>
       <br>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="Email">
           <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="Password">
-          <el-input v-model="form.password" type="password" placeholder="new password" ></el-input>
+        <el-form-item label="New Password">
+          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -29,15 +29,17 @@ import axios from 'axios'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
 import userDashboard from './user'
+import locales from '../../locales/register'
 
 export default {
+  locales,
   name: 'Dashboard',
   components: { adminDashboard, userDashboard, editorDashboard },
   data() {
     return {
       id: '',
       visibleDiagFirstConnexion: false,
-      currentRole: 'adminDashboard',
+      currentRole: 'userDashboard',
       form: {
         email: '',
         password: '',
@@ -58,7 +60,8 @@ export default {
     ...mapGetters([
       'roles',
       'userId',
-      'accessToken'
+      'accessToken',
+      'sidebar'
     ])
   },
   created() {
@@ -70,11 +73,19 @@ export default {
       this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = false
     }
+    if (this.roles.includes('admin')) {
+      this.currentRole = 'adminDashboard'
+      this.visibleDiagFirstConnexion = false
+    }
     // a guest account has only one role : [guest]
     if (this.roles.includes('guest') && this.roles.length==1) {
       this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = true
     }
+    if(this.sidebar.opened == false){
+      this.toggleSideBar()
+    }
+
   },
   mounted () {
     axios.get('/api/users/me',{headers: {
@@ -86,7 +97,7 @@ export default {
       })
   },
   methods: {
-    ...mapActions(['resetGuestPassword','logout']),
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')

@@ -1,4 +1,4 @@
-
+debug
 <template>
   <div>
     <div style='margin: 0px 0px 20px 0px'>
@@ -33,7 +33,7 @@
         </el-form-item>
         </el-col>
         <el-col :span='4'>
-          <el-button type="primary" @click="addAuthor" >Add</el-button>
+          <el-button type="primary" @click="submitForm('dynamicValidateForm')" >Add</el-button>
         </el-col>
       </el-row>
 
@@ -57,7 +57,7 @@
           </el-table-column>
           <el-table-column align="center" label="Role" width="140">
             <template slot-scope="scope">
-            <el-select v-model="scope.row.role">
+            <el-select v-model="scope.row.role" >
               <el-option
                 v-for="item in optionsEditRole"
                 :key="item.value"
@@ -82,7 +82,7 @@
     <div style='text-align:right'>
       <span slot="footer" class="dialog-footer">
         <el-button type=""  @click="$emit('close')" >Cancel</el-button>
-        <el-button type="primary"  @click="$emit('close')" >OK</el-button>
+        <el-button type="primary"  @click="onChange" >OK</el-button>
       </span>
     </div>
   </div>
@@ -91,11 +91,16 @@
 import axios from 'axios'
 import Sortable from 'sortablejs'
 import { mapGetters } from 'vuex'
+const debug = require('debug')('frontend');
+
 const shortid = require('shortid');
 
 export default {
   name: 'addCollaborator',
   components: {},
+  props: {
+    authors: {}
+  },
   data() {
     return {
       list: null,
@@ -136,8 +141,7 @@ export default {
       idArticle : '',
       rules: {
         email: [
-          { required: true, message: 'Please input email address', trigger: 'blur' },
-          { type: 'email', message: 'Please input correct email address', trigger: ['blur', 'change'] }
+          { type: 'email',required: true, message: 'Please input correct email address', trigger: ['blur', 'change'] }
         ],
         firstname: [
           { required: true, message: 'Please input firstname', trigger: 'blur' }
@@ -151,36 +155,23 @@ export default {
   computed: {
     ...mapGetters([
       'userId',
-      'roles'
+      'roles',
+      'accessToken'
     ])
   },
   created() {
     this.idArticle = this.$route.params && this.$route.params.id
     this.total = 2
-    this.getList(this.idArticle).then((listAuthors)=>{
-      this.list = listAuthors.map((item,key)=>{
-        const container = item;
-        container.rank = Number(container.rank);
-        return container;
-      })
-
-      // this.list = [{rank:1, firstname: "Michael",lastname: "Rera"},{rank:2,firstname: "Nicolas",lastname: 'Eberle'}]
+  },
+  mounted() {
+      this.list = this.authors
       this.oldList = this.list.map(v => Number(v.rank))
       this.newList = this.oldList.slice()
       this.$nextTick(() => {
         this.setSort()
       })
-    })
   },
   methods: {
-    getList (id) {
-      return axios.get('/api/articles/' + id ).then(response => {
-        console.log(response.data.authors)
-        return response.data.authors
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     setSort() {
       const el = document.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
       this.sortable = Sortable.create(el, {
@@ -198,32 +189,40 @@ export default {
         }
       })
     },
-    async addAuthor () {
-      var nbAuthors = this.list.length+1;
-      var newAuthor = {
-                          rank: nbAuthors,
-                          role: 'Author',
-                          author:{
-                            email: this.dynamicValidateForm.email,
-                            firstname: this.dynamicValidateForm.firstname,
-                            lastname: this.dynamicValidateForm.lastname
-                          }
-                      }
-      var newAuthorId = await this.invite ( newAuthor.author.email,
-                                            newAuthor.author.firstname,
-                                            newAuthor.author.lastname )
-
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.addReviewer()
+          } else {
+            debug('error submit!!');
+            return false;
+          }
+        });
+    },
+    async addReviewer () {
+      const nbAuthors = this.list.length + 1
+      const newAuthor = {
+        rank: nbAuthors,
+        role: 'Author',
+        author: {
+          email: this.dynamicValidateForm.email,
+          firstname: this.dynamicValidateForm.firstname,
+          lastname: this.dynamicValidateForm.lastname
+        }
+      }
       // warning. it's temporarly.
+      newAuthor.author = await this.invite(newAuthor.author.email,
+        newAuthor.author.firstname,
+        newAuthor.author.lastname);
       this.list.push(newAuthor)
       this.newList = this.list.map(v => Number(v.rank))
-      console.log(this.list)
       this.$forceUpdate()
       this.cleanForm()
     },
     invite (email, firstname, lastname) {
       let sender = this.userId;
       let shortId = shortid.generate();
-      while(shortId.indexOf('-')>=0){
+      while (shortId.indexOf('-') >= 0) {
         shortId = shortid.generate();
       }
       let link = shortId;
@@ -231,26 +230,25 @@ export default {
       let message = "toto";
       let name = this.userId;
 
-      axios.post('/api/invitations/invite', {
-              "sender": sender,
-              "link": link,
-              "to": inviteTo,
-              "msg": message,
-              "name": name})
-              .then(async (res) => {
-                //if the email is not in the db -> create guest account
-                if(res.data == null){
-                  console.log("creation of the temp account")
-                  var newUser = await this.createTempAccount( email, link, firstname, lastname)
-                  return newUser
-                }
-                else{
-                  console.log("this account exists yet")
-                  return res
-                }
-              }).then(() =>{
-                  this.addNewAuthor(email)
-              })
+      return new Promise((resolve, reject) => {
+        axios.post('/api/invitations/invite/collaborator?id_article=' + this.idArticle, {
+          "sender": sender,
+          "link": link,
+          "to": inviteTo,
+          "msg": message,
+          "name": name
+        }, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+          .then(async (res) => {
+            //if the email is not in the db -> create guest account
+            if (res.data == null) {
+              resolve((await this.createTempAccount(email, link, firstname, lastname)).user)
+            } else {
+              resolve(res.data)
+            }
+          }).then(() => {
+          this.addNewAuthor(email)
+        })
+      })
     },
     addNewAuthor (email) {
       var _newAuthor = {
@@ -258,7 +256,9 @@ export default {
                           'role': 'Author',
                           'email': email
                        }
-      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor} )
+      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      })
       .then(res => {
         return res
       }).catch((err) => {
@@ -267,7 +267,7 @@ export default {
     createTempAccount (_email,_password, _firstname,_lastname) {
       return axios.post('/api/users/guest',{ "email": _email,"password": _password,"firstname": _firstname,"lastname": _lastname})
       .then(res => {
-        return res
+        return res.data
       }).catch((err) => {
       setTimeout(() => {
         this.loginError = false
@@ -288,7 +288,10 @@ export default {
         });
         this.newList = this.list.map(v => Number(v.rank))
 
-        axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}  ).then(() => {
+        axios.put('/api/articles/' + this.idArticle + '/removeAuthor',{ 'authorId' : _removedAuthorId}, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        })
+          .then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')
@@ -296,6 +299,23 @@ export default {
           this.fetchMyArticles()
         })
       }).catch(() => {})
+    },
+    onChange() {
+      const newAuthors = this.list
+      axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: newAuthors },
+        { headers: {'Authorization': `Bearer ${this.accessToken}`} })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: this.$t('message.changeRole')
+          })
+        }).catch(() => {
+          this.$message({
+            type: "error",
+            message: this.$t('message.changeRoleFail')
+          })
+      })
+      this.$emit('close')
     }
   }
 }

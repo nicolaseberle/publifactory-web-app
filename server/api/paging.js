@@ -1,6 +1,7 @@
 var async = require('async')
 module.exports = {
   listQuery: function (schema, search, selection, sort, page, callback) {
+    console.log(page)
     for (var key in search) {
       if (search[key] === null || search[key] === undefined || search[key] === '') {
         delete search[key]

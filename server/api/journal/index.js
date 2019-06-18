@@ -4,27 +4,21 @@ var express = require('express')
 const journalController = require('./journal.controller');
 
 var auth = require('../../auth/auth.service')
+const roles = require('../roles/journal/roles.journal.controller')
 
 var router = express.Router()
 
 router.post('/', journalController.createJournal);
-router.get('/', journalController.getJournals);
-router.get('/:id', journalController.findJournalById);
-router.put('/:id', journalController.findJournalByIdAndUpdate);
-/*router.get('/:slug', articlesController.findArticleBySlug);
-router.get('/draft/:slug', articlesController.findEditedArticleBySlug);
-router.post('/', articlesController.createArticle);
-router.put('/:slug', articlesController.findArticlebySlugAndUpdate);
-router.delete('/:slug', articlesController.findArticleBySlugAndDelete);
+router.get('/:id?', journalController.getJournals);
+router.post('/:id/article', roles.owner, journalController.addArticleToJournal);
+router.delete('/:id/article/:id_article', roles.owner, journalController.removeArticleFromJournal);
+router.put('/:id', roles.administration, journalController.findJournalByIdAndUpdate);
+router.delete('/:id', roles.administration, journalController.deleteJournal);
 
-router.put('/:slug/toggle', articlesController.findArticleBySlugAndTogglePublished);
+router.get('/:id/users/:role(editor|associate_editor|user)', journalController.getJournalsUser)
+router.patch('/:id/article/:id_article', roles.publish, journalController.setArticlePublish)
+router.post('/:id/invite/:right(associate_editor|user)', roles.invite, journalController.inviteUser)
+router.post('/:id/follow', journalController.followJournal)
 
-router.get('/:slug/categories', articlesController.findArticleBySlugAndFetchCategories);
-router.put('/:slug/categories', articlesController.findArticleBySlugAndAddCategoryBySlug);
-router.delete('/:slug/categories', articlesController.findArticleBySlugAndRemoveCategoryBySlug);
 
-router.get('/feed/:id', articlesController.getArticlesOfFollowedUsers);
-router.get('/myfeed/:id', articlesController.getArticlesOfUser);
-router.get('/:id/selectedArticles', articlesController.getSelectedArticles);
-*/
 module.exports = router;

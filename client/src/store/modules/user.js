@@ -1,6 +1,15 @@
-import { merge } from 'lodash'
+// import { merge } from 'lodash'
 import { saveMulti, clearMulti } from '../../storage'
-import { login, getUserInfo, resetGuestPassword, changePassword, resetPassword, updateUser } from './user.api'
+import {
+  login,
+  getUserInfo,
+  resetGuestPassword,
+  changePassword,
+  resetPassword,
+  updateUser,
+  loginOrcid,
+  checkEmail
+} from './user.api'
 // eslint-disable-next-line camelcase
 import { username, email, access_token, refresh_token } from '../../stored'
 import { STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN } from '../../constants'
@@ -19,7 +28,8 @@ const state = {
 const mutations = {
   // set user info
   SET_USER_INFO (state, userInfo) {
-    merge(state, userInfo)
+    // merge(state, userInfo)
+    Object.assign(state, userInfo)
   },
   // after logout
   LOGOUT (state) {
@@ -57,15 +67,52 @@ const actions = {
       }
     })
   },
-  // login action
-  login ({ commit, dispatch }, payload) {
+  loginOrcid ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      login(payload.email, payload.password).then(data => {
+      loginOrcid(payload.orcidId, payload.password).then(data => {
         if (!data) {
           reject('error')
         }
         getUserInfo(data.token).then(user => {
-          const userInfo = merge({}, user, {
+          const userInfo = Object.assign({}, user, {
+            email: payload.orcidId,
+            access_token: data.token, // eslint-disable-line
+            refresh_token: '' // eslint-disable-line
+          })
+          var arrRoles = []
+          arrRoles.push(user.role)
+          commit('SET_ROLES', arrRoles)
+          commit('SET_AVATAR', user.avatar)
+          commit('SET_USER_INFO', userInfo)
+          saveMulti([{
+            key: STORE_KEY_USEREMAIL,
+            value: userInfo.orcidId
+          }, {
+            key: STORE_KEY_ACCESS_TOKEN,
+            value: userInfo.access_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_REFRESH_TOKEN,
+            value: userInfo.refresh_token // eslint-disable-line
+          }])
+          resolve()
+        }).catch(() => {})
+      }).catch(err => { reject(err) })
+    })
+  },
+  // login action
+  login ({ commit, dispatch }, payload) {
+    return new Promise(async (resolve, reject) => {
+      await login(payload.email, payload.password).then(data => {
+        if (!data) {
+          reject('error')
+        }
+        getUserInfo(data.token).then(user => {
+          /* const userInfo = merge({}, user, {
+            email: payload.email,
+            access_token: data.token, // eslint-disable-line
+            refresh_token: '' // eslint-disable-line
+          }) */
+          const userInfo = Object.assign({}, user, {
             email: payload.email,
             access_token: data.token, // eslint-disable-line
             refresh_token: '' // eslint-disable-line
@@ -86,8 +133,11 @@ const actions = {
             value: userInfo.refresh_token // eslint-disable-line
           }])
           resolve()
-        }).catch(() => {})
-      }).catch(err => { reject(err) })
+        }).catch(() => {
+        })
+      }).catch(err => {
+        reject(err)
+      })
     })
   },
   // resetPassword action
@@ -153,6 +203,10 @@ const actions = {
   logout ({ commit }, payload) {
     commit('LOGOUT')
     clearMulti([STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN])
+  },
+
+  checkEmail ({ commit }, payload) {
+    checkEmail(payload.userId)
   }
 }
 

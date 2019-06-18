@@ -1,15 +1,15 @@
 /**
  *
  * @param  {[event]} e        [description]
- * @param  {[Object]} arg_opts [description]
+ * @param  {[Object]} argOpts [description]
  * @return {[bollean]}          [description]
  */
-export default function(e, arg_opts) {
+export default function (e, argOpts) {
   var opts = Object.assign({
     ele: e.target,
     type: 'hit',
-    bgc: 'rgba(0, 0, 0, 0.15)' 
-  }, arg_opts)
+    bgc: 'rgba(0, 0, 0, 0.15)'
+  }, argOpts)
   var target = opts.ele
   if (target) {
     var rect = target.getBoundingClientRect()

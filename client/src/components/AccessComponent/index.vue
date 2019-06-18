@@ -133,6 +133,9 @@
 <script>
 import axios from 'axios'
 import Sortable from 'sortablejs'
+import { mapGetters } from 'vuex'
+
+const debug = require('debug')('frontend');
 
 export default {
   name: 'accessComponent',
@@ -194,6 +197,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['accessToken'])
+  },
   mounted() {
     // this.idArticle = this.$route.params && this.$route.params.id
     // this.total = 2
@@ -214,8 +220,10 @@ export default {
   },
   methods: {
     getList (id) {
-      return axios.get('/api/articles/' + id ).then(response => {
-        // console.log(response.data.authors)
+      return axios.get('/api/articles/' + id, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+        debug(response.data.authors)
         return response.data.authors
       }).catch(err => {
         console.log(err)
@@ -238,7 +246,7 @@ export default {
         }
       })
     },
-    addAuthor () {
+    addReviewer () {
       var nbAuthors = this.list.length+1;
       var newAuthor = {
                           rank: nbAuthors,

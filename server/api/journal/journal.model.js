@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
-const slug = require('mongoose-slug-generator');
 const mongoosePaginate = require('mongoose-paginate');
 const mongooseDelete = require('mongoose-delete');
-
-mongoose.plugin(slug);
 
 const Schema = mongoose.Schema;
 
@@ -43,12 +40,23 @@ const JournalSchema = new Schema({
     type: String,
     default: '#E0CF5C'
   },
-  editor: [{
+  users: [{
     type: Schema.Types.ObjectId,
     ref: 'User',
   }],
   tags:[{
     type: String,
+  }],
+  content: [{
+    published: {
+      type: Boolean,
+      default: false
+    },
+    reference: {
+      type: Schema.Types.ObjectId,
+      ref: 'Article',
+      default: null
+    }
   }]
 });
 

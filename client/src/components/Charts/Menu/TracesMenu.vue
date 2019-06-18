@@ -16,7 +16,7 @@
             {{$t('charts.type')}}
           </el-col>
           <el-col :span="16">
-            <el-select v-model="chartOption.type" placeholder="Select">
+            <el-select v-model="chartOption.type" placeholder="Select" v-on:change="updatechartOption_">
               <el-option
                 v-for="item in optionsChartType"
                 :key="item.value"
@@ -24,7 +24,7 @@
                 :value="item.value"
                 :disabled="item.disabled">
               </el-option>
-            </el-select>
+            </el-select >
           </el-col>
         </el-row>
       </el-form-item>
@@ -88,12 +88,16 @@
 </template>
 <script>
 import locales from 'locales/charts'
+const debug = require('debug')('frontend');
+
 export default {
   name: 'tracesMenu',
   locales,
   components: {},
+  props: ['values'],
   data () {
     return {
+      chartOption_: '',
       chartOption: {
         type: 'bar',
         direction: 'horizontal',
@@ -103,6 +107,9 @@ export default {
       optionsChartType: [{
        value: 'bar',
        label: 'Bar'
+     }, {
+       value: 'box',
+       label: 'Box'
      }, {
        value: 'scatter',
        label: 'Scatter',
@@ -153,6 +160,19 @@ export default {
         direction: [{
           required: true, message: this.$t('charts.warningName'), trigger: 'blur'
         }]
+      }
+    }
+  },
+  methods: {
+    updatechartOption_ () {
+      debug(this.chartOption.type)
+      this.$emit('input', this.chartOption.type)
+    }
+  },
+  computed: {
+    chartOption_: {
+      set(val){
+        debug(val)
       }
     }
   }

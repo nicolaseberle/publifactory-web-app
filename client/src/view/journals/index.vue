@@ -1,15 +1,30 @@
 <template>
   <div class="components-container-journal">
   <el-row :gutter="10" @page-change="fetch">
-    <el-col :span="20">
+    <el-col :span="12">
       <div>
-        <el-button round v-on:click="handleCreateJournal()" style="float:left;margin: 10px 10px 20px 10px;">Create A Journal</el-button>
+        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+        <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
+          <CreateJournal v-if="flagCreateJournal" v-on:close="flagCreateJournal=false"></CreateJournal>
+        </el-dialog>
+      </div>
+    </el-col>
+    <el-col :span="10">
+      <div style="width:100% ;margin-top:10px;">
+        <el-autocomplete style='display: flex;'
+          class="inline-input"
+          v-model="state2"
+          :fetch-suggestions="querySearch"
+          placeholder="Search"
+          :trigger-on-focus="false"
+          @select="handleSelect"
+        ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
       </div>
     </el-col>
     <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
-          <span>{{journal.title}}</span>
+          <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
           <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
         </div>
@@ -39,7 +54,7 @@
           </el-col>
           <el-col :span="6" :offset="2">
             <strong>Created on : </strong>{{ journal.creationDate | moment("DD/MM/YYYY") }}
-            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.editor" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
+            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.users" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
             <p><strong>Associate Editor:</strong> </p>
           </el-col>
         </el-row>
@@ -47,66 +62,63 @@
       </el-card>
     </el-col>
   </el-row>
-
-  <el-dialog :title="Warning" :visible.sync="dialogCreationJournal" center>
-    Soon
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="closeCreationDialog()" round>Cancel</el-button>
-      <el-button type="primary" @click="dialogCreationJournal = false" round>OK</el-button>
-    </span>
-  </el-dialog>
 </div>
-
-
-
-
 </template>
-
-
-
 <script>
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import locales from '../../locales/article'
 import axios from 'axios'
+import CreateJournal from '../../components/Journal/CreateJournal'
 
 export default {
   locales,
   data () {
     return {
-      rules: {
-        title: [{
-          required: true, message: this.$t('article.rules.title'), trigger: 'blur'
-        }],
-        abstract: [{
-          required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
-        }]
-      },
       journals: [],
-      dialogCreationJournal : false
+      dialogCreationJournal : false,
+      links: [],
+      state2: '',
+      flagCreateJournal: false
     }
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
-
+    CreateJournal
   },
   mounted () {
     this.$nextTick(() => {
       this.fetch()
     })
+    this.links = this.loadAll();
   },
   methods: {
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/journals/').then(list => {
+      axios.get('/api/journals/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.journals = list.data.journals
       }).catch(err => {
         console.error(err)
       })
+    },
+    loadAll() {
+    // to do -> lister les journaux (this.journals) dans cette structure pour permettre l'autocompletion
+        return [
+          { "value": "vue", "link": "https://" },
+          { "value": "Research", "link": "https://" },
+          { "value": "journal of oncology", "link": "https://" },
+          { "value": "journal of genetics", "link": "https://" }
+         ];
+    },
+    handleSelect(item) {
+      console.log(item);
     },
     handleCreateJournal () {
       this.dialogCreationJournal = true
@@ -114,7 +126,17 @@ export default {
     closeCreationDialog () {
       this.dialogCreationJournal = false
     },
-
+    querySearch(queryString, cb) {
+      var links = this.links;
+      var results = queryString ? links.filter(this.createFilter(queryString)) : links;
+      // call callback function to return suggestions
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (link) => {
+        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
     createJournal () {
 
       const newJournal = {
@@ -138,3 +160,8 @@ export default {
 }
 
 </script>
+<style>
+.el-card .el-card__header{
+  background-color:white;
+}
+</style>

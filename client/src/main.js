@@ -45,6 +45,7 @@ Vue.use(require('vue-moment'))
 
 import './styles/index.scss' // global css
 import 'codemirror/lib/codemirror.css'
+import 'quill-cursors/dist/quill-cursors.css'
 // ajax
 import './http'
 
@@ -56,7 +57,7 @@ routerHook(userPromise)
 // main component
 import App from './App'
 
-import './socket'
+// import './socket'
 // Vue.use( CKEditor );
 
 // register global utility filters.

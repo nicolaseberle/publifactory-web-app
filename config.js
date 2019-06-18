@@ -2,7 +2,7 @@
  * Project config file includes dev/prod and frontend/backend
  */
 var path = require('path')
-var _ = require('lodash')
+// var _ = require('lodash')
 
 var backendBase = {
   // Root path of server
@@ -31,14 +31,14 @@ var backendBase = {
 
 var development = {
   email : {
-    host: "smtp.ethereal.email",
-    port : 587,//465,
-    secure: false,//true,
     rootHTML: "http://localhost:9001",
-    auth: {
-      'user' : "enola.swaniawski71@ethereal.email",
-      'pass' : "Nh7Y6KWNNFnU89d7UK"
-    }
+    user: "publifactory.noreply@gmail.com",
+    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+  },
+  orcid: {
+    clientId: 'APP-HCKHJYQTALPVGUJ1',
+    clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
+    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
   },
   frontend: {
     port: 9001,
@@ -47,7 +47,9 @@ var development = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': { target: 'http://localhost:' + backendBase.port, changeOrigin: true },
-      '/socket.io': { target: 'http://localhost:' + backendBase.port, changeOrigin: true, ws: true }
+      '/socket.io': { target: 'http://localhost:' + backendBase.port, changeOrigin: true, ws: true },
+      '/cursors': { target: 'http://localhost:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
+      '/mevn-dev': { target: 'http://localhost:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
@@ -56,14 +58,17 @@ var development = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   },
-  backend: _.merge({}, backendBase, {
+  backend: Object.assign({}, backendBase, {
+    resetDB: 'false',
+    seedDB: 'true',
     mongo: {
-      uri: 'mongodb://localhost:27017/mevn-dev'
+      uri: 'mongodb://localhost:27017/mevn-dev',
+      useNewUrlParser: true
     }
   })
 }
 var production = {
-  email : {
+  /*email : {
     host: process.env.EMAIL_HOST,
     port : 587,
     rootHTML: process.env.ROOT_HTML,
@@ -72,7 +77,7 @@ var production = {
       'user' : process.env.EMAIL_ACCOUNT,
       'pass' : process.env.EMAIL_PASS
     }
-  },
+  },*/
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
@@ -86,11 +91,12 @@ var production = {
     productionGzip: false,
     productionGzipExtensions: ['js', 'css']
   },
-  backend: _.merge({}, backendBase, {
+  backend: Object.assign({}, backendBase, {
     // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
     // if set to true, you need no web services like nginx
     serverFrontend: true,
-
+    resetDB: process.env.RESETDB || 'false',
+    seedDB: process.env.SEEDB || 'false',
     // Server IP
     ip: process.env.OPENSHIFT_NODEJS_IP
       || process.env.ip
@@ -110,4 +116,4 @@ var production = {
 
 var config = process.env.NODE_ENV === 'production' ? production : development
 
-module.exports = _.assign({}, config)
+module.exports = Object.assign({}, config)

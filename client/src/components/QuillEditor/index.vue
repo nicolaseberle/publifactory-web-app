@@ -1,5 +1,13 @@
 <template>
   <div>
+  <div>
+      <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator' style='display:none;'></span>
+      <span v-bind:id="idSharedbSocketState" class='socket-state' style='display:none;'></span>
+      <!--<span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
+      <span v-bind:id="idCursorsSocketState" class='socket-state'></span>
+      <div v-bind:id="idUsersList" style='display:none;'></div>-->
+  </div>
+  <div>
     <div class='insert-button-box' v-bind:id="idButton">
       <el-button type="" plain class="el-icon-rank" v-on:click='' circle></el-button>
       <!--<el-button type="" plain v-on:click='' circle><i class="ai ai-zotero ai-1x"></i></el-button>
@@ -51,8 +59,7 @@
       <div   v-bind:id="idEditor">
         <span class='p-span' v-html="content"></span>
       </div>
-      </div>
-
+    </div>
   </div>
     <!--<div class='bottom-right'/>-->
     <div class="questions">
@@ -73,11 +80,13 @@
       </div>
     </div>
 </div>
+</div>
 
 </template>
 
 <script>
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 import Autocomplete from 'v-autocomplete'
 Vue.use(Autocomplete)
 
@@ -87,16 +96,38 @@ import defaultsDeep from 'lodash.defaultsdeep'
 import 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
+import 'quill-cursors/dist/quill-cursors.css'
 import 'v-autocomplete/dist/v-autocomplete.css'
 
 import hightlightText from '../../utils/js/animation/highlight.js';
-import asideRightAnimation from '../../utils/js/animation/aside.right.js';
+
+//var ShareDB = require('sharedb/lib/client')// cursor
+// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
+// var utils = require('../../utils/js/collaboration/utils')// cursor
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-const Embed = Quill.import('blots/embed');
+import QuillCursors from 'quill-cursors/src/cursors';
+Quill.register('modules/cursors', QuillCursors);
 
+//ShareDB.types.register(require('rich-text').type);
+
+const debug = require('debug')('frontend');
+
+const Embed = Quill.import('blots/embed');
+var sharedbWSAddress = ''
+/*
+if (process.env.NODE_ENV === 'production'){
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
+} else {
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
+}
+
+var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
+var shareDBConnection = new ShareDB.Connection(shareDBSocket);
+*/
+/*Zotero, highlight button in quill toolbar*/
 class ProcLink extends Embed {
     static create(value) {
         let node = super.create(value);
@@ -108,7 +139,7 @@ class ProcLink extends Embed {
     }
 
     static value(node) {
-      console.log(node  )
+      debug(node  )
       return {
         value: node.getAttribute('datareview'),
         text: node.innerHTML
@@ -120,11 +151,13 @@ ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
 
+/*Link the new button in quill*/
 Quill.register(ProcLink, true);
 
 export default {
   name: 'QuillEditor',
   props: {
+    cursors: [Object],
     content: [String],
     uuid: [String],
     numBlock: {},
@@ -141,8 +174,14 @@ export default {
   },
   data() {
     return {
+      id: '',
       inputRefVisible: false,
       editor: {},
+      idSharedbSocketIndicator: this.setIdSharedbSocketIndicator(),
+      idSharedbSocketState: this.setIdSharedbSocketState(),
+      idCursorsSocketIndicator: this.setIdCursorsSocketIndicator(),
+      idCursorsSocketState: this.setIdCursorsSocketState(),
+      idUsersList: this.setIdUsersList(),
       idEditor: this.setIdEditor(),
       idToolBar: this.setIdToolBar(),
       idButton: this.setIdButton(),
@@ -154,40 +193,209 @@ export default {
       items: [],
       template: ItemTemplate,
       actionValidate: 0,
-      mouse_pos : ''
+      mouse_pos : '',
+      hostname: ''
     }
   },
   created() {
+    this.id = this.$route.params && this.$route.params.id
+
   },
   mounted() {
-    var quill = new Quill('#'+this.idEditor, {
+
+    var quill = window.quill = new Quill('#'+this.idEditor, {
       modules: {
+        cursors:  {
+          hideDelayMs: 5000,
+          hideSpeedMs: 0,
+          selectionChangeSource: null
+      },
         toolbar: '#'+ this.idToolBar
+      },
+      history: {
+        userOnly: true
       },
       placeholder: 'Compose an epic...',
       theme: 'bubble'  // or 'bubble',
 
     });
+
+    //var doc = shareDBConnection.get('documents', this.idEditor);
+    //var doc = shareDBConnection.get('articles/',this.id)
+    /*arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+    axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,
+                                             "abstract":this.postForm.abstract,
+                                             "content": this.postForm.content,
+                                             "arr_content": this.postForm.arr_content,
+                                             "tags": this.postForm.tags,
+                                             "published": true
+                                           })*/
+
+    //shareDBConnection.createSubscribeQuery(collectionName, query, options, callback)
+
     let self = this
+
     document.querySelector('#' + this.idButtonZotero).addEventListener('click', function() {
       var range = quill.getSelection(focus = true);
       $("#"+self.idInputZotero).toggle()
       var html_ = '<a href="#" tooltip="" style="color:red">[R1]</a>'
       self.pasteHtmlAtCaret(html_)
     });
+
     document.querySelector('#' + this.idButtonComment).addEventListener('click', function() {
       self.highlightSelection()
-      //hightlightText()
-
     });
+
 
     this.editor = quill
-    this.editor.on('text-change', (delta, source) => {
-        this.$emit('edit', this.editor, delta, source,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+
+    var cursorsModule = this.editor.getModule('cursors');
+
+    this.editor.on('text-change', (delta, oldDelta, source) => {
+        this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });
 
+    cursorsModule.registerTextChangeListener();
+    //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
+
+    self = this
+    this.editor.root.innerHTML = this.content
+    /*
+    doc.subscribe(function(err) {
+
+      if (err) throw err;
+
+      if (!doc.type) {
+        doc.create([{
+          insert: '\n'
+        }], 'rich-text')
+        doc.data = self.content
+      }
+
+      // update editor contents
+      self.editor.setContents(doc.data);
+
+      // local -> server
+      self.editor.on('text-change', function(delta, oldDelta, source) {
+        if (source == 'user') {
+          // self.$emit('edit', self.editor, delta, source,self.numBlock,self.numSubBlock,self.numSubSubBlock)
+          // Check if it's a formatting-only delta
+          var formattingDelta = delta.reduce(function (check, op) {
+            return (op.insert || op.delete) ? false : check;
+          }, true);
+
+          // If it's not a formatting-only delta, collapse local selection
+          if (
+            !formattingDelta &&
+            self.cursors.getLocalConnectionRange() &&
+            self.cursors.getLocalConnectionRangeLength()
+          ) {
+            var _index = self.cursors.getLocalConnectionRangeLength() + 1
+            self.cursors.setLocalConnectionRangeIndex(_index)
+            self.cursors.setLocalConnectionRangeLength(0)
+            self.cursors.update()
+          }
+
+          doc.submitOp(delta, {
+            source: self.editor
+          }, function(err) {
+            if (err)
+              console.error('Submit OP returned an error:', err);
+          });
+
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
+        }
+      });
+
+      cursorsModule.registerTextChangeListener();
+
+      // server -> local
+      doc.on('op', function(op, source) {
+        if (source !== self.editor) {
+          self.editor.updateContents(op);
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
+
+        }
+      });
+
+      //
+      function sendCursorData(range) {
+        self.cursors.setLocalConnectionRange(range);
+        self.cursors.update();
+      }
+
+      //
+      var debouncedSendCursorData = utils.debounce(function() {
+        var range = self.editor.getSelection();
+        if (range) {
+          debug('[cursors] Stopped typing, sending a cursor update/refresh.');
+          sendCursorData(range);
+        }
+      }, 3000);
+
+      doc.on('nothing pending', debouncedSendCursorData);
+
+      function updateCursors(source) {
+        var activeConnections = {},
+          updateAll = Object.keys(cursorsModule.cursors).length == 0;
+
+        self.cursors.connections.forEach(function(connection) {
+          if (connection.id != self.cursors.localConnection.id) {
+
+            // Update cursor that sent the update, source (or update all if we're initting)
+            if ((connection.id == source.id || updateAll) && connection.range) {
+              cursorsModule.setCursor(
+                connection.id,
+                connection.range,
+                connection.name,
+                connection.color
+              );
+            }
+
+            // Add to active connections hashtable
+            activeConnections[connection.id] = connection;
+          }
+        });
+
+        // Clear 'disconnected' cursors
+        Object.keys(cursorsModule.cursors).forEach(function(cursorId) {
+          if (!activeConnections[cursorId]) {
+            cursorsModule.removeCursor(cursorId);
+          }
+        });
+      }
+
+      self.editor.on('selection-change', function(range, oldRange, source) {
+        sendCursorData(range);
+      });
+
+      document.addEventListener('cursors-update', function(e) {
+        // Handle Removed Connections
+        e.detail.removedConnections.forEach(function(connection) {
+          if (cursorsModule.cursors[connection.id])
+            cursorsModule.removeCursor(connection.id);
+        });
+
+        updateCursors(e.detail.source);
+        //setInterval(function() {
+        //  self.$emit('signalUpdateUserList', self.cursors)
+        //},5000)
+      })
+
+      updateCursors(self.cursors.localConnection)
+      //setInterval(function() {
+      //  self.$emit('signalUpdateUserList', self.cursors)
+      //},5000)
+    })
+*/
+    window.cursors = this.cursors
+
     $('#'+this.idButtonZotero).click(function () {
-      self.showQuestion(
+      self.showZoteroMenu(
         $(this));
     });
     $('.close-toto').click(function (e) {
@@ -200,13 +408,14 @@ export default {
         $("#"+self.idButton).toggle();
         self.editor.on('selection-change', function(range, oldRange, source) {
         if (range === null && oldRange !== null) {
-          // console.log('blur');
+          // debug('blur');
           $("#"+self.idButton).toggle()
         } else if (range !== null && oldRange === null)
-          // console.log('focus');
+          // debug('focus');
           $("#"+self.idButton).toggle()
         });
     });
+
     $(document).on('contextmenu', '#'+this.idEditor , function(e) {
       e.preventDefault();
       quill.theme.tooltip.edit();
@@ -215,19 +424,52 @@ export default {
       return false;
     });
 
+    // DEBUG
+
+    //var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
+    //var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator');
+    /*
+    shareDBConnection.on('state', function(state, reason) {
+      var indicatorColor;
+
+      debug('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+
+      sharedbSocketStateEl.innerHTML = state.toString();
+
+      switch (state.toString()) {
+        case 'connecting':
+          indicatorColor = 'silver';
+          break;
+        case 'connected':
+          indicatorColor = 'lime';
+          break;
+        case 'disconnected':
+        case 'closed':
+        case 'stopped':
+          indicatorColor = 'red';
+          break;
+      }
+
+      sharedbSocketIndicatorEl.style.backgroundColor = indicatorColor;
+    });
+    */
+
   },
   watch: {
     content (newContent) {
       if (this.content !== this.editor.root.innerHTML) {
-        this.editor.root.innerHTML = this.content
+        this.editor.root.innerHTML = newContent
       }
     }
   },
+  computed: {
+    ...mapGetters(['userId'])
+  },
   methods:{
+    /*Hightlight Functions*/
     highlightSelection () {
         var userSelection = window.getSelection().getRangeAt(0);
         this.highlightRange();
-
     },
     highlightRange () {
 
@@ -240,12 +482,10 @@ export default {
         this.editor.deleteText(range.index  , range.length);
         this.editor.insertEmbed(range.index,"datareview",cObj)
         this.$emit('comment', uuid_review)
-
-
     },
-    showQuestion (button) {
+    showZoteroMenu (button) {
       var offset = this.mouse_pos
-      console.log(offset.offsetY)
+      debug(offset.offsetY)
 
       $('.questions')
         .fadeIn()
@@ -300,7 +540,6 @@ export default {
       }
     },
     updateItems (text) {
-
         this.items = [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
                       {id: 2, name: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
                       {id: 3, name: 'Parkin overexpression during aging reduces proteotoxicity, alters mitochondrial dynamics, and extends lifespan', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
@@ -309,60 +548,40 @@ export default {
                     ]
     },
     setIdEditor () {
-      if(this.uuid==''){
-        return 'editor-container-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdToolBar () {
-      if(this.uuid==''){
-        return 'toolbar-container-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButton () {
-      if(this.uuid==''){
-        return 'bottom-right-button-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonZotero () {
-      if(this.uuid==''){
-        return 'button-zotero-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdInputZotero () {
-      if(this.uuid==''){
-        return 'input-zotero-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonComment () {
-      if(this.uuid==''){
-        return 'button-comment-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonHighlight () {
-      if(this.uuid==''){
-        return 'button-hightlight-' + this.numBlock + '-' + this.numSubBlock+ '-' + this.numSubSubBlock  ;
-      }
-      else{
-        return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
-      }
+      return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdSharedbSocketIndicator () {
+      return 'id-sharedb-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdSharedbSocketState () {
+      return 'id-sharedb-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdCursorsSocketIndicator () {
+      return 'id-cursors-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdCursorsSocketState () {
+      return 'id-cursors-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdUsersList () {
+      return 'id-users-list-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     deleteBlock () {
       this.$emit('delete',true)
@@ -376,7 +595,11 @@ export default {
   color:black;
   background-color:transparent;
 }
-
+/*
+.ql-cursor-flag {
+  display: none;
+}
+*/
 .pre {
   margin: 0 auto;
   width: 100%;
@@ -384,7 +607,8 @@ export default {
 
 p {
   text-align: justify;
-  white-space: pre-line;
+
+  /*white-space: pre-line;*/
   -webkit-hyphens: auto;
     -moz-hyphens: auto;
     -ms-hyphens: auto;
@@ -494,7 +718,6 @@ p {
   display: block;
   font-family: sans-serif;
 }
-
 .questions {
     display: none;
     background: #222;
@@ -513,7 +736,6 @@ p {
     padding: 5px 2px 5px 5px;
     font-size: 16px;
     text-align: center;
-
 }
 .question img{
   margin-top: 7px;
@@ -529,5 +751,4 @@ p {
     right:10px;
     top:5px;
 }
-
 </style>

@@ -63,7 +63,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
                   <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
+                  <el-dropdown-item  command="assignReviewer" disabled>Assign a reviewer</el-dropdown-item>
                   <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                   <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
                   <el-dropdown-item  command="referee">Referee</el-dropdown-item>
@@ -121,6 +121,7 @@ import axios from 'axios'
 import accessComponent from '../../../components/AccessComponent'
 
 var uuidv4 = require('uuid/v4');
+const debug = require('debug')('frontend')
 
 export default {
   locales,
@@ -142,7 +143,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userId'
+      'userId',
+      'accessToken'
     ])
   },
   components: {
@@ -164,14 +166,18 @@ export default {
       }
     },
     fetch (current = 1) {
-      axios.get('/api/articles/').then(list => {
+      axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
       })
     },
     fetchMyArticles () {
-      axios.get(`/api/articles/mine/${this.userId}`).then(list => {
+      axios.get(`/api/articles/mine/${this.userId}`, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
         this.articles = list.data.articles
       }).catch(err => {
         console.error(err)
@@ -179,26 +185,55 @@ export default {
     },
     createArticle () {
       var uuid_block = String(uuidv4())
+      const gen_text = `
+\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[english]{babel}
+\\usepackage{multicol}
+
+\\setcounter{secnumdepth}{2}
+
+\\title{Title of the article}
+\\author{Author's Name}
+\\date{2019}
+
+\\begin{document}
+
+\\maketitle
+
+\\begin{multicols}{2}
+\\section{Titre 1}
+\\subsection{Titre 1.1}
+
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ultrices sem sit amet massa semper condimentum. Nunc quis ipsum orci. Quisque diam augue, volutpat scelerisque dolor nec, porttitor rhoncus lorem. Cras rhoncus tristique dictum. Aliquam aliquet orci a tortor luctus interdum. Vivamus lacinia porttitor tellus ac euismod. Nullam tempor justo nulla, non molestie justo volutpat sed. Phasellus porttitor auctor mattis. Maecenas sit amet tincidunt elit, id consequat turpis. Vestibulum iaculis iaculis massa, nec convallis ipsum.
+
+Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu sodales felis mollis. Aenean purus mauris, vehicula id lacus ut, gravida faucibus quam. Ut vel felis erat. Pellentesque laoreet felis eu diam iaculis, et ornare est pharetra. Nam at nunc a arcu commodo maximus. Quisque consectetur lectus mollis volutpat congue. Phasellus rhoncus mi ac purus iaculis, ac suscipit dui interdum. Aenean eget neque nibh. Donec maximus ante ut dui lobortis ultrices. Duis finibus massa at maximus fermentum. Morbi lacinia fringilla purus at varius. Suspendisse consectetur vestibulum aliquam. Quisque convallis nunc vel vestibulum maximus. Donec rutrum venenatis risus sed sollicitudin.
+
+\\end{multicols}
+\\end{document}
+      `
       const newArticle = {
-          title: String('Article title'),
-          abstract:  String('abstract'),
-          status: String('Draft'),
-          arr_content: [{
-                          name:"titre_1",
-                          title:"Titre 1",
-                          title_placeholder:"Titre 1",
-                          block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
-                          content:"Type the text",
-                          display:true
-                        }],
-          category : String('physics'),
-          id_author : this.userId,
-          published: true
-        };
-        axios.post('/api/articles/', newArticle)
+        title: String('Article title'),
+        abstract: String('abstract'),
+        status: String('Draft'),
+        arr_content: [{
+          name: "titre_1",
+          title: "Titre 1",
+          title_placeholder: "Titre 1",
+          block: [[{ type: 'tbd', uuid: uuid_block, content: '' }]],
+          content: "Type the text",
+          display: true
+        }],
+        content: gen_text,
+        category: String('physics'),
+        id_author: this.userId,
+        published: true
+      };
+        axios.post('/api/articles/', newArticle, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_article_id = response.data
-          console.log("create successfully ")
+          debug("create successfully ")
           this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
         })
         .catch(e => {
@@ -244,7 +279,9 @@ export default {
       this.$confirm(`This action will remove the selected article forever, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
-        axios.delete('/api/articles/' + articleId ).then(() => {
+        axios.delete('/api/articles/' + articleId, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(() => {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')
