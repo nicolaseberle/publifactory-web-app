@@ -101,9 +101,9 @@ import 'v-autocomplete/dist/v-autocomplete.css'
 
 import hightlightText from '../../utils/js/animation/highlight.js';
 
-var ShareDB = require('sharedb/lib/client')// cursor
-var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
-var utils = require('../../utils/js/collaboration/utils')// cursor
+//var ShareDB = require('sharedb/lib/client')// cursor
+// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
+// var utils = require('../../utils/js/collaboration/utils')// cursor
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -157,7 +157,7 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
-    //cursors: [Object],
+    cursors: [Object],
     content: [String],
     uuid: [String],
     numBlock: {},
@@ -255,7 +255,7 @@ export default {
         this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
     });
 
-
+    cursorsModule.registerTextChangeListener();
     //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
 
     self = this

@@ -28,8 +28,8 @@ var app = express()
 app.use(cors())
 app.use(logger('dev'));
 var server = require('http').createServer(app)
-var socketio = require('socket.io')(server)
-require('./config/socketio')(socketio)
+//var socketio = require('socket.io')(server)
+//require('./config/socketio')(socketio)
 require('./config/express')(app)
 require('./routes')(app)
 

@@ -57,7 +57,7 @@ routerHook(userPromise)
 // main component
 import App from './App'
 
-import './socket'
+// import './socket'
 // Vue.use( CKEditor );
 
 // register global utility filters.

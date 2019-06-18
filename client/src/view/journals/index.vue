@@ -63,14 +63,7 @@
     </el-col>
   </el-row>
 </div>
-
-
-
-
 </template>
-
-
-
 <script>
 import moment from 'moment'
 import { mapGetters } from 'vuex'

@@ -405,10 +405,10 @@ export default {
   mounted() {
     this.fetchData(this.id)
     asideRightAnimation()
-    this.updateUserList()
-    this.$watch(this.dialogVisible, (val) => {
+    //this.updateUserList()
+    /*this.$watch(this.dialogVisible, (val) => {
       this.$refs.insertFigureDialog.setDialogStatus(val)
-    })
+    })*/
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {

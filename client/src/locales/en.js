@@ -1,9 +1,9 @@
 export default {
   route:{
     board: 'Board',
-    my_articles: 'My Articles',
-    my_journals: 'My Journals',
-    my_data: 'My Data',
+    my_articles: 'Articles',
+    my_journals: 'Journals',
+    my_data: 'Data',
     dashboard: 'Dashboard',
     feeds: 'Feeds',
     settings: 'Settings',
