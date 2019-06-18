@@ -210,6 +210,7 @@
     "uglifyjs-webpack-plugin": "~1.2",
     "vue-loader": "~15.6",
     "vue-plugin-load-script": "^1.2.0",
+    "vue-spinner": "^1.0.3",
     "vue-style-loader": "~4.1",
     "vue-template-compiler": "~2.6",
     "webpack": "4.33",

@@ -1,58 +1,6 @@
 <template>
   <div style='width:100%'>
-    <el-container style="height: 100%; border: 1px solid #eee">
-    <!--<el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-      <el-menu :default-openeds="['1', '3']">
-        <el-submenu index="1">
-          <template slot="title"><i class="el-icon-message"></i>Navigator One</template>
-          <el-menu-item-group>
-            <template slot="title">Group 1</template>
-            <el-menu-item index="1-1">Option 1</el-menu-item>
-            <el-menu-item index="1-2">Option 2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="Group 2">
-            <el-menu-item index="1-3">Option 3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">Option4</template>
-            <el-menu-item index="1-4-1">Option 4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-submenu index="2">
-          <template slot="title"><i class="el-icon-menu"></i>Navigator Two</template>
-          <el-menu-item-group>
-            <template slot="title">Group 1</template>
-            <el-menu-item index="2-1">Option 1</el-menu-item>
-            <el-menu-item index="2-2">Option 2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="Group 2">
-            <el-menu-item index="2-3">Option 3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="2-4">
-            <template slot="title">Option 4</template>
-            <el-menu-item index="2-4-1">Option 4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title"><i class="el-icon-setting"></i>Navigator Three</template>
-          <el-menu-item-group>
-            <template slot="title">Group 1</template>
-            <el-menu-item index="3-1">Option 1</el-menu-item>
-            <el-menu-item index="3-2">Option 2</el-menu-item>
-          </el-menu-item-group>
-          <el-menu-item-group title="Group 2">
-            <el-menu-item index="3-3">Option 3</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="3-4">
-            <template slot="title">Option 4</template>
-            <el-menu-item index="3-4-1">Option 4-1</el-menu-item>
-          </el-submenu>
-        </el-submenu>
-      </el-menu>
-    </el-aside>
-    -->
 
-    <el-main>
     <el-row >
       <el-col :span="11">
         <div style='width:100%'>
@@ -70,7 +18,7 @@
       </el-col>
       <el-col :span="12">
         <div class='plotly_js'>
-          <vue-plotly :data="currentData" :layout="layout" :options="options"/>
+          <vue-plotly :data="currentData" :layout="layout" :options="options" />
         </div>
         <div class="plotly_js">
           <div class="legend">
@@ -82,7 +30,7 @@
                 <el-input v-model="postForm.uuid_figure" disabled></el-input>
               </el-form-item>
               <el-form-item label="Legend">
-                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"></el-input>
+                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph" v-on:change="handleFormUpdate"></el-input>
               </el-form-item>
               <el-form-item label="Source" placeholder="Enter the graph DOI">
                 <el-input v-model="postForm.source"></el-input>
@@ -92,8 +40,6 @@
         </div>
       </el-col>
     </el-row>
-    </el-main>
-    </el-container>
   </div>
 </template>
 <script>
@@ -105,19 +51,21 @@ import 'codemirror/lib/codemirror.css'
 import '../../styles/one-dark.css'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
-const debug = require('debug')('frontend');
+import PulseLoader from 'vue-spinner/src/PulseLoader'
 
 export default {
   name: 'ScriptPython',
   locales,
   props: ["idfigure"],
-  components: {VuePlotly},
+  components: {VuePlotly, PulseLoader},
   data () {
     return {
       formPythonFile: {
         name: ''
       },
+      isCollapse: false,
       dialogVisible: false,
+      loading: true,
       postForm: {
         legend: '',
         source: 'http://dx.doi.org/00.0000/e0000000',
@@ -128,131 +76,10 @@ export default {
       editableTabs: [{
         title: 'main.py',
         name: '1',
-        content: `
-# This file has been formatted to be functional with plotly Python
-# Every modification will modify the graphic at the right of your screen.
-# You can find some information about plotly and how to make
-# good charts here : https://plot.ly/python/
-
-import plotly.graph_objs as go
-import plotly.io as plio
-
-import numpy as np
-
-
-# This function is used to insert your values into the plotly graph.
-# This function is called in the main to populate data.
-def plotly_values():
-    y0 = np.random.randn(50) + 1.2
-    y1 = np.random.randn(50) + 1
-    y2 = np.random.randn(50) * 2
-    y3 = np.random.randn(50) * 0.8 + 1
-
-    trace0 = go.Box(
-        y=y0,
-        name='Sample A'
-    )
-    trace1 = go.Box(
-        y=y1,
-        name='Sample B'
-    )
-    trace2 = go.Box(
-        y=y2,
-        name='Sample C'
-    )
-    trace3 = go.Box(
-        y=y3,
-        name='Sample D'
-    )
-    data = [trace0, trace1, trace2, trace3]
-    return data
-
-
-# This function is used to modify the title of the graph.
-# This function return the layout, and only this variable should be modified.
-def plotly_layout():
-    layout = "INSERT TITLE HERE"
-    return layout
-
-
-# This function is the main of the project.
-# This function call plotly_values to get the data for the plotly graph.
-# This part musn't be modified.
-def main():
-    data = plotly_values()
-    layout = go.Layout(title=plotly_layout())
-    figure = go.Figure(data=data, layout=layout)
-    plio.write_json(figure, './example.json')
-    exit(0)
-
-
-if __name__ == "__main__":
-    main()
-`
+        content: this.$t('template.pythonFirst')
       }],
       tabIndex: 1,
       tmpIndex: 1,
-      /* content: `
-# This file has been formatted to be functional with plotly Python
-# Every modification will modify the graphic at the right of your screen.
-# You can find some information about plotly and how to make
-# good charts here : https://plot.ly/python/
-
-import plotly.graph_objs as go
-import plotly.io as plio
-
-import numpy as np
-
-
-# This function is used to insert your values into the plotly graph.
-# This function is called in the main to populate data.
-def plotly_values():
-    y0 = np.random.randn(50) + 1.2
-    y1 = np.random.randn(50) + 1
-    y2 = np.random.randn(50) * 2
-    y3 = np.random.randn(50) * 0.8 + 1
-
-    trace0 = go.Box(
-        y=y0,
-        name='Sample A'
-    )
-    trace1 = go.Box(
-        y=y1,
-        name='Sample B'
-    )
-    trace2 = go.Box(
-        y=y2,
-        name='Sample C'
-    )
-    trace3 = go.Box(
-        y=y3,
-        name='Sample D'
-    )
-    data = [trace0, trace1, trace2, trace3]
-    return data
-
-
-# This function is used to modify the title of the graph.
-# This function return the layout, and only this variable should be modified.
-def plotly_layout():
-    layout = "INSERT TITLE HERE"
-    return layout
-
-
-# This function is the main of the project.
-# This function call plotly_values to get the data for the plotly graph.
-# This part musn't be modified.
-def main():
-    data = plotly_values()
-    layout = go.Layout(title=plotly_layout())
-    figure = go.Figure(data=data, layout=layout)
-    plio.write_json(figure, './example.json')
-    exit(0)
-
-
-if __name__ == "__main__":
-    main()
-`,*/
       editor: {},
       html: '',
       id: '',
@@ -272,33 +99,12 @@ if __name__ == "__main__":
     }
   },
   created () {
-
   },
   computed: {
     ...mapGetters(['accessToken'])
   },
   async mounted () {
     await this.fetchFigure(this.idfigure)
-    this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-      value: '',
-      lineNumbers: true,
-      styleActiveLine: true,
-      matchBrackets: true,
-      theme: 'one-dark',
-      mode: "text/x-python",
-      lineWrapping: true
-    })
-    this.editor.on('change', instance => {
-      this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-      if (!this.timer) {
-        this.$emit('loading', true)
-        this.timer = setTimeout(async () => {
-          await this.execCode()
-          this.timer = null
-          this.$emit('loading', true)
-        }, 3000)
-      }
-    })
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -347,6 +153,7 @@ if __name__ == "__main__":
     };
     var data = [trace0, trace1, trace2, trace3];
     this.currentData = data
+    this.loading = false;
   },
   watch: {
     currentData (newVal) {
@@ -366,44 +173,18 @@ if __name__ == "__main__":
     handleTabsEdit(targetName, action) {
       if (action === 'add') {
         let newTabName = ++this.tabIndex + '';
+        let promptAnswer = prompt('Which name to add to this file ?')
+        const regexp = /^.*?\.py$/;
+        if (!regexp.test(promptAnswer))
+          promptAnswer = promptAnswer + '.py'
         this.editableTabs.push({
-          title: prompt('Which name to add to this file ?'),
+          title: promptAnswer,
           name: newTabName,
-          content: `
-# This file has been formatted to be functional with plotly Python
-# Every modification will modify the graphic at the right of your screen.
-# You can find some information about plotly and how to make
-# good charts here : https://plot.ly/python/
-
-import plotly.graph_objs as go
-import plotly.io as plio
-
-import numpy as np
-`
+          content: this.$t('template.pythonSecond')
         });
         this.$nextTick(() => {
-          this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-            value: '',
-            lineNumbers: true,
-            styleActiveLine: true,
-            matchBrackets: true,
-            theme: 'one-dark',
-            mode: "text/x-python",
-            lineWrapping: true
-          })
-          this.editor.on('change', instance => {
-            this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-            if (!this.timer) {
-              this.$emit('loading', true)
-              this.timer = setTimeout(async () => {
-                await this.execCode()
-                this.timer = null
-                this.$emit('loading', true)
-              }, 3000)
-            }
-          })
+          this.codemirrorOptions(newTabName)
           this.editableTabsValue = newTabName;
-          this.editor.refresh();
         })
       }
       if (action === 'remove') {
@@ -423,25 +204,60 @@ import numpy as np
         this.editableTabs = tabs.filter(tab => tab.name !== targetName);
       }
     },
-    saveFigure () {
-      console.log('saveFigure: ',this.idfigure)
-      axios.put('/api/figure/'  + this.idfigure, {
-        data: this.currentData,
-        option:this.option,
-        layout: this.layout,
-        script: {
-          language: "Python",
-          content: this.editableTabs
+    async saveFigure () {
+      console.log('saveFigure: ', this.idfigure)
+      try {
+        await axios.put('/api/figure/' + this.idfigure, {
+          data: this.currentData,
+          option: this.option,
+          layout: this.layout,
+          script: {
+            language: "R",
+            content: this.content
+          },
+          infos: this.postForm
+        }, {
+          headers: { 'Authorization': `Bearer ${this.accessToken}` }
+        })
+        this.$message({
+          message: 'Your figure has been saved.',
+          type: 'success',
+          center: true,
+          duration: 2000
+        });
+      } catch (e) {
+        this.$message({
+          message: 'An error occurred during the save of your figure.',
+          type: 'success',
+          center: true,
+          duration: 2000
+        });
+      }
+    },
+    codemirrorOptions (elementId) {
+      this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
+        value: '',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        smartIndentationFix: true,
+        theme: 'one-dark',
+        mode: "text/x-python",
+        lineWrapping: true
+      })
+      this.editor.on('change', instance => {
+        this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
+        if (!this.timer) {
+          this.$emit('loading', true)
+          this.timer = setTimeout(async () => {
+            await this.execCode()
+            this.timer = null
+            this.$emit('loading', true)
+          }, 3000)
         }
-      }, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
-      .then(() => {
-        debug("figure saved")
-      })
-      .catch(e => {
-        console.log(e)
-      })
+      this.editor.refresh();
     },
     async fetchFigure(id) {
       const response = await axios.get('/api/figure/' + id , { headers: {'Authorization': `Bearer ${this.accessToken}`} })
@@ -450,6 +266,13 @@ import numpy as np
         this.layout = response.data.layout
         this.option = response.data.option
         this.editableTabs = response.data.script.content
+        this.editableTabsValue = '1'
+        this.tabIndex = response.data.script.content.length
+        if (this.tabIndex > 1)
+          for (let i = 0, len = this.tabIndex; i < len; ++i)
+            this.codemirrorOptions(response.data.script.content[i].name)
+        if (response.data.infos.uuid_figure)
+          this.postForm = this.response.data.infos
       }
     },
     async execCode () {
@@ -465,7 +288,6 @@ import numpy as np
         this.currentData = done.data.values.data
         this.layout.title = done.data.values.layout.title.text.toString()
         this.postForm.name = this.layout.title
-        debug(this.layout)
         if (done.data.options)
           this.options = done.data.values.options
         this.$forceUpdate()
@@ -476,7 +298,6 @@ import numpy as np
           offset: 100,
           showClose: false
         })
-        debug(done)
       } catch (e) {
         this.$notify({
           title: 'Error during the script.',
@@ -492,12 +313,27 @@ import numpy as np
     },
     setCodeMirror(tabClicked) {
       this.editableTabsValue = tabClicked.name;
+    },
+    handleFormUpdate () {
+      if (!this.timer) {
+        this.$emit('loading', true)
+        this.timer = setTimeout(async () => {
+          await this.saveFigure()
+          this.timer = null
+          this.$emit('loading', true)
+        }, 3000)
+      }
     }
   }
 }
 
 </script>
 <style lang="scss">
+
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+  }
 
   .plotly_js {
     width:100%;

@@ -100,11 +100,12 @@ module.exports.updateFigure = async (req, res, next) => {
     const layout = req.body.layout;
     const option = req.body.option;
     const script = req.body.script;
+    const infos = req.body.infos;
     console.log("updateFigure");
     const updatedFigure = await Figure
       .findOneAndUpdate(
         { _id: req.params.id },
-        { $set: { data, layout, option, script } },
+        { $set: { data, layout, option, script, infos } },
         { new: true }
       );
 
@@ -161,10 +162,13 @@ async function pythonExec(req, res, next) {
 
 async function rExec(req, res, next) {
   try {
-    await fs.writeFileSync('./example.R', req.body.content);
-    const response = await rscript.callSync('./example.R');
+    for (let i = 0, len = req.body.content.length; i < len; i++)
+      await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
+    const response = await rscript.callSync('./main.R');
     const json = JSON.parse(response.x.data)
-    await fs.unlinkSync('./example.R');
+    //for (let i = 0, len = req.body.content.length; i < len; ++i)
+      //await fs.unlinkSync(req.body.content[i].title);
+    console.log(json)
     res.json({ success: true, values: json });
   } catch (e) {
     res.status(500).json({ success: false, message: "Your script isn't correct. Please check your syntax." })
