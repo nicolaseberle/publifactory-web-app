@@ -149,6 +149,7 @@
       :visible.sync="diagInsertFigurePlotlyVisible"
       fullscreen
       width="100%"
+      lock-scroll
       center>
 
       <span slot="title" class="dialog-header" >
@@ -197,6 +198,7 @@
       :visible.sync="diagInsertFigureRVisible"
       fullscreen
       width="100%"
+      lock-scroll
       center>
 
       <span slot="title" class="dialog-header" >
@@ -400,9 +402,12 @@ export default {
 
   },
   mounted() {
-      this.fetchData(this.id)
-      asideRightAnimation()
-      //this.updateUserList()
+    this.fetchData(this.id)
+    asideRightAnimation()
+    this.updateUserList()
+    this.$watch(this.dialogVisible, (val) => {
+      this.$refs.insertFigureDialog.setDialogStatus(val)
+    })
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
@@ -442,9 +447,6 @@ export default {
           console.log(err)
         })
       }
-    },
-    dialogVisible (val) {
-      this.$refs.insertFigureDialog.setDialogStatus(val)
     }
   },
   methods: {
@@ -597,15 +599,14 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       this.save(ev)
     },
-    addChartBlock (ev,key,subkey,subsubkey) {
-      this.createFigure().then(idFigure => {
-        console.log("addChartBlock::idFigure: " + idFigure)
-        var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure',nbEdit:0}
-        this.editidfigure = idFigure
-        this.poseditfigure = [key, subkey, subsubkey]
-        this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
-      })
-      this.openEditFigure(ev,key,subkey,subsubkey)
+    async addChartBlock (ev, key, subkey, subsubkey) {
+      const idFigure = await this.createFigure()
+      console.log("addChartBlock::idFigure: " + idFigure)
+      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
+      this.editidfigure = idFigure
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
+      this.openEditFigure(ev, key, subkey, subsubkey)
     },
     addPictureBlock (ev,key,subkey,subsubkey) {
       console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
@@ -618,13 +619,11 @@ export default {
       this.save(ev)
     },
     async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
-      alert("CHANGED")
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
-      const response = await axios.get('http://localhost:4000/api/figure/' + this.editidfigure, {
+      const response = await axios.get('/api/figure/' + this.editidfigure, {
         headers: { 'Authorization': `Bearer ${this.accessToken}` }
       })
-      console.log(response)
       if (response.data.script.language === 'Python') {
         this.diagInsertFigurePythonVisible = true
       } else if (response.data.script.language === 'R') {
@@ -668,7 +667,7 @@ export default {
     openEditFigure (ev,key,subkey,subsubkey) {
       this.dialogVisible = true
     },
-    createFigure () {
+    async createFigure () {
       const newFigure = {
         data: [{
           x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
@@ -682,16 +681,10 @@ export default {
           showlegend: false
         }
       };
-
-      return axios.post('/api/figure/', newFigure, {headers: { 'Authorization': `Bearer ${this.accessToken}` }})
-      .then(response => {
-        let _idFigure = response.data;
-        console.log("createFigure::idFigure: " + _idFigure)
-        return _idFigure
-      })
-      .catch(err => {
-
-      })
+      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      let _idFigure = response.data;
+      console.log("createFigure::idFigure: " + _idFigure)
+      return _idFigure
     },
     createImage () {
       const newImage = {

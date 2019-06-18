@@ -70,10 +70,11 @@ module.exports.createFigure = async (req, res, next) => {
     const layout = req.body.layout;
     const option = req.body.option;
     console.log("createFigure");
-    const newFigure = new Figure({ "data": JSON.stringify(data),
-                                  "layout": JSON.stringify(layout),
-                                  "option": JSON.stringify(option)
-                                });
+    const newFigure = new Figure({
+      data: data,
+      layout: layout,
+      option: option
+    });
 
     //const article = await Article.findById(req.body.id).populate('arr_data').lean();
     //console.log(JSON.stringify(article, null, "\t"));
@@ -137,14 +138,16 @@ async function pythonExec(req, res, next) {
       scriptPath: './',
       args: []
     };
-    await fs.writeFileSync('./example.py', req.body.content);
+    for (let i = 0, len = req.body.content.length; i < len; i++)
+      await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
     await new Promise((resolve, reject) => {
-      PythonShell.run('./example.py', options, (err) => {
+      PythonShell.run('./main.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
       })
     });
-    await fs.unlinkSync('./example.py');
+    for (let i = 0, len = req.body.content.length; i < len; ++i)
+      await fs.unlinkSync(req.body.content[i].title);
     const jsonRawData = fs.readFileSync('./example.json')
     const json = JSON.parse(jsonRawData);
     await fs.unlinkSync('./example.json');

@@ -353,8 +353,8 @@ export default {
   },
   methods: {
     saveFigure () {
-      debug("saveFigure ", this.currentData.y)
-      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
+      console.log("saveFigure ", this.currentData.y)
+      axios.put('/api/figure/'  + this.idfigure, {
         data: this.currentData,
         option:this.option,
         layout: this.layout,
