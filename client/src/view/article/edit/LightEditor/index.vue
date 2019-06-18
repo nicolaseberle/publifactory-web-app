@@ -320,6 +320,7 @@ export default {
     addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
   data() {
     return {
+      timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
       cursors : Object,
@@ -566,13 +567,20 @@ export default {
     applyAbstractEdit (ev) {
       if (ev.event.target) {
         this.postForm.abstract = ev.event.target.innerHTML
-        this.save(ev);
+        //this.save(ev);
+        setTimeout(async ()=>{
+          this.save(ev)
+         },2000);
       }
     },
     applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
-      this.save(this.$event)
+      //this.save(this.$event)
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+       },2000);
       //this.updateUserList(editor)
     },
     addNewRow (ev,key) {
