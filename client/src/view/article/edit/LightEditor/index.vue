@@ -736,7 +736,7 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
   .el-dropdown {
     vertical-align: top;
   }

@@ -30,10 +30,11 @@
                 <el-input v-model="postForm.uuid_figure" disabled></el-input>
               </el-form-item>
               <el-form-item label="Legend">
-                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph" v-on:change="handleFormUpdate"></el-input>
+                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"
+                          v-on:change="handleFormUpdate"></el-input>
               </el-form-item>
               <el-form-item label="Source" placeholder="Enter the graph DOI">
-                <el-input v-model="postForm.source"></el-input>
+                <el-input v-model="postForm.source" v-on:change="handleFormUpdate"></el-input>
               </el-form-item>
             </el-form>
           </div>
@@ -57,7 +58,7 @@ export default {
   name: 'ScriptPython',
   locales,
   props: ["idfigure"],
-  components: {VuePlotly, PulseLoader},
+  components: { VuePlotly, PulseLoader },
   data () {
     return {
       formPythonFile: {
@@ -84,10 +85,10 @@ export default {
       html: '',
       id: '',
       currentData: [{
-            x: ['Sample A','Sample B','Sample C','Sample D'],
-            y: [ 10, 16, 12, 13],
-            type: 'bar',
-            orientation: 'v'
+        x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
+        y: [10, 16, 12, 13],
+        type: 'bar',
+        orientation: 'v'
       }],
       pythonVersion: '3.7',
       options: {},
@@ -105,6 +106,29 @@ export default {
   },
   async mounted () {
     await this.fetchFigure(this.idfigure)
+    this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
+      value: '',
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true,
+      indentUnit: 4,
+      smartIndentationFix: true,
+      theme: 'one-dark',
+      mode: "text/x-python",
+      lineWrapping: true
+    })
+    this.editor.on('change', instance => {
+      this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
+      if (!this.timer) {
+        this.$emit('loading', true)
+        this.timer = setTimeout(async () => {
+          await this.execCode()
+          this.timer = null
+          this.$emit('loading', true)
+        }, 3000)
+      }
+    })
+    this.execCode();
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -157,7 +181,7 @@ export default {
   },
   watch: {
     currentData (newVal) {
-      this.saveFigure ()
+      this.saveFigure()
     },
     pythonVersion (newVal) {
       if (newVal === '2.7')
@@ -170,7 +194,7 @@ export default {
     }
   },
   methods: {
-    handleTabsEdit(targetName, action) {
+    handleTabsEdit (targetName, action) {
       if (action === 'add') {
         let newTabName = ++this.tabIndex + '';
         let promptAnswer = prompt('Which name to add to this file ?')
@@ -259,19 +283,18 @@ export default {
       })
       this.editor.refresh();
     },
-    async fetchFigure(id) {
-      const response = await axios.get('/api/figure/' + id , { headers: {'Authorization': `Bearer ${this.accessToken}`} })
-      if (response.data.script.content.length !== 0) {
+    async fetchFigure (id) {
+      const response = await axios.get('/api/figure/' + id, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      if (response.data.script.content !== undefined && response.data.script.content.length !== 0) {
         this.currentData = response.data.data
         this.layout = response.data.layout
         this.option = response.data.option
         this.editableTabs = response.data.script.content
         this.editableTabsValue = '1'
         this.tabIndex = response.data.script.content.length
-        if (this.tabIndex > 1)
-          for (let i = 0, len = this.tabIndex; i < len; ++i)
-            this.codemirrorOptions(response.data.script.content[i].name)
-        if (response.data.infos.uuid_figure)
+        for (let i = 0, len = this.tabIndex; i < len; ++i)
+          this.codemirrorOptions(response.data.script.content[i].name)
+        if (response.data.infos !== null)
           this.postForm = this.response.data.infos
       }
     },
@@ -311,7 +334,7 @@ export default {
     setVersion (version) {
       this.pythonVersion = version
     },
-    setCodeMirror(tabClicked) {
+    setCodeMirror (tabClicked) {
       this.editableTabsValue = tabClicked.name;
     },
     handleFormUpdate () {
@@ -321,7 +344,7 @@ export default {
           await this.saveFigure()
           this.timer = null
           this.$emit('loading', true)
-        }, 3000)
+        }, 500)
       }
     }
   }

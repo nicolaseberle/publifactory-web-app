@@ -76,8 +76,6 @@ module.exports.createFigure = async (req, res, next) => {
       option: option
     });
 
-    //const article = await Article.findById(req.body.id).populate('arr_data').lean();
-    //console.log(JSON.stringify(article, null, "\t"));
     const figure = await newFigure.save();
     console.log(JSON.stringify(figure._id, null, "\t"));
 
@@ -101,7 +99,6 @@ module.exports.updateFigure = async (req, res, next) => {
     const option = req.body.option;
     const script = req.body.script;
     const infos = req.body.infos;
-    console.log("updateFigure");
     const updatedFigure = await Figure
       .findOneAndUpdate(
         { _id: req.params.id },
@@ -111,14 +108,21 @@ module.exports.updateFigure = async (req, res, next) => {
 
     if (!updatedFigure) return res.sendStatus(404);
 
-    console.log(JSON.stringify(updatedFigure._id, null, "\t"));
-
     return res.status(200).json(updatedFigure._id);
   } catch (err) {
     return next(err);
   }
 };
 
+/**
+ * This function is used to redirect the parameters to the right function
+ * It depends on the script used (Python / R)
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
+ */
 module.exports.scripts = async (req, res, next) => {
   try {
     if (req.body.content === undefined || (req.params.script === 'python' && req.body.version === undefined))
@@ -129,6 +133,15 @@ module.exports.scripts = async (req, res, next) => {
   }
 }
 
+/**
+ * This function is used to execute python code and do the translation in JSON
+ * This JSON output is used to communicate with PlotlyJs
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
+ */
 async function pythonExec(req, res, next) {
   try {
     const version = `python${req.body.version}`
@@ -154,21 +167,27 @@ async function pythonExec(req, res, next) {
     await fs.unlinkSync('./example.json');
     res.json({ success: true, values: json });
   } catch (e) {
-    console.error("====ERROR====")
-    console.error(e);
     res.status(500).json({ success: false, message: e})
   }
 }
 
+/**
+ * This function is used to execute R code and do the translation in JSON
+ * This JSON output is used to communicate with PlotlyJs
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ * @author Léo Riberon-Piatyszek
+ */
 async function rExec(req, res, next) {
   try {
     for (let i = 0, len = req.body.content.length; i < len; i++)
       await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
     const response = await rscript.callSync('./main.R');
     const json = JSON.parse(response.x.data)
-    //for (let i = 0, len = req.body.content.length; i < len; ++i)
-      //await fs.unlinkSync(req.body.content[i].title);
-    console.log(json)
+    for (let i = 0, len = req.body.content.length; i < len; ++i)
+      await fs.unlinkSync(req.body.content[i].title);
     res.json({ success: true, values: json });
   } catch (e) {
     res.status(500).json({ success: false, message: "Your script isn't correct. Please check your syntax." })

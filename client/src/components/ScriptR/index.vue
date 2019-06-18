@@ -10,7 +10,9 @@
               :label="item.title"
               :name="item.name"
               id="tabs">
-              <textarea :id="item.name" :name="item.name">{{item.content}}</textarea>
+              <label>
+                <textarea :id="item.name" :name="item.name">{{item.content}}</textarea>
+              </label>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -29,10 +31,11 @@
                 <el-input v-model="postForm.uuid_figure" disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="Legend">
-                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"></el-input>
+                <el-input type="textarea" :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the graph"
+                          v-on:change="handleFormUpdate"></el-input>
               </el-form-item>
               <el-form-item label="Source" placeholder="Enter the graph DOI">
-                <el-input v-model="postForm.source"></el-input>
+                <el-input v-model="postForm.source" v-on:change="handleFormUpdate"></el-input>
               </el-form-item>
             </el-form>
           </div>
@@ -42,25 +45,22 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import CodeMirror from 'codemirror'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/lib/codemirror.css'
-import '../../styles/one-dark.css'
-import { mapGetters } from 'vuex'
-const debug = require('debug')('frontend');
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import CodeMirror from 'codemirror'
+  import 'codemirror/mode/python/python.js'
+  import 'codemirror/lib/codemirror.css'
+  import '../../styles/one-dark.css'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
 
-import axios from 'axios'
-
-
+  const debug = require('debug')('frontend');
 
   export default {
     name: 'ScriptR',
     locales,
     props: ["idfigure"],
-    components: {VuePlotly},
+    components: { VuePlotly },
     data () {
       return {
         postForm: {
@@ -73,8 +73,8 @@ import axios from 'axios'
         html: '',
         id: '',
         currentData: [{
-          x: ['Sample A','Sample B','Sample C','Sample D'],
-          y: [ 10, 16, 12, 13],
+          x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
+          y: [10, 16, 12, 13],
           type: 'bar',
           orientation: 'v'
         }],
@@ -101,106 +101,95 @@ import axios from 'axios'
     },
     async mounted () {
       await this.fetchFigure(this.idfigure)
-      var y0 = [];
-      var y1 = [];
-      var y2 = [];
-      var y3 = [];
-      for (var i = 0; i < 50; i++) {
+      this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
+        value: '',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        smartIndentationFix: true,
+        theme: 'one-dark',
+        mode: "text/x-python",
+        lineWrapping: true
+      })
+      this.editor.on('change', instance => {
+        this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
+        if (!this.timer) {
+          this.$emit('loading', true)
+          this.timer = setTimeout(async () => {
+            await this.execCode()
+            this.timer = null
+            this.$emit('loading', true)
+          }, 3000)
+        }
+      })
+      this.execCode();
+      let y0 = []
+      let y1 = []
+      let y2 = []
+      let y3 = []
+      let i;
+      for (i = 0; i < 50; i++) {
         y0[i] = Math.random() + 1.2;
         y1[i] = Math.random() + 1;
         y2[i] = Math.random() * 2;
         y3[i] = Math.random() * 0.8 + 1;
       }
-    })
-    var y0 = [];
-    var y1 = [];
-    var y2 = [];
-    var y3 = [];
-    for (var i = 0; i < 50; i ++) {
-      y0[i] = Math.random() + 1.2;
-      y1[i] = Math.random() + 1;
-      y2[i] = Math.random()*2;
-      y3[i] = Math.random()*0.8+1;
-    }
-
-    var trace0 = {
-      y: y0,
-      type: 'box',
-      name: "sample A",
-      marker: {
-        color: 'rgb(9,56,125)'
+      y0 = []
+      y1 = []
+      y2 = []
+      y3 = []
+      for (i = 0; i < 50; i++) {
+        y0[i] = Math.random() + 1.2;
+        y1[i] = Math.random() + 1;
+        y2[i] = Math.random() * 2;
+        y3[i] = Math.random() * 0.8 + 1;
       }
-    };
 
-    var trace1 = {
-      y: y1,
-      type: 'box',
-      name: "sample B",
-      marker: {
-        color: 'rgb(9,56,125)'
-      }
-    };
-
-    var trace2 = {
-      y: y2,
-      type: 'box',
-      name: "sample C",
-      marker: {
-        color: 'rgb(9,56,125)'
-      }
-    };
-
-    var trace3 = {
-      y: y3,
-      type: 'box',
-      name: "sample D",
-      marker: {
-        color: 'rgb(9,56,125)'
-      }
-    };
-    var data = [trace0, trace1, trace2, trace3];
-    this.currentData = data
-  },
-  watch: {
-    currentData (newVal) {
-      this.saveFigure ()
-    }
-  },
-  methods: {
-    saveFigure () {
-      debug('saveFigure: ',this.idfigure)
-      axios.put('http://localhost:4000/api/figure/'  + this.idfigure, {
-        data: this.currentData,
-        option:this.option,
-        layout: this.layout,
-        script: {
-          language: "R",
-          content: this.content
+      const trace0 = {
+        y: y0,
+        type: 'box',
+        name: 'sample A',
+        marker: {
+          color: 'rgb(9,56,125)'
         }
-      }, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-        .then(response => {
-          debug("figure saved")
-        })
-        .catch(e => {
-          console.log(e)
-        })
-    },
-    fetchFigure(id) {
-      axios.get('http://localhost:4000/api/figure/' + id , {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-        this.currentData = response.data.data
-        this.layout = response.data.layout
-        this.option = response.data.option
+      }
 
-      }).catch(err => {
-        console.log(err)
-      })
+      const trace1 = {
+        y: y1,
+        type: 'box',
+        name: 'sample B',
+        marker: {
+          color: 'rgb(9,56,125)'
+        }
+      }
+
+      const trace2 = {
+        y: y2,
+        type: 'box',
+        name: 'sample C',
+        marker: {
+          color: 'rgb(9,56,125)'
+        }
+      }
+
+      const trace3 = {
+        y: y3,
+        type: 'box',
+        name: 'sample D',
+        marker: {
+          color: 'rgb(9,56,125)'
+        }
+      }
+      this.currentData = [trace0, trace1, trace2, trace3]
+    },
+    watch: {
+      currentData () {
+        this.saveFigure()
+      }
     },
     methods: {
-      handleTabsEdit(targetName, action) {
+      handleTabsEdit (targetName, action) {
         if (action === 'add') {
           let newTabName = ++this.tabIndex + '';
           let promptAnswer = prompt('Which name to add to this file ?')
@@ -266,16 +255,16 @@ import axios from 'axios'
       },
       async fetchFigure (id) {
         const response = await axios.get('/api/figure/' + id, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
-        if (response.data.script.content.length !== 0) {
+        if (response.data.script.content !== undefined && response.data.script.content.length !== 0) {
           this.currentData = response.data.data
           this.layout = response.data.layout
           this.option = response.data.option
           this.editableTabs = response.data.script.content
           this.editableTabsValue = '1'
-          this.tabIndex = response.data.script.content.length
+          this.tabIndex = response.data.script.content !== undefined ? response.data.script.content.length : 1
           for (let i = 0, len = this.tabIndex; i < len; ++i)
             this.codemirrorOptions(response.data.script.content[i].name)
-          if (response.data.infos.uuid_figure)
+          if (response.data.infos !== null)
             this.postForm = this.response.data.infos
         }
       },
@@ -336,12 +325,21 @@ import axios from 'axios'
           })
         }
       },
-      setCodeMirror(tabClicked) {
+      setCodeMirror (tabClicked) {
         this.editableTabsValue = tabClicked.name;
+      },
+      handleFormUpdate () {
+        if (!this.timer) {
+          this.$emit('loading', true)
+          this.timer = setTimeout(async () => {
+            await this.saveFigure()
+            this.timer = null
+            this.$emit('loading', true)
+          }, 500)
+        }
       }
     }
   }
-}
 
 </script>
 <style lang="scss">
