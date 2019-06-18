@@ -1,7 +1,7 @@
 <template>
   <div style='width:100%'>
     <el-container style="height: 100%; border: 1px solid #eee">
-    <!--<el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+    <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
       <el-menu :default-openeds="['1', '3']">
         <el-submenu index="1">
           <template slot="title"><i class="el-icon-message"></i>Navigator One</template>
@@ -50,7 +50,7 @@
         </el-submenu>
       </el-menu>
     </el-aside>
-    -->
+
 
     <el-main>
     <el-row >
@@ -381,28 +381,8 @@ import numpy as np
 `
         });
         this.$nextTick(() => {
-          this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-            value: '',
-            lineNumbers: true,
-            styleActiveLine: true,
-            matchBrackets: true,
-            theme: 'one-dark',
-            mode: "text/x-python",
-            lineWrapping: true
-          })
-          this.editor.on('change', instance => {
-            this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-            if (!this.timer) {
-              this.$emit('loading', true)
-              this.timer = setTimeout(async () => {
-                await this.execCode()
-                this.timer = null
-                this.$emit('loading', true)
-              }, 3000)
-            }
-          })
+          this.codemirrorOptions(newTabName)
           this.editableTabsValue = newTabName;
-          this.editor.refresh();
         })
       }
       if (action === 'remove') {
@@ -442,6 +422,29 @@ import numpy as np
         console.log(e)
       })
     },
+    codemirrorOptions (elementId) {
+      this.editor = CodeMirror.fromTextArea(document.getElementById(elementId), {
+        value: '',
+        lineNumbers: true,
+        styleActiveLine: true,
+        matchBrackets: true,
+        theme: 'one-dark',
+        mode: "text/x-python",
+        lineWrapping: true
+      })
+      this.editor.on('change', instance => {
+        this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
+        if (!this.timer) {
+          this.$emit('loading', true)
+          this.timer = setTimeout(async () => {
+            await this.execCode()
+            this.timer = null
+            this.$emit('loading', true)
+          }, 3000)
+        }
+      })
+      this.editor.refresh();
+    },
     async fetchFigure(id) {
       const response = await axios.get('/api/figure/' + id , { headers: {'Authorization': `Bearer ${this.accessToken}`} })
       if (response.data.script.content.length !== 0) {
@@ -449,6 +452,11 @@ import numpy as np
         this.layout = response.data.layout
         this.option = response.data.option
         this.editableTabs = response.data.script.content
+        this.editableTabsValue = '1'
+        this.tabIndex = response.data.script.content.length
+        if (this.tabIndex > 1)
+          for (let i = 1, len = this.tabIndex; i < len; ++i)
+            this.codemirrorOptions(response.data.script.content[i].name)
       }
     },
     async execCode () {
