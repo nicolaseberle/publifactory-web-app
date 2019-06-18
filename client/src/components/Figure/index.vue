@@ -10,9 +10,9 @@
             <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
         </div>
       <div class="font-dnltp-medium">
-        <span>Legends: {{infos.legend}}</span><br>
-        <span>Source: "{{infos.name}}" from figure n°{{infos.uuid_figure}}</span><br>
-        <span>DOI: {{infos.source}}</span>
+        <p><b style="font-family: DNLTPro-bold;">Legends</b>: {{infos.legend}}</p>
+        <p><b style="font-family: DNLTPro-bold;">Source</b>: "{{infos.name}}" from figure n°{{infos.uuid_figure}}</p>
+        <p><b style="font-family: DNLTPro-bold;">DOI</b>: {{infos.source}}</p>
       </div>
     </figure>
   </div>
