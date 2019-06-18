@@ -54,7 +54,7 @@ const webpackConfig = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                include: [ helpers.root('client/src'), resolve('../node_modules/vue-awesome') ]
+                include: [ helpers.root('client/src'), resolve('../node_modules/vue-awesome'), resolve('../node_modules/vue-spinner/') ]
             },/*
             {
               test: /\.vue$/,
@@ -64,7 +64,8 @@ const webpackConfig = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                include: [ helpers.root('client/src') ]
+                include: [ helpers.root('client/src') ],
+                exclude:  /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-spinner\//
             },
             {
               test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
