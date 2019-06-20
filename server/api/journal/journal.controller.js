@@ -288,3 +288,14 @@ module.exports.followJournal = async (req, res, next) => {
     next(e);
   }
 }
+
+module.exports.userFollowedJournals = async (req, res, next) => {
+  try {
+    const query =  { id_user: req.decoded._id }
+    const response = await Roles.find({query})//.populate('id_journal');
+    console.log('userFollowedJournals :: ',query , response)
+    res.json({success: true, journals: response})
+  } catch (e){
+    next(e)
+  }
+}

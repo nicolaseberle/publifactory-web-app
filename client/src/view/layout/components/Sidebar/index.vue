@@ -24,6 +24,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import SidebarItem from './SidebarItem'
 import locales from  '../../../../locales/menu'
+import axios from 'axios'
 
 export default {
   locales,
@@ -38,17 +39,31 @@ export default {
     ...mapGetters([
       'permissionrouters',
       'sidebar',
-      'roles'
+      'roles',
+      'accessToken'
     ]),
     isCollapse() {
       return !this.sidebar.opened
     }
   },
   mounted (){
-    this.updateRoutes(this.roles)
+    this.findFollowedJournals()
+
   },
   methods:{
-    ...mapActions(['updateRoutes'])
+    ...mapActions(['updateRoutes']),
+    findFollowedJournals () {
+      axios.get('/api/journals/followed', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.followedJournals = list.data.journals
+        console.log(list.data)
+        this.updateRoutes(this.roles, this.followedJournals)
+
+      }).catch(err => {
+        console.error(err)
+      })
+    },
   }
 }
 </script>

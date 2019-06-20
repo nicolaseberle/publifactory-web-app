@@ -78,16 +78,16 @@
               <div class='title'>
                 <a :href="'/article/' + article._id "><span>{{article.title}}</span></a>
               </div>
-              <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" >
                 <button v-show='flag==index' class='hide' alt='Mark as read an hide'><i class="el-icon-close"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Mark as read" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Mark as read" placement="top">
                 <button v-show='flag==index' class='mark-as-read' alt='Mark as read'><i class="el-icon-check"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Save to board" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Save to board" placement="top">
                 <button v-show='flag==index' class='save-to-board' alt='Save to board'><i class="el-icon-collection"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Read Later" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Read Later" placement="top">
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>

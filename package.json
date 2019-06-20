@@ -22,7 +22,7 @@
   "scripts": {
     "client": "./node_modules/.bin/cross-env NODE_ENV=development webpack-dev-server --hot --progress",
     "server": "./node_modules/.bin/nodemon --watch server server/app.js",
-    "start": "npm install; npm run client & npm run server",
+    "start": "/usr/bin/npm install -g npm;npm install; npm run client & npm run server",
     "staging": "cross-env NODE_ENV=staging webpack",
     "build": "cross-env NODE_ENV=production webpack",
     "svgo": "svgo -f ./client/src/icons/svg --config=./client/src/icons/svgo.yml"
