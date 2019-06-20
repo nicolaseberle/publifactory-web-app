@@ -43,7 +43,7 @@
       <el-radio v-model="dynamicForm.access" label="close_access">Close Access</el-radio>
       </el-form-item>
       <el-form-item style='text-align:right'>
-        <el-button type="primary" @click="submitForm()">Create</el-button>
+        <el-button type="primary" @click="submitForm('dynamicForm')">Create</el-button>
         <el-button @click="$emit('close')">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -102,8 +102,8 @@ const debug = require('debug')('frontend');
 
     },
     methods: {
-      submitForm() {
-        this.$refs[this.dynamicForm].validate((valid) => {
+      submitForm(dynamicForm) {
+        this.$refs[dynamicForm].validate((valid) => {
           if (valid) {
             this.$confirm(`By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them.`, this.$t('confirm.title'), {
                 type: 'warning'
