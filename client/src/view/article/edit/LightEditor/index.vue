@@ -177,8 +177,7 @@
           <el-dropdown trigger="click" @command="changePythonVersion">
             <el-button type="primary">Python version<i class="el-icon-arrow-down el-icon--right"></i></el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="3.7">Python 3.7</el-dropdown-item>
-              <el-dropdown-item command="3.6">Python 3.6</el-dropdown-item>
+              <el-dropdown-item command="3.5">Python 3.5</el-dropdown-item>
               <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
