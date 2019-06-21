@@ -160,7 +160,7 @@
     "compression-webpack-plugin": "~2.0",
     "connect-history-api-fallback": "^1.3.0",
     "countable": "^3.0.1",
-    "cross-env": "~5.2",
+    "cross-env": "^5.2.0",
     "cross-spawn": "^5.1.0",
     "css-loader": "~2.1",
     "devtool": "^2.3.1",

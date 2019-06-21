@@ -13,7 +13,8 @@ if (process.env.NODE_ENV === 'production') {
 
 var generator = new latexjs.HtmlGenerator({
   hyphenate: true,
-  languagePatterns: en
+  languagePatterns: 'en',
+  documentClass: ['a4paper','twocolumn']
 })
 
 var scrollY = 0

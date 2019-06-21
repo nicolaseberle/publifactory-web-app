@@ -19,6 +19,7 @@ router.get('/:id/users/:role(editor|associate_editor|user)', journalController.g
 router.patch('/:id/article/:id_article', roles.publish, journalController.setArticlePublish)
 router.post('/:id/invite/:right(associate_editor|user)', roles.invite, journalController.inviteUser)
 router.post('/:id/follow', journalController.followJournal)
+router.get('/followed', journalController.userFollowedJournals)
 
 
 module.exports = router;

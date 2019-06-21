@@ -26,7 +26,12 @@
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
-          <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
+          <div style='float:right'>
+            <el-button-group>
+              <el-button  v-on:click="handleCreateJournal()" type="info"  round>Submit your article</el-button>
+              <el-button  v-on:click="handleFollowJournal(journal._id)" type="info" round>Follow the journal</el-button>
+            </el-button-group>
+          </div>
         </div>
         <div class="body">
           <el-row :gutter="10">
@@ -155,6 +160,16 @@ export default {
         .catch(e => {
           console.log(e)
         })*/
+    },
+    handleFollowJournal (idJournal) {
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.post('/api/journals/' + idJournal + '/follow', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.journals = list.data.journals
+      }).catch(err => {
+        console.error(err)
+      })
     }
   }
 }

@@ -63,13 +63,11 @@ const permission = {
     },
     updateRoutes ({commit}, data) {
       return new Promise((resolve,reject)=>{
+        let roles = data['roles']
+        let followedJournals = data['followedJournals']
         //TO DO, inout needs to be the array of journals
-        const followedJournals = [
-            {'id': '5d0264a4d0738816c96658ca', 'title':'Genetics'},
-            {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}
-          ]
-
-        let  routes = filterAsyncRouter(constantRouterMap, data)
+        console.log('updateRoutes :: ',roles,followedJournals)
+        let  routes = filterAsyncRouter(constantRouterMap, roles)
         routes.forEach((parentRoute)=>{
           if(parentRoute.path==='/feeds'){
 
