@@ -61,9 +61,12 @@ const permission = {
         resolve()
       })
     },
-    updateRoutes ({commit}, roles, followedJournals) {
+    updateRoutes ({commit}, data) {
       return new Promise((resolve,reject)=>{
+        let roles = data['roles']
+        let followedJournals = data['followedJournals']
         //TO DO, inout needs to be the array of journals
+        console.log('updateRoutes :: ',roles,followedJournals)
         let  routes = filterAsyncRouter(constantRouterMap, roles)
         routes.forEach((parentRoute)=>{
           if(parentRoute.path==='/feeds'){
@@ -74,7 +77,7 @@ const permission = {
                   'hidden': 'true',
                   'component': "() => import('../view/journals/index.vue')"
                 }]
-              console.log(followedJournals)
+
               for (let i = 0; i < followedJournals.length; i++){
                 let componentRoute = '../view/journals/' + followedJournals[i].id
                 let _route = {

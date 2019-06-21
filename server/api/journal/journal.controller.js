@@ -52,7 +52,7 @@ exports.getJournals = async (req, res, next) => {
       console.log(JSON.stringify(journals, null, "\t"))
       renameObjectProperty(journals, 'docs', 'journals');
     } else {
-      console.log(JSON.stringify("findJournalById", null, "\t"))
+      //console.log(JSON.stringify("findJournalById", null, "\t"))
       journals = await Journal.findById(req.params.id)
         .populate('users')
         .populate('article')
@@ -128,7 +128,7 @@ module.exports.createJournal = async (req, res, next) => {
     // console.log(JSON.stringify(author, null, "\t"));
     newJournal.users[0] = req.decoded._id;
     const journal = await newJournal.save();
-    new Roles({ id_user: req.decoded._id, id_journal: journal, right: 'editor' }).save();
+    new Roles({ id_user: req.decoded._id, id_journal: journal._id, right: 'editor' }).save();
 
     console.log(JSON.stringify(journal._id, null, "\t"));
 
@@ -291,11 +291,14 @@ module.exports.followJournal = async (req, res, next) => {
 
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
-    const query =  { id_user: req.decoded._id }
-    const response = await Roles.find({query})//.populate('id_journal');
-    console.log('userFollowedJournals :: ',query , response)
+    const userInfo = await User.findOne({ _id: req.decoded._id });
+    const query =  { id_user: userInfo._id }
+    console.log('userFollowedJournals :: query :: ', query)
+    const response = await Roles.find({query}).exec()//.populate('id_journal');
+    console.log('userFollowedJournals :: response :: ', response)
     res.json({success: true, journals: response})
   } catch (e){
+    console.log(e)
     next(e)
   }
 }

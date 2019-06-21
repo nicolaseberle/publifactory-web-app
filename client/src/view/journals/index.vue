@@ -29,7 +29,7 @@
           <div style='float:right'>
             <el-button-group>
               <el-button  v-on:click="handleCreateJournal()" type="info"  round>Submit your article</el-button>
-              <el-button  v-on:click="handleCreateJournal()" type="info" round>Follow the journal</el-button>
+              <el-button  v-on:click="handleFollowJournal(journal._id)" type="info" round>Follow the journal</el-button>
             </el-button-group>
           </div>
         </div>
@@ -160,6 +160,16 @@ export default {
         .catch(e => {
           console.log(e)
         })*/
+    },
+    handleFollowJournal (idJournal) {
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.post('/api/journals/' + idJournal + '/follow', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.journals = list.data.journals
+      }).catch(err => {
+        console.error(err)
+      })
     }
   }
 }

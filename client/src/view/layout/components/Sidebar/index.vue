@@ -48,7 +48,6 @@ export default {
   },
   mounted (){
     this.findFollowedJournals()
-
   },
   methods:{
     ...mapActions(['updateRoutes']),
@@ -58,7 +57,7 @@ export default {
       }).then(list => {
         this.followedJournals = list.data.journals
         console.log(list.data)
-        this.updateRoutes(this.roles, this.followedJournals)
+        this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
 
       }).catch(err => {
         console.error(err)
