@@ -18,7 +18,7 @@ WORKDIR /tmp/nginx/vue-single-page-app
 # Copy our source code into the container
 COPY . .
 # Install the dependencies, can be commented out if you're running the same node version
-RUN npm install
+RUN npm install --silent
 
 # run webpack and the vue-loader
 RUN npm run build
