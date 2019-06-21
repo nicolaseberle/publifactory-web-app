@@ -44,23 +44,12 @@ services:
       - ./:/src/app
       - /src/app/node_modules
     environment:
-      - PORT=80
+      - PORT=9001
       - NODE_ENV=development
     depends_on:
       - api
     links:
       - api
-    networks:
-      - frontend
-
-  nginx:
-    build:
-      context: ./
-      dockerfile: nginx.dockerfile
-    depends_on:
-      - client_dev
-    ports:
-      - '80:80'
     networks:
       - frontend
 
