@@ -11,14 +11,14 @@ command=$1
 options=$2
 
 
-function debug {
-  printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1"
+debug () {
+  printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1";
 }
 
 log_path="`pwd`/logs/${DATE}.log"
 debug "All the logs will be saved in $log_path\n"
 
-function print_help {
+print_help () {
   printf "USAGE\n"
   printf "$0 {COMMAND} [OPTIONS]\n\n"
   printf "COMMAND:\n"
@@ -30,7 +30,7 @@ function print_help {
   printf "prod\tLaunch the prod options with nginx"
 }
 
-function execution_time {
+execution_time () {
   date_end=`date +%s`
   diff=`expr ${date_end} - ${DATE_BEGIN}`
   second=`expr ${diff} % 60`
@@ -38,7 +38,7 @@ function execution_time {
   debug "Execution time : $minute minutes and $second second"
 }
 
-function start {
+start () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
   sudo docker-compose build
@@ -52,7 +52,7 @@ function start {
   sudo docker-compose up -d ssh_tunnel
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
-  if [[ ${options} = "prod" ]]
+  if [ ${options} = "prod" ];
   then
     echo "prod"
   else
@@ -65,7 +65,7 @@ function start {
   debug "All is up.\n"
 }
 
-function stop {
+stop () {
   debug "Stopping every container and networks.\n"
   sudo docker-compose down
   debug "Docker stopped every container !"
@@ -85,14 +85,14 @@ function stop {
 }
 
 echo -ne '#                         (5%)\r'
-if [[ ${USER} != 'root' ]]
+if [ ${USER} != 'root' ];
 then
   debug "You must be root to execute this script.\n"
   exit 1
 fi
 
 echo -ne '##                        (10%)\r'
-if [[ "$#" -lt 1 ]]
+if [ "$#" -lt 1 ];
 then
   debug "You must provide a command after the binary.\n"
   print_help

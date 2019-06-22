@@ -37,6 +37,8 @@ services:
 
   client_dev:
     restart: always
+    ports:
+      - "9001:9001"
     build:
       context: ./
       dockerfile: client.dockerfile
