@@ -1,10 +1,10 @@
 
 <template>
   <div class="hello">
-    <picture-input
+    <!--<picture-input
       ref="pictureInput"
       @change="onChange"
-      
+
       removable="true"
       crop="false"
       margin="16"
@@ -15,11 +15,13 @@
         upload: '<h2>Bummer!</h2>',
         drag: '<div style=\'font-size:1rem\'>Drag a picture jpeg/png</div>'
       }">
-    </picture-input>
+    </picture-input>-->
   </div>
 </template>
 <script>
-import PictureInput from 'vue-picture-input'
+// import PictureInput from 'vue-picture-input'
+
+const debug = require('debug')('frontend');
 
 export default {
   name: 'app',
@@ -28,16 +30,16 @@ export default {
     }
   },
   components: {
-    PictureInput
+    // PictureInput
   },
   methods: {
     onChange (image) {
-      console.log('New picture selected!')
+      debug('New picture selected!')
       if (image) {
-        console.log('Picture loaded.',image)
+        debug('Picture loaded.',image)
         this.image = image
       } else {
-        console.log('FileReader API not supported: use the <form>, Luke!')
+        debug('FileReader API not supported: use the <form>, Luke!')
       }
     }
   }

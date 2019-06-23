@@ -5,6 +5,8 @@
 </template>
 
 <script>
+const debug = require('debug')('frontend');
+
 export default {
   name: 'SvgIcon',
   props: {
@@ -19,11 +21,11 @@ export default {
   },
   computed: {
     iconName() {
-      console.log( this.iconClass )
+      debug( this.iconClass )
       return `#icon-${this.iconClass}`
     },
     svgClass() {
-      console.log( this.className )
+      debug( this.className )
       if (this.className) {
         return 'svg-icon ' + this.className
       } else {

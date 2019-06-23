@@ -2,7 +2,7 @@
   <div>
   <div class="components-container-article">
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white" :gutter="40">
-      <el-col :span="8">
+      <el-col :span="10">
         <el-button-group>
           <el-button v-if="valueTypeEditor==1" type="primary" round  @click="changeEditor('LightEditor')">Light Editor</el-button>
           <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
@@ -23,7 +23,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
-      <el-col :span='8'>
+      <el-col :span='6'>
         <el-button-group >
 
           <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved !== 0" alt='Number of comments' type="info" @click='showCOmmentReviewPanel'  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
@@ -39,8 +39,8 @@
       <el-col :span="8">
         <div style='text-align:right'>
           <el-button-group>
-            <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
-            <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
+            <!--<el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
+            <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>-->
             <el-button type="" round disabled>Download the article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" round >Submit your article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round disabled>Submitted</el-button>
@@ -142,12 +142,6 @@ import axios from 'axios'
 export default {
   name: 'ArticleDetail',
   components: { lightEditorComponent, markdownEditorComponent, latexEditorComponent },
-  props: {
-    isEdit: {
-      type: Boolean,
-      default: false
-    }
-  },
   data() {
     return {
       // postForm: Object.assign({}, defaultForm),
@@ -164,7 +158,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'accessToken'])
+    ...mapGetters(['accessToken'])
   },
   created() {
 

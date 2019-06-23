@@ -65,22 +65,22 @@ export default {
       mode: "text/x-stex"
     });
     this.editor.refresh();
-
-    var self = this
-      document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       setTimeout(async function(){
-        await compile(self.editor.getValue(), iframe)
+        await compile(this.editor.getValue(), iframe)
       },2000);
     })
-    this.editor.on('change', function (object) {
-      self.postForm.content = String(object.getValue())
-      self.convertLatex2LightEditor()
-      self.save()
-      setTimeout(async function(){
-        await compile(self.editor.getValue(), iframe)
+    this.editor.on('change', (object) => {
+      this.postForm.content = String(object.getValue())
+      this.convertLatex2LightEditor()
+      setTimeout(async () => {
+        this.save()
+       },2000);
+      setTimeout(async ()=>{
+        await compile(this.editor.getValue(), iframe)
         iframe.contentDocument.dispatchEvent(new Event('change'))
        },2000);
-       setTimeout(() => void self.editor.refresh(), 0)
+       setTimeout(() => void this.editor.refresh(), 0)
      })
   },
   methods: {

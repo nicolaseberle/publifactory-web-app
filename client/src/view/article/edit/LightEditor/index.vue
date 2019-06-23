@@ -1,6 +1,5 @@
 <template>
   <div class="components-container-article">
-
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
       <main class="article">
         <article>
@@ -76,7 +75,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors'  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -93,7 +92,7 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:cursors='cursors' v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -132,125 +131,11 @@
     </main>
 
     </el-card>
-    <aside  class="comments-reviews" >
-        <p>Show comments &amp; reviews</p>
-    </aside>
+    <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-          <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
+      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
     </aside>
 
-    <el-dialog
-      title="Insert a figure"
-      :visible.sync="dialogVisible"
-      width="80%"
-      top="0">
-      <el-steps align-center :active="dialogStepActive" finish-status="success">
-      <el-step title="Import your data" description="Upload or drop your .xls or .csv file...">
-
-      </el-step>
-      <el-step title="Select a method" description="How to manage your data">
-
-      </el-step>
-      <el-step title="Setup it" description="Select the inputs, baptize your figure and that's it..."></el-step>
-    </el-steps>
-    <div v-if='dialogStepActive==0'>
-      <h2 style="text-align:left;">Import</h2>
-      <el-tabs stretch type="border-card" style='vertical-align:middle'>
-        <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
-        <el-tab-pane label="by URL">(not yet)</el-tab-pane>
-        <!--<el-tab-pane>
-          <span slot="label">by Drive<img src='/static/icons/drive.svg' style='width:20px'></img></span>
-          (not yet)
-        </el-tab-pane>
-        <el-tab-pane>
-          <span slot="label">by Dropbox<img src='/static/icons/dropbox.svg' style='width:20px'></img></span>
-          (not yet)
-        </el-tab-pane>-->
-        <el-tab-pane label="SQL">(not yet)</el-tab-pane>
-        <el-tab-pane label="Example">
-          <el-row>
-            <el-col :span="2">
-              <el-checkbox v-model="checkedExData1">Exemple 1</el-checkbox>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="2">
-              <el-checkbox v-model="checkedExData2">Exemple 2</el-checkbox>
-            </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="2">
-            <el-checkbox v-model="checkedExData3">Exemple 3</el-checkbox>
-          </el-col>
-        </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    <div v-if='dialogStepActive==1'>
-      <el-row :gutter="20" style='margin-top:3rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/plotly-logo.png" style="width: 90%;" alt="Chart Manager" v-on:click="addNewFigurePlotly($event)">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Light Chart Editor</span>
-            </div>
-            <div style='text-align:left'>
-              The easy way to create a simple chart. Intergate it in the text.
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/Python_logo.png" style="width: 90%;" alt="Python_script" v-on:click="addNewFigurePython($event)">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Expert - Python script </span>
-            </div>
-            <div style='text-align:left'>
-              Write your script in Python, generate your figure and integrate it in the text
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" style='margin-top:1rem'>
-        <el-col :span="3">
-          <el-card shadow="hover">
-            <img src="/../../static/img/R_logo.png" style="width: 90%;" alt="R_script">
-          </el-card>
-        </el-col>
-        <el-col :span="20">
-          <el-card shadow="hover">
-            <div slot="header" class="clearfix" style='text-align:left'>
-              <span>Expert - R script </span>
-            </div>
-            <div style='text-align:left'>
-              Write your script in R, generate your figure and integrate it in the text
-            </div>
-          </el-card>
-        </el-col>
-      </el-row>
-    </div>
-    <!--
-      <component :is="datatable" v-if='dialogStepActive==0'/>
-      <component :is="mixchart" v-if='dialogStepActive==1'/>
-      <component :is="setupchart" v-if='dialogStepActive==2'/>-->
-      <!--<iframe src="https://ec2-18-220-172-58.us-east-2.compute.amazonaws.com/sample-apps/table/?showcase=0" style="border: 1px solid #AAA; width:100%; height:500px;"></iframe>-->
-      <span slot="footer" class="dialog-footer">
-        <!--<el-button @click="previousStep">Previous step</el-button>
-            <el-button type="primary"style="margin-top: 12px;" @click="nextStep">Next step</el-button>-->
-        <el-button v-if='dialogStepActive==0' type="primary" v-on:click="addNewFigurePlotly($event)">Next</el-button>
-      </span>
-
-    </el-dialog>
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
@@ -262,44 +147,100 @@
       show-close
       top="0"
       :visible.sync="diagInsertFigurePlotlyVisible"
+      fullscreen
       width="100%"
+      lock-scroll
       center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigurePlotlyVisible=false" >Cancel</el-button>
           <el-button type="primary" @click="" >Preview</el-button>
           <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
         </div>
       </span>
-      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible"/>
+      <figureFactory :idfigure='editidfigure' :visible="diagInsertFigurePlotlyVisible" ref="lightChild"/>
     </el-dialog>
 
     <el-dialog
       show-close
       top="0"
       :visible.sync="diagInsertFigurePythonVisible"
+      fullscreen
       width="100%"
+      lock-scroll
       center>
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type=""  @click="diagInsertFigurePythonVisible=false" >Cancel</el-button>
-          <el-button type="primary" @click="" >Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" >Insert Figure</el-button>
+          <el-dropdown trigger="click" @command="changePythonVersion">
+            <el-button type="primary">Python version<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="3.7">Python 3.7</el-dropdown-item>
+              <el-dropdown-item command="3.6">Python 3.6</el-dropdown-item>
+              <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
+          <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible"/>
+      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+                    v-on:loading="renderLoading=!(renderLoading)"/>
+    </el-dialog>
+
+    <el-dialog
+      show-close
+      top="0"
+      :visible.sync="diagInsertFigureRVisible"
+      fullscreen
+      width="100%"
+      lock-scroll
+      center>
+
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
+          <el-button type=""  @click="diagInsertFigureRVisible=false" :loading="renderLoading">Cancel</el-button>
+          <el-button type="primary" @click="execRCode" :loading="renderLoading">Preview</el-button>
+          <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
+        </div>
+      </span>
+      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+               v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
     <div id="container"></div>
+
+    <el-dialog
+      title="Insert data"
+      :visible.sync="importDialogVisible"
+      width="80%"
+      top="0">
+      <ImportData ref="importDataDialog"></ImportData>
+    </el-dialog>
+
+    <el-dialog
+      title="Insert a figure"
+      :visible.sync="dialogVisible"
+      width="80%"
+      top="0">
+      <InsertFigure ref="insertFigureDialog"
+                    v-on:changeStatusPythonDiag="(data) => { this.diagInsertFigurePythonVisible = data }"
+                    v-on:changeStatusRDiag="(data) => { this.diagInsertFigureRVisible = data }"
+                    v-on:changeStatusLightDiag="(data) => { this.diagInsertFigurePlotlyVisible = data }"
+                    v-on:changeStatusMainDiag="(data) => { this.dialogVisible = data }"/>
+    </el-dialog>
 
   </div>
 
 </template>
 <script>
 import editor from 'vue2-medium-editor'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MarkdownEditor from '../../../../components/MarkdownEditor'
 import { validateURL } from '../../../../utils/validate'
 import axios from 'axios'
@@ -313,11 +254,13 @@ import VuePlotly from '@statnett/vue-plotly'
 import figureComponent from '../../../../components/Figure'
 import imageComponent from '../../../../components/Image'
 import scriptPython from '../../../../components/ScriptPython'
-
+import scriptR from '../../../../components/ScriptR'
 import figureFactory from '../../../../components/Charts'
 import addCollaborator from '../../../../components/Collaborator'
 import LoadScript from 'vue-plugin-load-script'
 import Cursors from '../../../../utils/js/collaboration/cursors.js'
+import ImportData from '../../../../components/ImportData/index'
+import InsertFigure from '../../../../components/InsertFigure/index'
 //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -373,9 +316,13 @@ const options = {
 
 export default {
   name: 'LightEditor',
-  components: {addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, uploadData},
+  components: {
+    InsertFigure,
+    ImportData,
+    addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
   data() {
     return {
+      timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
       cursors : Object,
@@ -386,8 +333,11 @@ export default {
       postForm: {},
       loading: false,
       diagAuthorVisible : false,
-      diagInsertFigurePlotlyVisible: false,
+      dialogVisible: false,
+      diagInsertFigureRVisible: false,
       diagInsertFigurePythonVisible: false,
+      diagInsertFigurePlotlyVisible: false,
+      importDialogVisible: false,
       userListOptions: [],
       html: '',
       activeNames: ['1'],
@@ -396,14 +346,13 @@ export default {
       activeName_tab: 'article',
       dialogTableVisible: false,
       dialogFormVisible: false,
-      dialogVisible: false,
       formLabelWidth: '120px',
-      dialogStepActive: 0,
       addFigureInBlock: 0,
       editorType: false,
       checkedExData1: false,
       checkedExData2: false,
       checkedExData3: false,
+      renderLoading: false,
       id: 0,
       form: {
           name: '',
@@ -441,30 +390,31 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar','userId','username', 'accessToken']),
+    ...mapGetters(['accessToken']),
+    ...mapActions(['closeSideBar']),
     contentShortLength() {
       return this.postForm.content_short.length
-    },
-    closeSidebar() {
-      this.sidebar.opened = false
     }
   },
   created() {
-    this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
-    this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
-    this.cursors.update()
+    //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
+    //this.cursors.update()
 
   },
   mounted() {
-      this.fetchData(this.id)
-      asideRightAnimation()
-      this.updateUserList()
+    this.fetchData(this.id)
+    asideRightAnimation()
+    //this.updateUserList()
+    /*this.$watch(this.dialogVisible, (val) => {
+      this.$refs.insertFigureDialog.setDialogStatus(val)
+    })*/
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
       if(val==false) {
         var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogLightStatus(true)
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
@@ -473,6 +423,16 @@ export default {
     diagInsertFigurePythonVisible (val) {
       if(val==false) {
         var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogPythonStatus(true)
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+      }
+    },
+    diagInsertFigureRVisible (val) {
+      if(val==false) {
+        var idfigure = this.editidfigure
+        this.$refs.insertFigureDialog.setDialogRStatus(true)
         this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
@@ -503,7 +463,7 @@ export default {
 
       var usersListEl = document.getElementById('id-users-list');
       usersListEl.innerHTML = null;
-      var _cursors = this.cursors
+      //var _cursors = this.cursors
       _cursors.connections.forEach(function(connection) {
         //var userItemEl = document.createElement('li');
         var userNameEl = document.createElement('div');
@@ -609,14 +569,21 @@ export default {
     applyAbstractEdit (ev) {
       if (ev.event.target) {
         this.postForm.abstract = ev.event.target.innerHTML
-        this.save(ev);
+        //this.save(ev);
+        setTimeout(async ()=>{
+          this.save(ev)
+         },2000);
       }
     },
     applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
-      this.save(this.$event)
-      this.updateUserList(editor)
+      //this.save(this.$event)
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+       },2000);
+      //this.updateUserList(editor)
     },
     addNewRow (ev,key) {
       var uuid_ = String(uuidv4())
@@ -640,16 +607,14 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       this.save(ev)
     },
-    addChartBlock (ev,key,subkey,subsubkey) {
-    var self = this
-      this.createFigure().then(idFigure => {
-        console.log("addChartBlock::idFigure: " + idFigure)
-        var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure',nbEdit:0}
-        self.editidfigure = idFigure
-        self.poseditfigure = [key, subkey, subsubkey]
-        self.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
-      })
-      this.openEditFigure(ev,key,subkey,subsubkey)
+    async addChartBlock (ev, key, subkey, subsubkey) {
+      const idFigure = await this.createFigure()
+      console.log("addChartBlock::idFigure: " + idFigure)
+      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
+      this.editidfigure = idFigure
+      this.poseditfigure = [key, subkey, subsubkey]
+      this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
+      this.openEditFigure(ev, key, subkey, subsubkey)
     },
     addPictureBlock (ev,key,subkey,subsubkey) {
       console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
@@ -661,18 +626,19 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    editChartBlock (ev,key,subkey,subsubkey,idFigure) {
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
-      this.diagInsertFigurePlotlyVisible = true;
-    },
-    editImageBlock () {
-      //this.editidfigure = idFigure
-      //this.poseditfigure = [key, subkey, subsubkey]
-      //this.diagInsertFigurePlotlyVisible = true;
-    },
-    forceRerenderBlock (key,subkey,subsubkey) {
-
+      const response = await axios.get('/api/figure/' + this.editidfigure, {
+        headers: { 'Authorization': `Bearer ${this.accessToken}` }
+      })
+      if (response.data.script.language === 'Python') {
+        this.diagInsertFigurePythonVisible = true
+      } else if (response.data.script.language === 'R') {
+        this.diagInsertFigureRVisible = true
+      } else {
+        this.diagInsertFigurePlotlyVisible = true
+      }
     },
     addOneBlock (ev,key) {
       var uuid_block = String(uuidv4())
@@ -707,25 +673,9 @@ export default {
 
     },
     openEditFigure (ev,key,subkey,subsubkey) {
-      this.dialogVisible = true;
+      this.dialogVisible = true
     },
-    addNewFigurePlotly (ev,key,subkey,subsubkey){
-      this.dialogStepActive++;
-      if(this.dialogStepActive == 2){
-        this.dialogVisible = false;
-        this.diagInsertFigurePlotlyVisible = true;
-        this.dialogStepActive = 0;
-      }
-    },
-    addNewFigurePython (ev,key,subkey,subsubkey){
-      this.dialogStepActive++;
-      if(this.dialogStepActive == 2){
-        this.dialogVisible = false;
-        this.diagInsertFigurePythonVisible = true;
-        this.dialogStepActive = 0;
-      }
-    },
-    createFigure () {
+    async createFigure () {
       const newFigure = {
         data: [{
           x: ['Sample A', 'Sample B', 'Sample C', 'Sample D'],
@@ -739,16 +689,10 @@ export default {
           showlegend: false
         }
       };
-
-      return axios.post('/api/figure/', newFigure, {headers: { 'Authorization': `Bearer ${this.accessToken}` }})
-      .then(response => {
-        let _idFigure = response.data;
-        console.log("createFigure::idFigure: " + _idFigure)
-        return _idFigure
-      })
-      .catch(err => {
-
-      })
+      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      let _idFigure = response.data;
+      console.log("createFigure::idFigure: " + _idFigure)
+      return _idFigure
     },
     createImage () {
       const newImage = {
@@ -775,11 +719,34 @@ export default {
         if (!response.data.items) return
         this.userListOptions = response.data.items.map(v => v.name)
       })
+    },
+    async execPythonCode () {
+      this.renderLoading = true
+      await this.$refs.pythonChild.execCode()
+      this.renderLoading = false
+    },
+    async execRCode () {
+      this.renderLoading = true
+      await this.$refs.rChild.execCode()
+      this.renderLoading = false
+    },
+    changePythonVersion (newValue) {
+      this.$refs.pythonChild.setVersion(newValue)
     }
   }
 }
 </script>
-<style>
+<style lang="scss">
+  .el-dropdown {
+    vertical-align: top;
+  }
+  .el-dropdown + .el-dropdown {
+    margin-left: 15px;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
+  }
+
 .el-dialog--center .el-dialog__body{
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;

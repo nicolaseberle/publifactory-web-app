@@ -116,6 +116,7 @@ import DataTable from '../../../components/DataTable'
 import locales from '../../../locales/article'
 import axios from 'axios'
 
+const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {
@@ -155,7 +156,7 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-        console.log(tab, event);
+        debug(tab, event);
     },
     fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
@@ -189,7 +190,7 @@ export default {
         axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
         .then(response => {
           let new_article_id = response.data
-          console.log("create successfully ")
+          debug("create successfully ")
           this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
         })
         .catch(e => {

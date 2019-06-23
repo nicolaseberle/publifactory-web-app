@@ -47,7 +47,7 @@ var CommentSchema = new Schema({
   childComment: [{
     type: Schema.Types.ObjectId,
     ref: 'Comment',
-    default: null
+    default: []
   }]
 });
 

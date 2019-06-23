@@ -69,14 +69,14 @@ var development = {
 }
 var production = {
   email : {
-    host: process.env.EMAIL_HOST,
-    port : 587,
-    rootHTML: process.env.ROOT_HTML,
-    secure: false,
-    auth: {
-      'user' : process.env.EMAIL_ACCOUNT,
-      'pass' : process.env.EMAIL_PASS
-    }
+    rootHTML: "http://localhost:9001",
+    user: "publifactory.noreply@gmail.com",
+    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+  },
+  orcid: {
+    clientId: 'APP-HCKHJYQTALPVGUJ1',
+    clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
+    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
   },
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
@@ -106,7 +106,8 @@ var production = {
     port: process.env.APP_PORT || process.env.PORT || 8080,
     // MongoDB connection options
     mongo: {
-      uri: process.env.MONGODB_URI
+      //uri: process.env.MONGODB_URI
+      uri: 'mongodb://localhost:27017/mevn-dev',
     },
 
     // frontend folder

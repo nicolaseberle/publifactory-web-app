@@ -66,24 +66,24 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'dashboard',
   // hidden: true,
-  meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
+  meta: { title: 'board', icon: 'appsbutton', noCache: true },
   children: [
     {
       path: '',
-      name: 'Articles',
-      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      name: 'my_articles',
+      meta: { title: 'my_articles', icon: 'edit', noCache: true },
       component: () => import('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
-      name: 'Journals',
-      meta: { title: 'Journals', icon: 'book', noCache: true },
+      name: 'my_journals',
+      meta: { title: 'my_journals', icon: 'book', noCache: true },
       component: () => import('../view/journals/index.vue')
     },
     {
       path: '/data',
-      name: 'Data',
-      meta: { title: 'Data', icon: 'database', noCache: true },
+      name: 'my_data',
+      meta: { title: 'my_data', icon: 'database', noCache: true },
       component: () => import('../view/data/index.vue')
     },
     {
@@ -97,24 +97,38 @@ export const constantRouterMap = [{
       component: () => import('../view/dashboard/index.vue')
     }
   ]
-},
+},//
+{
+  path: '/feeds',
+  component: Layout,
+  redirect: 'feeds',
+  // hidden: true,
+  meta: { title: 'feeds', icon: 'layers', noCache: true },
+  children: [
+    {
+      path: 'feeds',
+      hidden: true,
+      component: () => import('../view/journals/index.vue')
+    }
+  ]
+},//
 {
   path: '/applications',
   component: Layout,
   redirect: 'applications',
   // hidden: true,
-  meta: { title: 'Services', icon: 'puzzle-piece-plugin', noCache: true },
+  meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true },
   children: [
     {
       path: 'reviewermatcher',
-      name: 'Matcher',
-      meta: { title: 'Reviewer Matcher', icon: 'network', noCache: true },
+      name: 'reviewer_matcher',
+      meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
       component: () => import('../view/applications/reviewermatcher/index.vue')
     },
     {
       path: 'preprintsearch',
-      name: 'Radar',
-      meta: { title: 'Preprint Search', icon: 'search', noCache: true },
+      name: 'preprint_search',
+      meta: { title: 'preprint_search', icon: 'search', noCache: true },
       component: () => import('../view/applications/preprintsearch/index.vue')
     },
     {
@@ -150,9 +164,9 @@ export const constantRouterMap = [{
   children: [
     {
       path: '/articles/:id',
-      name: 'Article',
+      name: 'article',
       props: { newsletterPopup: false },
-      meta: { title: 'Articles', icon: 'edit', noCache: true },
+      meta: { title: 'article', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/article/index.vue').then(resolve)
       }
@@ -165,9 +179,9 @@ export const constantRouterMap = [{
   children: [
     {
       path: '/journals/:id',
-      name: 'Journal',
+      name: 'journal',
       props: { newsletterPopup: false },
-      meta: { title: 'Journal', icon: 'edit', noCache: true },
+      meta: { title: 'journal', icon: 'edit', noCache: true },
       component: (resolve) => {
         import('../view/journals/index_.vue').then(resolve)
       }
@@ -177,7 +191,7 @@ export const constantRouterMap = [{
   path: '*',
   component: {
     render (h) {
-      return h('div', { staticClass: 'flex flex-main-center', attrs: { style: 'width:100%;font-size:32px' }}, 'Page not found')
+      return h('div', { staticClass: 'flex flex-Boardmain-center', attrs: { style: 'width:100%;font-size:32px' }}, 'Page not found')
     }
   }
 }]

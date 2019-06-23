@@ -16,7 +16,7 @@
       <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item
           v-if="child.children&&child.children.length>0"
-          :is-nest="true"
+          :is-nest="false"
           :item="child"
           :key="child.path"
           :base-path="resolvePath(child.path)"
@@ -38,6 +38,7 @@ import path from 'path'
 import { generateTitle } from '../../../../utils/i18n'
 import { validateURL } from '../../../../utils/validate'
 import Item from './Item'
+
 
 export default {
   name: 'SidebarItem',
@@ -123,3 +124,8 @@ export default {
   }
 }
 </script>
+<style>
+.menu-wrapper{
+  margin-bottom: 25px;
+}
+</style>

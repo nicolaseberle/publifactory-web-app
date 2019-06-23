@@ -1,18 +1,21 @@
-var ShareDB = require('sharedb/lib/client');
+// var ShareDB = require('sharedb/lib/client');
 var Quill = require('quill');
-var ReconnectingWebSocket = require('reconnectingwebsocket');
+// var ReconnectingWebSocket = require('reconnectingwebsocket');
 var cursors = require('./cursors' );
 var utils = require('./utils');
 
-import QuillCursors from 'quill-cursors/src/cursors';
+// import QuillCursors from 'quill-cursors/src/cursors';
 
-ShareDB.types.register(require('rich-text').type);
+// ShareDB.types.register(require('rich-text').type);
 
-Quill.register('modules/cursors', QuillCursors);
+// Quill.register('modules/cursors', QuillCursors);
 
-var shareDBSocket = new ReconnectingWebSocket(((location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/sharedb');
+// var shareDBSocket = new ReconnectingWebSocket(((location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/sharedb');
 
-var shareDBConnection = new ShareDB.Connection(shareDBSocket);
+// var shareDBConnection = new ShareDB.Connection(shareDBSocket);
+
+
+const debug = require('debug')('frontend');
 
 var quill = window.quill = new Quill('#editor', {
   theme: 'snow',
@@ -95,7 +98,7 @@ doc.subscribe(function(err) {
     var range = quill.getSelection();
 
     if (range) {
-      console.log('[cursors] Stopped typing, sending a cursor update/refresh.');
+      debug('[cursors] Stopped typing, sending a cursor update/refresh.');
       sendCursorData(range);
     }
   }, 1500);
@@ -215,7 +218,7 @@ var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator
 shareDBConnection.on('state', function(state, reason) {
   var indicatorColor;
 
-  console.log('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+  debug('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
 
   sharedbSocketStateEl.innerHTML = state.toString();
 

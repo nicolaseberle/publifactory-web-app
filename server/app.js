@@ -28,8 +28,8 @@ var app = express()
 app.use(cors())
 app.use(logger('dev'));
 var server = require('http').createServer(app)
-var socketio = require('socket.io')(server)
-require('./config/socketio')(socketio)
+//var socketio = require('socket.io')(server)
+//require('./config/socketio')(socketio)
 require('./config/express')(app)
 require('./routes')(app)
 
@@ -46,9 +46,9 @@ server.listen(config.port, config.ip, function () {
 })
 
 // init websockets servers
-var wssShareDB = require('./helpers/wss-sharedb')(server);
-var wssCursors = require('./helpers/wss-cursors')(server);
-
+// var wssShareDB = require('./helpers/wss-sharedb')(server);
+// var wssCursors = require('./helpers/wss-cursors')(server);
+/*
 server.on('upgrade', (request, socket, head) => {
   const pathname = url.parse(request.url).pathname;
   console.log(pathname)
@@ -67,6 +67,6 @@ server.on('upgrade', (request, socket, head) => {
     socket.destroy();
   }
 });
-
+*/
 // Expose app
 exports = module.exports = app

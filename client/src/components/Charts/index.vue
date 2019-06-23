@@ -83,7 +83,7 @@ import { HotTable } from '@handsontable/vue';
 import { mapGetters } from 'vuex'
 
 import axios from 'axios'
-
+const debug = require('debug')('frontend');
 //var Handsontable = require('handsontable');
 
 export default {
@@ -122,12 +122,12 @@ export default {
           contextMenu: true,
           minCols: 20,
           afterChange: () => {
-            console.log("afterChange")
+            debug("afterChange")
             if (this.hotRef) {
               var __data = this.hotRef.getSourceData()
-              console.log(__data)
-              console.log(__data[0])
-              console.log(__data[1].map(Number))
+              debug(__data)
+              debug(__data[0])
+              debug(__data[1].map(Number))
 
               this.currentData[0].x = __data[0]
               if (this.parentFigureType == 'bar'){
@@ -186,7 +186,7 @@ export default {
   },
   mounted() {
         this.hotRef = this.$refs.hotTableComponent.hotInstance;
-        console.log(this.idfigure)
+        debug("mounted:: ",this.idfigure)
 
 
     // var container = document.getElementById('tabFactory');
@@ -203,7 +203,7 @@ export default {
       contextMenu: {
             callback: function (key, selection, clickEvent) {
               // Common callback for all options
-              console.log(key, selection, clickEvent);
+              debug(key, selection, clickEvent);
             },
             items: {
               "newtrace": { // Own custom option
@@ -235,9 +235,9 @@ export default {
                         let vm = this
                         setTimeout(function() {
                           let arr_Cell = vm.getSelected()
-                          console.log(arr_Cell[0])
+                          debug(arr_Cell[0])
                           vm.colHeaders = vm.getDataAtRow(arr_Cell[0][0])
-                          console.log(vm.getDataAtRow(arr_Cell[0][0]))
+                          debug(vm.getDataAtRow(arr_Cell[0][0]))
                         }, 0);
 
                           // alert('You select this row to be header!');
@@ -297,9 +297,9 @@ export default {
 /*
     hot.addHook('afterInit', function(changes, src) {
         this.loadData(new Array([this.tableHeader[0],this.tableData]))
-        console.log('afterInit')
+        debug('afterInit')
 
-        console.log(this.tableHeader[0])
+        debug(this.tableHeader[0])
         /*this.colHeaders = this.tableHeader
         vm.currentData[0].x = this.tableHeader[0]
         vm.currentData[0].y = [10, 6 , 4 ,5]*/
@@ -313,13 +313,13 @@ export default {
 
   },
   watch:{
-    parentTitleChart () {
+    parentTitleChart (newVal) {
       this.layout = {'title': this.parentTitleChart}
       this.saveFigure ()
     },
-    parentFigureType () {
+    parentFigureType (newVal) {
       // WARNING [0] for Trace 1 [1] for Trace 2...
-      console.log("parentFigureType change : ", this.parentFigureType)
+      debug("parentFigureType change : ", this.parentFigureType)
       this.currentData[0] = {'type': this.parentFigureType}
       if (this.parentFigureType == 'box'){
         this.currentData = [{
@@ -347,18 +347,26 @@ export default {
       }
       this.saveFigure ()
     },
-    settings3 () {
-      //console.log(this.settings3)
+    settings3 (newVal) {
+      debug(this.settings3)
     }
   },
   methods: {
     saveFigure () {
       console.log("saveFigure ", this.currentData.y)
-      axios.put('/api/figure/'  + this.idfigure, { "data": this.currentData,"option":this.option,"layout": this.layout}, {
+      axios.put('/api/figure/'  + this.idfigure, {
+        data: this.currentData,
+        option:this.option,
+        layout: this.layout,
+        script: {
+          language: "Light",
+          content: null
+        }
+      }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(response => {
-        console.log("figure saved")
+        debug("figure saved")
       })
       .catch(e => {
         console.log(e)
@@ -389,10 +397,10 @@ export default {
           this.tableData = new Array(JSON.parse(response.data[0].content))
           this.tableHeader = new Array(JSON.parse(response.data[0].header))
           this.currentData[0].x = this.tableHeader[0]
-          console.log("loadData")
-          console.log(this.currentData[0].x)
+          debug("loadData")
+          debug(this.currentData[0].x)
           this.currentData[0].y = [10, 6 , 4]
-          console.log(this.currentData[0].y)
+          debug(this.currentData[0].y)
           this.settings.data = new Array(this.currentData[0].x,this.currentData[0].y)
           this.settings3.data = new Array(this.currentData[0].x,this.currentData[0].y)
 

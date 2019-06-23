@@ -3,7 +3,7 @@
 const User = require('../user/user.model')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
-const Roles = require('../roles/journal/roles.journal.model')
+const RolesJournal = require('../roles/journal/roles.journal.model')
 const Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
 
@@ -52,7 +52,7 @@ exports.getJournals = async (req, res, next) => {
       console.log(JSON.stringify(journals, null, "\t"))
       renameObjectProperty(journals, 'docs', 'journals');
     } else {
-      console.log(JSON.stringify("findJournalById", null, "\t"))
+      //console.log(JSON.stringify("findJournalById", null, "\t"))
       journals = await Journal.findById(req.params.id)
         .populate('users')
         .populate('article')
@@ -128,7 +128,7 @@ module.exports.createJournal = async (req, res, next) => {
     // console.log(JSON.stringify(author, null, "\t"));
     newJournal.users[0] = req.decoded._id;
     const journal = await newJournal.save();
-    new Roles({ id_user: req.decoded._id, id_journal: journal, right: 'editor' }).save();
+    new RolesJournal({ id_user: req.decoded._id, id_journal: journal._id, right: 'editor' }).save();
 
     console.log(JSON.stringify(journal._id, null, "\t"));
 
@@ -208,7 +208,7 @@ module.exports.getJournalsUser = async (req, res, next) => {
     const query = { _id: req.params.id };
     if (req.params.role !== undefined)
       query.right = req.params.role;
-    const users = await Roles.find(query);
+    const users = await RolesJournal.find(query);
     res.json({ success: true, users: users });
   } catch (e) {
     next(e);
@@ -219,7 +219,7 @@ module.exports.setArticlePublish = async (req, res, next) => {
   try {
     const query = { _id: req.params.id, content: { reference: { $in: [req.params.id_article] } } };
     const toUpdate = { $set: { content: { published: true } } };
-    await Roles.findOneAndUpdate(query, toUpdate);
+    await RolesJournal.findOneAndUpdate(query, toUpdate);
     res.json({ success: true });
   } catch (e) {
     next(e);
@@ -258,7 +258,7 @@ module.exports.inviteUser = async (req, res, next) => {
           await mail.sendInvitationJournalUser(senderId, clientUrl)
         } else {
           const userInfo = await User.findOne({ email: req.body.to });
-          const role = new Roles({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
+          const role = new RolesJournal({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
           await role.save();
           await mail.sendInvitationJournalAssociateEditor(senderId, clientUrl)
         }
@@ -273,18 +273,33 @@ module.exports.inviteUser = async (req, res, next) => {
 module.exports.followJournal = async (req, res, next) => {
   try {
     let instruction, query = { id_journal: req.params.id, id_user: req.decoded._id }
-    const roleInfo = await Roles.findOne(query);
+    const roleInfo = await RolesJournal.findOne(query);
     if (roleInfo === null) {
       instruction = { $push: { users: req.decoded._id } }
-      await new Roles({ id_user: req.decoded._id, id_journal: req.params.id }).save()
+      await new RolesJournal({ id_user: req.decoded._id, id_journal: req.params.id }).save()
     } else {
       instruction = { $pull: { users: { $in: [req.decoded._id] } } }
-      await Roles.findOneAndDelete(query);
+      await RolesJournal.findOneAndDelete(query);
     }
     query = { _id: req.params.id };
     await Journal.findOneAndUpdate(query, instruction);
     res.json({ success: true })
   } catch (e) {
     next(e);
+  }
+}
+
+module.exports.userFollowedJournals = async (req, res, next) => {
+  try {
+
+    const query = RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal');
+    await query.exec(function (err, docs) {
+      console.log('userFollowedJournals :: response :: ', docs)
+      res.json({success: true, journals: docs})
+    });
+
+  } catch (e){
+    console.log('userFollowedJournals :: error :: ',e)
+    next(e)
   }
 }

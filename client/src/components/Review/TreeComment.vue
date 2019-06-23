@@ -126,7 +126,7 @@
         :depth="depth + 1"
         v-on:post='reload'
       >
-      </tree-comment>
+    </tree-comment>
 
   </div>
 </template>
@@ -135,49 +135,50 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import axios from 'axios'
 import { mapGetters } from 'vuex'
 import velocity from 'velocity-animate'
+const debug = require('debug')('frontend');
 var uuidv4 = require('uuid/v4');
 
 export default {
   props: {
-  uuidComment: {type: String},
-  label: {type: String},
-  nodes: {type: Array,
-          validator: function (value) {
-            if(typeof value == "") {
-              return []
+    uuidComment: {type: String},
+    label: {type: String},
+    nodes: {type: Array,
+            validator: function (value) {
+              if(value) {
+                return value
+              }
+              else {
+                return []
+              }
             }
-            else {
-              return value
-            }
-
-    }},
-  flagShowingComment: {type: Boolean},
-  depth: {type: Number},
-  creationDate: String,
-  anonymousFlag: {type: Boolean},
-  reviewRequest: {type: String},
-  scores:{
-    type:Object,
-    validator: function (value) {
-      if(value) {
-        return value
+    },
+    flagShowingComment: {type: Boolean},
+    depth: {type: Number},
+    creationDate: String,
+    anonymousFlag: {type: Boolean},
+    reviewRequest: {type: String},
+    scores:{
+      type:Object,
+      validator: function (value) {
+        if(value) {
+          return value
+        }
+        else {
+          return ""
+        }
       }
-      else {
-        return ""
+    },
+    user: {
+      type:Object,
+      validator: function (value) {
+        if(value) {
+          return value
+        }
+        else {
+          return ""
+        }
       }
     }
-  },
-  user: {
-    type:Object,
-    validator: function (value) {
-      if(value) {
-        return value
-      }
-      else {
-        return ""
-      }
-    }
-  }
   },
   name: 'tree-comment',
   components:{'font-awesome-icon': FontAwesomeIcon},
@@ -297,7 +298,7 @@ export default {
       }).catch(() => {})
     },
     upvoteComment (ev) {
-      console.log('upvoteComment')
+      debug('upvoteComment')
       this.scores.upvote = ++this.scores.upvote
       axios.put('/api/comments/'  + this.id + '/comments/' + this.uuidComment,{"upvote": 1, "downvote": 0 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -308,7 +309,7 @@ export default {
       })
     },
     downvoteComment (ev,idComment,key) {
-      console.log('downvoteComment')
+      debug('downvoteComment')
       this.scores.upvote = --this.scores.upvote
       axios.put('/api/comments/'  + this.id + '/comments/' + this.uuidComment,{"upvote": -1, "downvote": 0 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -319,11 +320,11 @@ export default {
       })
     },
     focusOnCommentedText () {
-      console.log('focusOnCommentedText')
+      debug('focusOnCommentedText')
       const markup = this.uuidComment
       const articleText = $("span[datareview='" + markup + "']")
       if (articleText.length > 0){
-        console.log(articleText)
+        debug(articleText)
         var offset = 200
         var delay = 1000
         $('html, body').animate({

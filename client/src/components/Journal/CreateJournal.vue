@@ -1,14 +1,5 @@
 <template>
   <div>
-    <!--<el-row style='margin-bottom:10px'>
-      <el-col :span="24">
-        <el-alert
-          title="Don't worry, you can change these settings later"
-          type="info"
-          show-icon>
-        </el-alert>
-      </el-col>
-    </el-row>-->
     <el-form  :model="dynamicForm" :rules="rules" ref="dynamicForm" label-width="120px" class="dialog-create-journal" style='text-align:left'>
       <el-form-item label="Title" :label-width="formLabelWidth" prop="title">
         <el-col :span='12'>
@@ -22,7 +13,7 @@
       </el-form-item>
       <el-form-item label="Editors" :label-width="formLabelWidth">
         <el-col :span='12'>
-          <el-input  v-model="dynamicForm.editor.name" autocomplete="off" :disabled="true">{{dynamicForm.editor.firstname}} {{dynamicForm.editor.lastname}}</el-input>
+          <el-input  v-model="dynamicForm.editor.name" autocomplete="off" disabled>{{dynamicForm.editor.firstname}} {{dynamicForm.editor.lastname}}</el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="Keywords" :label-width="formLabelWidth" prop="keywords">
@@ -44,7 +35,7 @@
           @blur="handleInputConfirm"
         >
         </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New keypoint</el-button>
+        <el-button v-else class="button-new-tag" size="small" @click="showInput()">+ New keypoint</el-button>
 
       </el-form-item>
       <el-form-item label="Access Policy" :label-width="formLabelWidth">
@@ -56,23 +47,6 @@
         <el-button @click="$emit('close')">Cancel</el-button>
       </el-form-item>
     </el-form>
-    <!--
-    <el-row style='margin-bottom:10px'>
-      <el-col :span="24">
-        <el-alert
-          title="General Conditions of Use"
-          description="By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them."
-          type="info"
-          style='text-align:left'
-          >
-        </el-alert>
-      </el-col>
-    </el-row>-->
-
-    <!--<span slot="footer" class="dialog-footer">
-      <el-button @click="$emit('close')">Cancel</el-button>
-      <el-button type="primary" @click="$emit('close')">Create</el-button>
-    </span>-->
   </div>
 </template>
 
@@ -80,6 +54,7 @@
 
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+const debug = require('debug')('frontend');
 
   export default {
     name: 'CreateJournal',
@@ -112,7 +87,7 @@ import { mapGetters } from 'vuex'
       }
     },
     computed: {
-      ...mapGetters(['sidebar','userId', 'accessToken'])
+      ...mapGetters(['userId', 'accessToken'])
     },
     created () {
       axios.get('/api/users/me',{headers: {
@@ -127,8 +102,8 @@ import { mapGetters } from 'vuex'
 
     },
     methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+      submitForm(dynamicForm) {
+        this.$refs[dynamicForm].validate((valid) => {
           if (valid) {
             this.$confirm(`By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them.`, this.$t('confirm.title'), {
                 type: 'warning'
@@ -138,13 +113,10 @@ import { mapGetters } from 'vuex'
             }).catch(() => {})
 
           } else {
-            console.log('error submit!!')
+            debug('error submit!!')
             return false;
           }
         });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
       },
       handleClose(tag) {
         this.dynamicForm.tags.splice(this.dynamicForm.tags.indexOf(tag), 1);
@@ -159,8 +131,8 @@ import { mapGetters } from 'vuex'
         axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_journal_id = response.data.journal._id
-          console.log(response.data)
-          console.log("create successfully ")
+          debug(response.data)
+          debug("create successfully ")
           this.$router.push({ path: `/journals/${new_journal_id}` })
         })
         .catch(e => {

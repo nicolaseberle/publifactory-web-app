@@ -8,6 +8,7 @@ var User = require('../api/user/user.model')
 var Article = require('../api/article/article.model');
 var Comments = require('../api/comment/comment.model');
 var Journals = require('../api/journal/journal.model');
+const Figure = require('../api/figure/figure.model');
 var RolesArticle = require('../api/roles/article/roles.article.model');
 var RolesJournal = require('../api/roles/journal/roles.journal.model');
 var seedDB = require('../../config.js').backend.seedDB
@@ -74,9 +75,10 @@ var populateUsers = new Promise(
 
 var populateBase = function () {
     populateUsers.then(function (users) {
+      Figure.find({}).remove().exec()
       User.find({}, async function (err, users) {
         if (err) throw err
-        createComment(users)
+        //createComment(users)
         await createArticles(users);
         createJournals(users);
       })
@@ -114,7 +116,7 @@ function createComment(user_tmp) {
 
 function createJournals(user_tmp) {
   Journals.find({}).remove()
-    .then(() => {
+    .then(() => {/*
       let journals = Journals.create(
       {
         title: 'Developmental Biology',
@@ -142,8 +144,8 @@ function createJournals(user_tmp) {
         color_2: "#FAD2BE",
         users: [user_tmp[1]._id],
         published: true
-      });
-      return journals
+      });*/
+      // return journals
   })
   .then(() => {console.log('finished populating journals');})
   .catch(err => console.log('error populating journals', err));
@@ -153,7 +155,7 @@ function createJournals(user_tmp) {
 async function createArticles (user_tmp, comment_tmp) {
   const resres = await new Promise((resolve) => {
     Article.find({}).remove()
-      .then(() => {
+      .then(() => {/*
         let comments = Comments.create(
           {
             userId: [user_tmp[1]._id],
@@ -164,7 +166,8 @@ async function createArticles (user_tmp, comment_tmp) {
             userId: [user_tmp[1]._id],
             content: 'Need precision',
             reviewRequest: 'Minor revision'
-          });
+          });*/
+          /*
         let article = Article.create(
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
@@ -284,15 +287,16 @@ async function createArticles (user_tmp, comment_tmp) {
             tags: ['Aging', 'death rates', 'curve fitting'],
             doi: '',
 
-          });
-        resolve(article);
+          });*/
+        // resolve(article);
+        resolve()
       })
       .then(() => {
         console.log('finished populating articles')
       })
       .catch(err => console.log('error populating articles', err));
   });
-  createRole(user_tmp, resres);
+  //createRole(user_tmp, resres);
 }
 
 function createRole(user, article) {

@@ -21,19 +21,47 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import SidebarItem from './SidebarItem'
+import locales from  '../../../../locales/menu'
+import axios from 'axios'
 
 export default {
+  locales,
   components: { SidebarItem },
+  data(){
+    return {
+      followedJournals : [{'id': '5d0264a4d0738816c96658ca', 'title':'Genetics'},
+      {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}]
+    }
+  },
   computed: {
     ...mapGetters([
       'permissionrouters',
-      'sidebar'
+      'sidebar',
+      'roles',
+      'accessToken'
     ]),
     isCollapse() {
       return !this.sidebar.opened
     }
+  },
+  mounted (){
+    this.findFollowedJournals()
+  },
+  methods:{
+    ...mapActions(['updateRoutes']),
+    findFollowedJournals () {
+      axios.get('/api/journals/followed/all', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.followedJournals = list.data.journals
+        this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
+
+      }).catch(err => {
+        console.error(err)
+      })
+    },
   }
 }
 </script>
