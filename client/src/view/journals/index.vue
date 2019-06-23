@@ -21,15 +21,15 @@
         ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
       </div>
     </el-col>
-    <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
+    <el-col :span="22" v-for="(journal,key) in journals" :key='changeState'>
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
           <div style='float:right'>
-            <el-button  v-on:click="handleCreateJournal()" type="info"  round>Submit your article</el-button>
-            <el-button v-if='journal.followed===false'  v-on:click="handleFollowJournal(journal._id)" type="info" round>Follow the journal</el-button>
-            <el-button v-if='journal.followed===true' v-on:click="handleUnFollowJournal(journal._id)" type="primary" round>Followed</el-button>
+            <el-button  v-on:click="handleCreateJournal()" type=""  round>Submit your article</el-button>
+            <el-button v-show='journal.followed===false'  v-on:click="handleFollowJournal(key,journal._id)" type="" plain round>Follow the journal</el-button>
+            <el-button v-show='journal.followed===true' v-on:click="handleUnFollowJournal(key,journal._id)" type="primary" plain round>Followed</el-button>
           </div>
         </div>
         <div class="body">
@@ -84,7 +84,8 @@ export default {
       dialogCreationJournal : false,
       links: [],
       state2: '',
-      flagCreateJournal: false
+      flagCreateJournal: false,
+      changeState : 0
     }
   },
   computed: {
@@ -188,18 +189,28 @@ export default {
         };
 
     },
-    handleFollowJournal (idJournal) {
+    handleFollowJournal (key,idJournal) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.post('/api/journals/' + idJournal + '/follow', {
+      axios.post('/api/journals/' + idJournal + '/follow', {}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.journals = list.data.journals
+      }).then(() => {
+        this.journals[key].followed = true
+        this.changeState = this.changeState + 1
+        //console.log('handleFollowJournal :: ',this.journals[key].followed )
       }).catch(err => {
         console.error(err)
       })
     },
-    handleUnFollowJournal (idJournal) {
-
+    handleUnFollowJournal (key,idJournal) {
+      axios.post('/api/journals/' + idJournal + '/follow', {}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(() => {
+        this.journals[key].followed = false
+        this.changeState = this.changeState + 1
+        //console.log('handleFollowJournal :: ',this.journals[key].followed )
+      }).catch(err => {
+        console.error(err)
+      })
     }
   }
 }
