@@ -41,7 +41,9 @@
             <el-button  icon="el-icon-plus" size="mini" circle></el-button>
           </div>
           <li>
-            <div v-for='editor in editors'>{{editor.id_user.firstname}} {{editor.id_user.lastname}}</div>
+            <el-row>
+              <div v-for='editor in editors'>{{editor.id_user.firstname}} {{editor.id_user.lastname}}</div>
+            </el-row>
           </li>
         </div>
         <div class='details'>
@@ -50,8 +52,10 @@
             <el-button  icon="el-icon-plus" size="mini" circle></el-button>
           </div>
           <li>
-            <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
-            <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
+            <el-row>
+              <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
+              <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
+            </el-row>
           </li>
         </div>
         <div class='details'>
@@ -150,6 +154,7 @@ export default {
   },
   created (){
     this.journalId = this.$route.params && this.$route.params.id
+
   },
   mounted () {
     this.fetch()
@@ -171,6 +176,7 @@ export default {
       axios.get('/api/roles/journal/' + this.journalId + '/editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
+        console.log('fetchEditor :: ', res.data)
         this.editors = res.data.users
       }).catch(err => {
         console.error(err)

@@ -296,17 +296,18 @@ async function createArticles (user_tmp, comment_tmp) {
       })
       .catch(err => console.log('error populating articles', err));
   });
-  //createRole(user_tmp, resres);
+  createRole(/*user_tmp, resres*/);
 }
 
-function createRole(user, article) {
-  RolesArticle.find({}).remove().then(() => {
+function createRole(/*user, article*/) {
+  RolesArticle.find({}).remove().exec();//.then(() => {
+    /*
     RolesArticle.create({
       id_user: user[0]._id,
       id_article: article._id,
       right: 'author'
     });
-  });
+  });*/
   RolesJournal.find({}).remove().exec();
 }
 

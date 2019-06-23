@@ -27,10 +27,9 @@
           <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
           <i class="ai ai-open-access ai-2x"></i>
           <div style='float:right'>
-            <el-button-group>
-              <el-button  v-on:click="handleCreateJournal()" type="info"  round>Submit your article</el-button>
-              <el-button  v-on:click="handleFollowJournal(journal._id)" type="info" round>Follow the journal</el-button>
-            </el-button-group>
+            <el-button  v-on:click="handleCreateJournal()" type="info"  round>Submit your article</el-button>
+            <el-button v-if='journal.followed===false'  v-on:click="handleFollowJournal(journal._id)" type="info" round>Follow the journal</el-button>
+            <el-button v-if='journal.followed===true' v-on:click="handleUnFollowJournal(journal._id)" type="primary" round>Followed</el-button>
           </div>
         </div>
         <div class="body">
@@ -81,6 +80,7 @@ export default {
   data () {
     return {
       journals: [],
+      followedJournals : [],
       dialogCreationJournal : false,
       links: [],
       state2: '',
@@ -96,19 +96,54 @@ export default {
   components: {
     CreateJournal
   },
+  created () {
+
+  },
   mounted () {
-    this.$nextTick(() => {
-      this.fetch()
+    this.$nextTick(() =>  {
+      var initializePromise = this.initialize()
+      initializePromise.then( () => {
+        this.fetch()
+      });
     })
     this.links = this.loadAll();
   },
   methods: {
-    fetch (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+    initialize () {
+      return new Promise((resolve, reject) => {
+        axios.get('/api/journals/followed/all', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(list => {
+          this.followedJournals = list.data.journals
+          //console.log('intern function findFollowedJournals :: ',this.followedJournals)
+          resolve(this.followedJournals);
+        }).catch(err => {
+          reject(err);
+        })
+      })
+    },
+    fetch () {
       axios.get('/api/journals/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
+      }).then(async list => {
+
         this.journals = list.data.journals
+        this.journals = await  this.journals.map((item,key)=>{
+          let journal = item;
+          journal.followed = false;
+          return journal;
+        })
+        //console.log('followedJournals :: ',this.followedJournals)
+        for (let i = 0; i < this.journals.length; i++) {
+          for (let j = 0; j< this.followedJournals.length; j++){
+
+            if(this.journals[i]._id === this.followedJournals[j].id_journal._id )
+            {
+              this.journals[i].followed = true
+            }
+          }
+        }
+        console.log('journals :: ',this.journals)
       }).catch(err => {
         console.error(err)
       })
@@ -150,16 +185,8 @@ export default {
           category : String('Physics'),
           id_author : this.userId,
           published: true
-        };/*
-        axios.post('/api/articles/', newArticle)
-        .then(response => {
-          let new_article_id = response.data
-          console.log("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
-        })
-        .catch(e => {
-          console.log(e)
-        })*/
+        };
+
     },
     handleFollowJournal (idJournal) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
@@ -170,6 +197,9 @@ export default {
       }).catch(err => {
         console.error(err)
       })
+    },
+    handleUnFollowJournal (idJournal) {
+
     }
   }
 }
