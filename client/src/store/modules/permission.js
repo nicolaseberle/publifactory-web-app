@@ -66,7 +66,7 @@ const permission = {
         let roles = data['roles']
         let followedJournals = data['followedJournals']
         //TO DO, inout needs to be the array of journals
-        console.log('updateRoutes :: ',roles,followedJournals)
+        // console.log('updateRoutes :: ',roles,followedJournals)
         let  routes = filterAsyncRouter(constantRouterMap, roles)
         routes.forEach((parentRoute)=>{
           if(parentRoute.path==='/feeds'){

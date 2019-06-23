@@ -71,10 +71,12 @@ module.exports.getUserRoles = async function (req, res, next) {
 
 module.exports.getJournalUsers = async function (req, res, next) {
   try {
-    const query = { id_article: req.body.id_journal };
+    const query = { id_journal: req.params.id_journal };
     if (req.params.right)
       query.right = req.params.right;
-    const users = await RolesJournal.find(query).populate('id_user');
+    // console.log('getJournalUsers ::  query :: ',query)
+    const users = await RolesJournal.find(query).populate('id_user').exec();
+    // console.log('getJournalUsers :: ', users)
     res.json({ success: true, users: users})
   } catch (e) {
     next(e);

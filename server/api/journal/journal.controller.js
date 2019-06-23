@@ -273,7 +273,7 @@ module.exports.inviteUser = async (req, res, next) => {
 module.exports.followJournal = async (req, res, next) => {
   try {
     let instruction, query = { id_journal: req.params.id, id_user: req.decoded._id }
-    const roleInfo = await RolesJournal.findOne(query);
+    const roleInfo = await RolesJournal.findOne(query).exec();
     if (roleInfo === null) {
       instruction = { $push: { users: req.decoded._id } }
       await new RolesJournal({ id_user: req.decoded._id, id_journal: req.params.id }).save()
