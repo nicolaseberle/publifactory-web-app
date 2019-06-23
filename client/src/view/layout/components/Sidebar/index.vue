@@ -52,11 +52,10 @@ export default {
   methods:{
     ...mapActions(['updateRoutes']),
     findFollowedJournals () {
-      axios.get('/api/journals/followed', {
+      axios.get('/api/journals/followed/all', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.followedJournals = list.data.journals
-        console.log(list.data)
         this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
 
       }).catch(err => {

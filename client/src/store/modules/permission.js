@@ -79,11 +79,11 @@ const permission = {
                 }]
 
               for (let i = 0; i < followedJournals.length; i++){
-                let componentRoute = '../view/journals/' + followedJournals[i].id
+                let componentRoute = '../view/journals/' + followedJournals[i].id_journal._id
                 let _route = {
-                  'path': '/journals/' + followedJournals[i].id,
-                  'name':  followedJournals[i].title,
-                  'meta': { 'title': followedJournals[i].title, 'icon': 'book', 'noCache': 'true' },
+                  'path': '/journals/' + followedJournals[i].id_journal._id,
+                  'name':  followedJournals[i].id_journal.title,
+                  'meta': { 'title': followedJournals[i].id_journal.title, 'icon': 'book', 'noCache': 'true' },
                 }
                 parentRoute.children.push(_route)
               }
