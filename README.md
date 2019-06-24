@@ -18,5 +18,17 @@ Join us: contact@publifactory.co
 3. Open other terminal and run `npm run client`, you can combine the two command with `npm run dev`
 4. Open browser and nav to `localhost:9001` (the default port is 9001, if you change this, change the port)
 
+## GCLOUD
+
+1. Log in
+`gcloud auth init`
+
+2. Connexion with ssh 
+`gcloud compute --project "smart-rope-243709" ssh --zone "europe-west3-c" "atome-01"`
+
+3. Launch docker
+`gcloud compute --project "smart-rope-243709" ssh --zone "europe-west3-c" "atome-01" --command="more /home/$HOST/install.sh"`
+
+
 ## License
 Under [MIT license](./LICENSE)
