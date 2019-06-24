@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Define global variables
+
 # Syntax Coloration for PROMPT
 RED='\033[0;31m' # Red Color
 NC='\033[0m' # No Color
@@ -7,15 +9,15 @@ NC='\033[0m' # No Color
 DATE_BEGIN=`date +%s`
 USER=`whoami`
 
+# Store args in variable
 command=$1
 options=$2
-
 
 debug () {
   printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1";
 }
 
-log_path="`pwd`/logs/${DATE}.log"
+log_path="`pwd`/logs/${DATE_BEGIN}.log"
 debug "All the logs will be saved in $log_path\n"
 
 print_help () {
@@ -46,22 +48,22 @@ start () {
   debug "Images built.\n"
   debug "Up the database.\n"
   echo -ne '################          (76%)\r'
-  sudo docker-compose up -d mongo
+  sudo docker-compose up --no-deps -d mongo
   echo -ne '#################         (80%)\r'
   debug "Up ssh tunnel to access data visualization.\n"
-  sudo docker-compose up -d ssh_tunnel
+  sudo docker-compose up --no-deps -d ssh_tunnel
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
-  if [ ${options} = "prod" ];
+  if [[ ${options} = "prod" ]];
   then
     echo "prod"
   else
     debug "Launching the DEV app\n"
-    sudo docker-compose up -d client_dev
+    sudo docker-compose up --no-deps -d client_dev
   fi
   echo -ne '###################       (88%)\r'
   debug "Up the API.\n"
-  sudo docker-compose up -d api
+  sudo docker-compose up --no-deps -d api
   debug "All is up.\n"
 }
 
@@ -82,17 +84,26 @@ stop () {
   debug "Removing containers"
   sudo docker rm `docker ps -a | awk '{if(NR>1)print $1}'`
   debug "Every programs has been stopped !...\n"
+  debug "Removing node_modules folder...\n"
+  rm -rf ./node_modules/
+  debug "Removing package-lock...\n"
+  rm -f ./package-lock.json
+}
+
+save_database () {
+  debug "Creating a dump in ./database..."
+  mongodump -o ./database
 }
 
 echo -ne '#                         (5%)\r'
-if [ ${USER} != 'root' ];
+if [[ ${USER} != 'root' ]];
 then
   debug "You must be root to execute this script.\n"
   exit 1
 fi
 
 echo -ne '##                        (10%)\r'
-if [ "$#" -lt 1 ];
+if [[ "$#" -lt 1 ]];
 then
   debug "You must provide a command after the binary.\n"
   print_help
@@ -129,6 +140,10 @@ case "$command" in
     execution_time
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
+    exit 0
+    ;;
+  dump)
+    save_database
     exit 0
     ;;
   *)

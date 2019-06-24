@@ -1,0 +1,56 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Publifactory API",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Léo Riberon-Piatyszek",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "composable-middleware": "^0.3.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-favicon": "^2.0.1",
+    "express-jwt": "^5.1.0",
+    "js-call-r": "0.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^2.3.7",
+    "mongoose": "^5.5.11",
+    "mongoose-delete": "^0.3.4",
+    "mongoose-paginate": "^5.0.3",
+    "mongoose-slug-generator": "^1.0.4",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-orcid": "0.0.3",
+    "rich-text": "^3.1.0",
+    "serve-static": "^1.14.0",
+    "sharedb": "^1.0.0-beta.22",
+    "sharedb-mongo": "^1.0.0-beta.3",
+    "shortid": "^2.2.14",
+    "socketio-jwt": "^4.5.0",
+    "uuid": "^3.2.1",
+    "websocket-json-stream": "0.0.3"
+  },
+  "devDependencies": {
+    "async": "^3.1.0",
+    "debug": "^4.1.1",
+    "gmail-send": "^1.2.14",
+    "lodash": "^4.17.11",
+    "nodemon": "^1.19.0",
+    "python-shell": "^1.0.7",
+    "should": "^13.2.3",
+    "supertest": "^4.0.2",
+    "ws": "^7.0.1"
+  },
+  "engines": {
+    "node": "12.2.0",
+    "npm": "6.9.0"
+  }
+}
