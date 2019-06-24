@@ -112,11 +112,8 @@
             <el-col :span='23' :offset='1'>
             <el-select v-model="formSubmArticle.journal" placeholder="Please select the journal" style='width:100%'>
               <div v-for='journal in journalList'>
-                <el-option :label="journal.name" :value="journal._id"></el-option>
+                <el-option :label="journal.title" :value="journal._id"></el-option>
               </div>
-              <!--<el-option label="PCI Evol Biol" value="pci_evol_bio"></el-option>
-              <el-option label="PCI Ecology" value="pci_ecology"></el-option>
-              <el-option label="PCI Paleo" value="pci_paleo"></el-option>-->
             </el-select>
             </el-col>
           </el-form-item>
@@ -154,7 +151,7 @@ export default {
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
-      journalList: [{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
+      journalList: []//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
     }
   },
   computed: {
@@ -244,7 +241,15 @@ export default {
       this.$router.push(this.$route.query.redirect || '/')
     },
     getJournalList () {
-
+      axios.get('/api/journals/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.journalList = list.data.journals
+        //console.log('intern function findFollowedJournals :: ',this.followedJournals)
+        resolve(this.journalList);
+      }).catch(err => {
+        reject(err);
+      })
     },
     sendNotificationByMail () {
       //send a notification to authors
