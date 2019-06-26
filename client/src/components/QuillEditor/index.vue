@@ -92,7 +92,6 @@ Vue.use(Autocomplete)
 
 import ItemTemplate from './ItemTemplate.vue'
 
-import defaultsDeep from 'lodash.defaultsdeep'
 import 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
