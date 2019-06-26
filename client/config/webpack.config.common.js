@@ -54,7 +54,7 @@ const webpackConfig = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                include: [ helpers.root('../src'), resolve('/node_modules/vue-awesome'), resolve('/node_modules/vue-spinner/') ]
+                include: [ helpers.root('./src'), resolve('/node_modules/vue-awesome'), resolve('/node_modules/vue-spinner/') ]
             },/*
             {
               test: /\.vue$/,
