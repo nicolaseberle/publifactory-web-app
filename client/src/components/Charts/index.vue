@@ -466,7 +466,7 @@ export default {
 }
 </script>
 <style>
-@import "../../../../node_modules/handsontable/dist/handsontable.full.css";
+@import "../../../node_modules/handsontable/dist/handsontable.full.css";
 
 .col-main-menu-chart{
   height:100%;
