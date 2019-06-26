@@ -1,5 +1,5 @@
 var path = require('path')
-var config = require('../../server/config').frontend
+var config = require('../config').frontend
 var utils = require('./utils')
 var webpack = require('webpack')
 var merge = require('webpack-merge')
@@ -48,7 +48,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.index,
-      template: 'client/index.html',
+      template: 'index.html',
       inject: true,
       minify: {
         removeComments: true,

@@ -243,7 +243,7 @@ export default {
   border: none
 }
 .login-btn-icon-orcid {
-    background-image: url(/client/static/logo_orcid.svg);
+    background-image: url(/static/logo_orcid.svg);
 }
 div.logo {
     border: 1px solid none;

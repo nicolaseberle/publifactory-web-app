@@ -13,7 +13,7 @@ Vue.use(VueRouter)
 export const constantRouterMap = [{
   path: '/login',
   component: (resolve) => {
-    import('../view/auth/Login.vue').then(resolve)
+    require('../view/auth/Login.vue').then(resolve)
   },
   meta: {
     skipAuth: true
@@ -23,7 +23,7 @@ export const constantRouterMap = [{
 {
   path: '/register',
   component: (resolve) => {
-    import('../view/register/index.vue').then(resolve)
+    require('../view/register/index.vue').then(resolve)
   },
   meta: {
     skipAuth: true
@@ -31,13 +31,13 @@ export const constantRouterMap = [{
 },
 {
   path: '/auth-redirect',
-  component: () => import('../view/auth/authredirect'),
+  component: () => require('../view/auth/authredirect'),
   hidden: true
 },
 {
   path: '/invite/:id',
   component: (resolve) => {
-    import('../view/invite/index.vue').then(resolve)
+    require('../view/invite/index.vue').then(resolve)
   },
   meta: {
     skipAuth: true
@@ -46,7 +46,7 @@ export const constantRouterMap = [{
 {
   path: '/login/forgot/',
   component: (resolve) => {
-    import('../view/auth/forgot.vue').then(resolve)
+    require('../view/auth/forgot.vue').then(resolve)
   },
   meta: {
     skipAuth: true
@@ -55,7 +55,7 @@ export const constantRouterMap = [{
 {
   path: '/recover/password/:id',
   component: (resolve) => {
-    import('../view/auth/recoverPassword.vue').then(resolve)
+    require('../view/auth/recoverPassword.vue').then(resolve)
   },
   meta: {
     skipAuth: true
@@ -72,29 +72,29 @@ export const constantRouterMap = [{
       path: '',
       name: 'my_articles',
       meta: { title: 'my_articles', icon: 'edit', noCache: true },
-      component: () => import('../view/dashboard/index.vue')
+      component: () => require('../view/dashboard/index.vue')
     },
     {
       path: '/journal',
       name: 'my_journals',
       meta: { title: 'my_journals', icon: 'book', noCache: true },
-      component: () => import('../view/journals/index.vue')
+      component: () => require('../view/journals/index.vue')
     },
     {
       path: '/data',
       name: 'my_data',
       meta: { title: 'my_data', icon: 'database', noCache: true },
-      component: () => import('../view/data/index.vue')
+      component: () => require('../view/data/index.vue')
     },
     {
       path: 'settings',
       hidden: true,
-      component: () => import('../view/settings/index.vue')
+      component: () => require('../view/settings/index.vue')
     },
     {
       path: 'dashboard',
       hidden: true,
-      component: () => import('../view/dashboard/index.vue')
+      component: () => require('../view/dashboard/index.vue')
     }
   ]
 },//
@@ -108,7 +108,7 @@ export const constantRouterMap = [{
     {
       path: 'feeds',
       hidden: true,
-      component: () => import('../view/journals/index.vue')
+      component: () => require('../view/journals/index.vue')
     }
   ]
 },//
@@ -123,18 +123,18 @@ export const constantRouterMap = [{
       path: 'reviewermatcher',
       name: 'reviewer_matcher',
       meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
-      component: () => import('../view/applications/reviewermatcher/index.vue')
+      component: () => require('../view/applications/reviewermatcher/index.vue')
     },
     {
       path: 'preprintsearch',
       name: 'preprint_search',
       meta: { title: 'preprint_search', icon: 'search', noCache: true },
-      component: () => import('../view/applications/preprintsearch/index.vue')
+      component: () => require('../view/applications/preprintsearch/index.vue')
     },
     {
       path: 'applications',
       hidden: true,
-      component: () => import('../view/applications/index.vue')
+      component: () => require('../view/applications/index.vue')
     }
   ]
 },
@@ -149,11 +149,11 @@ export const constantRouterMap = [{
       path: 'user',
       name: 'Users',
       meta: { title: 'Users', icon: 'profile', noCache: true, roles: ['admin'] },
-      component: () => import('../view/admin/UserList.vue')
+      component: () => require('../view/admin/UserList.vue')
     },
     {
       path: 'admin',
-      component: () => import('../view/admin/UserList.vue')
+      component: () => require('../view/admin/UserList.vue')
     }
   ]
 },
@@ -168,7 +168,7 @@ export const constantRouterMap = [{
       props: { newsletterPopup: false },
       meta: { title: 'article', icon: 'edit', noCache: true },
       component: (resolve) => {
-        import('../view/article/index.vue').then(resolve)
+        require('../view/article/index.vue').then(resolve)
       }
     }]
 },
@@ -183,7 +183,7 @@ export const constantRouterMap = [{
       props: { newsletterPopup: false },
       meta: { title: 'journal', icon: 'edit', noCache: true },
       component: (resolve) => {
-        import('../view/journals/index_.vue').then(resolve)
+        require('../view/journals/index_.vue').then(resolve)
       }
     }]
 },

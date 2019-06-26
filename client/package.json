@@ -4,7 +4,8 @@
   "description": "Publifactory's webapp",
   "scripts": {
     "build": "./node_modules/.bin/cross-env NODE_ENV=production webpack",
-    "client": "./node_modules/.bin/cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --hot --progress"
+    "client": "./node_modules/.bin/cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --hot --progress",
+    "svgo": "svgo -f ./src/icons/svg --config=./src/icons/svgo.yml"
   },
   "author": "Nicolas Eberle",
   "license": "MIT",

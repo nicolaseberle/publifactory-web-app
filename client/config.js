@@ -42,7 +42,7 @@ var development = {
   },
   frontend: {
     port: 9001,
-    assetsRoot: path.resolve(__dirname, './client/src'),
+    assetsRoot: path.resolve(__dirname, './src'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
@@ -79,8 +79,8 @@ var production = {
     callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
   },
   frontend: {
-    index: path.resolve(__dirname, './client/dist/index.html'),
-    assetsRoot: path.resolve(__dirname, './client/dist'),
+    index: path.resolve(__dirname, './dist/index.html'),
+    assetsRoot: path.resolve(__dirname, './dist'),
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     cssSourceMap: true,
@@ -111,7 +111,7 @@ var production = {
     },
 
     // frontend folder
-    frontend: path.resolve(__dirname, './client/dist')
+    frontend: path.resolve(__dirname, './dist')
   })
 }
 

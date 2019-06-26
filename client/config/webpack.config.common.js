@@ -22,7 +22,7 @@ function assetsPath (_path) {
 const webpackConfig = {
     entry: {
         polyfill: '@babel/polyfill',
-        main: helpers.root('../src', 'main'),
+        main: helpers.root('./src', 'main'),
     },
     resolve: {
         extensions: [ '.js', '.vue', '.json' ],

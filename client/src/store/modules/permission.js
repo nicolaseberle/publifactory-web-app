@@ -75,7 +75,7 @@ const permission = {
                 {
                   'path': 'feeds',
                   'hidden': 'true',
-                  'component': "() => import('../view/journals/index.vue')"
+                  'component': "() => require('../view/journals/index.vue')"
                 }]
 
               for (let i = 0; i < followedJournals.length; i++){
@@ -89,7 +89,7 @@ const permission = {
               }
               //we add a route to add other journals
 
-              const journal = () => import('../../view/journals/index.vue')
+              const journal = () => require('../../view/journals/index.vue')
               parentRoute.children.push(
               {
                 'path': '/journal',

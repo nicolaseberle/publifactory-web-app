@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-const _root = path.resolve(__dirname, '..');
+const _root = path.resolve(__dirname, '../');
 
 exports.root = function (args) {
     args = Array.prototype.slice.call(arguments, 0);
