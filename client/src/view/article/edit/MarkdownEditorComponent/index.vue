@@ -107,14 +107,14 @@ export default {
     this.fetchData(this.id)
   },
   mounted () {
-    import('showdown').then(showdown => {
+    require('showdown').then(showdown => {
       const converter = new showdown.Converter()
       this.html = converter.makeHtml(this.content)
     })
   },
   methods: {
     markdown2Html(event) {
-      import('showdown').then(showdown => {
+      require('showdown').then(showdown => {
         const converter = new showdown.Converter()
         this.html = converter.makeHtml(this.content)
       })

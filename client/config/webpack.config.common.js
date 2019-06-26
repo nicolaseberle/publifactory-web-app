@@ -64,7 +64,7 @@ const webpackConfig = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                include: [ helpers.root('../src') ],
+                include: [ helpers.root('./src') ],
                 exclude:  /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-spinner\//
             },
             {
