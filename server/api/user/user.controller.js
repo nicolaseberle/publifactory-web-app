@@ -2,12 +2,12 @@
 
 var User = require('./user.model')
 // var passport = require('passport')
-var config = require('../../../config').backend
+var config = require('../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 const shortid = require('shortid');
 
-const configEmail = require('../../../config.js').email
+const configEmail = require('../../config.js').email
 var Invitation = require('../invitations/invitations.model');
 const Email = require('../email/email.controller');
 

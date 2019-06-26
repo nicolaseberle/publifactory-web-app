@@ -1,5 +1,5 @@
 var path = require('path')
-var config = require('../../config').frontend
+var config = require('../../server/config').frontend
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 exports.assetsPath = function (_path) {

@@ -8,7 +8,7 @@ const Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
 
 const shortid = require('shortid')
-const configEmail = require('../../../config.js').email
+const configEmail = require('../../config.js').email
 
 /**
  * Get list of articles

@@ -11,7 +11,7 @@ const helpers              = require('./helpers');
 const isDev                = process.env.NODE_ENV === 'development';
 
 function resolve (dir) {
-  return path.join(__dirname, '../client/', dir)
+  return path.join(__dirname, '../', dir)
 }
 
 function assetsPath (_path) {
@@ -22,11 +22,11 @@ function assetsPath (_path) {
 const webpackConfig = {
     entry: {
         polyfill: '@babel/polyfill',
-        main: helpers.root('client/src', 'main'),
+        main: helpers.root('../src', 'main'),
     },
     resolve: {
         extensions: [ '.js', '.vue', '.json' ],
-	      modules: [resolve('src'), resolve('../node_modules')],
+	      modules: [resolve('src'), resolve('node_modules')],
         alias: {
             'vue$': isDev ? 'vue/dist/vue.runtime.js' : 'vue/dist/vue.runtime.min.js'
         }
@@ -54,7 +54,7 @@ const webpackConfig = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                include: [ helpers.root('client/src'), resolve('../node_modules/vue-awesome'), resolve('../node_modules/vue-spinner/') ]
+                include: [ helpers.root('../src'), resolve('/node_modules/vue-awesome'), resolve('/node_modules/vue-spinner/') ]
             },/*
             {
               test: /\.vue$/,
@@ -64,7 +64,7 @@ const webpackConfig = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                include: [ helpers.root('client/src') ],
+                include: [ helpers.root('../src') ],
                 exclude:  /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-spinner\//
             },
             {
@@ -105,7 +105,7 @@ const webpackConfig = {
         //new HtmlPlugin({ template: 'index.html', chunksSortMode: 'dependency' })
 	new HtmlPlugin({
 	    filename: 'index.html',
-	    template: 'client/index.html',
+	    template: 'index.html',
 	    inject: true
 	})
     ]

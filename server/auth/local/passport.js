@@ -1,7 +1,7 @@
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 const OrcidStrategy = require('passport-orcid').Strategy;
-const configStrategy = require('../../../config').orcid;
+const configStrategy = require('../../config').orcid;
 
 exports.setupLogin = function (User, config) {
   passport.use(new LocalStrategy({

@@ -2,7 +2,7 @@
 require('shelljs/global')
 var path = require('path')
 process.env.NODE_ENV = 'production'
-var config = require('../../config').frontend
+var config = require('../../server/config').frontend
 var ora = require('ora')
 var webpack = require('webpack')
 var webpackConfig = require('./webpack.prod.conf')

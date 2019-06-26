@@ -1,7 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const config = require('../../config').backend
+const config = require('../config').backend
 
 module.exports = function checkToken(req, res, next) {
   const unparsedToken = req.body.token || req.params.token || req.headers['authorization'];

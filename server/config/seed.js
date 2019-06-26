@@ -11,8 +11,8 @@ var Journals = require('../api/journal/journal.model');
 const Figure = require('../api/figure/figure.model');
 var RolesArticle = require('../api/roles/article/roles.article.model');
 var RolesJournal = require('../api/roles/journal/roles.journal.model');
-var seedDB = require('../../config.js').backend.seedDB
-var resetDB = require('../../config.js').backend.resetDB
+var seedDB = require('../config.js').backend.seedDB
+var resetDB = require('../config.js').backend.resetDB
 
 const gen_text = `
 \\documentclass{article}

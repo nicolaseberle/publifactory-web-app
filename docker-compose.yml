@@ -2,9 +2,7 @@ version: "3.7"
 services:
   api:
     restart: always
-    build:
-      context: ./
-      dockerfile: server.dockerfile
+    build: ./server
     volumes:
       - app:/src/app
       - node_modules:/src/app/node_modules
@@ -33,7 +31,6 @@ services:
     build:
       context: ./
       dockerfile: mongo.dockerfile
-    command: --smallfiles
     ports:
       - "27017:27017"
     networks:
@@ -45,9 +42,7 @@ services:
     restart: always
     ports:
       - "9001:9001"
-    build:
-      context: ./
-      dockerfile: client.dockerfile
+    build: ./client
     volumes:
       - app:/src/app
       - node_modules:/src/app/node_modules

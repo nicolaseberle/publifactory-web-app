@@ -5,7 +5,7 @@
  'use strict';
 
 const shortid = require('shortid')
-const configEmail = require('../../../config.js').email
+const configEmail = require('../../config.js').email
 
 const User = require('../user/user.model')
 const Invitation = require('./invitations.model')

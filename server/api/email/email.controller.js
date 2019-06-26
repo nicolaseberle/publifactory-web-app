@@ -1,6 +1,6 @@
 'use strict';
 
-const configEmail = require('../../../config.js').email
+const configEmail = require('../../config.js').email
 const User = require('../user/user.model');
 
 module.exports = class Email {

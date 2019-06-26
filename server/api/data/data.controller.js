@@ -4,7 +4,7 @@ var User = require('../user/user.model');
 var Article = require('../article/article.model');
 var Data = require('./data.model');
 
-var config = require('../../../config').backend
+var config = require('../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')

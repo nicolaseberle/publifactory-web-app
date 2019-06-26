@@ -1,5 +1,5 @@
 var utils = require('./utils')
-var config = require('../../config').frontend
+var config = require('../../server/config').frontend
 var isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {

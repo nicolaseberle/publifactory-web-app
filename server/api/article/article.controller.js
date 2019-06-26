@@ -5,7 +5,7 @@ var Article = require('./article.model');
 const RolesArticle = require('../roles/article/roles.article.model');
 var Data = require('../data/data.model');
 
-var config = require('../../../config').backend
+var config = require('../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 var _ = require('lodash')

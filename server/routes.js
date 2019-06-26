@@ -5,7 +5,7 @@
 'use strict'
 
 var errors = require('./components/errors')
-var config = require('../config').backend
+var config = require('./config').backend
 var path = require('path')
 
 const jwtCheck = require('./auth/jwt');

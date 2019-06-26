@@ -4,7 +4,7 @@
 
 'use strict'
 var socketioJwt = require('socketio-jwt')
-var config = require('../../config').backend
+var config = require('../config').backend
 
 // When the user disconnects.. perform this
 function onDisconnect (socket) {

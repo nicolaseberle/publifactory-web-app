@@ -114,7 +114,7 @@ case "$command" in
   start)
     echo -ne '######                    (33%)\r'
     start >> ${log_path} 2>&1
-    echo -ne '########################  (100%)\r'
+    echo -ne '########################  (100%)\r\n'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     execution_time
     exit 0
@@ -122,7 +122,7 @@ case "$command" in
   stop)
     echo -ne '########                  (33%)\r'
     stop >> ${log_path} 2>&1
-    echo -ne '########################  (100%)\r'
+    echo -ne '########################  (100%)\r\n'
     execution_time
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     exit 0
@@ -138,7 +138,7 @@ case "$command" in
     start >> ${log_path} 2>&1
     echo -ne '#####################     (90%)\r'
     execution_time
-    echo -ne '########################  (100%)\r'
+    echo -ne '########################  (100%)\r\n'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     exit 0
     ;;

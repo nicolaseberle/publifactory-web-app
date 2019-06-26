@@ -1,5 +1,5 @@
 var ShareDB = require('sharedb');
-var config = require('../../config').backend
+var config = require('../config').backend
 
 ShareDB.types.register(require('rich-text').type);
 

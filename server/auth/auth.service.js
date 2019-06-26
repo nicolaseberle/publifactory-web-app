@@ -2,7 +2,7 @@
 
 // var mongoose = require('mongoose')
 // var passport = require('passport')
-const config = require('../../config').backend
+const config = require('../config').backend
 const jwt = require('jsonwebtoken')
 const expressJwt = require('express-jwt')
 const compose = require('composable-middleware')
