@@ -21,7 +21,7 @@ const logger = require('morgan');
 mongoose.connect(config.mongo.uri, config.mongo.options)
 
 // insure DB with admin user data
-require('./config/seed')
+// require('./config/seed')
 
 // Setup server
 var app = express()

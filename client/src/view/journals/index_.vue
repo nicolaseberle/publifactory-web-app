@@ -38,7 +38,7 @@
         <div class='details'>
           Editor:
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addEditor()' circle></el-button>
           </div>
           <li>
             <el-row>
@@ -49,7 +49,7 @@
         <div class='details'>
           Associate Editor:
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addAssociateEditor()' circle></el-button>
           </div>
           <li>
             <el-row>
@@ -60,7 +60,7 @@
         </div>
         <div class='details'>
           <li>
-            Licence: CC
+            Licence: <a href='https://creativecommons.org/licenses/by-nd/4.0/'><u>CC BY-ND 4.0</u></a>
           </li>
           <li>
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
@@ -104,17 +104,35 @@
           </div>
       </div>
       </div>
-    </el-col>
-
+    </el-col><!--
+    <el-dialog
+      title="Add Editors"
+      :visible.sync="diagEditorVisible"
+      width="70%">
+    <addCollaborator v-bind:authors='editor' v-on:close="diagEditorVisible=false"/>
+    </el-dialog>
+    <el-dialog
+      title="Add Associate Editors"
+      :visible.sync="diagAssociateEditorVisible"
+      width="70%">
+    <addCollaborator v-bind:authors='associateEditor' v-on:close="diagAssociateEditorVisible=false"/>
+  </el-dialog>-->
   </div>
 </template>
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import addEditor from '../../components/Collaborator/addEditor'
+import addAssociateEditor from '../../components/Collaborator/addAssociateEditor'
 
 export default {
+  components: {addEditor,addAssociateEditor},
   data () {
     return {
+      editor: '',
+      associateEditor: '',
+      diagAssociateEditorVisible: false,
+      diagEditorVisible: false,
       flag : false,
       test : 'on est sur la page du journal',
       journalId: '',
@@ -190,6 +208,12 @@ export default {
       }).catch(err => {
         console.error(err)
       })
+    },
+    addEditor () {
+      this.diagEditorVisible = true
+    },
+    addAssociateEditor () {
+      this.diagAssociateEditorVisible = true
     }
   }
 }

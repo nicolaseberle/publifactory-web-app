@@ -25,7 +25,7 @@
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
-          <i class="ai ai-open-access ai-2x"></i>
+          <!--<i class="ai ai-open-access ai-2x"></i>-->
           <div style='float:right'>
             <el-button  v-on:click="handleCreateJournal()" type=""  round>Submit your article</el-button>
             <el-button v-show='journal.followed===false'  v-on:click="handleFollowJournal(key,journal._id)" type="" plain round>Follow the journal</el-button>

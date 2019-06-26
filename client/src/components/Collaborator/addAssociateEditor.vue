@@ -76,10 +76,10 @@
   const debug = require('debug')('frontend');
 
   export default {
-    name: 'viewAddReviewer',
+    name: 'viewAddEditor',
     components: {},
     props: {
-      article_id: {}
+      journal_id: {}
     },
     data () {
       return {
@@ -112,7 +112,7 @@
     },
     async mounted () {
       this.list = await new Promise((resolve, reject) => {
-        axios.get(`/api/articles/${this.article_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+        axios.get(`/api/journal/${this.journal_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
           .then(data => {
             resolve(data.data.reviewers)
           })
@@ -125,8 +125,6 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.addReviewer()
-            //change status of the article
-            this.changeStatus()
           } else {
             debug('error submit!!');
             return false;
@@ -159,7 +157,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/invitations/invite/reviewer?id_article=' + this.article_id, {
+          axios.post('/api/invitations/invite/reviewer?id_article=' + this.journal_id, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
@@ -179,7 +177,7 @@
         const _newReviewer = {
           'email': email
         }
-        axios.put('/api/articles/'+ this.article_id +'/addReviewer',{ 'reviewer' : _newReviewer}, {
+        axios.put('/api/articles/'+ this.journal_id +'/addReviewer',{ 'reviewer' : _newReviewer}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(res => {
             return res
@@ -208,7 +206,7 @@
             return el._id !== _removeReviewerId;
           });
 
-          axios.put('/api/articles/' + this.article_id + '/removeReviewer',{ 'reviewerId' : _removeReviewerId}, {
+          axios.put('/api/articles/' + this.journal_id + '/removeEditor',{ 'reviewerId' : _removeReviewerId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {
@@ -219,16 +217,6 @@
               this.fetchMyArticles()
             })
         }).catch(() => {})
-      },
-      async changeStatus () {
-        this.articleInfo = await new Promise((resolve, reject) => {
-          axios.get('/api/articles/' + this.article_id, { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
-            .then(data => resolve(data.data))
-            .catch(err => reject(err))
-        });
-        if (this.articleInfo.status === 'Submited')
-          axios.patch(`/api/articles/${this.article_id}/review`, {},
-            { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       }
     }
   }
