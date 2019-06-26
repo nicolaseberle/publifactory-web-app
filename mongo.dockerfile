@@ -6,4 +6,4 @@ WORKDIR /data
 EXPOSE 27017
 
 # Dump the database
-CMD mongorestore
+CMD mongorestore --host=127.0.0.1 --port=27017
