@@ -90,7 +90,7 @@ export default {
         type: 'bar',
         orientation: 'v'
       }],
-      pythonVersion: '3.7',
+      pythonVersion: '3.5',
       options: {},
       layout: {
         title: 'Distribution',
@@ -323,7 +323,7 @@ export default {
         })
       } catch (e) {
         this.$notify({
-          title: 'Error during the script.',
+          title: 'Error during the script',
           type: 'error',
           message: e.response.data.message.traceback || this.$t('message.scriptFailure'),
           offset: 100,

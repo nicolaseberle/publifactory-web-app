@@ -1,30 +1,60 @@
-version: "3.0"
-
+version: "3.3"
 services:
-  shiny:
-    container_name: shiny
-    # To build the image locally, comment out "image" below, and uncomment
-    # "build" and the lines indented under it.
-    # image: rocker/shiny
-    build:
-      context: .
-      dockerfile: Dockerfile
+  api:
     restart: always
-    # Setting this to something other than 'root' will cause shiny apps not to
-    # run on the localhost:80 "Welcome to Shiny" diagnostics page mentioned
-    # below.
-    user: 'root'
-    # Uncomment the lines below to disable application logs STDOUT output
-    # environment:
-    #   - APPLICATION_LOGS_TO_STDOUT=false
-    ports:
-      - '80:3838'
+    build:
+      context: ./
+      dockerfile: server.dockerfile
     volumes:
-      - 'shiny_logs:/var/log/shiny-server'
-      # Comment the line below out for initial testing. With it commented out,
-      # going to localhost:80 in one's web browser will show a "Welcome to
-      # Shiny Server!" diagnostics page.
-      # - './mountpoints/apps:/srv/shiny-server'
+      - ./:/src/app
+      - /src/app/node_modules
+    ports:
+      - "4000:4000"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    environment:
+      WAIT_HOSTS: mongo:27017
+      NODE_ENV: development
+    networks:
+      - backend
+      - frontend
 
-volumes:
-  shiny_logs:
+  ssh_tunnel:
+    build: ./.tunnel/
+    networks:
+      - backend
+      - frontend
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+
+  client_dev:
+    restart: always
+    ports:
+      - "9001:9001"
+    build:
+      context: ./
+      dockerfile: client.dockerfile
+    volumes:
+      - ./:/src/app
+      - /src/app/node_modules
+    environment:
+      - PORT=9001
+      - NODE_ENV=development
+    depends_on:
+      - api
+    links:
+      - api
+    networks:
+      - frontend
+
+networks:
+  backend:
+  frontend:
