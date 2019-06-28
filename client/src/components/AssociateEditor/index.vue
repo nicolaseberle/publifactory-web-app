@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeReviewer(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeAE(scope.row._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +69,6 @@
 </template>
 <script>
   import axios from 'axios'
-  import Sortable from 'sortablejs'
   import { mapGetters } from 'vuex'
 
   const shortid = require('shortid');
@@ -124,7 +123,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addReviewer()
+            this.addAE()
           } else {
             debug('error submit!!');
             return false;
@@ -157,7 +156,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/invitations/invite/reviewer?id_article=' + this.journal_id, {
+          axios.post('/api/invitations/invite/associateeditor?id_article=' + this.journal_id, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
@@ -173,11 +172,11 @@
             }).then(() => this.addNewAuthor(email))
         })
       },
-      addNewAuthor (email) {
-        const _newReviewer = {
+      addNewAE (email) {
+        const _newAE = {
           'email': email
         }
-        axios.put('/api/articles/'+ this.journal_id +'/addReviewer',{ 'reviewer' : _newReviewer}, {
+        axios.put('/api/articles/'+ this.journal_id +'/addAssociateEditor',{ 'associate_editor' : _newAE}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(res => {
             return res
@@ -198,7 +197,7 @@
         this.dynamicValidateForm.firstname = ''
         this.dynamicValidateForm.lastname = ''
       },
-      removeReviewer(_removeReviewerId) {
+      removeAE(_removeReviewerId) {
         this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
           type: 'warning'
         }).then(() => {
@@ -221,14 +220,6 @@
     }
   }
 </script>
-<style>
-  .sortable-ghost{
-    opacity: .8;
-    color: #fff!important;
-    background: #42b983!important;
-  }
-</style>
-
 <style scoped>
   .icon-star{
     margin-right:2px;
