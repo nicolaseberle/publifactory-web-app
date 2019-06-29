@@ -111,6 +111,8 @@
       this.journal_id = this.$route.params && this.$route.params.id
     },
     async mounted () {
+      this.fetchAssociateEditor()
+      /*
       this.list = await new Promise((resolve, reject) => {
         axios.get(`/api/journals/${this.journal_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
           .then(data => {
@@ -118,9 +120,19 @@
           })
           .catch(err => reject(err))
       })
-      console.log('this.list :: ',this.list)
+      console.log('this.list :: ',this.list)*/
     },
     methods: {
+      fetchAssociateEditor () {
+        axios.get('/api/roles/journal/' + this.journal_id + '/associate_editor', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(res => {
+          console.log('fetchAssociateEditor :: ', res.data.users)
+          this.list = res.data.users
+        }).catch(err => {
+          console.error(err)
+        })
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -139,8 +151,8 @@
         }
         // warning. it's temporarly.
         newAE = await this.invite(newAE.email,
-          newReviewer.firstname,
-          newReviewer.lastname);
+          newAE.firstname,
+          newAE.lastname);
         this.list.push(newAE)
         this.$forceUpdate()
         this.cleanForm()
@@ -157,7 +169,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/journals/invite/associate_editor?id_journal=' + this.journal_id, {
+          axios.post('/api/invitations/invite/associate_editor?id_journal=' + this.journal_id, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
