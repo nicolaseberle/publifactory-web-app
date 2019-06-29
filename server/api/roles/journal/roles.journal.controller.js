@@ -133,11 +133,21 @@ async function switchRoute (req, journalInfo) {
       break;
     case 'invite':
     case 'inviteEditor':
-    //ajouter la règle que seul le créateur peut faire cette action
+      if (journalInfo.right !== 'editor' )
+        throw { message: 'Only the editor can add new editor' };
+      break;
     case 'inviteAssociateEditor':
-    //ajouter la règle que seul l'éditeur peut faire cette action
+      if (journalInfo.right !== 'editor' )
+        throw { message: 'Only the editor can add new associate editor' };
+      break;
     case 'removeAssociateEditor':
-    //ajouter la règle que seul l'éditeur peut faire cette action
+      if (journalInfo.right !== 'editor' )
+        throw { message: 'Only the editor can remove an associate editor' };
+      break;
+    case 'unfollowJournal':
+      if (journalInfo.right === 'editor' || journalInfo.right === 'associate_editor')
+        throw { message: 'Editor and Associate Editor can not unfollow a journal' };
+      break;
     case 'admin':
       if (journalInfo.right !== 'editor')
         throw { message: 'Only the editor (admin) can access to thoses settings.' }

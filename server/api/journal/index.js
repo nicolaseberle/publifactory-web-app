@@ -41,7 +41,17 @@ router.put('/:id/removeAssociateEditor', journalController.removeAssociateEditor
 router.get('/:id/users/:role(editor|associate_editor|user)', journalController.getJournalsUser)
 router.patch('/:id/article/:id_article', roles.publish, journalController.setArticlePublish)
 router.post('/:id/invite/:right(associate_editor|user)', roles.invite, journalController.inviteUser)
+
+router.use('/:id/follow', async function (req, res, next) {
+  try {
+    req.route = 'unfollowJournal'
+    await rolesJournal.doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+})
 router.post('/:id/follow', journalController.followJournal)
+
 router.get('/followed/all', journalController.userFollowedJournals)
 
 
