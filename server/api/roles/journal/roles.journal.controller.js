@@ -3,7 +3,7 @@
 const RolesJournal = require('./roles.journal.model')
 const RolesArticle = require('../article/roles.article.model')
 
-module.exports.createRole = function (req, res, next) {
+async function createRole (req, res, next) {
   try {
     if (!(req.body.id_user && req.body.id_journal && req.body.right))
       throw { code: 422, message: "Missing parameters in body field." }
@@ -19,7 +19,7 @@ module.exports.createRole = function (req, res, next) {
     next(e);
   }
 }
-module.exports.modifyRight = async function (req, res, next) {
+async function modifyRight (req, res, next) {
   try {
     if (!req.body.right)
       throw { code: 422, message: "Missing parameters in body field." }
@@ -36,7 +36,7 @@ module.exports.modifyRight = async function (req, res, next) {
     next(e);
   }
 }
-module.exports.deleteRole = async function (req, res, next) {
+async function  deleteRole (req, res, next) {
   try {
     const query = { _id: req.params.id };
     await RolesJournal.deleteOne(query, (err, result) => {
@@ -48,7 +48,7 @@ module.exports.deleteRole = async function (req, res, next) {
     next(e);
   }
 }
-module.exports.getRoleById = async function (req, res, next) {
+async function getRoleById (req, res, next) {
   try {
     const query = { _id: req.params.id };
     const response = await new Promise(async (resolve, reject) => {
@@ -59,7 +59,7 @@ module.exports.getRoleById = async function (req, res, next) {
     next(e);
   }
 }
-module.exports.getUserRoles = async function (req, res, next) {
+async function getUserRoles (req, res, next) {
   try {
     const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
     const response = await RolesJournal.find(query);
@@ -69,7 +69,7 @@ module.exports.getUserRoles = async function (req, res, next) {
   }
 }
 
-module.exports.getJournalUsers = async function (req, res, next) {
+async function getJournalUsers (req, res, next) {
   try {
     const query = { id_journal: req.params.id_journal };
     if (req.params.right)
@@ -83,7 +83,7 @@ module.exports.getJournalUsers = async function (req, res, next) {
   }
 }
 
-module.exports.invite = async function (req, res, next) {
+async function invite (req, res, next) {
   try {
     if (req.params.right !== 'user') {
       req.route = 'invite'
@@ -95,7 +95,7 @@ module.exports.invite = async function (req, res, next) {
   }
 }
 
-module.exports.publish = async function (req, res, next) {
+async function publish (req, res, next) {
   try {
     req.route = 'publish'
     await doYouHaveThisRight(req, res, next);
@@ -104,7 +104,7 @@ module.exports.publish = async function (req, res, next) {
   }
 }
 
-module.exports.owner = async function (req, res, next) {
+async function owner (req, res, next) {
   try {
     req.route = 'owner'
     req.params.id_article = req.params.id_article || req.body.id_article
@@ -114,7 +114,7 @@ module.exports.owner = async function (req, res, next) {
   }
 }
 
-module.exports.administration = async function (req, res, next) {
+async function administration (req, res, next) {
   try {
     req.route = 'admin'
     await doYouHaveThisRight(req, res, next);
@@ -132,6 +132,10 @@ async function switchRoute (req, journalInfo) {
         throw { message: 'Only the author can post his article in a journal.' }
       break;
     case 'invite':
+    case 'inviteEditor':
+    //ajouter la règle que seul le créateur peut faire cette action
+    case 'inviteAssociateEditor':
+    //ajouter la règle que seul l'éditeur peut faire cette action
     case 'admin':
       if (journalInfo.right !== 'editor')
         throw { message: 'Only the editor (admin) can access to thoses settings.' }
@@ -163,3 +167,19 @@ async function doYouHaveThisRight (req, res, next) {
     throw e;
   }
 }
+
+
+module.exports = {
+  createRole: createRole,
+  modifyRight : modifyRight,
+  deleteRole: deleteRole,
+  getRoleById: getRoleById,
+  getUserRoles: getUserRoles,
+  getJournalUsers: getJournalUsers,
+  invite: invite,
+  publish: publish,
+  owner: owner,
+  administration: administration,
+  switchRoute : switchRoute,
+  doYouHaveThisRight: doYouHaveThisRight
+};

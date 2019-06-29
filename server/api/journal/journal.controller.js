@@ -289,6 +289,24 @@ module.exports.followJournal = async (req, res, next) => {
   }
 }
 
+module.exports.addAssociateEditor = async (req,res,next) => {
+  try{
+    if (req.body.associate_editor === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ email: req.body.associate_editor.email }).exec();
+    const query = { _id: req.params.id };
+    const toAdd = { $push: { users: user._id } };
+    const options = { new: true };
+    await Journal.findOneAndUpdate(query, toAdd, options);
+    new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  }
+  catch (e) {
+    next(e);
+  }
+}
+
+
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
 
