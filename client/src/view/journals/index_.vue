@@ -35,8 +35,9 @@
             {{ tag }}
           </el-tag>
         </div>
+
         <div class='details'>
-          Editor:
+          <h2>Editor</h2>
           <div style='float: right;margin-bottom:3px'>
             <el-button  icon="el-icon-plus" size="mini" v-on:click='addEditor()' circle></el-button>
           </div>
@@ -47,7 +48,7 @@
           </li>
         </div>
         <div class='details'>
-          Associate Editor:
+          <h2>Associate Editors</h2>
           <div style='float: right;margin-bottom:3px'>
             <el-button  icon="el-icon-plus" size="mini" v-on:click='addAssociateEditor()' circle></el-button>
           </div>
@@ -129,6 +130,7 @@ export default {
   data () {
     return {
       editor: '',
+      isEditable: false,
       associateEditor: '',
       diagAssociateEditorVisible: false,
       diagEditorVisible: false,
@@ -285,7 +287,16 @@ export default {
     }
   }
   .details{
-    padding-bottom: 70px;
+    padding-bottom: 50px;
+    display: inline-block;
+    width: 100%;
+    h2{
+        font-size:1.3rem;
+        margin: 0;
+        padding: 0;
+        font-family: 'DNLTPro-bold';
+        display: inline-block;
+    }
 
      li:first-of-type {
        border-top: 1px solid #ddd;

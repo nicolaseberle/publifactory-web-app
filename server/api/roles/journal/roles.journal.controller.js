@@ -136,6 +136,8 @@ async function switchRoute (req, journalInfo) {
     //ajouter la règle que seul le créateur peut faire cette action
     case 'inviteAssociateEditor':
     //ajouter la règle que seul l'éditeur peut faire cette action
+    case 'removeAssociateEditor':
+    //ajouter la règle que seul l'éditeur peut faire cette action
     case 'admin':
       if (journalInfo.right !== 'editor')
         throw { message: 'Only the editor (admin) can access to thoses settings.' }

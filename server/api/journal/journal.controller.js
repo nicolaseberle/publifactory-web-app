@@ -306,6 +306,26 @@ module.exports.addAssociateEditor = async (req,res,next) => {
   }
 }
 
+module.exports.removeAssociateEditor = async (req,res,next) => {
+  try{
+    if (req.body.associate_editor_id === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ _id: req.body.associate_editor_id }).exec();
+    //const query = { _id: req.params.id };
+    //we keep the user in journal.user matrix
+    //const toRemove = { $pull: { users: user._id } };
+    //await Journal.findOneAndUpdate(query, toRemove);
+    const query = { id_user: user._id, id_journal: req.params.id }
+    const roles = await RolesJournal.findOneAndRemove( query );
+    //new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  }
+  catch (e) {
+    next(e);
+  }
+}
+
+
 
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
