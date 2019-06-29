@@ -151,6 +151,7 @@ module.exports.deleteJournal = async (req, res, next) => {
   try {
     const query = { _id: req.params.id };
     await Journal.findOneAndRemove(query);
+    await RolesJournal.deleteMany({ id_journal: req.params.id });
     res.json({ success: true });
   } catch (e) {
     next(e);

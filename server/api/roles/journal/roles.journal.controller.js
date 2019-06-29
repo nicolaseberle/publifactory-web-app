@@ -148,6 +148,10 @@ async function switchRoute (req, journalInfo) {
       if (journalInfo.right === 'editor' || journalInfo.right === 'associate_editor')
         throw { message: 'Editor and Associate Editor can not unfollow a journal' };
       break;
+    case 'removeJournal':
+      if (journalInfo.right !== 'editor' )
+        throw { message: 'Only the editor can remove the journal' };
+      break;
     case 'admin':
       if (journalInfo.right !== 'editor')
         throw { message: 'Only the editor (admin) can access to thoses settings.' }
