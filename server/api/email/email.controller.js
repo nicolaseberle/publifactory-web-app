@@ -71,7 +71,9 @@ module.exports = class Email {
       Vous trouverez le journal ici : ${link}.`
     })();
   }
+  async sendInvitationCoEditor (authorId, link) {
 
+  }
   async sendInvitationJournalAssociateEditor (authorId, link) {
     const author = await new Promise(async (resolve, reject) => {
       resolve(await User.findOne({ _id: authorId }));

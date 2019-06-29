@@ -44,17 +44,17 @@
 
         <el-table-column align="left" min-width="140px" label="Firstname">
           <template slot-scope="scope">
-            <span>{{ scope.row.firstname }}</span>
+            <span>{{ scope.row.id_user.firstname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="left" min-width="140px" label="Lastname">
           <template slot-scope="scope">
-            <span>{{ scope.row.lastname }}</span>
+            <span>{{ scope.row.id_user.lastname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeAE(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeAE(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -111,6 +111,8 @@
       this.journal_id = this.$route.params && this.$route.params.id
     },
     async mounted () {
+      this.fetchAssociateEditor()
+      /*
       this.list = await new Promise((resolve, reject) => {
         axios.get(`/api/journals/${this.journal_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
           .then(data => {
@@ -118,9 +120,20 @@
           })
           .catch(err => reject(err))
       })
-      console.log('this.list :: ',this.list)
+      console.log('this.list :: ',this.list)*/
     },
     methods: {
+      fetchAssociateEditor () {
+        axios.get('/api/roles/journal/' + this.journal_id + '/associate_editor', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(res => {
+          console.log('fetchAssociateEditor :: ', res.data.users)
+          this.list = res.data.users
+          console.log(this.list)
+        }).catch(err => {
+          console.error(err)
+        })
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -139,8 +152,8 @@
         }
         // warning. it's temporarly.
         newAE = await this.invite(newAE.email,
-          newReviewer.firstname,
-          newReviewer.lastname);
+          newAE.firstname,
+          newAE.lastname);
         this.list.push(newAE)
         this.$forceUpdate()
         this.cleanForm()
@@ -157,7 +170,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/journals/invite/associate_editor?id_journal=' + this.journal_id, {
+          axios.post('/api/invitations/invite/associate_editor?id_journal=' + this.journal_id, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
@@ -198,15 +211,15 @@
         this.dynamicValidateForm.firstname = ''
         this.dynamicValidateForm.lastname = ''
       },
-      removeAE(_removeReviewerId) {
+      removeAE(_removeAssociateEditorId) {
         this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
           type: 'warning'
         }).then(() => {
           this.list = this.list.filter(function( el ) {
-            return el._id !== _removeReviewerId;
+            return el._id !== _removeAssociateEditorId;
           });
 
-          axios.put('/api/journals/' + this.journal_id + '/removeAssociateEditor',{ 'reviewerId' : _removeReviewerId}, {
+          axios.put('/api/journals/' + this.journal_id + '/removeAssociateEditor',{ 'associate_editor_id' : _removeAssociateEditorId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {
