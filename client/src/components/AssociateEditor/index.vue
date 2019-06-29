@@ -44,17 +44,17 @@
 
         <el-table-column align="left" min-width="140px" label="Firstname">
           <template slot-scope="scope">
-            <span>{{ scope.row.firstname }}</span>
+            <span>{{ scope.row.id_user.firstname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="left" min-width="140px" label="Lastname">
           <template slot-scope="scope">
-            <span>{{ scope.row.lastname }}</span>
+            <span>{{ scope.row.id_user.lastname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeAE(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeAE(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -129,6 +129,7 @@
         }).then(res => {
           console.log('fetchAssociateEditor :: ', res.data.users)
           this.list = res.data.users
+          console.log(this.list)
         }).catch(err => {
           console.error(err)
         })
@@ -210,15 +211,15 @@
         this.dynamicValidateForm.firstname = ''
         this.dynamicValidateForm.lastname = ''
       },
-      removeAE(_removeReviewerId) {
+      removeAE(_removeAssociateEditorId) {
         this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
           type: 'warning'
         }).then(() => {
           this.list = this.list.filter(function( el ) {
-            return el._id !== _removeReviewerId;
+            return el._id !== _removeAssociateEditorId;
           });
 
-          axios.put('/api/journals/' + this.journal_id + '/removeAssociateEditor',{ 'reviewerId' : _removeReviewerId}, {
+          axios.put('/api/journals/' + this.journal_id + '/removeAssociateEditor',{ 'associate_editor_id' : _removeAssociateEditorId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {

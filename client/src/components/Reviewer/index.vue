@@ -44,17 +44,17 @@
 
         <el-table-column align="left" min-width="140px" label="Firstname">
           <template slot-scope="scope">
-            <span>{{ scope.row.firstname }}</span>
+            <span>{{ scope.row.id_user.firstname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="left" min-width="140px" label="Lastname">
           <template slot-scope="scope">
-            <span>{{ scope.row.lastname }}</span>
+            <span>{{ scope.row.id_user.lastname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeReviewer(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeReviewer(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
