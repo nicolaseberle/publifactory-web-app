@@ -110,23 +110,22 @@
       :visible.sync="diagEditorVisible"
       width="70%">
     <addCollaborator v-bind:authors='editor' v-on:close="diagEditorVisible=false"/>
-    </el-dialog>
+  </el-dialog>-->
     <el-dialog
       title="Add Associate Editors"
       :visible.sync="diagAssociateEditorVisible"
       width="70%">
-    <addCollaborator v-bind:authors='associateEditor' v-on:close="diagAssociateEditorVisible=false"/>
-  </el-dialog>-->
+    <addAssociateEditor v-on:close="diagAssociateEditorVisible=false"/>
+  </el-dialog>
   </div>
 </template>
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
-import addEditor from '../../components/Collaborator/addEditor'
-import addAssociateEditor from '../../components/Collaborator/addAssociateEditor'
+import addAssociateEditor from '../../components/AssociateEditor'
 
 export default {
-  components: {addEditor,addAssociateEditor},
+  components: {addAssociateEditor},
   data () {
     return {
       editor: '',
@@ -204,6 +203,7 @@ export default {
       axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
+        console.log('fetchAssociateEditor :: ', res.data)
         this.associate_editors = res.data.users
       }).catch(err => {
         console.error(err)

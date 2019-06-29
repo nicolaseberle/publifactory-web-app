@@ -128,7 +128,7 @@ const debug = require('debug')('frontend');
           tags: this.dynamicForm.tags,
           published: true
         };
-        axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+        axios.post('/api/journals/', newJournal,  { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_journal_id = response.data.journal._id
           debug(response.data)
