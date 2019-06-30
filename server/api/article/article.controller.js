@@ -4,6 +4,8 @@ var User = require('../user/user.model');
 var Article = require('./article.model');
 const RolesArticle = require('../roles/article/roles.article.model');
 var Data = require('../data/data.model');
+const Journal = require('../journal/journal.model')
+const RolesJournal = require('../roles/journal/roles.journal.model')
 
 var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
@@ -340,6 +342,18 @@ module.exports.addReviewer = async function (req, res, next) {
     const toAdd = { $push: { reviewers: user._id } };
     const options = { new: true };
     await Article.findOneAndUpdate(query, toAdd, options);
+    new RolesArticle({ id_user: user._id, id_article: req.params.id, right: 'reviewer' }).save();
+    res.json({ success: true });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports.addAssociateEditor = async function (req, res, next) {
+  try {
+    if (req.body.associate_editors === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ email: req.body.associate_editors.email }).exec();
     new RolesArticle({ id_user: user._id, id_article: req.params.id, right: 'associate_editor' }).save();
     res.json({ success: true });
   } catch (e) {

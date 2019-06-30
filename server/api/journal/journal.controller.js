@@ -4,6 +4,7 @@ const User = require('../user/user.model')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
 const RolesJournal = require('../roles/journal/roles.journal.model')
+const RolesArticle = require('../roles/article/roles.article.model')
 const Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
 
@@ -168,15 +169,17 @@ module.exports.deleteJournal = async (req, res, next) => {
  */
 module.exports.addArticleToJournal = async (req, res, next) => {
   try {
-    let query = { _id: req.body.id_article };
-    const article = await Article.findOne(query);
-    if (article === null)
-      throw { success: false, message: 'You can\'t add an article which does\'nt exist.' }
-    query._id = req.params.id;
-    const toUpdate = { $push: { content: { reference: article, published: false } } };
+    let query = { id_journal: req.params.id, right: 'editor' };
+    const journalInfo = await RolesJournal.find(query);
+    if (journalInfo.length === 0)
+      throw { success: false, message: "There are no editor on this journal." };
+    for (let i = 0, len = journalInfo.length; i < len; ++i)
+      new RolesArticle({ id_user: journalInfo[i].id_user, id_article: req.body.id_article, right: 'editor'}).save()
+    query = { _id: req.params.id }
+    const toAdd = { $push: { content: { published: false, reference: req.body.id_article } } };
     const options = { new: true };
-    await Journal.findOneAndUpdate(query, toUpdate, options);
-    res.json({ success: true });
+    await Journal.findOneAndUpdate(query, toAdd, options)
+    res.json({success: true})
   } catch (e) {
     next(e)
   }
