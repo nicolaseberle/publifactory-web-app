@@ -131,7 +131,7 @@ def main():
     data = plotly_values()
     layout = go.Layout(title=plotly_layout())
     figure = go.Figure(data=data, layout=layout)
-    plio.write_json(figure, './example.json')
+    plio.write_json(figure, '/tmp/example.json')
     exit(0)
 
 

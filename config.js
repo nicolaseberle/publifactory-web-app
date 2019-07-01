@@ -31,14 +31,14 @@ var backendBase = {
 
 var development = {
   email : {
-    rootHTML: "http://localhost:9001",
+    rootHTML: "http://client_dev:9001",
     user: "publifactory.noreply@gmail.com",
     pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
     clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
-    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
+    callbackUrl: 'http://api:4000/api/auth/local/orcid/callback'
   },
   frontend: {
     port: 9001,
@@ -62,7 +62,7 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: 'mongodb://localhost:27017/mevn-dev',
+      uri: 'mongodb://mongo:27017/',
       useNewUrlParser: true
     }
   })

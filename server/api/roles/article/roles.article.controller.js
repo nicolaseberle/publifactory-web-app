@@ -149,7 +149,7 @@ async function createRole (req, res, next) {
 }
 
 async function switchRoute (route, articleInfo) {
-  let status;
+  let status, infoAuthor;
   switch (route) {
     case 'comment':
       status = await new Promise((resolve, reject) => {
@@ -189,7 +189,11 @@ async function switchRoute (route, articleInfo) {
         throw { message: 'Only the associate editor is able to set status in review / publish.' };
       break;
     case 'inviteReviewer':
-      const infoAuthor = await new Promise((resolve, reject) => {
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate_editor is able to invite reviewers.' };
+      break;
+    case 'inviteAssociateEditor':
+      infoAuthor = await new Promise((resolve, reject) => {
         const query = { _id: articleInfo.id_user }
         User.findOne(query, (err, data) => {
           if (err) reject(err)

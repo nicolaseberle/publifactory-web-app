@@ -6,6 +6,7 @@ var Data = require('../data/data.model');
 var Figure = require('./figure.model');
 
 const fs = require('fs');
+const path = require('path');
 let {PythonShell} = require('python-shell');
 const rscript = require('js-call-r');
 
@@ -149,24 +150,25 @@ async function pythonExec(req, res, next) {
       mode: 'text',
       pythonPath: `/usr/bin/${version}`,
       pythonOptions: ['-u'],
-      scriptPath: './',
+      scriptPath: '/tmp',
       args: []
     };
     for (let i = 0, len = req.body.content.length; i < len; i++)
-      await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
+      await fs.writeFileSync(`/tmp/${req.body.content[i].title}`, req.body.content[i].content);
     await new Promise((resolve, reject) => {
-      PythonShell.run('./main.py', options, (err) => {
+      PythonShell.run('main.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
       })
     });
-    for (let i = 0, len = req.body.content.length; i < len; ++i)
-      await fs.unlinkSync(req.body.content[i].title);
-    const jsonRawData = fs.readFileSync('./example.json')
+    //for (let i = 0, len = req.body.content.length; i < len; ++i)
+      //await fs.unlinkSync(`/tmp/${req.body.content[i].title}`);
+    const jsonRawData = fs.readFileSync('/tmp/example.json')
     const json = JSON.parse(jsonRawData);
-    await fs.unlinkSync('./example.json');
+    await fs.unlinkSync('/tmp/example.json');
     res.json({ success: true, values: json });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ success: false, message: e})
   }
 }
@@ -183,13 +185,15 @@ async function pythonExec(req, res, next) {
 async function rExec(req, res, next) {
   try {
     for (let i = 0, len = req.body.content.length; i < len; i++)
-      await fs.writeFileSync(`./${req.body.content[i].title}`, req.body.content[i].content);
-    const response = await rscript.callSync('./main.R');
+      await fs.writeFileSync(`/tmp/${req.body.content[i].title}`, req.body.content[i].content);
+    const response = await rscript.callSync('/tmp/main.R');
+    console.log(response)
     const json = JSON.parse(response.x.data)
-    for (let i = 0, len = req.body.content.length; i < len; ++i)
-      await fs.unlinkSync(req.body.content[i].title);
+    //for (let i = 0, len = req.body.content.length; i < len; ++i)
+      //await fs.unlinkSync(`/tmp/${req.body.content[i].title}`);
     res.json({ success: true, values: json });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ success: false, message: "Your script isn't correct. Please check your syntax." })
   }
 }

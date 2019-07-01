@@ -34,6 +34,17 @@ router.use('/:id/addReviewer', async function (req, res, next) {
 
 router.put('/:id/addReviewer', articlesController.addReviewer);
 
+router.use('/:id/addAssociateEditor', async function (req, res, next) {
+  try {
+    req.route = 'inviteAssociateEditor'
+    await rolesArticle.doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+})
+
+router.put('/:id/addAssociateEditor', articlesController.addAssociateEditor);
+
 router.use('/:id', async function (req, res, next) {
   try {
     req.route = 'articleRead';
