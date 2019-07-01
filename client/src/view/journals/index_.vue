@@ -68,6 +68,8 @@
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
         </div>
+        </div>
+        <div class='footer'>
           <el-button v-on:click="removeJournal(journal._id)" type="danger" plain round>Remove journal</el-button>
       </div>
     </div>
@@ -179,6 +181,16 @@ export default {
     this.fetch()
     this.fetchEditor()
     this.fetchAssociateEditor()
+  },
+  watch: {
+    diagAssociateEditorVisible () {
+      this.fetchAssociateEditor()
+      this.$forceUpdate();
+    },
+    addAssociateEditor () {
+      this.fetchEditor()
+      this.$forceUpdate();
+    }
   },
   methods:{
     fetch () {
@@ -519,6 +531,12 @@ export default {
         word-break: break-word;
         color: #9e9e9e;
       }
+}
+.footer{
+  padding-bottom: 30px;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
 }
 
  button{
