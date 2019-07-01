@@ -87,8 +87,9 @@
 </div>
 </template>
 <script>
-import locales from 'locales/charts'
-const debug = require('debug')('frontend');
+  import locales from 'locales/charts'
+
+  const debug = require('debug')('frontend');
 
 export default {
   name: 'tracesMenu',

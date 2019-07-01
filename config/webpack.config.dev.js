@@ -60,11 +60,11 @@ const webpackConfig = merge(commonConfig, {
         overlay: true,
         port: 9001,
         proxy: {
-          '/api': { target: 'http://localhost:' + backendBase.port, changeOrigin: true },
+          '/api': { target: 'http://api:4000', changeOrigin: true },
           '/static': { target: 'http://localhost:9001',  pathRewrite: {'^/static' : '/client/static'}},
-          '/socket.io': { target: 'http://localhost:' + backendBase.port, changeOrigin: true, ws: true },
-          '/cursors': { target: 'http://localhost:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
-          '/mevn-dev': { target: 'http://localhost:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
+          '/socket.io': { target: 'http://api:' + backendBase.port, changeOrigin: true, ws: true },
+          '/cursors': { target: 'http://api:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
+          '/mevn-dev': { target: 'http://api:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
         },
         stats: {normale:true}
     }

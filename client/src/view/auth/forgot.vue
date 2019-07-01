@@ -24,10 +24,10 @@
 </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/login'
+  import { mapActions, mapGetters } from 'vuex'
+  import locales from 'locales/login'
 
-export default {
+  export default {
   locales,
   data () {
     return {

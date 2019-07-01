@@ -48,11 +48,11 @@
 </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/register'
-import axios from 'axios'
+  import { mapActions, mapGetters } from 'vuex'
+  import locales from 'locales/register'
+  import axios from 'axios'
 
-export default {
+  export default {
   locales,
   data () {
     return {

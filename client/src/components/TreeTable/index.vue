@@ -27,12 +27,13 @@
 </template>
 
 <script>
-/**
-  Auth: Lei.j1ang
-  Created: 2018/1/19-13:59
-*/
-import treeToArray from './eval'
-export default {
+  /**
+   Auth: Lei.j1ang
+   Created: 2018/1/19-13:59
+   */
+  import treeToArray from './eval'
+
+  export default {
   name: 'TreeTable',
   props: {
     /* eslint-disable */

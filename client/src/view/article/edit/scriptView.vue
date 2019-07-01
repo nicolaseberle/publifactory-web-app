@@ -22,15 +22,14 @@
 </template>
 
 <script>
-// require component
-import { codemirror } from 'vue-codemirror'
+  // require component
+  import { codemirror } from 'vue-codemirror'
+  // require styles
+  import 'codemirror/lib/codemirror.css'
+  import 'codemirror/theme/base16-dark.css'
+  import 'codemirror/theme/monokai.css'
 
-// require styles
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/base16-dark.css'
-import 'codemirror/theme/monokai.css'
-
-// require more codemirror resource...
+  // require more codemirror resource...
 
 export default {
   components: { codemirror },

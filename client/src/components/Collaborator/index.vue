@@ -88,10 +88,11 @@ debug
   </div>
 </template>
 <script>
-import axios from 'axios'
-import Sortable from 'sortablejs'
-import { mapGetters } from 'vuex'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+  import Sortable from 'sortablejs'
+  import { mapGetters } from 'vuex'
+
+  const debug = require('debug')('frontend');
 
 const shortid = require('shortid');
 

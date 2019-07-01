@@ -131,11 +131,12 @@
   </div>
 </template>
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-import velocity from 'velocity-animate'
-const debug = require('debug')('frontend');
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import velocity from 'velocity-animate'
+
+  const debug = require('debug')('frontend');
 var uuidv4 = require('uuid/v4');
 
 export default {

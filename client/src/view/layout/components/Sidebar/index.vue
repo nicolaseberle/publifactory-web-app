@@ -21,12 +21,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import SidebarItem from './SidebarItem'
-import locales from  '../../../../locales/menu'
-import axios from 'axios'
+  import { mapActions, mapGetters } from 'vuex'
+  import SidebarItem from './SidebarItem'
+  import locales from '../../../../locales/menu'
+  import axios from 'axios'
 
-export default {
+  export default {
   locales,
   components: { SidebarItem },
   data(){

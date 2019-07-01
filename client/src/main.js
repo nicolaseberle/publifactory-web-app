@@ -1,40 +1,45 @@
 import Vue from 'vue'
 import Cookies from 'js-cookie'
-
 // read localStorage stored data
 import './stored'
 // locale
 // import './locales'
 import './icons'
 import './errorLog' // error log
-
 // router and store
 import store from './store'
 import router, { hook as routerHook } from './router'
 import { sync } from 'vuex-router-sync'
-sync(store, router)
-
 // import i18n from './lang' // Internationalization
 import './locales'
-import './icons'
-// ui library
-
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
-// import CKEditor from '@ckeditor/ckeditor5-vue';
-// import VueQuill from 'vue-quill'
-
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 
 import VueSplit from 'vue-split-panel'
+import Icon from 'vue-awesome/components/Icon'
+import VueTextareaAutosize from 'vue-textarea-autosize'
+import './styles/index.scss' // global css
+import 'codemirror/lib/codemirror.css'
+import 'quill-cursors/dist/quill-cursors.css'
+// ajax
+import './http'
+
+import * as filters from './filters' // global filters
+// main component
+import App from './App'
+
+sync(store, router)
+
+// ui library
+
+// import CKEditor from '@ckeditor/ckeditor5-vue';
+// import VueQuill from 'vue-quill'
 Vue.use(VueSplit)
 
-import Icon from 'vue-awesome/components/Icon'
 Vue.component('v-icon', Icon)
 
-import VueTextareaAutosize from 'vue-textarea-autosize'
 Vue.use(VueTextareaAutosize)
 
 Vue.use(ElementUI, {
@@ -43,19 +48,8 @@ Vue.use(ElementUI, {
 })
 Vue.use(require('vue-moment'))
 
-import './styles/index.scss' // global css
-import 'codemirror/lib/codemirror.css'
-import 'quill-cursors/dist/quill-cursors.css'
-// ajax
-import './http'
-
-import * as filters from './filters' // global filters
-
 const userPromise = store.dispatch('initUserInfo')
 routerHook(userPromise)
-
-// main component
-import App from './App'
 
 // import './socket'
 // Vue.use( CKEditor );

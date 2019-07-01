@@ -227,13 +227,13 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/settings'
-import axios from 'axios'
-import ImageCropper from '../../components/ImageCropper'
-import PanThumb from '../../components/PanThumb'
+  import { mapActions, mapGetters } from 'vuex'
+  import locales from 'locales/settings'
+  import axios from 'axios'
+  import ImageCropper from '../../components/ImageCropper'
+  import PanThumb from '../../components/PanThumb'
 
-export default {
+  export default {
   locales,
   components: { "image-cropper": ImageCropper, "pan-thumb": PanThumb },
   data () {

@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import icons from './requireIcons'
-import clipboard from '../../utils/clipboard'
+  import icons from './requireIcons'
+  import clipboard from '../../utils/clipboard'
 
-export default {
+  export default {
   name: 'Icons',
   data() {
     return {

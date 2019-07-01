@@ -44,17 +44,17 @@
   </div>
 </template>
 <script>
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import CodeMirror from 'codemirror'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/lib/codemirror.css'
-import '../../styles/one-dark.css'
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import PulseLoader from 'vue-spinner/src/PulseLoader'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import CodeMirror from 'codemirror'
+  import 'codemirror/mode/python/python.js'
+  import 'codemirror/lib/codemirror.css'
+  import '../../styles/one-dark.css'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import PulseLoader from 'vue-spinner/src/PulseLoader'
 
-export default {
+  export default {
   name: 'ScriptPython',
   locales,
   props: ["idfigure"],
@@ -90,7 +90,7 @@ export default {
         type: 'bar',
         orientation: 'v'
       }],
-      pythonVersion: '3.7',
+      pythonVersion: '3.5',
       options: {},
       layout: {
         title: 'Distribution',
@@ -323,7 +323,7 @@ export default {
         })
       } catch (e) {
         this.$notify({
-          title: 'Error during the script.',
+          title: 'Error during the script',
           type: 'error',
           message: e.response.data.message.traceback || this.$t('message.scriptFailure'),
           offset: 100,

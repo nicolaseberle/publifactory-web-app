@@ -105,19 +105,20 @@
 
 </template>
 <script>
-import locales from '../../locales/article'
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-// import hightlightText from '../../utils/js/animation/highlight.js';
-import VuePlotly from '@statnett/vue-plotly'
-import asideRightAnimation from '../../utils/js/animation/aside.right.js';
-var uuidv4 = require('uuid/v4');
+  import locales from '../../locales/article'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faCoffee, faReply } from '@fortawesome/free-solid-svg-icons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  // import hightlightText from '../../utils/js/animation/highlight.js';
+  import VuePlotly from '@statnett/vue-plotly'
+  import asideRightAnimation from '../../utils/js/animation/aside.right.js'
+  import TreeComment from './TreeComment.vue'
 
-import TreeComment from './TreeComment.vue'
-const debug = require('debug')('frontend');
+  var uuidv4 = require('uuid/v4');
+
+  const debug = require('debug')('frontend');
 
 library.add(faCoffee,faReply)
 

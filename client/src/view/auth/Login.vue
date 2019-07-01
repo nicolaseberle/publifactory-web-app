@@ -80,11 +80,11 @@
 </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/login'
-import axios from 'axios'
+  import { mapActions, mapGetters } from 'vuex'
+  import locales from 'locales/login'
+  import axios from 'axios'
 
-const debug = require('debug')('frontend')
+  const debug = require('debug')('frontend')
 
 export default {
   locales,

@@ -36,9 +36,9 @@
 </template>
 
 <script>
-import uploadData from '../../view/article/edit/LightEditor/uploadData'
+  import uploadData from '../../view/article/edit/LightEditor/uploadData'
 
-export default {
+  export default {
   name: 'ImportData',
   components: {
     uploadData
