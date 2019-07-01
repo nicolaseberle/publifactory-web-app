@@ -192,14 +192,14 @@ export default {
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addCollaborator()
+            this.addReviewer()
           } else {
             debug('error submit!!');
             return false;
           }
         });
     },
-    async addCollaborator () {
+    async addReviewer () {
       const nbAuthors = this.list.length + 1
       const newAuthor = {
         rank: nbAuthors,

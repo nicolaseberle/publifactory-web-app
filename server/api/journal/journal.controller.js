@@ -152,6 +152,7 @@ module.exports.deleteJournal = async (req, res, next) => {
   try {
     const query = { _id: req.params.id };
     await Journal.findOneAndRemove(query);
+    await RolesJournal.deleteMany({ id_journal: req.params.id });
     res.json({ success: true });
   } catch (e) {
     next(e);
@@ -291,6 +292,44 @@ module.exports.followJournal = async (req, res, next) => {
     next(e);
   }
 }
+
+module.exports.addAssociateEditor = async (req,res,next) => {
+  try{
+    if (req.body.associate_editor === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ email: req.body.associate_editor.email }).exec();
+    const query = { _id: req.params.id };
+    const toAdd = { $push: { users: user._id } };
+    const options = { new: true };
+    await Journal.findOneAndUpdate(query, toAdd, options);
+    new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  }
+  catch (e) {
+    next(e);
+  }
+}
+
+module.exports.removeAssociateEditor = async (req,res,next) => {
+  try{
+    if (req.body.associate_editor_id === undefined)
+      throw { success: false, message: 'Missing parameters in body field.' };
+    const user = await User.findOne({ _id: req.body.associate_editor_id }).exec();
+    //const query = { _id: req.params.id };
+    //we keep the user in journal.user matrix
+    //const toRemove = { $pull: { users: user._id } };
+    //await Journal.findOneAndUpdate(query, toRemove);
+    const query = { id_user: user._id, id_journal: req.params.id }
+    const roles = await RolesJournal.findOneAndRemove( query );
+    //new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true });
+  }
+  catch (e) {
+    next(e);
+  }
+}
+
+
 
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {

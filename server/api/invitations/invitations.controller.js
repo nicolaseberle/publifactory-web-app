@@ -49,10 +49,17 @@ async function createInvitation(req, res, next) {
       } else {
         //we send the email to invite the new author to access
         const mail = new Email(receiverEmail);
+        if(req.params.role === 'collaborator' || req.params.role === 'reviewer') {
         const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
         req.params.role === 'collaborator' ?
           await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
           await mail.sendInvitationReviewer(req.body.sender, clientUrl);
+        } else {
+          const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+          req.params.role === 'editor' ?
+            await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
+            await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
+        }
       }
     })
     const receiver = await User.findOne({ email: receiverEmail }).exec()

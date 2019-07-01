@@ -3,7 +3,7 @@
   <div>
     <div style='margin: 0px 0px 20px 0px'>
       <el-alert
-        title="A email will be sent to invite reviewers to review the article"
+        title="A email will be sent to invite the associate editor to join this journal"
         type="info">
       </el-alert>
     </div>
@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeReviewer(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeAE(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -69,20 +69,17 @@
 </template>
 <script>
   import axios from 'axios'
-  import Sortable from 'sortablejs'
   import { mapGetters } from 'vuex'
 
   const shortid = require('shortid');
   const debug = require('debug')('frontend');
 
   export default {
-    name: 'viewAddReviewer',
+    name: 'viewAddAssociateEditor',
     components: {},
-    props: {
-      article_id: {}
-    },
     data () {
       return {
+        journal_id : '',
         dynamicValidateForm: {
           email: '',
           firstname: '',
@@ -110,40 +107,54 @@
         'accessToken'
       ])
     },
+    created () {
+      this.journal_id = this.$route.params && this.$route.params.id
+    },
     async mounted () {
+      this.fetchAssociateEditor()
+      /*
       this.list = await new Promise((resolve, reject) => {
-        axios.get(`/api/articles/${this.article_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+        axios.get(`/api/journals/${this.journal_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
           .then(data => {
-            resolve(data.data.reviewers)
+            resolve(data.data.users)
           })
           .catch(err => reject(err))
       })
-      debug(this.list)
+      console.log('this.list :: ',this.list)*/
     },
     methods: {
+      fetchAssociateEditor () {
+        axios.get('/api/roles/journal/' + this.journal_id + '/associate_editor', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(res => {
+          console.log('fetchAssociateEditor :: ', res.data.users)
+          this.list = res.data.users
+          console.log(this.list)
+        }).catch(err => {
+          console.error(err)
+        })
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addReviewer()
-            //change status of the article
-            this.changeStatus()
+            this.addAE()
           } else {
             debug('error submit!!');
             return false;
           }
         });
       },
-      async addReviewer () {
-        let newReviewer = {
+      async addAE () {
+        let newAE = {
           email: this.dynamicValidateForm.email,
           firstname: this.dynamicValidateForm.firstname,
           lastname: this.dynamicValidateForm.lastname
         }
         // warning. it's temporarly.
-        newReviewer = await this.invite(newReviewer.email,
-          newReviewer.firstname,
-          newReviewer.lastname);
-        this.list.push(newReviewer)
+        newAE = await this.invite(newAE.email,
+          newAE.firstname,
+          newAE.lastname);
+        this.list.push(newAE)
         this.$forceUpdate()
         this.cleanForm()
       },
@@ -159,7 +170,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/invitations/invite/reviewer?id_article=' + this.article_id, {
+          axios.post('/api/invitations/invite/associate_editor?id_journal=' + this.journal_id, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
@@ -172,14 +183,14 @@
                 resolve((await this.createTempAccount(email, link, firstname, lastname)).user)
               else
                 resolve(res)
-            }).then(() => this.addNewAuthor(email))
+            }).then(() => this.addNewAE(email))
         })
       },
-      addNewAuthor (email) {
-        const _newReviewer = {
+      addNewAE (email) {
+        const _newAE = {
           'email': email
         }
-        axios.put('/api/articles/'+ this.article_id +'/addReviewer',{ 'reviewer' : _newReviewer}, {
+        axios.put('/api/journals/'+ this.journal_id +'/addAssociateEditor',{ 'associate_editor' : _newAE}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(res => {
             return res
@@ -200,15 +211,15 @@
         this.dynamicValidateForm.firstname = ''
         this.dynamicValidateForm.lastname = ''
       },
-      removeReviewer(_removeReviewerId) {
+      removeAE(_removeAssociateEditorId) {
         this.$confirm(`This action will remove this author, still going on?`, this.$t('confirm.title'), {
           type: 'warning'
         }).then(() => {
           this.list = this.list.filter(function( el ) {
-            return el._id !== _removeReviewerId;
+            return el._id !== _removeAssociateEditorId;
           });
 
-          axios.put('/api/articles/' + this.article_id + '/removeReviewer',{ 'reviewerId' : _removeReviewerId}, {
+          axios.put('/api/journals/' + this.journal_id + '/removeAssociateEditor',{ 'associate_editor_id' : _removeAssociateEditorId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {
@@ -216,31 +227,13 @@
                 type: 'success',
                 message: this.$t('message.removed')
               })
-              this.fetchMyArticles()
+              // this.fetchMyArticles()
             })
         }).catch(() => {})
-      },
-      async changeStatus () {
-        this.articleInfo = await new Promise((resolve, reject) => {
-          axios.get('/api/articles/' + this.article_id, { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
-            .then(data => resolve(data.data))
-            .catch(err => reject(err))
-        });
-        if (this.articleInfo.status === 'Submited')
-          axios.patch(`/api/articles/${this.article_id}/review`, {},
-            { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       }
     }
   }
 </script>
-<style>
-  .sortable-ghost{
-    opacity: .8;
-    color: #fff!important;
-    background: #42b983!important;
-  }
-</style>
-
 <style scoped>
   .icon-star{
     margin-right:2px;

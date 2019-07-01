@@ -35,10 +35,11 @@
             {{ tag }}
           </el-tag>
         </div>
+
         <div class='details'>
-          Editor:
+          <h2>Editor</h2>
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addEditor()' circle></el-button>
           </div>
           <li>
             <el-row>
@@ -47,9 +48,9 @@
           </li>
         </div>
         <div class='details'>
-          Associate Editor:
+          <h2>Associate Editors</h2>
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addAssociateEditor()' circle></el-button>
           </div>
           <li>
             <el-row>
@@ -60,14 +61,14 @@
         </div>
         <div class='details'>
           <li>
-            Licence: CC
+            Licence: <a href='https://creativecommons.org/licenses/by-nd/4.0/'><u>CC BY-ND 4.0</u></a>
           </li>
           <li>
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
         </div>
-
+          <el-button v-on:click="removeJournal(journal._id)" type="danger" plain round>Remove journal</el-button>
       </div>
     </div>
     </el-col>
@@ -104,17 +105,35 @@
           </div>
       </div>
       </div>
-    </el-col>
-
+    </el-col><!--
+    <el-dialog
+      title="Add Editors"
+      :visible.sync="diagEditorVisible"
+      width="70%">
+    <addCollaborator v-bind:authors='editor' v-on:close="diagEditorVisible=false"/>
+  </el-dialog>-->
+    <el-dialog
+      title="Add Associate Editors"
+      :visible.sync="diagAssociateEditorVisible"
+      width="70%">
+    <addAssociateEditor v-on:close="diagAssociateEditorVisible=false"/>
+  </el-dialog>
   </div>
 </template>
 <script>
 import axios from 'axios'
 import { mapGetters } from 'vuex'
+import addAssociateEditor from '../../components/AssociateEditor'
 
 export default {
+  components: {addAssociateEditor},
   data () {
     return {
+      editor: '',
+      isEditable: false,
+      associateEditor: '',
+      diagAssociateEditorVisible: false,
+      diagEditorVisible: false,
       flag : false,
       test : 'on est sur la page du journal',
       journalId: '',
@@ -186,10 +205,35 @@ export default {
       axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
+        console.log('fetchAssociateEditor :: ', res.data)
         this.associate_editors = res.data.users
       }).catch(err => {
         console.error(err)
       })
+    },
+    addEditor () {
+      this.diagEditorVisible = true
+    },
+    addAssociateEditor () {
+      this.diagAssociateEditorVisible = true
+    },
+    removeJournal(journal_id) {
+      this.$confirm(`Are you sure to remove the journal and the collection of articles`, this.$t('confirm.title'), {
+          type: 'warning'
+        }).then(()=>{
+          axios.delete('/api/journals/' + this.journalId + '/removeJournal', {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then(res=>{
+            this.$message({
+              type: 'success',
+              message: this.$t('message.removed')
+            })
+          })
+          .catch(err=>{console.error(err)})
+
+      }).catch(() => {})
+
+
     }
   }
 }
@@ -261,7 +305,16 @@ export default {
     }
   }
   .details{
-    padding-bottom: 70px;
+    padding-bottom: 50px;
+    display: inline-block;
+    width: 100%;
+    h2{
+        font-size:1.3rem;
+        margin: 0;
+        padding: 0;
+        font-family: 'DNLTPro-bold';
+        display: inline-block;
+    }
 
      li:first-of-type {
        border-top: 1px solid #ddd;

@@ -114,7 +114,7 @@ export default {
       },
       settings3: {
           data: [
-            ["Ford", "Volvo", "Toyota", "Honda"],
+            ["Smaple A", "Sample B", "Sample C", "Sample CTRL"],
             [10, 11, 12, 13]
           ],
           colHeaders: true,
