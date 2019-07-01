@@ -189,8 +189,8 @@ async function switchRoute (route, articleInfo) {
         throw { message: 'Only the associate editor is able to set status in review / publish.' };
       break;
     case 'inviteReviewer':
-      if (articleInfo.role !== 'associate_editor')
-        throw { message: 'Only the associate_editor are able to invite reviewers.' };
+      if (articleInfo.right !== 'associate_editor')
+        throw { message: 'Only the associate_editor is able to invite reviewers.' };
       break;
     case 'inviteAssociateEditor':
       infoAuthor = await new Promise((resolve, reject) => {
