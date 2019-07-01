@@ -39,12 +39,12 @@
   </div>
 </template>
 <script>
-import DataTable from '../../components/DataTable'
-import locales from '../../locales/users'
-import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
+  import DataTable from '../../components/DataTable'
+  import locales from '../../locales/users'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
 
-export default {
+  export default {
   locales,
   data () {
     return {

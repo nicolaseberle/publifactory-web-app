@@ -73,12 +73,11 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import DataTable from 'components/DataTable'
-import { article as articleRes } from 'resources'
-import locales from 'locales/article'
+  import DataTable from 'components/DataTable'
+  import { article as articleRes } from 'resources'
+  import locales from 'locales/article'
 
-export default {
+  export default {
   locales,
   data () {
     return {

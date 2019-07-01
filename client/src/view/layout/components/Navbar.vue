@@ -47,16 +47,16 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Breadcrumb from '../../../components/Breadcrumb'
-import Hamburger from '../../../components/Hamburger'
-import ErrorLog from '../../../components/ErrorLog'
-import Screenfull from '../../../components/Screenfull'
-import Nightmode from '../../../components/Nightmode'
-// import SizeSelect from '../../../components/SizeSelect'
-import LangSelect from '../../../components/LangSelect'
-import locales from  '../../../locales/navbar'
-// import locales2 from '../../../locales/header'
+  import { mapActions, mapGetters } from 'vuex'
+  import Breadcrumb from '../../../components/Breadcrumb'
+  import Hamburger from '../../../components/Hamburger'
+  import ErrorLog from '../../../components/ErrorLog'
+  import Screenfull from '../../../components/Screenfull'
+  import Nightmode from '../../../components/Nightmode'
+  // import SizeSelect from '../../../components/SizeSelect'
+  import LangSelect from '../../../components/LangSelect'
+  import locales from '../../../locales/navbar'
+  // import locales2 from '../../../locales/header'
 
 export default {
   locales,

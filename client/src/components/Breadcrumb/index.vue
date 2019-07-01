@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import { generateTitle } from '../../utils/i18n'
+  import { generateTitle } from '../../utils/i18n'
 
-export default {
+  export default {
   data() {
     return {
       levelList: null

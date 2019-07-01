@@ -1,4 +1,5 @@
 import $ from 'jquery'
+
 const debug = require('debug')('frontend');
 
 function asideRightAnimation () {

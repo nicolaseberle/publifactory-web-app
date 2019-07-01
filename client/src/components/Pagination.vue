@@ -19,9 +19,10 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import locales from 'locales/pagination'
-export default {
+  import { mapGetters } from 'vuex'
+  import locales from 'locales/pagination'
+
+  export default {
   locales,
   props: {
     current: {

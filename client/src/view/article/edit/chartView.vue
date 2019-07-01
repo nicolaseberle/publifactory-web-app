@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import hist from '../../../components/Charts/histChart'
-// import basicbox from '../../../components/Charts/boxPlot'
+  import hist from '../../../components/Charts/histChart'
+  // import basicbox from '../../../components/Charts/boxPlot'
 // import basicline from '../../../components/Charts/evolChart'
 // import waterfall from '../../../components/Charts/waterfallChart'
 // import scatter from '../../../components/Charts/scatterChart'

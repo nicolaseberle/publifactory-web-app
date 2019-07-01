@@ -8,10 +8,10 @@
 </template>
 
 <script>
-import { Sidebar } from './layout/components'
-import ResizeMixin from './layout/mixin/ResizeHandler'
+  import { Sidebar } from './layout/components'
+  import ResizeMixin from './layout/mixin/ResizeHandler'
 
-export default {
+  export default {
   name: 'Layout',
   components: {
     Sidebar,

@@ -35,13 +35,12 @@
 </template>
 
 <script>
-import MarkdownEditor from '../../../../components/MarkdownEditor'
-import { mapGetters } from 'vuex'
-import VueSplit from 'vue-split-panel'
-import axios from 'axios'
+  import MarkdownEditor from '../../../../components/MarkdownEditor'
+  import { mapGetters } from 'vuex'
+  import VueSplit from 'vue-split-panel'
+  import axios from 'axios'
 
-
-const defaultForm = {
+  const defaultForm = {
   status: 'draft',
   title: '',
   abstract: '',

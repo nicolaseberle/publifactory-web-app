@@ -238,29 +238,24 @@
 
 </template>
 <script>
-import editor from 'vue2-medium-editor'
-import { mapGetters, mapActions } from 'vuex'
-import MarkdownEditor from '../../../../components/MarkdownEditor'
-import { validateURL } from '../../../../utils/validate'
-import axios from 'axios'
-import velocity from 'velocity-animate'
-import uploadData from './uploadData'
-import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
-import hightlightText from '../../../../utils/js/animation/highlight.js';
-import reviewComponent from '../../../../components/Review'
-import quilleditor from '../../../../components/QuillEditor'
-import VuePlotly from '@statnett/vue-plotly'
-import figureComponent from '../../../../components/Figure'
-import imageComponent from '../../../../components/Image'
-import scriptPython from '../../../../components/ScriptPython'
-import scriptR from '../../../../components/ScriptR'
-import figureFactory from '../../../../components/Charts'
-import addCollaborator from '../../../../components/Collaborator'
-import LoadScript from 'vue-plugin-load-script'
-import Cursors from '../../../../utils/js/collaboration/cursors.js'
-import ImportData from '../../../../components/ImportData/index'
-import InsertFigure from '../../../../components/InsertFigure/index'
-//import Zotero from '../../../../utils/zotero/include.js'
+  import editor from 'vue2-medium-editor'
+  import { mapActions, mapGetters } from 'vuex'
+  import MarkdownEditor from '../../../../components/MarkdownEditor'
+  import axios from 'axios'
+  import velocity from 'velocity-animate'
+  import asideRightAnimation from '../../../../utils/js/animation/aside.right.js'
+  import reviewComponent from '../../../../components/Review'
+  import quilleditor from '../../../../components/QuillEditor'
+  import VuePlotly from '@statnett/vue-plotly'
+  import figureComponent from '../../../../components/Figure'
+  import imageComponent from '../../../../components/Image'
+  import scriptPython from '../../../../components/ScriptPython'
+  import scriptR from '../../../../components/ScriptR'
+  import figureFactory from '../../../../components/Charts'
+  import addCollaborator from '../../../../components/Collaborator'
+  import ImportData from '../../../../components/ImportData/index'
+  import InsertFigure from '../../../../components/InsertFigure/index'
+  //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 // var Zotero = require('libzotero');

@@ -110,13 +110,12 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import DataTable from '../../../components/DataTable'
-import locales from '../../../locales/article'
-import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import DataTable from '../../../components/DataTable'
+  import locales from '../../../locales/article'
+  import axios from 'axios'
 
-const debug = require('debug')('frontend')
+  const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {

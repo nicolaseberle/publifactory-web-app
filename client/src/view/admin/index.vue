@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import userlist from './UserList'
+  import { mapGetters } from 'vuex'
+  import userlist from './UserList'
 
-export default {
+  export default {
   data() {
     return {
       flagAdmin: false

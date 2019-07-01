@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import velocity from 'velocity-animate'
+  import velocity from 'velocity-animate'
 
-export default {
+  export default {
   name: 'accordion',
   template: '#accordion',
   props: ['items'],

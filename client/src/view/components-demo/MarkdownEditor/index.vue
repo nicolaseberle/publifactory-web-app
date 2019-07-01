@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import 'font-awesome/css/font-awesome.min.css'
-import 'simplemde/dist/simplemde.min.css'
-import SimpleMDE from 'simplemde'
+  import 'font-awesome/css/font-awesome.min.css'
+  import 'simplemde/dist/simplemde.min.css'
+  import SimpleMDE from 'simplemde'
 
-export default {
+  export default {
   name: 'SimplemdeMd',
   props: {
     value: {

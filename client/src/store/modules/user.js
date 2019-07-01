@@ -1,18 +1,23 @@
 // import { merge } from 'lodash'
-import { saveMulti, clearMulti } from '../../storage'
+import { clearMulti, saveMulti } from '../../storage'
 import {
-  login,
-  getUserInfo,
-  resetGuestPassword,
   changePassword,
-  resetPassword,
-  updateUser,
+  checkEmail,
+  getUserInfo,
+  login,
   loginOrcid,
-  checkEmail
+  resetGuestPassword,
+  resetPassword,
+  updateUser
 } from './user.api'
 // eslint-disable-next-line camelcase
-import { username, email, access_token, refresh_token } from '../../stored'
-import { STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN } from '../../constants'
+import { access_token, email, refresh_token, username } from '../../stored'
+import {
+  STORE_KEY_ACCESS_TOKEN,
+  STORE_KEY_REFRESH_TOKEN,
+  STORE_KEY_USEREMAIL,
+  STORE_KEY_USERNAME
+} from '../../constants'
 
 const state = {
   _id: '',
