@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Syntax Coloration for PROMPT
 RED='\033[0;31m' # Red Color
