@@ -69,13 +69,12 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import locales from '../../locales/article'
-import axios from 'axios'
-import CreateJournal from '../../components/Journal/CreateJournal'
+  import { mapGetters } from 'vuex'
+  import locales from '../../locales/article'
+  import axios from 'axios'
+  import CreateJournal from '../../components/Journal/CreateJournal'
 
-export default {
+  export default {
   locales,
   data () {
     return {

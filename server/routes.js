@@ -28,6 +28,7 @@ module.exports = function (app) {
   app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
   app.use('/api/roles', require('./api/roles'))
+  app.use('/api/pictures', require('./api/picture'))
 
   // All undefined asset or api routes should return a 404
   app.route('/:url(api|auth|static)/*').get(errors[404])

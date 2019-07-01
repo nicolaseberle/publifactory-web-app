@@ -73,17 +73,17 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import tracesMenu from '../../components/Charts/Menu/TracesMenu'
-import generalMenu from '../../components/Charts/Menu/GeneralMenu'
-import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
-import { HotTable } from '@handsontable/vue';
-import { mapGetters } from 'vuex'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import tracesMenu from '../../components/Charts/Menu/TracesMenu'
+  import generalMenu from '../../components/Charts/Menu/GeneralMenu'
+  import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
+  import { HotTable } from '@handsontable/vue'
+  import { mapGetters } from 'vuex'
 
-import axios from 'axios'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+
+  const debug = require('debug')('frontend');
 //var Handsontable = require('handsontable');
 
 export default {

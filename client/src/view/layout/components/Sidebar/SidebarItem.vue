@@ -33,14 +33,13 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import path from 'path'
-import { generateTitle } from '../../../../utils/i18n'
-import { validateURL } from '../../../../utils/validate'
-import Item from './Item'
+  import { mapGetters } from 'vuex'
+  import path from 'path'
+  import { generateTitle } from '../../../../utils/i18n'
+  import { validateURL } from '../../../../utils/validate'
+  import Item from './Item'
 
-
-export default {
+  export default {
   name: 'SidebarItem',
   components: { Item },
   props: {

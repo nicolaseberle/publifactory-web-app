@@ -22,9 +22,9 @@
   </div>
 </template>
 <script>
-import locales from 'locales/charts'
+  import locales from 'locales/charts'
 
-export default {
+  export default {
   name: 'generalMenu',
   locales,
   components: {},

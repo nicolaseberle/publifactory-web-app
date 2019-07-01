@@ -85,31 +85,27 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import { mapGetters } from 'vuex'
-import Autocomplete from 'v-autocomplete'
-Vue.use(Autocomplete)
+  import Vue from 'vue'
+  import { mapGetters } from 'vuex'
+  import Autocomplete from 'v-autocomplete'
+  import ItemTemplate from './ItemTemplate.vue'
+  import 'quill'
+  import 'quill/dist/quill.core.css'
+  import 'quill/dist/quill.bubble.css'
+  import 'quill-cursors/dist/quill-cursors.css'
+  import 'v-autocomplete/dist/v-autocomplete.css'
+  import QuillCursors from 'quill-cursors/src/cursors'
 
-import ItemTemplate from './ItemTemplate.vue'
+  Vue.use(Autocomplete)
 
-import defaultsDeep from 'lodash.defaultsdeep'
-import 'quill'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.bubble.css'
-import 'quill-cursors/dist/quill-cursors.css'
-import 'v-autocomplete/dist/v-autocomplete.css'
-
-import hightlightText from '../../utils/js/animation/highlight.js';
-
-//var ShareDB = require('sharedb/lib/client')// cursor
+  //var ShareDB = require('sharedb/lib/client')// cursor
 // var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
 // var utils = require('../../utils/js/collaboration/utils')// cursor
 
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 
-import QuillCursors from 'quill-cursors/src/cursors';
-Quill.register('modules/cursors', QuillCursors);
+  Quill.register('modules/cursors', QuillCursors);
 
 //ShareDB.types.register(require('rich-text').type);
 

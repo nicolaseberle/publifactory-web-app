@@ -123,11 +123,11 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-import addAssociateEditor from '../../components/AssociateEditor'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import addAssociateEditor from '../../components/AssociateEditor'
 
-export default {
+  export default {
   components: {addAssociateEditor},
   data () {
     return {

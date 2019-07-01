@@ -15,15 +15,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import CodeMirror from 'codemirror'
-import 'codemirror/mode/stex/stex.js'
-import 'codemirror/lib/codemirror.css'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import CodeMirror from 'codemirror'
+  import 'codemirror/mode/stex/stex.js'
+  import 'codemirror/lib/codemirror.css'
 
-import compile from '../../../../utils/js/latex/latex2html.js'
-import VueSplit from 'vue-split-panel'
-const util = require('util');
+  import compile from '../../../../utils/js/latex/latex2html.js'
+  import VueSplit from 'vue-split-panel'
+
+  const util = require('util');
 const setTimeoutPromise = util.promisify(setTimeout);
 
 export default {

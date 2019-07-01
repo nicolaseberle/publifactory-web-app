@@ -44,9 +44,10 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-import resize from './mixins/resize'
-var debug = require('debug')('frontend');
+  import echarts from 'echarts'
+  import resize from './mixins/resize'
+
+  var debug = require('debug')('frontend');
 
 export default {
   mixins: [resize],

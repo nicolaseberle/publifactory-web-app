@@ -5,6 +5,7 @@ import VueResource from 'vue-resource'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+
 Vue.use(ElementUI)
 // import { Message } from 'element-ui'
 

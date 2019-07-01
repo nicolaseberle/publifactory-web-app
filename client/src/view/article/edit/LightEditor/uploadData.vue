@@ -48,11 +48,11 @@
   </div>
 </template>
 <script>
-import UploadExcelComponent from '../../../../components/UploadExcel/index.vue'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
+  import UploadExcelComponent from '../../../../components/UploadExcel/index.vue'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
 
-export default {
+  export default {
   name: 'UploadExcel',
   components: { UploadExcelComponent },
   data() {

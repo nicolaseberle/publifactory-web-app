@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import editComponent from './edit'
-import readComponent from './read'
-import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import editComponent from './edit'
+  import readComponent from './read'
+  import axios from 'axios'
 
-const debug = require('debug')('frontend')
+  const debug = require('debug')('frontend')
 
 const defaultForm = {
   status: 'draft',

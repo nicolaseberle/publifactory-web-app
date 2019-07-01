@@ -67,11 +67,12 @@
   </transition>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-// import { merge } from 'lodash'
-import { user as userResource } from '../../../resources'
-import locales from '../../../locales/header'
-export default {
+  import { mapActions, mapGetters } from 'vuex'
+  // import { merge } from 'lodash'
+  import { user as userResource } from '../../../resources'
+  import locales from '../../../locales/header'
+
+  export default {
   locales,
   data () {
     return {

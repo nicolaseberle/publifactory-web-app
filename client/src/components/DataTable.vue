@@ -15,12 +15,12 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-// import { merge } from 'lodash'
-import ContentLoading from 'components/ContentLoading'
-import Pagination from 'components/Pagination'
+  import { mapGetters } from 'vuex'
+  // import { merge } from 'lodash'
+  import ContentLoading from 'components/ContentLoading'
+  import Pagination from 'components/Pagination'
 
-export default {
+  export default {
   props: {
     rowKey: String,
     showPagination: {

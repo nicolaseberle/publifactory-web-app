@@ -24,14 +24,14 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import axios from 'axios'
-import adminDashboard from './admin'
-import editorDashboard from './editor'
-import userDashboard from './user'
-import locales from '../../locales/register'
+  import { mapActions, mapGetters } from 'vuex'
+  import axios from 'axios'
+  import adminDashboard from './admin'
+  import editorDashboard from './editor'
+  import userDashboard from './user'
+  import locales from '../../locales/register'
 
-export default {
+  export default {
   locales,
   name: 'Dashboard',
   components: { adminDashboard, userDashboard, editorDashboard },
