@@ -18,13 +18,12 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
 
-const debug = require('debug')('frontend');
+  const debug = require('debug')('frontend');
 
 
 export default {

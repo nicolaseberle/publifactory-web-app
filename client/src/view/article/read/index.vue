@@ -78,18 +78,17 @@
   </div>
 </template>
 <script>
-import editor from 'vue2-medium-editor'
-import { mapGetters } from 'vuex'
-import MarkdownEditor from '../../../components/MarkdownEditor'
-import { validateURL } from '../../../utils/validate'
-import axios from 'axios'
-import velocity from 'velocity-animate'
-import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
-import VuePlotly from '@statnett/vue-plotly'
-import figureComponent from '../../../components/Figure'
-import reviewComponent from '../../../components/Review'
+  import { mapGetters } from 'vuex'
+  import MarkdownEditor from '../../../components/MarkdownEditor'
+  import { validateURL } from '../../../utils/validate'
+  import axios from 'axios'
+  import velocity from 'velocity-animate'
+  import asideRightAnimation from '../../../utils/js/animation/aside.right.js'
+  import VuePlotly from '@statnett/vue-plotly'
+  import figureComponent from '../../../components/Figure'
+  import reviewComponent from '../../../components/Review'
 
-const debug = require('debug')('frontend')
+  const debug = require('debug')('frontend')
 
 
 const defaultForm = {

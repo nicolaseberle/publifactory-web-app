@@ -3,12 +3,12 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { Loading } from 'element-ui';
-import locales from 'locales/invitation'
-import axios from 'axios'
+  import { mapActions, mapGetters } from 'vuex'
+  import { Loading } from 'element-ui'
+  import locales from 'locales/invitation'
+  import axios from 'axios'
 
-export default {
+  export default {
   locales,
   name: 'RecoverPasswordView',
   data() {

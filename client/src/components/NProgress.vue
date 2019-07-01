@@ -1,9 +1,10 @@
 <template></template>
 <script>
-import Vue from 'vue'
-import nprogress from 'nprogress'
-import 'nprogress/nprogress.css'
-export default {
+  import Vue from 'vue'
+  import nprogress from 'nprogress'
+  import 'nprogress/nprogress.css'
+
+  export default {
   props: {
     parent: String
   },

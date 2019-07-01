@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-import resize from './mixins/resize'
+  import echarts from 'echarts'
+  import resize from './mixins/resize'
 
-export default {
+  export default {
   mixins: [resize],
   props: {
     className: {

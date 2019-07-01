@@ -52,9 +52,10 @@
 
 <script>
 
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+
+  const debug = require('debug')('frontend');
 
   export default {
     name: 'CreateJournal',

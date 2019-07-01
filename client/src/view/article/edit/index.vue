@@ -129,14 +129,13 @@
 
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import velocity from 'velocity-animate'
-import lightEditorComponent from './LightEditor'
-import markdownEditorComponent from './MarkdownEditorComponent'
-import latexEditorComponent from './LatexEditorComponent'
-import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import lightEditorComponent from './LightEditor'
+  import markdownEditorComponent from './MarkdownEditorComponent'
+  import latexEditorComponent from './LatexEditorComponent'
+  import axios from 'axios'
 
-export default {
+  export default {
   name: 'ArticleDetail',
   components: { lightEditorComponent, markdownEditorComponent, latexEditorComponent },
   data() {

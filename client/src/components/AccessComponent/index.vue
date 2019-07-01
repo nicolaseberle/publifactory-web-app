@@ -131,11 +131,11 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
-import Sortable from 'sortablejs'
-import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import Sortable from 'sortablejs'
+  import { mapGetters } from 'vuex'
 
-const debug = require('debug')('frontend');
+  const debug = require('debug')('frontend');
 
 export default {
   name: 'accessComponent',

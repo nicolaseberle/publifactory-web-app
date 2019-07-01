@@ -44,17 +44,17 @@
   </div>
 </template>
 <script>
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import CodeMirror from 'codemirror'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/lib/codemirror.css'
-import '../../styles/one-dark.css'
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import PulseLoader from 'vue-spinner/src/PulseLoader'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import CodeMirror from 'codemirror'
+  import 'codemirror/mode/python/python.js'
+  import 'codemirror/lib/codemirror.css'
+  import '../../styles/one-dark.css'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import PulseLoader from 'vue-spinner/src/PulseLoader'
 
-export default {
+  export default {
   name: 'ScriptPython',
   locales,
   props: ["idfigure"],

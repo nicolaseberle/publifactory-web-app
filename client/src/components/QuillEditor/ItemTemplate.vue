@@ -7,8 +7,9 @@
 </template>
 
 <script>
-import 'v-autocomplete/dist/v-autocomplete.css'
-export default {
+  import 'v-autocomplete/dist/v-autocomplete.css'
+
+  export default {
   props: {
     item: { required: true },
     searchText: { required: true }

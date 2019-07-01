@@ -69,7 +69,6 @@
 </template>
 <script>
   import axios from 'axios'
-  import Sortable from 'sortablejs'
   import { mapGetters } from 'vuex'
 
   const shortid = require('shortid');

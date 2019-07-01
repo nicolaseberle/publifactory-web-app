@@ -3,9 +3,10 @@
 </template>
 
 <script>
-import echarts from 'echarts'
-import resize from './mixins/resize'
-const debug = require('debug')('frontend');
+  import echarts from 'echarts'
+  import resize from './mixins/resize'
+
+  const debug = require('debug')('frontend');
 
 export default {
   mixins: [resize],

@@ -117,13 +117,13 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import DataTable from '../../../components/DataTable'
-import locales from '../../../locales/article'
-import axios from 'axios'
-import addReviewer from '../../../components/Reviewer'
-const debug = require('debug')('frontend')
+  import { mapGetters } from 'vuex'
+  import DataTable from '../../../components/DataTable'
+  import locales from '../../../locales/article'
+  import axios from 'axios'
+  import addReviewer from '../../../components/Reviewer'
+
+  const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {
