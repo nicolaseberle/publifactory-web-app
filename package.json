@@ -199,6 +199,7 @@
     "optimize-css-assets-webpack-plugin": "~5.0",
     "ora": "^1.1.0",
     "os-locale": "^2.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "python-shell": "^1.0.7",
     "sass-loader": "~7.1",
     "shelljs": "^0.7.7",

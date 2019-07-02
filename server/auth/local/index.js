@@ -46,6 +46,10 @@ router.post('/orcid', async function (req, res, next) {
   res.json({ success: true });
 })
 
+router.get('/google', async function (req, res, next) {
+
+})
+
 /**
 router.get('/orcid', passport.authenticate('orcid'));
 

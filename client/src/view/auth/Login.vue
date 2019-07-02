@@ -48,7 +48,7 @@
           </el-button>
         </el-row>
         <el-row>
-          <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading">
+          <el-button class="login-button" style='margin-top:5px; background: #4885ed' :class="{error: loginError}" type="primary" :loading="loading" @click="onGoogleSubmit()">
             <i class="fab fa-google" style='transform: scale(1.2) ; color: white;font-size:1em;margin-right:3em'></i>
             {{$t('login.googleButton')}}
           </el-button>
@@ -85,6 +85,7 @@
   import axios from 'axios'
 
   const debug = require('debug')('frontend')
+  const configGoogle = require('../../../../config').google
 
 export default {
   locales,
@@ -153,24 +154,6 @@ export default {
               }, 500)
             })
           })
-          await this.login({
-            email: this.form.email,
-            password: this.form.password
-          }).then((data) => {
-            this.loading = false
-            window.location.href = 'https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=token&scope=openid&redirect_uri=http://localhost:9001/'
-          }).catch((err) => {
-            this.$message({
-              title: this.$t('message.error'),
-              message: err.message || this.$t('login.authFail'),
-              type: 'error'
-            })
-            this.loading = false
-            this.loginError = true
-            setTimeout(() => {
-              this.loginError = false
-            }, 500)
-          })
         }
       })
     },
@@ -221,6 +204,39 @@ export default {
       if (regExp.exec(this.redirect).length === 6) {
 
       }
+    },
+    async onGoogleSubmit () {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          const params = {
+            client_id: configGoogle.client_id,
+            redirect_uri: configGoogle.callbackUrl,
+            response_type: 'token',
+            scope: 'https://www.googleapis.com/auth/drive.metadata.readonly',
+            include_granted_scopes: 'true',
+            state: 'pass-through value'
+          }
+          const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
+          await this.login({
+            email: this.form.email,
+            password: this.form.password
+          }).then((data) => {
+            window.location.href = `${oauth2Endpoint}?scope=${params.scope}&client_id=${params.client_id}&include_granted_scopes=${params.include_granted_scopes}&state=${params.state}&redirect_uri=${params.redirect_uri}&response_type=${params.response_type}`
+          }).catch((err) => {
+            this.$message({
+              title: this.$t('message.error'),
+              message: err.message || this.$t('login.authFail'),
+              type: 'error'
+            })
+            this.loginError = true
+            setTimeout(() => {
+              this.loginError = false
+            }, 500)
+          }).finally(() => {
+              this.loading = false
+            })
+        }
+      })
     }
   }
 }

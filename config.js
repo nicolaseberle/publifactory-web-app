@@ -41,8 +41,9 @@ var development = {
     callbackUrl: 'http://api:4000/api/auth/local/orcid/callback'
   },
   google: {
-      client_id	: "512110219820-jg8kgmn0keerqaq6iktdp6th80gqguvv.apps.googleusercontent.com",
-      client_secret: "bP63zGcgNyfv5jBDKYdsgpbE"
+    client_id	: "512110219820-jg8kgmn0keerqaq6iktdp6th80gqguvv.apps.googleusercontent.com",
+    client_secret: "bP63zGcgNyfv5jBDKYdsgpbE",
+    callbackUrl: 'http://localhost:9001'
   },
   frontend: {
     port: 9001,

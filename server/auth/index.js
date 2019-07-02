@@ -8,6 +8,7 @@ var User = require('../api/user/user.model')
 // Passport Configuration
 require('./local/passport').setupLogin(User, config)
 require('./local/passport').setupOrcid(User, config)
+require('./local/passport').setupGoogle(User, config)
 
 var router = express.Router()
 
