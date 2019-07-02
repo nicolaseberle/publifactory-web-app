@@ -40,6 +40,11 @@ var development = {
     clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
     callbackUrl: 'http://api:4000/api/auth/local/orcid/callback'
   },
+  google: {
+    client_id	: "512110219820-jg8kgmn0keerqaq6iktdp6th80gqguvv.apps.googleusercontent.com",
+    client_secret: "bP63zGcgNyfv5jBDKYdsgpbE",
+    callbackUrl: 'http://localhost:9001'
+  },
   frontend: {
     port: 9001,
     assetsRoot: path.resolve(__dirname, './client/src'),
