@@ -120,7 +120,7 @@ export default {
       this.onCreation()
     if (this.$route.query.redirect) {
       this.redirect = this.$route.query.redirect
-      this.onOrcidLogin()
+      this.onOAuthLogin()
     }
   },
   computed: {
@@ -131,27 +131,25 @@ export default {
     onOrcidSubmit () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await new Promise((resolve, reject) => {
-            axios.post('/api/users/orcid',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
-              .then(response => {
-                this.$message({
-                  title: this.$t('message.created'),
-                  message: this.$t('message.created'),
-                  type: 'success'
-                })
-                resolve("OK")
-              }).catch((err) => {
+          await new Promise(async (resolve, reject) => {
+            const response = await this.login({
+              email: this.form.email,
+              password: this.form.password
+            }).then((data) => {
+              console.log(data)
+              window.location.href = 'https://orcid.org/oauth/authorize?client_id=APP-HCKHJYQTALPVGUJ1&response_type=token&scope=openid&redirect_uri=http://localhost:9001/'
+            }).catch((err) => {
               this.$message({
                 title: this.$t('message.error'),
-                message: err.message || this.$t('register.authFail'),
+                message: err.message || this.$t('login.authFail'),
                 type: 'error'
               })
-              this.loading = false
               this.loginError = true
-              reject(err)
               setTimeout(() => {
                 this.loginError = false
               }, 500)
+            }).finally(() => {
+              this.loading = false
             })
           })
         }
@@ -199,13 +197,16 @@ export default {
         }
       })
     },
-    onOrcidLogin() {
-      const regExp = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
-      if (regExp.exec(this.redirect).length === 6) {
+    onOAuthLogin() {
+      const regExpOrcid = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
+      const regExpGoogle = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*scope=(.*?)$/g
+      if (regExpOrcid.exec(this.redirect).length === 6) {
+
+      } else if (regExpGoogle.exec(this.redirect).length === 5) {
 
       }
     },
-    async onGoogleSubmit () {
+    onGoogleSubmit () {
       this.$refs.form.validate(async valid => {
         if (valid) {
           const params = {
@@ -217,10 +218,11 @@ export default {
             state: 'pass-through value'
           }
           const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-          await this.login({
+          const response = await this.login({
             email: this.form.email,
             password: this.form.password
           }).then((data) => {
+            console.log(data)
             window.location.href = `${oauth2Endpoint}?scope=${params.scope}&client_id=${params.client_id}&include_granted_scopes=${params.include_granted_scopes}&state=${params.state}&redirect_uri=${params.redirect_uri}&response_type=${params.response_type}`
           }).catch((err) => {
             this.$message({
@@ -235,6 +237,7 @@ export default {
           }).finally(() => {
               this.loading = false
             })
+          console.log(response)
         }
       })
     }
