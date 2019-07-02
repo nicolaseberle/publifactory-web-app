@@ -17,6 +17,7 @@ services:
     environment:
       WAIT_HOSTS: mongo:27017
       NODE_ENV: development
+      BASE_MONGO : mongo
     networks:
       - backend
       - frontend
@@ -48,6 +49,7 @@ services:
     environment:
       - PORT=9001
       - NODE_ENV=development
+      - BASE_API=api
     depends_on:
       - api
     links:
