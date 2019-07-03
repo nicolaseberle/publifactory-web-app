@@ -1,7 +1,7 @@
 <template>
   <div class="components-container-article">
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
-      <main class="article">
+      <main class="article" id="article-page">
         <article>
           <span id="triggerStartNav"></span>
             <header>
@@ -784,6 +784,7 @@ export default {
 #users-panel .user-data > div {
   flex-grow: 1;
 }
+
 </style>
 <!--<style>
 @import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";
