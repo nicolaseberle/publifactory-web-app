@@ -154,11 +154,12 @@
         newAE = await this.invite(newAE.email,
           newAE.firstname,
           newAE.lastname);
-        this.list.push(newAE)
+
+        await this.fetchAssociateEditor()
         this.$forceUpdate()
         this.cleanForm()
       },
-      invite (email, firstname, lastname) {
+      async invite (email, firstname, lastname) {
         let sender = this.userId;
         let shortId = shortid.generate();
         while (shortId.indexOf('-') >= 0) {
@@ -169,32 +170,24 @@
         let message = "toto";
         let name = this.userId;
 
-        return new Promise((resolve, reject) => {
-          axios.post('/api/invitations/invite/associate_editor?id_journal=' + this.journal_id, {
-            "sender": sender,
-            "link": link,
-            "to": inviteTo,
-            "msg": message,
-            "name": name
-          }, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
-            .then(async (res) => {
-              //if the email is not in the db -> create guest account
-              if (res.data == null)
-                resolve((await this.createTempAccount(email, link, firstname, lastname)).user)
-              else
-                resolve(res)
-            }).then(() => this.addNewAE(email))
-        })
+        const res = await axios.post('/api/invitations/invite/associate_editor?id_journal=' + this.journal_id, {
+          "sender": sender,
+          "link": link,
+          "to": inviteTo,
+          "msg": message,
+          "name": name
+        }, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+        if (res.data == null)
+          (await this.createTempAccount(email, link, firstname, lastname))
+        return await this.addNewAE(email)
       },
-      addNewAE (email) {
+      async addNewAE (email) {
         const _newAE = {
           'email': email
         }
-        axios.put('/api/journals/'+ this.journal_id +'/addAssociateEditor',{ 'associate_editor' : _newAE}, {
+        return await axios.put('/api/journals/'+ this.journal_id +'/addAssociateEditor',{ 'associate_editor' : _newAE}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
-        }).then(res => {
-            return res
-          })
+        })
       },
       createTempAccount (_email,_password, _firstname,_lastname) {
         return axios.post('/api/users/guest',{ "email": _email,"password": _password,"firstname": _firstname,"lastname": _lastname})

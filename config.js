@@ -62,7 +62,7 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: 'mongodb://mongo:27017/',
+      uri: `mongodb://${process.env.BASE_MONGO}:27017/`,
       useNewUrlParser: true
     }
   })

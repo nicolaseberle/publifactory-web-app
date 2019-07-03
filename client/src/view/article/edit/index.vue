@@ -41,7 +41,7 @@
           <el-button-group>
             <!--<el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>-->
-            <el-button type="" round disabled>Download the article</el-button>
+            <el-button type="" v-on:click="handleDownload()" round >Download the article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" round >Submit your article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round disabled>Submitted</el-button>
             <el-button v-if="  this.articleInfo.status === 'Reviewing' " type="" @click="changeStatus()" round >Validate the article</el-button>
@@ -63,7 +63,7 @@
   </div>
   <div>
 
-      <component v-bind:is="currentEditor" :hidePDF="flagHidePDF" v-on:changecomment='onChangeComment'/>
+      <component  v-bind:is="currentEditor" :hidePDF="flagHidePDF" v-on:changecomment='onChangeComment'/>
   </div>
   <el-dialog
     title="Submission process"
@@ -134,6 +134,9 @@
   import markdownEditorComponent from './MarkdownEditorComponent'
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
+  const printJS = require( 'print-js')
+  // const convertHTMLToPDF = require('pdf-puppeteer');
+  // const jsPDF = require( 'jspdf')
 
   export default {
   name: 'ArticleDetail',
@@ -173,6 +176,60 @@
     },
     actionHandleCommand (action) {
 
+    },
+    async handleDownload() {
+/*
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.goto(window.location.href, {waitUntil: 'networkidle2'});
+      // page.pdf() is currently supported only in headless mode.
+      // @see https://bugs.chromium.org/p/chromium/issues/detail?id=753118
+      await page.pdf({
+        path: 'hn.pdf',
+        format: 'letter'
+      });
+
+      await browser.close();*/
+      // Get HTML to print from element
+        /*const prtHtml = document.getElementById('article-page').innerHTML;
+
+        // Get all stylesheets HTML
+        let stylesHtml = '';
+        for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
+          stylesHtml += node.outerHTML;
+        }
+
+        console.log(stylesHtml)
+
+        // Open the print window
+        const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+
+        WinPrint.document.write(`<!DOCTYPE html>
+        <html>
+          <head>
+            ${stylesHtml}
+          </head>
+          <body>
+            ${prtHtml}
+          </body>
+        </html>`);
+
+        WinPrint.document.close();
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+        */
+      /*
+		    const filename  = 'ThisIsYourPDFFilename.pdf';
+
+  		html2canvas(document.querySelector('#article-page')).then(canvas => {
+  			let pdf = new jsPDF('p', 'mm', 'a4');
+  			pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
+  			pdf.save(filename);
+  		});*/
+
+
+      printJS({printable:'article-page',header:'', type:'html',css:'/dist/css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
     },
     handleHidePDF () {
       if(this.flagHidePDF == 1){
