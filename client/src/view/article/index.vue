@@ -8,6 +8,7 @@
   import readComponent from './read'
   import axios from 'axios'
 
+
   const debug = require('debug')('frontend')
 
 const defaultForm = {
@@ -49,18 +50,8 @@ export default {
     ])
   },
   created() {
-    if (1) {
       this.id = this.$route.params && this.$route.params.id
-
       debug("creation de la page")
-
-      // this.fetchData(this.id)
-      // console.log(this.postForm.authors)
-
-      //}
-    } else {
-      this.postForm = Object.assign({}, defaultForm)
-    }
   },
   methods: {
     fetchData(id) {

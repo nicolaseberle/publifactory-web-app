@@ -29,3 +29,8 @@
   }
 }
 </script>
+<style>
+#nprogress .bar {
+  height:6px;
+}
+</style>
