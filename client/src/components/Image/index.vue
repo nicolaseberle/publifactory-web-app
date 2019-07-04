@@ -1,21 +1,7 @@
 
 <template>
   <div class="hello">
-    <!--<picture-input
-      ref="pictureInput"
-      @change="onChange"
 
-      removable="true"
-      crop="false"
-      margin="16"
-      accept="image/jpeg,image/png"
-      size="10"
-      buttonClass="btn"
-      :customStrings="{
-        upload: '<h2>Bummer!</h2>',
-        drag: '<div style=\'font-size:1rem\'>Drag a picture jpeg/png</div>'
-      }">
-    </picture-input>-->
   </div>
 </template>
 <script>
