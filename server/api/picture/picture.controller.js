@@ -2,8 +2,9 @@
 
 const Picture = require('./picture.model')
 
-function addPicture (req, res, next) {
+async function addPicture (req, res, next) {
   try {
+    console.log("addPicture :: " , req.file)
     if (!req.file)
       throw { code: 422, message: 'Missing picture to upload' };
     if (req.body.name === undefined)
@@ -18,8 +19,9 @@ function addPicture (req, res, next) {
       fields.legend = req.body.legend;
     if (req.body.license !== undefined)
       fields.license = req.body.license;
-    new Picture(fields).save()
-    res.status(201).json({success: true})
+    const newPicture = await new Picture(fields).save()
+    console.log(newPicture)
+    res.status(201).json({success: true, picture: newPicture})
   } catch (e) {
     next(e);
   }

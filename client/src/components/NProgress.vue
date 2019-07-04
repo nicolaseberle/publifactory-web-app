@@ -31,7 +31,8 @@
     })
     this.$router.afterEach(() => {
       //nprogress.done()
-      this.loadingInstance.close();
+      if(this.loadingInstance!=undefined)
+        this.loadingInstance.close();
     })/*
     Vue.http.interceptors.push((request, next) => {
       nprogress.start()

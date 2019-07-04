@@ -1,7 +1,7 @@
 
 <template>
-  <div class="hello">
-
+  <div>
+    <img v-if="image" :src="image" class="avatar">
   </div>
 </template>
 <script>
@@ -11,22 +11,28 @@ const debug = require('debug')('frontend');
 
 export default {
   name: 'app',
+  props:{
+    idPicture: String
+  },
   data () {
     return {
+      image: ''
+
     }
   },
-  components: {
-    // PictureInput
+  created () {
+    this.fetchPicture(this.idPicture)
   },
   methods: {
-    onChange (image) {
-      debug('New picture selected!')
-      if (image) {
-        debug('Picture loaded.',image)
-        this.image = image
-      } else {
-        debug('FileReader API not supported: use the <form>, Luke!')
-      }
+    fetchPicture (idPicture) {
+      axios.get('/api/picture',{headers: {
+        'Authorization': `Bearer ${this.accessToken}`,
+        'Content-Type': 'multipart/form-data'}
+      }).then(res=>{
+        console.log(res)
+        this.image = res
+      })
+
     }
   }
 }

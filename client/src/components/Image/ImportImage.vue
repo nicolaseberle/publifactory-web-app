@@ -8,12 +8,17 @@
             action=""
             :http-request="uploadSectionFile"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            :before-upload="beforeAvatarUpload"
+            :on-preview="handlePictureCardPreview">
+            <img v-if="binary!==''" :src="binary" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 
           </el-upload>
+
+          <label>File
+  <input type="file" id="file" name="pciture" ref="file" v-on:change="handleFileUpload()"/>
+</label>
+<button v-on:click="submitFile()">Submit</button>
         <!--<el-upload
           class="upload-demo"
           drag
@@ -54,9 +59,10 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      file: '',
       imageUrl: '',
-      postForm: {name:'',legend:'',source:''},
-      myHeaders: Object
+      binary: '',
+      postForm: {name:'',legend:'',source:''}
     };
   },
   computed: {
@@ -67,7 +73,8 @@ export default {
   },
   methods: {
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+
+
     },
     handleFormUpdate () {
 
@@ -84,10 +91,71 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    uploadSectionFile (param) {
-       console.log(param)
-       //axios.post('/api/journal',)
+    uploadSectionFile (data) {
+      let formData = new FormData();
+
+      /*
+          Add the form data we need to submit
+      */
+      console.log(data)
+      formData.append('picture', data.file);
+      formData.append('name', data.file.name);
+
+       axios.post('/api/pictures/',formData,{headers: {
+         'Authorization': `Bearer ${this.accessToken}`}
+       }).then(res=>{
+         this.arrayBufferToBase64(res.content)
+       })
+       this.postForm.name = data.file.name
+       //this.imageUrl = data.file.url;
       },
+      arrayBufferToBase64(buffer) {
+          this.binary = 'data:image/jpeg;base64,';
+          var bytes = [].slice.call(new Uint8Array(buffer));
+          bytes.forEach((b) => this.binary += String.fromCharCode(b));
+
+      },
+      submitFile(){
+        /*
+                Initialize the form data
+            */
+            let formData = new FormData();
+
+            /*
+                Add the form data we need to submit
+            */
+            console.log(this.file)
+            formData.append('picture', this.file);
+            formData.append('name', this.file.name);
+
+        /*
+          Make the request to the POST /single-file URL
+        */
+            axios.post( '/api/pictures',
+                formData,
+                {
+                headers: {
+                  'Authorization': `Bearer ${this.accessToken}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+              }
+            ).then(function(){
+          console.log('SUCCESS!!');
+        })
+        .catch(function(){
+          console.log('FAILURE!!');
+        });
+      },
+
+      /*
+        Handles a change on the file upload
+      */
+      handleFileUpload(){
+        this.file = this.$refs.file.files[0];
+      },
+      handlePictureCardPreview(file) {
+       this.dialogImageUrl = file.url;
+     }
   }
 }
 </script>

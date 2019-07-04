@@ -410,10 +410,6 @@ export default {
       return this.postForm.content_short.length
     }
   },
-  beforeCreate () {
-
-    this.loadingInstance1 = Loading.service({ fullscreen: true });
-  },
   created() {
     this.id = this.$route.params && this.$route.params.id
     //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
