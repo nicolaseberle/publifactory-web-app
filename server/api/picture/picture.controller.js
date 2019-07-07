@@ -1,17 +1,15 @@
 'use strict';
-
 const Picture = require('./picture.model')
 
 async function addPicture (req, res, next) {
   try {
-    console.log("addPicture :: " , req.file)
     if (!req.file)
       throw { code: 422, message: 'Missing picture to upload' };
     if (req.body.name === undefined)
       throw { code: 422, message: 'Missing parameter in body field.' };
     const fields = {
       name: req.body.name,
-      content: req.file.buffer,
+      path: req.file.path,
       size: req.file.size,
       id_user: req.decoded._id,
     }
@@ -30,8 +28,10 @@ async function addPicture (req, res, next) {
 async function getPictureById (req, res, next) {
   try {
     let response
-    if (req.params.id)
-      response = await Picture.findOne({ _id: req.params.id });
+    if (req.params.id){
+      response = await Picture.findById( req.params.id ).exec();
+      console.log(response)
+    }
     else
       response = await Picture.find();
     res.json({success: true, picture: response})

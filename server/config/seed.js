@@ -11,6 +11,7 @@ var Journals = require('../api/journal/journal.model');
 const Figure = require('../api/figure/figure.model');
 var RolesArticle = require('../api/roles/article/roles.article.model');
 var RolesJournal = require('../api/roles/journal/roles.journal.model');
+var Picture = require('../api/picture/picture.model');
 var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
@@ -76,6 +77,7 @@ var populateUsers = new Promise(
 var populateBase = function () {
     populateUsers.then(function (users) {
       Figure.find({}).remove().exec()
+      Picture.find({}).remove().exec();
       User.find({}, async function (err, users) {
         if (err) throw err
         //createComment(users)
