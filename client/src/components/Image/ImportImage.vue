@@ -10,13 +10,14 @@
             :show-file-list="false"
             :before-upload="beforeAvatarUpload"
             >
-
+            <img :src="imageUrl" />
             <el-image
               v-if="imageUrl!==''"
               style="width: 400px; height: 400px"
               :src="imageUrl"
               fit="contain">
             </el-image>
+
 
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 
@@ -105,11 +106,13 @@ export default {
        axios.post('/api/pictures/',formData,{headers: {
          'Authorization': `Bearer ${this.accessToken}`}
        }).then(res=>{
-         this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
+
+         this.imageUrl = "/" + res.data.picture.path;
          this.postForm.name = res.data.picture.name
          this.postForm.id = res.data.picture._id
          this.postForm.legend = res.data.picture.legend
          this.postForm.license = res.data.picture.license
+         console.log(this.imageUrl)
        }).catch(err=>{console.error(err)})
 
       },
@@ -129,7 +132,7 @@ export default {
             }
           }
           ).then(res=>{
-            this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
+            this.imageUrl = "/" + res.data.picture.path;
             this.postForm.name = res.data.picture.name
             this.postForm.legend = res.data.picture.legend
             this.postForm.id = res.data.picture._id

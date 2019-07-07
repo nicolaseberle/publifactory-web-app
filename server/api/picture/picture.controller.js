@@ -29,7 +29,8 @@ async function getPictureById (req, res, next) {
   try {
     let response
     if (req.params.id){
-      response = await Picture.findById( req.params.id ).exec();
+      //response = await Picture.findById(  ).exec();
+      await Picture.findOne({_id:req.params.id},  (err, res) => {console.log(res)});
       console.log(response)
     }
     else

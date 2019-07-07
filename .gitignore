@@ -14,8 +14,7 @@ client/dist
 # Logs
 logs
 *.log
-# Public images
-public
+
 
 npm-debug.log*
 yarn-debug.log*

@@ -42,7 +42,7 @@ export default {
         'Authorization': `Bearer ${this.accessToken}`}
       }).then(res=>{
         console.log(res)
-        this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
+        this.imageUrl = "/" + res.data.picture.path;
         // this.imageUrl = res.data.path
       })
 
