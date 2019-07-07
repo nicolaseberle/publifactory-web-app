@@ -107,7 +107,7 @@ export default {
          'Authorization': `Bearer ${this.accessToken}`}
        }).then(res=>{
 
-         this.imageUrl = "/" + res.data.picture.path;
+         this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
          this.postForm.name = res.data.picture.name
          this.postForm.id = res.data.picture._id
          this.postForm.legend = res.data.picture.legend
@@ -132,7 +132,7 @@ export default {
             }
           }
           ).then(res=>{
-            this.imageUrl = "/" + res.data.picture.path;
+            this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
             this.postForm.name = res.data.picture.name
             this.postForm.legend = res.data.picture.legend
             this.postForm.id = res.data.picture._id
