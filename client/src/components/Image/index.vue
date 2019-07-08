@@ -1,15 +1,17 @@
 
 <template>
-  <div style='text-align: center'>
+  <div >
 
     <figure>
-        <figcaption>Fig.1 : {{infos.title}}</figcaption>
-        <el-image
-          v-if="infos.path!==''"
-          style="width: 400px; height: 400px"
-          :src="'/' + infos.path"
-          fit="contain">
-        </el-image>
+        <figcaption>Fig.1 : {{infos.name}}</figcaption>
+        <div style='text-align:center'>
+          <el-image
+            v-if="infos.path!==''"
+            style="width: 400px; height: 400px;"
+            :src="'/' + infos.path"
+            fit="contain">
+          </el-image>
+        </div>
         <div class='action-button'>
             <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
             <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
