@@ -31,7 +31,7 @@ var backendBase = {
 
 var development = {
   email : {
-    rootHTML: "http://client_dev:9001",
+    rootHTML: "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
     pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
   },
