@@ -1,46 +1,58 @@
 
 <template>
-  <div class="hello">
-    <!--<picture-input
-      ref="pictureInput"
-      @change="onChange"
+  <div style='text-align: center'>
 
-      removable="true"
-      crop="false"
-      margin="16"
-      accept="image/jpeg,image/png"
-      size="10"
-      buttonClass="btn"
-      :customStrings="{
-        upload: '<h2>Bummer!</h2>',
-        drag: '<div style=\'font-size:1rem\'>Drag a picture jpeg/png</div>'
-      }">
-    </picture-input>-->
+    <figure>
+        <figcaption>Fig.1 : {{infos.title}}</figcaption>
+        <el-image
+          v-if="infos.path!==''"
+          style="width: 400px; height: 400px"
+          :src="'/' + infos.path"
+          fit="contain">
+        </el-image>
+        <div class='action-button'>
+            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
+            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
+        </div>
+      <div class="font-dnltp-medium">
+        <p><b style="font-family: DNLTPro-bold;">Legends</b>: {{infos.legend}}</p>
+        <p><b style="font-family: DNLTPro-bold;">Source</b>: "{{infos.name}}" from figure n°{{infos.id}}</p>
+        <p><b style="font-family: DNLTPro-bold;">DOI</b>: {{infos.source}}</p>
+      </div>
+    </figure>
+
   </div>
 </template>
 <script>
 // import PictureInput from 'vue-picture-input'
+import { mapGetters } from 'vuex'
+import axios from 'axios'
 
 const debug = require('debug')('frontend');
 
 export default {
   name: 'app',
+  props:{
+    idpicture: String
+  },
   data () {
     return {
+      infos: {name:'',legend:'',source:'',id:'',license: '',path:''}
     }
   },
-  components: {
-    // PictureInput
+  computed: {
+    ...mapGetters(['accessToken'])
+  },
+  mounted () {
+    this.fetchPicture(this.idpicture)
   },
   methods: {
-    onChange (image) {
-      debug('New picture selected!')
-      if (image) {
-        debug('Picture loaded.',image)
-        this.image = image
-      } else {
-        debug('FileReader API not supported: use the <form>, Luke!')
-      }
+    async fetchPicture (idPicture) {
+      await axios.get('/api/pictures/' + this.idpicture, {headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+      }).then(res=>{
+        this.infos = res.data.picture
+      })
     }
   }
 }

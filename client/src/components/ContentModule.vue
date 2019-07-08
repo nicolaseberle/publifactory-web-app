@@ -46,7 +46,7 @@
     }
   },
   components: {
-    ContentLoading
+    'content-loading':ContentLoading
   }
 }
 </script>

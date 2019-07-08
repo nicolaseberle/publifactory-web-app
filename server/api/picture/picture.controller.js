@@ -1,8 +1,10 @@
 'use strict';
 
-const Picture = require('./picture.model')
+require("./picture.model"); // register your schema
+const Picture = require('mongoose').model('Picture'); // load your schema
+var mongoose = require('mongoose');
 
-function addPicture (req, res, next) {
+async function addPicture (req, res, next) {
   try {
     if (!req.file)
       throw { code: 422, message: 'Missing picture to upload' };
@@ -10,7 +12,7 @@ function addPicture (req, res, next) {
       throw { code: 422, message: 'Missing parameter in body field.' };
     const fields = {
       name: req.body.name,
-      content: req.file.buffer,
+      path: req.file.path,
       size: req.file.size,
       id_user: req.decoded._id,
     }
@@ -18,8 +20,9 @@ function addPicture (req, res, next) {
       fields.legend = req.body.legend;
     if (req.body.license !== undefined)
       fields.license = req.body.license;
-    new Picture(fields).save()
-    res.status(201).json({success: true})
+    const newPicture = await new Picture(fields).save()
+    console.log(newPicture)
+    res.status(201).json({success: true, picture: newPicture})
   } catch (e) {
     next(e);
   }
@@ -28,8 +31,9 @@ function addPicture (req, res, next) {
 async function getPictureById (req, res, next) {
   try {
     let response
-    if (req.params.id)
-      response = await Picture.findOne({ _id: req.params.id });
+    if (req.params.id){
+      response = await Picture.findOne({ _id: req.params.id })
+    }
     else
       response = await Picture.find();
     res.json({success: true, picture: response})
