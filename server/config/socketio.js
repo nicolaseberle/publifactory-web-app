@@ -1,54 +1,48 @@
+'use strict';
+
+class User {
+  constructor (id) {
+    this.id = id
+    console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
+  }
+
+  setArticleId (idArticle) {
+    this.idArticle = idArticle
+  }
+}
+
+const mapUser = {};
+
 /**
- * Socket.io configuration
+ * Main calls from the sockets
+ * @param io -> the socket declaration
  */
+module.exports = function (io) {
+  io.on('connection', (socket) => {
+    mapUser[socket.id] = new User(socket.id)
 
-'use strict'
-var socketioJwt = require('socketio-jwt')
-var config = require('../../config').backend
-
-// When the user disconnects.. perform this
-function onDisconnect (socket) {
-}
-
-// When the user connects.. perform this
-function onConnect (socket) {
-  // When the client emits 'info', this listens and executes
-  socket.on('info', function (data) {
-    console.info('[%s] %s', socket.address, JSON.stringify(data, null, 2))
-  })
-
-  socket.on('client:hello', function (data) {
-    console.info('Received from client: %s', data)
-    socket.emit('server:hello', 'server hello')
-  })
-
-  // Insert sockets below
-  require('../api/thing/thing.socket').register(socket)
-  //require('../api/comment/comment.socket').register(socket)
-}
-
-module.exports = function (socketio) {
-  socketio.sockets
-    .on('connection', socketioJwt.authorize({
-      secret: config.secrets.session,
-      timeout: 15000 // 15 seconds to send the authentication message
-    }))
-    .on('authenticated', function (socket) {
-      // this socket is authenticated, we are good to handle more events from it.
-      console.log('hello! ' + socket.decoded_token.name)
-      socket.address = socket.handshake.address ||
-        socket.handshake.headers.host || process.env.DOMAIN
-
-      socket.connectedAt = new Date()
-
-      // Call onDisconnect.
-      socket.on('disconnect', function () {
-        onDisconnect(socket)
-        console.info('[%s] DISCONNECTED', socket.address)
-      })
-
-      // Call onConnect.
-      onConnect(socket)
-      console.info('[%s] CONNECTED', socket.address)
+    socket.on('disconnect', () => {
+      console.log('[socket.io] AN USER JUST DISCONNECTED: %s', mapUser[socket.id].id)
+      delete mapUser[socket.id];
     })
-}
+
+    /**
+     * Data contain :
+     * - content of the changed block
+     * - numBlock
+     * - numSubBlock
+     * - numSubSubBlock
+     */
+    socket.on('UPDATE_SECTION', (data) => {
+      socket.broadcast.emit(`UPDATE_BLOCK`, data)
+    })
+
+    /**
+     * Data contain id_article
+     */
+    socket.on('SET_ARTICLE', (data) => {
+      mapUser[socket.id].setArticleId(data.id_article)
+      console.log('[socket.io] AN USER WORKS ON ARTICLE %s: %s', data.id_article, mapUser[socket.id].id)
+    })
+  })
+};

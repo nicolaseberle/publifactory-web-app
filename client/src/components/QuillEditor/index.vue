@@ -95,6 +95,7 @@
   import 'quill-cursors/dist/quill-cursors.css'
   import 'v-autocomplete/dist/v-autocomplete.css'
   import QuillCursors from 'quill-cursors/src/cursors'
+  const io = require('socket.io-client');
 
   Vue.use(Autocomplete)
 
@@ -190,7 +191,9 @@ export default {
       template: ItemTemplate,
       actionValidate: 0,
       mouse_pos : '',
-      hostname: ''
+      hostname: '',
+
+      socket: io('/socket.io')
     }
   },
   created() {
@@ -198,6 +201,15 @@ export default {
 
   },
   mounted() {
+    this.socket.emit('SET_ARTICLE', {
+      id_article: this.id
+    })
+
+    this.socket.on('UPDATE_BLOCK', (data) => {
+      if (this.numBlock === data.numBlock && this.numSubBlock === data.numSubBlock &&
+        this.numSubSubBlock === data.numSubSubBlock)
+        this.content = data.content
+    })
 
     var quill = window.quill = new Quill('#'+this.idEditor, {
       modules: {
@@ -248,7 +260,13 @@ export default {
     var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
-        this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+      this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+      this.socket.emit('UPDATE_SECTION', {
+        content: this.content,
+        numBlock: this.numBlock,
+        numSubBlock: this.numSubBlock,
+        numSubSubBlock: this.numSubSubBlock
+      })
     });
 
     cursorsModule.registerTextChangeListener();
@@ -462,6 +480,16 @@ export default {
     ...mapGetters(['userId'])
   },
   methods:{
+    sendUpdates () {
+      this.socket.emit('UPDATE_SECTION', {
+        content: this.content,
+        numBlock: this.numBlock,
+        numSubBlock: this.numSubBlock,
+        numSubSubBlock: this.numSubSubBlock
+      })
+    },
+
+
     /*Hightlight Functions*/
     highlightSelection () {
         var userSelection = window.getSelection().getRangeAt(0);
@@ -581,7 +609,9 @@ export default {
     },
     deleteBlock () {
       this.$emit('delete',true)
-    }
+    },
+
+
   }
 }
 </script>
