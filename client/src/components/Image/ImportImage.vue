@@ -36,7 +36,7 @@
               <el-input v-model="postForm.id" disabled></el-input>
             </el-form-item>
             <el-form-item label="Name of the picture" placeholder="Enter the name of the picture">
-              <el-input v-model="postForm.name" ></el-input>
+              <el-input v-model="postForm.name"  v-on:change="handleFormUpdate"></el-input>
             </el-form-item>
             <el-form-item label="Legend" placeholder="Enter the legend of the picture">
               <el-input type="textarea"  :rows="3" v-model="postForm.legend" placeholder="Enter the legend of the picture"
@@ -92,17 +92,17 @@ export default {
       this.imageUrl = ''
     },
     handleFormUpdate () {
-
+      this.updatePicture()
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';
       const isLt2M = file.size / 1024 / 1024  < 5;
 
       if (!isJPG) {
-        this.$message.error('Avatar picture must be JPG format!');
+        this.$message.error('Picture must be JPG format!');
       }
       if (!isLt2M) {
-        this.$message.error('Avatar picture size can not exceed 2MB!');
+        this.$message.error('Picture size can not exceed 5MB!');
       }
       return isJPG && isLt2M;
     },
@@ -125,8 +125,13 @@ export default {
        }).catch(err=>{console.error(err)})
 
       },
-      async fetchPicture (idPicture) {
-        await axios.get('/api/pictures/' + idPicture, {headers: {
+      async updatePicture () {
+        await axios.put('/api/pictures/' + this.idpicture, {name:this.postForm.name, legend:this.postForm.legend }, {headers: {
+          'Authorization': `Bearer ${this.accessToken}`}
+        }).then(res=>{console.log('updated')})
+      },
+      async fetchPicture () {
+        await axios.get('/api/pictures/' + this.idpicture, {headers: {
           'Authorization': `Bearer ${this.accessToken}`}
         }).then(res=>{
           this.postForm.path = res.data.picture.path

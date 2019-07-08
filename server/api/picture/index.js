@@ -21,6 +21,6 @@ var router = express.Router()
 router.post('/', multer.single("picture"), controller.addPicture)
 router.get('/:id?', controller.getPictureById)
 router.delete('/:id', controller.removePicture)
-router.put('/:id', multer.single("picture"), controller.changeSource)
+router.put('/:id', multer.single("picture"), controller.updatePicture)
 
 module.exports = router;
