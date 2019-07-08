@@ -11,9 +11,9 @@
             :before-upload="beforeAvatarUpload"
             >
             <el-image
-              v-if="imageUrl!==''"
+              v-if="postForm.path!==''"
               style="width: 400px; height: 400px"
-              :src="imageUrl"
+              :src="'/'+postForm.path"
               fit="contain">
             </el-image>
 
@@ -60,6 +60,8 @@ import axios from 'axios'
 
 export default {
   props: {
+
+    idpicture: 0,
     numBlock: {},
     numSubBlock: {},
     numSubSubBlock: {},
@@ -82,6 +84,7 @@ export default {
   },
   mounted () {
     this.imageUrl = ''
+    this.fetchPicture(this.idpicture)
   },
   methods: {
     reset () {
@@ -113,48 +116,26 @@ export default {
        axios.post('/api/pictures/',formData,{headers: {
          'Authorization': `Bearer ${this.accessToken}`}
        }).then(  (res) => {
-         this.imageUrl = "http://localhost:9001/" + res.data.picture.path
+         this.postForm.path = res.data.picture.path
          this.postForm.name = res.data.picture.name
          this.postForm.id = res.data.picture._id
          this.postForm.legend = res.data.picture.legend
          this.postForm.license = res.data.picture.license
-         this.postForm.path = this.imageUrl
-         this.$emit('edit',this.numBlock,this.numSubBlock,this.numSubSubBlock,this.postForm.id)
+         this.$emit('update',this.numBlock,this.numSubBlock,this.numSubSubBlock,this.postForm.id)
        }).catch(err=>{console.error(err)})
 
       },
-      submitFile(){
-        let formData = new FormData();
-
-        console.log(this.file)
-        formData.append('picture', this.file);
-        formData.append('name', this.file.name);
-
-        axios.post( '/api/pictures',
-            formData,
-            {
-            headers: {
-              'Authorization': `Bearer ${this.accessToken}`,
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-          ).then(res=>{
-            this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
-            this.postForm.name = res.data.picture.name
-            this.postForm.legend = res.data.picture.legend
-            this.postForm.id = res.data.picture._id
-            this.postForm.license = res.data.picture.license
-            console.log('SUCCESS!!');
+      async fetchPicture (idPicture) {
+        await axios.get('/api/pictures/' + idPicture, {headers: {
+          'Authorization': `Bearer ${this.accessToken}`}
+        }).then(res=>{
+          this.postForm.path = res.data.picture.path
+          this.postForm.name = res.data.picture.name
+          this.postForm.id = res.data.picture._id
+          this.postForm.legend = res.data.picture.legend
+          this.postForm.license = res.data.picture.license
         })
-        .catch(err=>{
-          console.error(err)
-          console.log('FAILURE!!');
-        });
       },
-
-      /*
-        Handles a change on the file upload
-      */
       handleFileUpload(){
         this.file = this.$refs.file.files[0];
 
