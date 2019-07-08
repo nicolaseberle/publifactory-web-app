@@ -1,12 +1,25 @@
 
 <template>
   <div style='text-align: center'>
-    <el-image
-      v-if="imageUrl!==''"
-      style="width: 400px; height: 400px"
-      :src="imageUrl"
-      fit="contain">
-    </el-image>
+
+    <figure>
+        <figcaption>Fig.1 : {{infos.title}}</figcaption>
+        <el-image
+          v-if="infos.path!==''"
+          style="width: 400px; height: 400px"
+          :src="'/' + infos.path"
+          fit="contain">
+        </el-image>
+        <div class='action-button'>
+            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
+            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
+        </div>
+      <div class="font-dnltp-medium">
+        <p><b style="font-family: DNLTPro-bold;">Legends</b>: {{infos.legend}}</p>
+        <p><b style="font-family: DNLTPro-bold;">Source</b>: "{{infos.name}}" from figure n°{{infos.id}}</p>
+        <p><b style="font-family: DNLTPro-bold;">DOI</b>: {{infos.source}}</p>
+      </div>
+    </figure>
 
   </div>
 </template>
@@ -20,28 +33,26 @@ const debug = require('debug')('frontend');
 export default {
   name: 'app',
   props:{
-    idfigure: String
+    idpicture: String
   },
   data () {
     return {
-      imageUrl: ''
+      infos: {name:'',legend:'',source:'',id:'',license: '',path:''}
     }
   },
   computed: {
     ...mapGetters(['accessToken'])
   },
   mounted () {
-    this.fetchPicture(this.idfigure)
+    this.fetchPicture(this.idpicture)
   },
   methods: {
     async fetchPicture (idPicture) {
-      await axios.get('/api/pictures/' + this.idfigure, {headers: {
+      await axios.get('/api/pictures/' + this.idpicture, {headers: {
         'Authorization': `Bearer ${this.accessToken}`}
       }).then(res=>{
-        this.imageUrl = "/" + res.data.picture.path;
-        this.legend = res.data.picture.legend
+        this.infos = res.data.picture
       })
-
     }
   }
 }

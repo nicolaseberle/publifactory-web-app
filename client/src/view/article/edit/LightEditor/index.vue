@@ -77,7 +77,7 @@
 
                           <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -94,7 +94,7 @@
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" :idfigure="subitem.uuid" :key='subitem.nbEdit'/>
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -246,7 +246,7 @@
         </div>
       </span>
 
-    <importImage ref="dialogPicture" v-on:edit='editPictureBlock' :numBlock='poseditfigure[0]' :numSubBlock='poseditfigure[1]' :numSubSubBlock='poseditfigure[2]' ></importImage>
+    <importImage ref="dialogPicture" :idpicture='editidfigure' v-on:update='updatePictureBlock' :numBlock='poseditfigure[0]' :numSubBlock='poseditfigure[1]' :numSubSubBlock='poseditfigure[2]' ></importImage>
   </el-dialog>
   </div>
 
@@ -662,12 +662,14 @@ export default {
         this.diagInsertFigurePlotlyVisible = true
       }
     },
-    editPictureBlock(key, subkey, subsubkey, idPicture) {
-      console.log("editPictureBlock :: key :: ",key,subkey,subsubkey,idPicture)
+    updatePictureBlock(key, subkey, subsubkey, idPicture) {
       this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture
       this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++
-      console.log("editPictureBlock :: ",this.postForm.arr_content[key].block[subkey][subsubkey])
       this.save(this.$event)
+    },
+    editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
+      this.editidfigure = idPicture
+      this.openEditPicture ()
     },
     addOneBlock (ev,key) {
       var uuid_block = String(uuidv4())
