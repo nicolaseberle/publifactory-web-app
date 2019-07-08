@@ -33,7 +33,7 @@ var development = {
   email : {
     rootHTML: "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"//"09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
