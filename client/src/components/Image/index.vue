@@ -1,14 +1,13 @@
 
 <template>
-  <div>
-    imageUrl : {{imageUrl}}
-    idfigure : {{idfigure}}
+  <div style='text-align: center'>
     <el-image
       v-if="imageUrl!==''"
       style="width: 400px; height: 400px"
       :src="imageUrl"
       fit="contain">
     </el-image>
+
   </div>
 </template>
 <script>
@@ -21,13 +20,11 @@ const debug = require('debug')('frontend');
 export default {
   name: 'app',
   props:{
-    idfigure: String,
-    imageUrl: ''
+    idfigure: String
   },
   data () {
     return {
-      image: ''
-
+      imageUrl: ''
     }
   },
   computed: {
@@ -41,9 +38,8 @@ export default {
       await axios.get('/api/pictures/' + this.idfigure, {headers: {
         'Authorization': `Bearer ${this.accessToken}`}
       }).then(res=>{
-        console.log(res)
-        this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
-        // this.imageUrl = res.data.path
+        this.imageUrl = "/" + res.data.picture.path;
+        this.legend = res.data.picture.legend
       })
 
     }

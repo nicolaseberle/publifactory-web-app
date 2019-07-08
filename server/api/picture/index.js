@@ -6,10 +6,10 @@ const controller = require('./picture.controller');
 const Multer = require('multer');
 var storage = Multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './public/uploads/')
+    cb(null, './client/public/')
   },
   filename: function (req, file, cb) {
-    cb(null,  Date.now() + file.originalname)
+    cb(null,  Date.now() +  '-' + file.originalname)
   }
 })
 

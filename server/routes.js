@@ -31,7 +31,7 @@ module.exports = function (app) {
   app.use('/api/pictures', require('./api/picture'))
 
   // All undefined asset or api routes should return a 404
-  app.route('/:url(api|auth|static)/*').get(errors[404])
+  app.route('/:url(api|auth|static|public)/*').get(errors[404])
 
   // All other routes should redirect to the index.html
   if (config.serverFrontend) {

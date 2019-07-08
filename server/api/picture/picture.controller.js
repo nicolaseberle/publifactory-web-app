@@ -1,5 +1,7 @@
 'use strict';
-const Picture = require('./picture.model')
+require("./picture.model"); // register your schema
+const Picture = require('mongoose').model('Picture'); // load your schema
+var mongoose = require('mongoose');
 
 async function addPicture (req, res, next) {
   try {
@@ -29,9 +31,7 @@ async function getPictureById (req, res, next) {
   try {
     let response
     if (req.params.id){
-      //response = await Picture.findById(  ).exec();
-      await Picture.findOne({_id:req.params.id},  (err, res) => {console.log(res)});
-      console.log(response)
+      response = await Picture.findOne({ _id: req.params.id })
     }
     else
       response = await Picture.find();

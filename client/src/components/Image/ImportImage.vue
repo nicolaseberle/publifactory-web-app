@@ -10,7 +10,6 @@
             :show-file-list="false"
             :before-upload="beforeAvatarUpload"
             >
-            <img :src="imageUrl" />
             <el-image
               v-if="imageUrl!==''"
               style="width: 400px; height: 400px"
@@ -60,12 +59,17 @@ import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
+  props: {
+    numBlock: {},
+    numSubBlock: {},
+    numSubSubBlock: {},
+  },
   data() {
     return {
       file: '',
       imageUrl: '',
       binary: '',
-      postForm: {name:'',legend:'',source:'',id:'',license: ''},
+      postForm: {name:'',legend:'',source:'',id:'',license: '',path:''},
 
 
     };
@@ -77,10 +81,13 @@ export default {
 
   },
   mounted () {
-    this.postForm =  {name:'',legend:'',source:'',id:'',license: ''}
     this.imageUrl = ''
   },
   methods: {
+    reset () {
+      this.postForm = {name:'',legend:'',source:'',id:'',license: '',path:''}
+      this.imageUrl = ''
+    },
     handleFormUpdate () {
 
     },
@@ -105,14 +112,14 @@ export default {
 
        axios.post('/api/pictures/',formData,{headers: {
          'Authorization': `Bearer ${this.accessToken}`}
-       }).then(res=>{
-
-         this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
+       }).then(  (res) => {
+         this.imageUrl = "http://localhost:9001/" + res.data.picture.path
          this.postForm.name = res.data.picture.name
          this.postForm.id = res.data.picture._id
          this.postForm.legend = res.data.picture.legend
          this.postForm.license = res.data.picture.license
-         console.log(this.imageUrl)
+         this.postForm.path = this.imageUrl
+         this.$emit('edit',this.numBlock,this.numSubBlock,this.numSubSubBlock,this.postForm.id)
        }).catch(err=>{console.error(err)})
 
       },

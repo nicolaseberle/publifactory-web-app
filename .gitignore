@@ -16,7 +16,8 @@ logs
 *.log
 
 # Public folders
-public
+client/public
+
 
 
 npm-debug.log*
