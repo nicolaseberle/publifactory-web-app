@@ -8,29 +8,33 @@
             action=""
             :http-request="uploadSectionFile"
             :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            :before-upload="beforeAvatarUpload"
+            >
+            <el-image
+              v-if="imageUrl!==''"
+              style="width: 400px; height: 400px"
+              :src="imageUrl"
+              fit="contain">
+            </el-image>
+
+
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 
           </el-upload>
-        <!--<el-upload
-          class="upload-demo"
-          drag
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :file-list="fileList"
-          multiple>
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">Drop file here or <em>click to upload</em></div>
-          <div class="el-upload__tip" slot="tip">jpg/png files with a size less than 2Mo</div>
-        </el-upload>-->
+
+
+          <!--<input type="file" id="file" name="pciture" ref="file" v-on:change="handleFileUpload()"/>->
+
+          <button v-on:click="submitFile()">Submit</button>-->
+
         </div>
       </el-col>
       <el-col :span='12'>
         <div class="legend" style='text-align:left'>
           <el-form ref="postForm" label-position="top" :model="postForm">
+            <el-form-item label="ID" placeholder="">
+              <el-input v-model="postForm.id" disabled></el-input>
+            </el-form-item>
             <el-form-item label="Name of the picture" placeholder="Enter the name of the picture">
               <el-input v-model="postForm.name" ></el-input>
             </el-form-item>
@@ -40,6 +44,9 @@
             </el-form-item>
             <el-form-item label="Source" placeholder="Enter the graph DOI">
               <el-input v-model="postForm.source" v-on:change="handleFormUpdate"></el-input>
+            </el-form-item>
+            <el-form-item label="License" placeholder="Choose your licence">
+              <el-input v-model="postForm.license" v-on:change="handleFormUpdate"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -52,11 +59,19 @@ import { mapGetters } from 'vuex'
 import axios from 'axios'
 
 export default {
+  props: {
+    numBlock: {},
+    numSubBlock: {},
+    numSubSubBlock: {},
+  },
   data() {
     return {
+      file: '',
       imageUrl: '',
-      postForm: {name:'',legend:'',source:''},
-      myHeaders: Object
+      binary: '',
+      postForm: {name:'',legend:'',source:'',id:'',license: '',path:''},
+
+
     };
   },
   computed: {
@@ -65,16 +80,20 @@ export default {
   created () {
 
   },
+  mounted () {
+    this.imageUrl = ''
+  },
   methods: {
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    reset () {
+      this.postForm = {name:'',legend:'',source:'',id:'',license: '',path:''}
+      this.imageUrl = ''
     },
     handleFormUpdate () {
 
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024  < 2;
+      const isLt2M = file.size / 1024 / 1024  < 5;
 
       if (!isJPG) {
         this.$message.error('Avatar picture must be JPG format!');
@@ -84,10 +103,65 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    uploadSectionFile (param) {
-       console.log(param)
-       //axios.post('/api/journal',)
+    uploadSectionFile (data) {
+      let formData = new FormData();
+
+      console.log(data)
+      formData.append('picture', data.file);
+      formData.append('name', data.file.name);
+
+       axios.post('/api/pictures/',formData,{headers: {
+         'Authorization': `Bearer ${this.accessToken}`}
+       }).then(  (res) => {
+         this.imageUrl = "http://localhost:9001/" + res.data.picture.path
+         this.postForm.name = res.data.picture.name
+         this.postForm.id = res.data.picture._id
+         this.postForm.legend = res.data.picture.legend
+         this.postForm.license = res.data.picture.license
+         this.postForm.path = this.imageUrl
+         this.$emit('edit',this.numBlock,this.numSubBlock,this.numSubSubBlock,this.postForm.id)
+       }).catch(err=>{console.error(err)})
+
       },
+      submitFile(){
+        let formData = new FormData();
+
+        console.log(this.file)
+        formData.append('picture', this.file);
+        formData.append('name', this.file.name);
+
+        axios.post( '/api/pictures',
+            formData,
+            {
+            headers: {
+              'Authorization': `Bearer ${this.accessToken}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+          ).then(res=>{
+            this.imageUrl = "http://localhost:9001/" + res.data.picture.path;
+            this.postForm.name = res.data.picture.name
+            this.postForm.legend = res.data.picture.legend
+            this.postForm.id = res.data.picture._id
+            this.postForm.license = res.data.picture.license
+            console.log('SUCCESS!!');
+        })
+        .catch(err=>{
+          console.error(err)
+          console.log('FAILURE!!');
+        });
+      },
+
+      /*
+        Handles a change on the file upload
+      */
+      handleFileUpload(){
+        this.file = this.$refs.file.files[0];
+
+      },
+      handlePictureCardPreview(file) {
+       this.dialogImageUrl = file.url;
+     },
   }
 }
 </script>

@@ -28,8 +28,7 @@ module.exports = function (app) {
 
   if (config.backend.serverFrontend) {
     var staticPath = path.posix.join(config.frontend.assetsPublicPath, config.frontend.assetsSubDirectory)
-    console.log(staticPath)
     app.use(staticPath, express.static(path.join(config.backend.frontend, '/static')))
-    console.log(path.join(config.backend.frontend, '/static'))
+    app.use(staticPath, express.static(path.join(config.backend.frontend, '/public')))
   }
 }

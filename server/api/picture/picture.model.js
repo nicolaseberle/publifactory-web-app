@@ -1,6 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose').set('debug', true);
 
 const Schema = mongoose.Schema;
 
@@ -9,9 +9,8 @@ var PictureSchema = new Schema({
     type: String,
     required: true
   },
-  content: {
-    type: String,
-    required: true
+  path:{
+    type: String
   },
   size: {
     type: Number,

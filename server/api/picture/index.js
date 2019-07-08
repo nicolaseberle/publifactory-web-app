@@ -4,10 +4,17 @@ var express = require('express')
 const controller = require('./picture.controller');
 
 const Multer = require('multer');
-const multer = Multer({
-  storage: Multer.MemoryStorage,
-  limits: 10 * 1024 * 1024
+var storage = Multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './client/public/')
+  },
+  filename: function (req, file, cb) {
+    cb(null,  Date.now() +  '-' + file.originalname)
+  }
 })
+
+var multer = Multer({ storage: storage })
+
 
 var router = express.Router()
 
