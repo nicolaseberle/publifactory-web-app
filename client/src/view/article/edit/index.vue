@@ -135,8 +135,6 @@
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
   const printJS = require( 'print-js')
-  // const convertHTMLToPDF = require('pdf-puppeteer');
-  // const jsPDF = require( 'jspdf')
 
   export default {
   name: 'ArticleDetail',
