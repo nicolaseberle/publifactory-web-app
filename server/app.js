@@ -16,6 +16,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var url = require('url');
 const logger = require('morgan');
+const ssl = require('../config').ssl;
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options)
@@ -27,7 +28,10 @@ require('./config/seed')
 var app = express()
 app.use(cors())
 app.use(logger('dev'));
-var server = require('http').createServer(app)
+var server = require('https').createServer({
+  key: ssl.key,
+  cert: ssl.cert
+}, app)
 //var socketio = require('socket.io')(server)
 //require('./config/socketio')(socketio)
 require('./config/express')(app)
@@ -41,7 +45,7 @@ if(process.env.NODE_ENV === 'production'){
   console.log("listen port :"+ config.port)
 }
 
-server.listen(config.port, config.ip, function () {
+server.listen(config.port, config.ip,  function () {
   console.log('Express server listening on %d, in %s mode', config.port, app.get('env'))
 })
 

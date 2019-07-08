@@ -7,6 +7,7 @@ const helpers              = require('./helpers');
 const commonConfig         = require('./webpack.config.common');
 const environment          = require('./env/dev.env');
 const path = require('path')
+const fs = require('fs')
 
 const backendBase = {
   // Root path of server
@@ -54,6 +55,7 @@ const webpackConfig = merge(commonConfig, {
         new FriendlyErrorsPlugin()
     ],
     devServer: {
+        https: true,
         compress: true,
         historyApiFallback: true,
         hot: true,
