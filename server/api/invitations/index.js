@@ -5,8 +5,16 @@ var controller = require('./invitations.controller')
 var auth = require('../../auth/auth.service')
 const rolesArticle = require('../roles/article/roles.article.controller');
 const rolesJournal = require('../roles/journal/roles.journal.controller');
+const jwtCheck = require('../../auth/jwt');
 
 var router = express.Router()
+
+router.get('/myInvitations', controller.getMyInvitations)
+router.get('/invite/:id', controller.checkInvitation)
+
+router.use(function(req, res, next) {
+  jwtCheck(req, res, next);
+})
 
 router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async function (req, res, next) {
   try {
@@ -26,7 +34,5 @@ router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async
 })
 
 router.post('/invite/:role(reviewer|collaborator|associate_editor|editor)', controller.createInvitation)
-router.get('/myInvitations', controller.getMyInvitations)
-router.get('/invite/:id', controller.checkInvitation)
 
 module.exports = router

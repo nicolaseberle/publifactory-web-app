@@ -28,10 +28,8 @@ require('./config/seed')
 var app = express()
 app.use(cors())
 app.use(logger('dev'));
-var server = require('https').createServer({
-  key: ssl.key,
-  cert: ssl.cert
-}, app)
+var server = require('http').createServer(app)
+
 //var socketio = require('socket.io')(server)
 //require('./config/socketio')(socketio)
 require('./config/express')(app)

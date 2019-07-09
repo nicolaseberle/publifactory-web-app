@@ -14,6 +14,7 @@ module.exports = function (app) {
   // Insert routes below
   app.use('/api/users', require('./api/user'))
   app.use('/api/auth', require('./auth'))
+  app.use('/api/invitations', require('./api/invitations'))
 
   app.use(function(req, res, next) {
     jwtCheck(req, res, next);
@@ -25,7 +26,6 @@ module.exports = function (app) {
   app.use('/api/comments', require('./api/comment'))
   app.use('/api/data', require('./api/data'))
   app.use('/api/figure', require('./api/figure'))
-  app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
   app.use('/api/roles', require('./api/roles'))
   app.use('/api/pictures', require('./api/picture'))
