@@ -36,9 +36,9 @@ var development = {
     key: fs.readFileSync('./server.dev.key')
   },
   email : {
-    rootHTML: "http://localhost:9001",
+    rootHTML:  `${process.env.ROOT_APP}` || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
@@ -78,9 +78,9 @@ var production = {
     key: fs.readFileSync('./server.prod.key')
   },
   email : {
-    rootHTML: "http://localhost:9001",
+    rootHTML:  `${process.env.ROOT_APP}` || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
