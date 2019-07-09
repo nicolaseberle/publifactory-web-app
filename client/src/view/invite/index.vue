@@ -26,6 +26,7 @@
     let loadingInstance = Loading.service({ fullscreen: true });
     setTimeout(async () => {
       this.id = this.$route.params && this.$route.params.id
+      console.log(this.id)
       this.postForm  = await this.fetch(this.id)
       this.guestLogin()
       this.$nextTick(() => { // Loading should be closed asynchronously
@@ -42,10 +43,11 @@
   },
   methods: {
     ...mapActions(['login']),
-    fetch(id) {
-      var data = axios.get('/api/invitations/invite/' + id , {
+    fetch() {
+      var data = axios.get('/api/invitations/invite/' + this.id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
+        console.log(response.data)
          return response.data
       }).catch(err => {
         console.log(err)

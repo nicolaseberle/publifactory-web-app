@@ -31,7 +31,7 @@ var backendBase = {
 
 var development = {
   email : {
-    rootHTML:  `${process.env.ROOT_APP}` || "http://localhost:9001",
+    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
     pass: "cxuxhyudqehcujro"
   },
@@ -69,7 +69,7 @@ var development = {
 }
 var production = {
   email : {
-    rootHTML:  `${process.env.ROOT_APP}` || "http://localhost:9001",
+    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
     pass: "cxuxhyudqehcujro"
   },

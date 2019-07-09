@@ -107,15 +107,17 @@ async function getMyInvitations (req, res, next) {
 
 async function checkInvitation(req, res, next) {
   try {
-    console.log(req.params);
+    console.log("id :: ", req.params.id);
     const sender = req.params.id
       .trim()
       .split("-")[0]
       .trim();
+    console.log("sender :: ",sender);
     const inviteLink = req.params.id
       .trim()
       .split("-")[1]
       .trim();
+    console.log("sender :: ",inviteLink);
     const seen = new Date().toISOString();
     const invitation = await Invitation.findOneAndUpdate(
         { senderName: sender ,link: inviteLink},
