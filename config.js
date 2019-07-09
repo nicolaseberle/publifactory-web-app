@@ -1,7 +1,8 @@
 /**
  * Project config file includes dev/prod and frontend/backend
  */
-var path = require('path')
+var path = require('path');
+const fs = require('fs');
 // var _ = require('lodash')
 
 var backendBase = {
@@ -30,6 +31,10 @@ var backendBase = {
 }
 
 var development = {
+  ssl: {
+    cert: fs.readFileSync('./server.dev.cert'),
+    key: fs.readFileSync('./server.dev.key')
+  },
   email : {
     rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
@@ -68,6 +73,10 @@ var development = {
   })
 }
 var production = {
+  ssl: {
+    cert: fs.readFileSync('./server.prod.cert'),
+    key: fs.readFileSync('./server.prod.key')
+  },
   email : {
     rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
