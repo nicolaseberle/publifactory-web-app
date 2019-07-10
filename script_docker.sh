@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Syntax Coloration for PROMPT
 RED='\033[0;31m' # Red Color
@@ -10,6 +10,7 @@ USER=`whoami`
 command=$1
 options=$2
 
+export ROOT_APP='http://35.246.243.12/'
 
 debug () {
   printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1";

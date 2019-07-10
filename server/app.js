@@ -16,6 +16,7 @@ var serveStatic = require('serve-static');
 var path = require('path');
 var url = require('url');
 const logger = require('morgan');
+const ssl = require('../config').ssl;
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options)
@@ -41,7 +42,7 @@ if(process.env.NODE_ENV === 'production'){
   console.log("listen port :"+ config.port)
 }
 
-server.listen(config.port, config.ip, function () {
+server.listen(config.port, config.ip,  function () {
   console.log('Express server listening on %d, in %s mode', config.port, app.get('env'))
 })
 

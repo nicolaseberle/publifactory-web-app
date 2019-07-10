@@ -1,4 +1,5 @@
 <template>
+
   <div class="login-main">
   <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
@@ -78,6 +79,7 @@
     </div>
   </div>
 </div>
+
 </template>
 <script>
   import { mapActions, mapGetters } from 'vuex'

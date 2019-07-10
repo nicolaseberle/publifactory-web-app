@@ -34,6 +34,13 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column class-name="author-col" width="120px"  label="Ass. Editor">
+          <template slot-scope="articles">
+            <div v-for="associate_editor in articles.row.associate_editor">
+              {{ associate_editor.firstname[0] }}. {{ associate_editor.lastname }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column class-name="author-col" width="120px"  label="Reviewer">
           <template slot-scope="articles" >
             <div v-for="reviewer in articles.row.reviewers" >
@@ -194,6 +201,7 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles
+        console.log(this.articles)
       }).catch(err => {
         console.error(err)
       })
@@ -283,5 +291,7 @@ export default {
 .tabs, .el-tabs__nav{
     padding-top:10px
 }
-
+.el-table__header-wrapper{
+  white-space: pre-line;
+}
 </style>

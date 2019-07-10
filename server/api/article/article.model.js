@@ -81,6 +81,10 @@ const ArticleSchema = new Schema({
       ref: 'User'
     }}
   ],
+  associate_editor:[{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   invitation:[{
     type: Schema.Types.ObjectId,
     ref: 'Invitation'

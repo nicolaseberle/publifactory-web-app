@@ -1,7 +1,7 @@
 <template>
   <div class="components-container-article">
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
-      <main class="article">
+      <main class="article" id="article-page">
         <article>
           <span id="triggerStartNav"></span>
             <header>
@@ -77,7 +77,7 @@
 
                           <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -94,7 +94,7 @@
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -234,10 +234,25 @@
                     v-on:changeStatusMainDiag="(data) => { this.dialogVisible = data }"/>
     </el-dialog>
 
+    <el-dialog
+      title="Insert a picture"
+      :visible.sync="dialogPictureVisible"
+      width="80%"
+      top="0">
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type=""  @click="dialogPictureVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="dialogPictureVisible=false" >Insert Picture</el-button>
+        </div>
+      </span>
+
+    <importImage ref="dialogPicture" :idpicture='editidfigure' v-on:update='updatePictureBlock' :numBlock='poseditfigure[0]' :numSubBlock='poseditfigure[1]' :numSubSubBlock='poseditfigure[2]' ></importImage>
+  </el-dialog>
   </div>
 
 </template>
 <script>
+
   import editor from 'vue2-medium-editor'
   import { mapActions, mapGetters } from 'vuex'
   import MarkdownEditor from '../../../../components/MarkdownEditor'
@@ -249,6 +264,7 @@
   import VuePlotly from '@statnett/vue-plotly'
   import figureComponent from '../../../../components/Figure'
   import imageComponent from '../../../../components/Image'
+  import importImage from '../../../../components/Image/ImportImage'
   import scriptPython from '../../../../components/ScriptPython'
   import scriptR from '../../../../components/ScriptR'
   import figureFactory from '../../../../components/Charts'
@@ -313,7 +329,7 @@ export default {
   components: {
     InsertFigure,
     ImportData,
-    addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
+    addCollaborator,importImage, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
   data() {
     return {
       timeoutId: Number,
@@ -332,6 +348,7 @@ export default {
       diagInsertFigurePythonVisible: false,
       diagInsertFigurePlotlyVisible: false,
       importDialogVisible: false,
+      dialogPictureVisible: false,
       userListOptions: [],
       html: '',
       activeNames: ['1'],
@@ -381,7 +398,8 @@ export default {
       value: 'vertical',
       label: 'Vertical'
     }]
-    }
+  }
+
   },
   computed: {
     ...mapGetters(['accessToken']),
@@ -441,6 +459,15 @@ export default {
         }).catch(err => {
           console.log(err)
         })
+      }
+    },
+    dialogPictureVisible (val) {
+      if(val==false) {
+        //this.$ref.dialogPicture.reset()
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        console.log( 'dialogPictureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+
       }
     }
   },
@@ -608,13 +635,14 @@ export default {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
-      this.openEditFigure(ev, key, subkey, subsubkey)
+      this.openEditFigure()
     },
     addPictureBlock (ev,key,subkey,subsubkey) {
-      console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
-      var new_block = { type: 'image', uuid: 'mqlssdfpsdazoizeDSQMKqsdmlk', content: 'New Image',nbEdit:0}
+      var uuid_block = String(uuidv4())
+      var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0}
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      this.openEditPicture()
     },
     removeBlock (ev,key,subkey,subsubkey) {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
@@ -633,6 +661,15 @@ export default {
       } else {
         this.diagInsertFigurePlotlyVisible = true
       }
+    },
+    updatePictureBlock(key, subkey, subsubkey, idPicture) {
+      this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture
+      this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++
+      this.save(this.$event)
+    },
+    editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
+      this.editidfigure = idPicture
+      this.openEditPicture ()
     },
     addOneBlock (ev,key) {
       var uuid_block = String(uuidv4())
@@ -666,8 +703,11 @@ export default {
       }
 
     },
-    openEditFigure (ev,key,subkey,subsubkey) {
+    openEditFigure () {
       this.dialogVisible = true
+    },
+    openEditPicture () {
+      this.dialogPictureVisible = true
     },
     async createFigure () {
       const newFigure = {
@@ -687,20 +727,6 @@ export default {
       let _idFigure = response.data;
       console.log("createFigure::idFigure: " + _idFigure)
       return _idFigure
-    },
-    createImage () {
-      const newImage = {
-        headers: { 'Authorization': `Bearer ${this.accessToken}` }
-      }
-      return axios.post('/api/image/', newImage)
-      .then(response => {
-        let _idFigure = response.data;
-        console.log("createFigure::idFigure: " + _idFigure)
-        return _idFigure
-      })
-      .catch(err => {
-
-      })
     },
     markdown2Html() {
       import('showdown').then(showdown => {
@@ -784,6 +810,7 @@ export default {
 #users-panel .user-data > div {
   flex-grow: 1;
 }
+
 </style>
 <!--<style>
 @import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";

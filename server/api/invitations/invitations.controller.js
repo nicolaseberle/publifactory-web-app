@@ -107,23 +107,28 @@ async function getMyInvitations (req, res, next) {
 
 async function checkInvitation(req, res, next) {
   try {
-    console.log(req.params);
+    console.log("id :: ", req.params.id);
     const sender = req.params.id
       .trim()
       .split("-")[0]
       .trim();
+    console.log("sender :: ",sender);
     const inviteLink = req.params.id
       .trim()
       .split("-")[1]
       .trim();
+    console.log("inviteLink :: ",inviteLink);
     const seen = new Date().toISOString();
     const invitation = await Invitation.findOneAndUpdate(
-        { senderName: sender ,link: inviteLink},
-        { $set: { updated_at :seen } })
+        { senderId: sender ,link: inviteLink},
+        { $set: { updated_at :seen } }).exec()
 
-    const _sender = await User.findById( invitation.senderName ).exec();
+    console.log(invitation)
+
+    const _sender = await User.findOne({ _id: invitation.senderName }).exec();
     const _guest = await User.findOneAndUpdate( {'email': invitation.recieptEmail},{ $set: {'invitationId': invitation._id}} ).exec();
 
+    console.log(_sender)
     invitation.senderLastname = _sender.lastname
     invitation.senderFirstname = _sender.firstname
 

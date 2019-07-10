@@ -2,7 +2,7 @@
   <div id="app">
     <div :class="{active: loggedIn}">
       <router-view/>
-      <!--<n-progress parent=".app-wrapper"></n-progress>-->
+      <n-progress parent=".app-wrapper"></n-progress>
     </div>
   </div>
 </template>
@@ -18,17 +18,17 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
   library.add(faCoffee)
-Vue.component('ContentModule', ContentModule)
+  Vue.component('ContentModule', ContentModule)
 
-export default {
-  name: 'App',
-  computed: {
-    ...mapGetters(['loggedIn'])
-  },
-  components: {
-    XHeader,
-    'font-awesome-icon': FontAwesomeIcon,
-    'n-progress': NProgress
+  export default {
+    name: 'App',
+    computed: {
+      ...mapGetters(['loggedIn'])
+    },
+    components: {
+      XHeader,
+      'font-awesome-icon': FontAwesomeIcon,
+      'n-progress': NProgress
+    }
   }
-}
 </script>

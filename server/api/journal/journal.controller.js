@@ -302,8 +302,8 @@ module.exports.addAssociateEditor = async (req,res,next) => {
     const toAdd = { $push: { users: user._id } };
     const options = { new: true };
     await Journal.findOneAndUpdate(query, toAdd, options);
-    new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
-    res.json({ success: true });
+    const newAE = await new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    res.json({ success: true});
   }
   catch (e) {
     next(e);

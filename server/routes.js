@@ -14,6 +14,7 @@ module.exports = function (app) {
   // Insert routes below
   app.use('/api/users', require('./api/user'))
   app.use('/api/auth', require('./auth'))
+  app.use('/api/invitations', require('./api/invitations'))
 
   app.use(function(req, res, next) {
     jwtCheck(req, res, next);
@@ -25,13 +26,12 @@ module.exports = function (app) {
   app.use('/api/comments', require('./api/comment'))
   app.use('/api/data', require('./api/data'))
   app.use('/api/figure', require('./api/figure'))
-  app.use('/api/invitations', require('./api/invitations'))
   app.use('/api/converter', require('./Converter'))
   app.use('/api/roles', require('./api/roles'))
   app.use('/api/pictures', require('./api/picture'))
 
   // All undefined asset or api routes should return a 404
-  app.route('/:url(api|auth|static)/*').get(errors[404])
+  app.route('/:url(api|auth|static|public)/*').get(errors[404])
 
   // All other routes should redirect to the index.html
   if (config.serverFrontend) {

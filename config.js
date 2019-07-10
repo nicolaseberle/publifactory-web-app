@@ -1,7 +1,8 @@
 /**
  * Project config file includes dev/prod and frontend/backend
  */
-var path = require('path')
+var path = require('path');
+const fs = require('fs');
 // var _ = require('lodash')
 
 var backendBase = {
@@ -30,10 +31,14 @@ var backendBase = {
 }
 
 var development = {
+  ssl: {
+    cert: fs.readFileSync('./server.dev.cert'),
+    key: fs.readFileSync('./server.dev.key')
+  },
   email : {
-    rootHTML: "http://client_dev:9001",
+    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
@@ -67,16 +72,20 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: 'mongodb://mongo:27017/',
+      uri: `mongodb://${process.env.BASE_MONGO}:27017/`,
       useNewUrlParser: true
     }
   })
 }
 var production = {
+  ssl: {
+    cert: fs.readFileSync('./server.prod.cert'),
+    key: fs.readFileSync('./server.prod.key')
+  },
   email : {
-    rootHTML: "http://localhost:9001",
+    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',

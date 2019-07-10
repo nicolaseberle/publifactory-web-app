@@ -15,7 +15,7 @@ var plugins = gulpLoadPlugins();
 
 
 const clientPath = 'client';
-const serverPath = 'server';
+const serverPath = 'server.dev.cert.dev.key';
 const paths = {
     client: {
         assets: `${clientPath}/src/assets/**/*`,
@@ -26,7 +26,7 @@ const paths = {
     },
     dist: 'client/dist',
     heroku_app: 'heroku-app',
-    server: 'server'
+    server: 'server.dev.cert.dev.key'
 };
 
 gulp.task('default', function() {
