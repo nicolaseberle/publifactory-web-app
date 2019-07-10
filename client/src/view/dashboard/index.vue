@@ -78,14 +78,13 @@
       this.visibleDiagFirstConnexion = false
     }
     // a guest account has only one role : [guest]
-    if (this.roles.includes('guest') && this.roles.length==1) {
+    if (this.roles.includes('guest')) {
       this.currentRole = 'userDashboard'
       this.visibleDiagFirstConnexion = true
     }
     if(this.sidebar.opened == false){
       this.toggleSideBar()
     }
-
   },
   mounted () {
     axios.get('/api/users/me',{headers: {
@@ -95,25 +94,31 @@
       this.form.firstname = response.data.firstname
       this.form.lastname = response.data.lastname
       })
+    alert(this.roles)
   },
   methods: {
-    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar', 'initUserInfo']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')
       })
     },
     changePassword () {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          this.resetGuestPassword({id: this.userId,
-            password: this.form.password,
-            token: this.accessToken
-          }).then((data) => {
+          try {
+            const response = await axios.put('/api/users/' + this.userId + '/guestPassword', {
+              password: this.form.password
+            }, {
+              headers: {
+                'Authorization': `Bearer ${this.accessToken}`
+              }
+            })
             this.visibleDiagFirstConnexion = false
-          }).catch(err => {
-            console.log(err)
-          });
+            this.$forceUpdate()
+          } catch (e) {
+            console.error(e)
+          }
         }
       })
     }

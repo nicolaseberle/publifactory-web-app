@@ -136,6 +136,7 @@ function create(req, res, next) {
  * Create a guest account - a guest have to reset his password during the first connection
  */
 function createGuest(req, res, next) {
+  req.body.isVerified = true;
   var newUser = new User(req.body)
   newUser.provider = 'local'
   newUser.role = 'guest'
@@ -203,34 +204,35 @@ function changePassword(req, res, next) {
 /**
  * Change a guest password and convert it in user // we check that the guest is on the list
  */
-function changeGuestPassword(req, res, next) {
+async function changeGuestPassword(req, res, next) {
   try {
     var userId = req.params.id
     var newPass = String(req.body.password)
 
-    User.findById( userId, function (_err, user) {
-      console.log(user)
-      Invitation.findById( user.invitationId , (err,invite)=>{
-        console.log(invite)
-        if (err) {
-          console.log(err);
-          next(err);
+    let user = await User.findById(userId)
+    const invite = await Invitation.findById(user.invitationId)
+    if (user.authenticate(invite.senderId)) {
+      const query = {
+        _id: userId
+      };
+      const toSet = {
+        $set: {
+          password: newPass,
+          role: 'user',
+          roles: ['user'],
+          invitationId: 'None'
         }
-        if (user.authenticate(invite.senderId)) {
-          user.password = newPass
-          user.role = 'user'
-          user.roles = ['user']
-          user.invitationId = 'None'
-          user.save(function (err) {
-            if (err) return validationError(res, err)
-            var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-            res.json({ token: token })
-          })
-        }
-      })
-    })
+      };
+      await User.findOneAndUpdate(query, toSet);
+      const token = jwt.sign({
+        _id: user._id,
+        name: user.name,
+        role: user.role
+      }, config.secrets.session, {expiresIn: '7d'})
+      res.json({token: token})
+    }
   } catch (err) {
-      return next(err)
+    return next(err)
   }
 }
 

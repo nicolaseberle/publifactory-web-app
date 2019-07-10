@@ -128,6 +128,7 @@ async function checkInvitation(req, res, next) {
     const _sender = await User.findOne({ _id: invitation.senderName }).exec();
     const _guest = await User.findOneAndUpdate( {'email': invitation.recieptEmail},{ $set: {'invitationId': invitation._id}} ).exec();
 
+    console.log(_sender)
     invitation.senderLastname = _sender.lastname
     invitation.senderFirstname = _sender.firstname
 

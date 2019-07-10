@@ -220,7 +220,7 @@ module.exports.addAuthorOfArticle = async function (req, res, next) {
         { new: true }
         );
     new RolesArticle({ id_user: author._id, id_article: req.params.id, right: 'author' }).save();
-    return res.status(200);
+    return res.json({success: true});
   } catch (err) {
     return next(err);
   }

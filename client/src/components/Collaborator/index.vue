@@ -251,18 +251,14 @@ export default {
         })
       })
     },
-    addNewAuthor (email) {
+    async addNewAuthor (email) {
       var _newAuthor = {
                           'rank': this.list.length,
                           'role': 'Author',
                           'email': email
                        }
-      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
+      return await axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-      .then(res => {
-        return res
-      }).catch((err) => {
       })
     },
     createTempAccount (_email,_password, _firstname,_lastname) {

@@ -24,15 +24,6 @@ export function loginOrcid (orcidId, password) {
   }).then(res => console.log(res.json()))
 }
 
-export function resetGuestPassword (id, password, token) {
-  return Vue.http.put('users/' + id + '/guestPassword', {
-    password,
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  }).then(res => res.json())
-}
-
 export function changePassword (id, oldPassword, newPassword, token) {
   return Vue.http.put('users/' + id + '/changePassword', {
     oldPassword, newPassword, headers: {
