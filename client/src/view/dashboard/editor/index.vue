@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <!--
       <el-row :gutter="20">
         <el-col :span='6'>
           <el-button-group>
@@ -8,91 +9,25 @@
             <el-button round v-on:click="importArticle()">Import</el-button>
           </el-button-group>
         </el-col>
-      </el-row>
+      </el-row>-->
       <div class='dashboard-tab'>
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
-      <data-table ref="articles" @page-change="fetchArticles" >
-        <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
-        <el-table-column class-name="date-col" width="140px" label="Date">
-          <template slot-scope="scope">
-            <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="300px"  label="Title">
-          <template slot-scope="scope">
-            <router-link :to="'/articles/'+scope.row.id" class="link-type">
-              <span>{{ scope.row.title }}</span>
-            </router-link>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="author-col" width="120px"  label="Author">
-          <template slot-scope="articles">
-            <div v-for="item_author in articles.row.authors">
-              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="author-col" width="120px"  label="Ass. Editor">
-          <template slot-scope="articles">
-            <div v-for="associate_editor in articles.row.associate_editor">
-              {{ associate_editor.firstname[0] }}. {{ associate_editor.lastname }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="author-col" width="120px"  label="Reviewer">
-          <template slot-scope="articles" >
-            <div v-for="reviewer in articles.row.reviewers" >
-                <span style="white-space: pre;">{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="doi-col" label="DOI" width="50">
-          <template v-if="scope.row.doi" slot-scope="scope">
-            <i class="el-icon-check"></i>
-          </template>
-
-        </el-table-column>
-        <el-table-column class-name="status-col" label="Status" width="110">
-          <template slot-scope="scope">
-            <el-tag class-name="el-tag-status"  :type="scope.row.status | statusFilter" >{{ scope.row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="action-col"  label="Actions" width="120">
-          <template slot-scope="scope">
-            <!--<router-link :to="'/example/edit/'+scope.row.id">-->
-              <!--<el-button type="primary" size="small" icon="el-icon-edit">Edit</el-button>-->
-              <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
-                <div>
-                  <el-button class="el-button-action" icon="el-icon-more" circle>
-                  </el-button>
-                </div>
-                <el-dropdown-menu slot="dropdown" >
-                  <el-dropdown-item  command="settings" disabled>Access & settings</el-dropdown-item>
-                  <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
-                  <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
-                  <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
-                  <el-dropdown-item  command="referee">Referee</el-dropdown-item>
-                  <el-dropdown-item  command="survey">Survey (Scopus, Google Scholar...)</el-dropdown-item>
-                  <el-dropdown-item  command="remove" style="{color:'red'}" disabled>Remove the article</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            <!--</router-link>-->
-          </template>
-        </el-table-column>
-      </el-table>
-    </data-table>
-  </el-tab-pane>
-  <el-tab-pane label="Submission" name="second">Submission</el-tab-pane>
-
-  <el-tab-pane name="third">
-    <span slot="label">Review<el-badge :value="2" lass="mark"/></span>
-  </el-tab-pane>
-
-  <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
-  <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
+        <dataTableStatus desiredstatus="All"/>
+      </el-tab-pane>
+      <el-tab-pane label="Submission" name="second">
+        <span slot="label">Review<el-badge :value="notifications.submited" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Submited"/>
+      </el-tab-pane>
+      <el-tab-pane name="third">
+        <span slot="label">Review<el-badge :value="notifications.review" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Reviewing"/>
+      </el-tab-pane>
+      <el-tab-pane label="Published" name="fourth">
+        <span slot="label">Review<el-badge :value="notifications.published" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Published"/>
+      </el-tab-pane>
   </el-tabs>
   </div>
   </div>
@@ -124,13 +59,13 @@
 </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
-  import DataTable from '../../../components/DataTable'
-  import locales from '../../../locales/article'
-  import axios from 'axios'
-  import addReviewer from '../../../components/Reviewer'
+import { mapGetters } from 'vuex'
+import locales from '../../../locales/article'
+import axios from 'axios'
+import addReviewer from '../../../components/Reviewer'
+import dataTableStatus from './DataTableStatus'
 
-  const debug = require('debug')('frontend')
+const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {
@@ -156,6 +91,7 @@ export default {
           required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
         }]
       },
+      notifications:{review:0,submited:0,published:0},
       formVisible: false,
       articles: [],
       flagAddReviewer: false
@@ -168,7 +104,7 @@ export default {
     ])
   },
   components: {
-    DataTable,
+    dataTableStatus,
     addReviewer
   },
   methods: {
@@ -194,18 +130,7 @@ export default {
           this.flagAddReviewer = true
           break;
       }
-    },
-    fetchArticles (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/', {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.articles = list.data.articles
-        console.log(this.articles)
-      }).catch(err => {
-        console.error(err)
-      })
-    },
+    },/*
     createArticle () {
       var uuid_block = String(uuidv4())
       //this.formVisible = true
@@ -234,6 +159,22 @@ export default {
         .catch(e => {
           console.log(e)
         })
+    },*/
+    async fetchArticles () {
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      await axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+          this.articles = list.data.articles.filter(d => d.status !== 'Draft')
+          this.articles.forEach((el)=>{
+            if(el.status === 'Submited'){this.notifications.submited++}
+            if(el.status === 'Reviewing'){this.notifications.review++}
+            if(el.status === 'Published'){this.notifications.published++}
+          })
+
+      }).catch(err => {
+        console.error(err)
+      })
     },
     closeCreationDialog () {
       this.formVisible = false
@@ -242,44 +183,10 @@ export default {
       this.form.title = ''
       this.form.abstract = ''
       this.formVisible = false
-    },
-    saveForm () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          articleRes.save(null, this.form).then(() => {
-            this.cancelForm()
-            this.$message({
-              type: 'success',
-              message: this.$t('message.created')
-            })
-            this.fetchArticles()
-          }).catch((err) => {
-            this.$message({
-              type: 'error',
-              message: err.status === 422 ? this.$t('article.action.articleExisted') : this.$t('message.createFailed')
-            })
-          })
-        }
-      })
-    },
-    deleteArticle (article) {
-      this.$confirm(`This action will remove the selected article: ${article.title} forever, still going on?`, this.$t('confirm.title'), {
-        type: 'warning'
-      }).then(() => {
-        articleRes.delete({ _id: article._id }).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t('message.removed')
-          })
-          this.fetchArticles()
-        })
-      }).catch(() => {})
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.fetchArticles()
-    })
+    this.fetchArticles()
   }
 }
 </script>
