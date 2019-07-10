@@ -145,48 +145,19 @@ export default {
           break;
       }
     },
-    fetchArticles (current = 1) {
+    async fetchArticles (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/', {
+      await axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         if(this.desiredstatus === 'All')
           this.articles = list.data.articles.filter(d => d.status !== 'Draft')
         else
           this.articles = list.data.articles.filter(d => d.status === this.desiredstatus)
-          
+
       }).catch(err => {
         console.error(err)
       })
-    },
-    createArticle () {
-      var uuid_block = String(uuidv4())
-      //this.formVisible = true
-      const newArticle = {
-          title: String('Article title'),
-          abstract:  String('abstract'),
-          status: 'Draft',
-          arr_content: [{
-                          name:"titre_1",
-                          title:"Titre 1",
-                          title_placeholder:"Titre 1",
-                          block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
-                          content:"Type the text",
-                          display:true
-                        }],
-          category : String('Biology'),
-          id_author : this.userId,
-          published: true
-        };
-        axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
-        .then(response => {
-          let new_article_id = response.data
-          debug("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
-        })
-        .catch(e => {
-          console.log(e)
-        })
     },
     closeCreationDialog () {
       this.formVisible = false
@@ -230,9 +201,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.fetchArticles()
-    })
+    this.fetchArticles()
   }
 }
 </script>

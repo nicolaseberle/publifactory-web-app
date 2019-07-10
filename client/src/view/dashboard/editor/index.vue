@@ -16,10 +16,11 @@
         <dataTableStatus desiredstatus="All"/>
       </el-tab-pane>
       <el-tab-pane label="Submission" name="second">
+        <span slot="label">Review<el-badge :value="notifications.submited" lass="mark"/></span>
         <dataTableStatus desiredstatus="Submited"/>
       </el-tab-pane>
       <el-tab-pane name="third">
-        <span slot="label">Review<el-badge :value="2" lass="mark"/></span>
+        <span slot="label">Review<el-badge :value="notifications.review" lass="mark"/></span>
         <dataTableStatus desiredstatus="Reviewing"/>
       </el-tab-pane>
       <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
@@ -87,6 +88,7 @@ export default {
           required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
         }]
       },
+      notifications:{review:0,submited:0},
       formVisible: false,
       articles: [],
       flagAddReviewer: false
@@ -126,16 +128,6 @@ export default {
           break;
       }
     },
-    fetchArticles (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/', {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.articles = list.data.articles.filter(d => d.status !== 'Draft')
-      }).catch(err => {
-        console.error(err)
-      })
-    },
     createArticle () {
       var uuid_block = String(uuidv4())
       //this.formVisible = true
@@ -165,6 +157,21 @@ export default {
           console.log(e)
         })
     },
+    async fetchArticles () {
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      await axios.get('/api/articles/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+          this.articles = list.data.articles.filter(d => d.status !== 'Draft')
+          this.articles.forEach((el)=>{
+            if(el.status === 'Submited'){this.notifications.submited++}
+            if(el.status === 'Reviewing'){this.notifications.review++}
+          })
+
+      }).catch(err => {
+        console.error(err)
+      })
+    },
     closeCreationDialog () {
       this.formVisible = false
     },
@@ -172,44 +179,10 @@ export default {
       this.form.title = ''
       this.form.abstract = ''
       this.formVisible = false
-    },
-    saveForm () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          articleRes.save(null, this.form).then(() => {
-            this.cancelForm()
-            this.$message({
-              type: 'success',
-              message: this.$t('message.created')
-            })
-            this.fetchArticles()
-          }).catch((err) => {
-            this.$message({
-              type: 'error',
-              message: err.status === 422 ? this.$t('article.action.articleExisted') : this.$t('message.createFailed')
-            })
-          })
-        }
-      })
-    },
-    deleteArticle (article) {
-      this.$confirm(`This action will remove the selected article: ${article.title} forever, still going on?`, this.$t('confirm.title'), {
-        type: 'warning'
-      }).then(() => {
-        articleRes.delete({ _id: article._id }).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t('message.removed')
-          })
-          this.fetchArticles()
-        })
-      }).catch(() => {})
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.fetchArticles()
-    })
+    this.fetchArticles()
   }
 }
 </script>

@@ -164,8 +164,8 @@ export default {
         this.deleteArticle(this.selectedArticleId)
       }
     },
-    fetch (current = 1) {
-      axios.get('/api/articles/', {
+    async fetch (current = 1) {
+      await axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles
@@ -173,8 +173,8 @@ export default {
         console.error(err)
       })
     },
-    fetchMyArticles () {
-      axios.get(`/api/articles/mine/${this.userId}`, {
+    async fetchMyArticles () {
+      await axios.get(`/api/articles/mine/${this.userId}`, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles

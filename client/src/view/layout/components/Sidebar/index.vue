@@ -31,8 +31,7 @@
   components: { SidebarItem },
   data(){
     return {
-      followedJournals : [{'id': '5d0264a4d0738816c96658ca', 'title':'Genetics'},
-      {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}]
+      followedJournals : []
     }
   },
   computed: {
