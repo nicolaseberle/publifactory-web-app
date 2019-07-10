@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
+      <!--
       <el-row :gutter="20">
         <el-col :span='6'>
           <el-button-group>
@@ -8,7 +9,7 @@
             <el-button round v-on:click="importArticle()">Import</el-button>
           </el-button-group>
         </el-col>
-      </el-row>
+      </el-row>-->
       <div class='dashboard-tab'>
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -23,8 +24,10 @@
         <span slot="label">Review<el-badge :value="notifications.review" lass="mark"/></span>
         <dataTableStatus desiredstatus="Reviewing"/>
       </el-tab-pane>
-      <el-tab-pane label="CopyEditing" name="fourth">Copy Editing</el-tab-pane>
-      <el-tab-pane label="Production" name="fifth">Production</el-tab-pane>
+      <el-tab-pane label="Published" name="fourth">
+        <span slot="label">Review<el-badge :value="notifications.published" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Published"/>
+      </el-tab-pane>
   </el-tabs>
   </div>
   </div>
@@ -88,7 +91,7 @@ export default {
           required: true, message: this.$t('article.rules.abstract'), trigger: 'blur'
         }]
       },
-      notifications:{review:0,submited:0},
+      notifications:{review:0,submited:0,published:0},
       formVisible: false,
       articles: [],
       flagAddReviewer: false
@@ -127,7 +130,7 @@ export default {
           this.flagAddReviewer = true
           break;
       }
-    },
+    },/*
     createArticle () {
       var uuid_block = String(uuidv4())
       //this.formVisible = true
@@ -156,7 +159,7 @@ export default {
         .catch(e => {
           console.log(e)
         })
-    },
+    },*/
     async fetchArticles () {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       await axios.get('/api/articles/', {
@@ -166,6 +169,7 @@ export default {
           this.articles.forEach((el)=>{
             if(el.status === 'Submited'){this.notifications.submited++}
             if(el.status === 'Reviewing'){this.notifications.review++}
+            if(el.status === 'Published'){this.notifications.published++}
           })
 
       }).catch(err => {
