@@ -58,7 +58,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor numBlock='-1' numSubBlock='-1' numSubSubBlock='-1' uuid='-1' v-bind:content="postForm.abstract" v-on:edit='applyAbstractEdit' ></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-on:edit='applyAbstractEdit' ></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -626,7 +626,7 @@ export default {
         console.log(e)
       })
     },
-    applyAbstractEdit (ev, socket = false) {
+    /*applyAbstractEdit (ev, socket = false) {
       if (!socket)
         this.socket.emit('ABSTRACT_EDIT', {ev: ev})
       if (ev.event.target) {
@@ -636,7 +636,28 @@ export default {
           this.save(ev)
          },2000);
       }
+    },*/
+    applyAbstractEdit (editor, delta, source,key,subkey,subsubkey, socket = false) {
+      this.postForm.asbtract = editor.root.innerHTML
+      console.log("applyAbstractEdit :: ", socket)
+      if (!socket)
+      {
+        console.log("socket :: ", socket)
+        this.socket.emit('ABSTRACT_EDIT', {
+          editor: editor,
+          delta: delta,
+          source: source,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
+      }
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+       },2000);
     },
+
     applyTextEdit (editor, delta, source,key,subkey,subsubkey, socket = false) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML

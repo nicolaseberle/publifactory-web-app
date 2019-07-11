@@ -154,12 +154,25 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
-    cursors: [Object],
-    content: [String],
-    uuid: [String],
-    numBlock: {},
-    numSubBlock: {},
-    numSubSubBlock: {},
+    content: {
+      type: String
+    },
+    uuid: {
+      type: String,
+      default: 'abstract'
+    },
+    numBlock: {
+      type: Number,
+      default: 0
+    },
+    numSubBlock: {
+      type: Number,
+      default: 0
+    },
+    numSubSubBlock: {
+      type: Number,
+      default: 0
+    },
     output: {
         default : 'delta'
     },
@@ -191,7 +204,8 @@ export default {
       template: ItemTemplate,
       actionValidate: 0,
       mouse_pos : '',
-      hostname: ''
+      hostname: '',
+      timeoutId : ''
     }
   },
   created() {
@@ -248,7 +262,12 @@ export default {
     var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
-      this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        await this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+       },2000);
+
+
     });
 
     cursorsModule.registerTextChangeListener();
