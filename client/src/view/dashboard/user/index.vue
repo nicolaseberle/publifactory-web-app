@@ -137,7 +137,15 @@ export default {
       search: {
       },
       formVisible: false,
-      articles: []
+      articles: [{
+          id: '',
+          creationDate: '',
+          title: '',
+          address: '',
+          status: '',
+          authors: '',
+          reviewers: ''
+        }]
     }
   },
   computed: {

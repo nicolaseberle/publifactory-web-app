@@ -107,8 +107,16 @@ export default {
         }]
       },
       formVisible: false,
-      articles: [],
-      flagAddReviewer: false
+      flagAddReviewer: false,
+      articles: [{
+          id: '',
+          creationDate: '',
+          title: '',
+          address: '',
+          status: '',
+          authors: '',
+          reviewers: ''
+        }]
     }
   },
   computed: {

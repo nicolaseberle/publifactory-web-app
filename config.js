@@ -36,7 +36,7 @@ var development = {
     key: fs.readFileSync('./server.dev.key')
   },
   email : {
-    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
+    rootHTML:  process.env.ROOT_APP, // || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
     pass: "cxuxhyudqehcujro"
   },

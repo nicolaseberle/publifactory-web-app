@@ -16,16 +16,16 @@
       <el-tab-pane label="All" name="first">
         <dataTableStatus desiredstatus="All"/>
       </el-tab-pane>
-      <el-tab-pane label="Submission" name="second">
-        <span slot="label">Review<el-badge :value="notifications.submited" lass="mark"/></span>
+      <el-tab-pane label="Submited" name="second">
+        <span slot="label">Submited<el-badge :value="notifications.submited" lass="mark"/></span>
         <dataTableStatus desiredstatus="Submited"/>
       </el-tab-pane>
-      <el-tab-pane name="third">
+      <el-tab-pane label="in Reviewing" name="third">
         <span slot="label">Review<el-badge :value="notifications.review" lass="mark"/></span>
         <dataTableStatus desiredstatus="Reviewing"/>
       </el-tab-pane>
       <el-tab-pane label="Published" name="fourth">
-        <span slot="label">Review<el-badge :value="notifications.published" lass="mark"/></span>
+        <span slot="label">Published<el-badge :value="notifications.published" lass="mark"/></span>
         <dataTableStatus desiredstatus="Published"/>
       </el-tab-pane>
   </el-tabs>
@@ -200,5 +200,8 @@ export default {
 }
 .el-table__header-wrapper{
   white-space: pre-line;
+}
+.el-tabs__item{
+    width: 120px;
 }
 </style>
