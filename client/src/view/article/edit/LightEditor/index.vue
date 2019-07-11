@@ -636,7 +636,7 @@ export default {
       }
     },*/
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
-      this.postForm.asbtract = editor.root.innerHTML
+      this.postForm.abstract = editor.root.innerHTML
       this.socket.emit('ABSTRACT_EDIT', {
         content: this.postForm.abstract
       })
