@@ -60,7 +60,8 @@ const webpackConfig = merge(commonConfig, {
         hot: true,
         overlay: true,
         port: 9001,
-        host: process.env.SITE_IP,
+        // host: process.env.SITE_IP,
+        disableHostCheck: true,
         proxy: {
           '/api': { target: `http://${process.env.BASE_API}:4000`, changeOrigin: true },
           '/static': { target: 'http://localhost:9001',  pathRewrite: {'^/static' : '/client/static'}},
