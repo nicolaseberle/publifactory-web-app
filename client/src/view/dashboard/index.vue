@@ -94,7 +94,6 @@
       this.form.firstname = response.data.firstname
       this.form.lastname = response.data.lastname
       })
-    alert(this.roles)
   },
   methods: {
     ...mapActions(['resetGuestPassword','logout','toggleSideBar', 'initUserInfo']),

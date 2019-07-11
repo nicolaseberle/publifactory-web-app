@@ -152,7 +152,7 @@ const actions = {
         if (!data) {
           reject('error')
         }
-        resolve()
+        resolve(data)
       }).catch(err => { reject(err) })
     })
   },

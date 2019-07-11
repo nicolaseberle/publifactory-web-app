@@ -191,9 +191,7 @@ export default {
       template: ItemTemplate,
       actionValidate: 0,
       mouse_pos : '',
-      hostname: '',
-
-      socket: io('/socket.io')
+      hostname: ''
     }
   },
   created() {
@@ -201,16 +199,6 @@ export default {
 
   },
   mounted() {
-    this.socket.emit('SET_ARTICLE', {
-      id_article: this.id
-    })
-
-    this.socket.on('UPDATE_BLOCK', (data) => {
-      if (this.numBlock === data.numBlock && this.numSubBlock === data.numSubBlock &&
-        this.numSubSubBlock === data.numSubSubBlock)
-        this.content = data.content
-    })
-
     var quill = window.quill = new Quill('#'+this.idEditor, {
       modules: {
         cursors:  {
@@ -223,7 +211,7 @@ export default {
       history: {
         userOnly: true
       },
-      placeholder: 'Compose an epic...',
+      placeholder: this.content,
       theme: 'bubble'  // or 'bubble',
 
     });
@@ -261,12 +249,6 @@ export default {
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
       this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
-      this.socket.emit('UPDATE_SECTION', {
-        content: this.content,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock
-      })
     });
 
     cursorsModule.registerTextChangeListener();
