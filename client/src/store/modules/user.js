@@ -147,12 +147,35 @@ const actions = {
   },
   // resetPassword action
   resetGuestPassword ({ commit, dispatch }, payload) {
-    return new Promise((resolve, reject) => {
-      resetGuestPassword(payload.id, payload.password, payload.token).then(data => {
+    return new Promise(async (resolve, reject) => {
+      await resetGuestPassword(payload.id, payload.password, payload.token).then(data => {
         if (!data) {
           reject('error')
         }
-        resolve()
+        getUserInfo(data.token).then(user => {
+          const userInfo = Object.assign({}, user, {
+            email: payload.email,
+            access_token: data.token, // eslint-disable-line
+            refresh_token: '' // eslint-disable-line
+          })
+          var arrRoles = []
+          arrRoles.push(user.role)
+          commit('SET_ROLES', arrRoles)
+          commit('SET_AVATAR', user.avatar)
+          commit('SET_USER_INFO', userInfo)
+          saveMulti([{
+            key: STORE_KEY_USEREMAIL,
+            value: userInfo.email
+          }, {
+            key: STORE_KEY_ACCESS_TOKEN,
+            value: userInfo.access_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_REFRESH_TOKEN,
+            value: userInfo.refresh_token // eslint-disable-line
+          }])
+          resolve(userInfo.access_token)
+        }).catch(() => {
+        })
       }).catch(err => { reject(err) })
     })
   },
