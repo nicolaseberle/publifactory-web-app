@@ -223,11 +223,12 @@ async function changeGuestPassword(req, res, next) {
           invitationId: 'None'
         }
       };
-      await User.findOneAndUpdate(query, toSet);
-      const token = jwt.sign({
-        _id: user._id,
-        name: user.name,
-        role: user.role
+      const updatedUser = await User.findOneAndUpdate(query, toSet);
+      console.log("changeGuestPassword :: ",updateUser)
+      const token = await jwt.sign({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        role: updatedUser.role
       }, config.secrets.session, {expiresIn: '7d'})
       res.json({token: token})
     }
@@ -277,7 +278,11 @@ function resetPassword(req, res, next) {
       user.roles = ['guest']
       user.save(function (err) {
         if (err) return validationError(res, err)
-        var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+        var token = jwt.sign({
+           _id: user._id,
+           name: user.name,
+           role: user.role },
+           config.secrets.session, { expiresIn: '7d' })
         res.json({ token: token })
       })
       console.log(invitation)

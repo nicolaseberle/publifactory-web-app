@@ -10,7 +10,8 @@ USER=`whoami`
 command=$1
 options=$2
 
-export ROOT_APP='http://35.246.243.12/'
+export SITE_IP='35.246.243.12'
+export ROOT_APP=`http://${SITE_IP}/`
 
 debug () {
   printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1";

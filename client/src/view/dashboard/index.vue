@@ -22,9 +22,8 @@
         </span>
       </el-dialog>
     </div>
-  
-</template>
 
+</template>
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import axios from 'axios'
@@ -96,10 +95,9 @@
       this.form.firstname = response.data.firstname
       this.form.lastname = response.data.lastname
       })
-    alert(this.roles)
   },
   methods: {
-    ...mapActions(['resetGuestPassword','logout','toggleSideBar', 'initUserInfo']),
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')
@@ -108,19 +106,13 @@
     changePassword () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          try {
-            const response = await axios.put('/api/users/' + this.userId + '/guestPassword', {
-              password: this.form.password
-            }, {
-              headers: {
-                'Authorization': `Bearer ${this.accessToken}`
-              }
-            })
+          await this.resetGuestPassword({id: this.userId,
+            email: this.form.email,
+            password: this.form.password,
+            token: this.accessToken
+          }).then((data) => {
             this.visibleDiagFirstConnexion = false
-            this.$forceUpdate()
-          } catch (e) {
-            console.error(e)
-          }
+          })
         }
       })
     }
