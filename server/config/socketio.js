@@ -127,5 +127,10 @@ module.exports = function (io) {
       console.log('[socket.io] PICTURE BLOCK UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('MODIFY_BLOCK_PICTURE', data)
     });
+
+    socket.on('UPDATE_TITLE', data => {
+      console.log('[socket.io] TITLE UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('MODIFY_TITLE', data)
+    });
   })
 };

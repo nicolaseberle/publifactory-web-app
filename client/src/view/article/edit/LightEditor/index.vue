@@ -31,7 +31,7 @@
                       :min-height="30"
                       :cols="35"
                       :max-height="350"
-                      @input="save($event)"
+                      @input="updateTitle"
                     ></textarea-autosize>
                     <br>
                   </form>
@@ -421,16 +421,13 @@ export default {
   mounted() {
     this.fetchData(this.id)
 
-    /**
-     * Socket transmission
-     */
     this.socket.emit('SET_ARTICLE', {
       id_article: this.id
     })
 
-    this.socket.on('ABSTRACT_UPDATE', data => this.applyAbstractEdit(data.ev, true));
+    this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
-      this.applyTextEdit(data.editor, data.delta, data.source, data.key, data.subkey, data.subsubkey, true));
+      this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content);
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -449,6 +446,7 @@ export default {
     this.socket.on('DELETE_ROW', data => this.removeRow(data.ev, data.key, true));
     this.socket.on('MODIFY_BLOCK_PICTURE',
       data => this.updatePictureBlock(data.key, data.subkey, data.subsubkey, data.idPicture, true));
+    this.socket.on('MODIFY_TITLE', data => this.postForm.title = data.title);
 
     asideRightAnimation()
     //this.updateUserList()
@@ -637,44 +635,31 @@ export default {
          },2000);
       }
     },*/
-    applyAbstractEdit (editor, delta, source,key,subkey,subsubkey, socket = false) {
+    applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.asbtract = editor.root.innerHTML
-      console.log("applyAbstractEdit :: ", socket)
-      if (!socket)
-      {
-        console.log("socket :: ", socket)
-        this.socket.emit('ABSTRACT_EDIT', {
-          editor: editor,
-          delta: delta,
-          source: source,
-          key: key,
-          subkey: subkey,
-          subsubkey: subsubkey
-        })
-      }
+      this.socket.emit('ABSTRACT_EDIT', {
+        content: this.postForm.abstract
+      })
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },2000);
+       },500);
     },
 
-    applyTextEdit (editor, delta, source,key,subkey,subsubkey, socket = false) {
+    applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+      this.socket.emit('SECTION_EDIT', {
+        content: this.postForm.arr_content[key].block[subkey][subsubkey].content,
+        key: key,
+        subkey: subkey,
+        subsubkey: subsubkey
+      })
       //this.save(this.$event)
-      if (!socket)
-        this.socket.emit('SECTION_EDIT', {
-          editor: editor,
-          delta: delta,
-          source: source,
-          key: key,
-          subkey: subkey,
-          subsubkey: subsubkey
-        })
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },2000);
+       },500);
       //this.updateUserList(editor)
     },
     addNewRow (ev,key, socket = false) {
@@ -718,14 +703,15 @@ export default {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
-      this.openEditFigure()
-      if (!socket)
+      if (!socket) {
+        this.openEditFigure()
         this.socket.emit('NEW_BLOCK_CHART', {
           ev: ev,
           key: key,
           subkey: subkey,
           subsubkey: subsubkey
         })
+      }
     },
     addPictureBlock (ev,key,subkey,subsubkey, socket = false) {
       var uuid_block = String(uuidv4())
@@ -733,13 +719,15 @@ export default {
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       this.openEditPicture()
-      if (!socket)
+      if (!socket) {
+        this.openEditPicture()
         this.socket.emit('NEW_BLOCK_PICTURE', {
           ev: ev,
           key: key,
           subkey: subkey,
           subsubkey: subsubkey
         })
+      }
     },
     removeBlock (ev,key,subkey,subsubkey, socket = false) {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
@@ -827,6 +815,15 @@ export default {
         this.postForm.arr_content.splice(key+1,0, new_content);
         this.save(ev)
       }
+    },
+    updateTitle () {
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.socket.emit('UPDATE_TITLE', {
+          title: this.postForm.title
+        });
+        this.save(this.$event)
+      }, 500);
     },
     openEditFigure () {
       this.dialogVisible = true
