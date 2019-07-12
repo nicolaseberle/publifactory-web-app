@@ -27,6 +27,21 @@ function addInstruction (User, instruction) {
     })
 }
 
+async function getHistory(req, res, next) {
+  try {
+    const query = {
+      id_article: req.params.id_article
+    };
+    if (req.params.id_user)
+      query.id_user = req.params.id_user;
+    const response = await History.find(query).exec();
+    res.json({success: true, history: response});
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
-  addInstruction: addInstruction
+  addInstruction: addInstruction,
+  getHistory: getHistory
 };
