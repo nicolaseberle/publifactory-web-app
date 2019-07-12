@@ -44,13 +44,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'accessToken']),
-    closeSidebar() {
-      this.sidebar.opened = false
-    }
+    ...mapGetters(['sidebar', 'accessToken'])
   },
   created () {
-    this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
     this.fetchData(this.id)
     this.convertLightEditor2Latex()

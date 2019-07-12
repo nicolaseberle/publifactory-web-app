@@ -6,8 +6,8 @@
         <el-button-group>
           <el-button v-if="valueTypeEditor==1" type="primary" round  @click="changeEditor('LightEditor')">Light Editor</el-button>
           <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
-          <el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
-          <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
+          <!--<el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
+          <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>-->
           <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latex</el-button>
           <el-button v-if="valueTypeEditor!=3" type="" round @click="changeEditor('LatexEditor')">Latex</el-button>
         </el-button-group>
@@ -16,10 +16,10 @@
             <el-button class="el-button-action" round>Version<i class="el-icon-arrow-down" style='margin-left:10px'/></el-button>
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="v1">Submited</el-dropdown-item>
-            <el-dropdown-item command="v2">Reviewed - 01/08/2018</el-dropdown-item>
+            <el-dropdown-item command="v1">Current version</el-dropdown-item>
+            <!--<el-dropdown-item command="v2">Reviewed - 01/08/2018</el-dropdown-item>
             <el-dropdown-item command="v3">Reviewed - 10/09/2018</el-dropdown-item>
-            <el-dropdown-item command="v4">Reviewed - 15/09/2018</el-dropdown-item>
+            <el-dropdown-item command="v4">Reviewed - 15/09/2018</el-dropdown-item>-->
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -41,7 +41,8 @@
           <el-button-group>
             <!--<el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>-->
-            <el-button type="" v-on:click="handleDownload()" round >Download the article</el-button>
+            <!--<el-button type="" v-on:click="handleDownload()" round icon='el-icon-download' ></el-button>-->
+            <el-button type="" v-on:click="handleDownload()" round >Download</el-button>
             <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" round >Submit your article</el-button>
             <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round disabled>Submitted</el-button>
             <el-button v-if="  this.articleInfo.status === 'Reviewing' " type="" @click="changeStatus()" round >Validate the article</el-button>
