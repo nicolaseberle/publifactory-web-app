@@ -121,14 +121,14 @@ function createJournals(user_tmp) {
     .then(() => {
       let journals = Journals.create(
       {
-        title: 'Developmental Biology',
-        abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
-        tags:['Aging','death rates','curve fitting'],
+        title: 'BioRxiv',
+        abstract: "bioRxiv is an open access preprint repository for the biological sciences co-founded by John Inglis and Richard Sever in November 2013. It is hosted by the Cold Spring Harbor Laboratory. As preprints, papers hosted on bioRxiv are not peer-reviewed",
+        tags:['Biology'],
         color_1: '#B9DAAC',
         color_2: '#B9DA90',
         users: [user_tmp[2]._id],
         published: true
-      },
+      }/*,
       {
         title: 'Genetics',
         abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
@@ -146,7 +146,7 @@ function createJournals(user_tmp) {
         color_2: "#FAD2BE",
         users: [user_tmp[1]._id],
         published: true
-      });
+      }*/);
       return journals
   })
   .then(() => {console.log('finished populating journals');})
