@@ -37,7 +37,7 @@
                   </form>
                </h1>
                 <div class="article-author">
-                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
+                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
                   <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
@@ -447,6 +447,8 @@ export default {
     this.socket.on('MODIFY_BLOCK_PICTURE',
       data => this.updatePictureBlock(data.key, data.subkey, data.subsubkey, data.idPicture, true));
     this.socket.on('MODIFY_TITLE', data => this.postForm.title = data.title);
+    this.socket.on('LOAD_CODE_R', () => this.execRCodeSocket)
+    this.socket.on('LOAD_CODE_PYTHON', () => this.execPythonCodeSocket)
 
     asideRightAnimation()
     //this.updateUserList()
@@ -643,7 +645,7 @@ export default {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },500);
+       },200);
     },
 
     applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
@@ -659,7 +661,7 @@ export default {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },500);
+       },200);
       //this.updateUserList(editor)
     },
     addNewRow (ev,key, socket = false) {
@@ -718,7 +720,6 @@ export default {
       var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0}
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
-      this.openEditPicture()
       if (!socket) {
         this.openEditPicture()
         this.socket.emit('NEW_BLOCK_PICTURE', {
@@ -863,17 +864,29 @@ export default {
       })
     },
     async execPythonCode () {
+      this.socket.emit('EXEC_CODE_PYTHON', {});
+      this.execPythonCodeSocket()
+    },
+    async execRCode () {
+      this.socket.emit('EXEC_CODE_R', {});
+      this.execRCodeSocket()
+    },
+    async execPythonCodeSocket () {
       this.renderLoading = true
       await this.$refs.pythonChild.execCode()
       this.renderLoading = false
     },
-    async execRCode () {
+    async execRCodeSocket () {
       this.renderLoading = true
       await this.$refs.rChild.execCode()
       this.renderLoading = false
     },
     changePythonVersion (newValue) {
       this.$refs.pythonChild.setVersion(newValue)
+    },
+    handleCollaboratorInvitations() {
+      this.dialogTableVisible = true
+      this.diagAuthorVisible=true
     }
   }
 }

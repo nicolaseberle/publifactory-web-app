@@ -18,6 +18,7 @@ services:
       WAIT_HOSTS: mongo:27017
       NODE_ENV: development
       BASE_MONGO : mongo
+      DOCKER: "true"
     networks:
       - backend
       - frontend
@@ -44,7 +45,7 @@ services:
       context: ./
       dockerfile: client.dockerfile
     volumes:
-      - ./:/src/app
+      - ./:/src/app/
       - /src/app/node_modules
     environment:
       - PORT=9001

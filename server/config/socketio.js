@@ -25,6 +25,8 @@ module.exports = function (io) {
   io.on('connection', (socket) => {
     mapUser[socket.id] = new User(socket.id)
 
+    console.log('[socket.io] New User Map :')
+    console.log(mapUser)
     socket.on('disconnect', () => {
       console.log('[socket.io] AN USER JUST DISCONNECTED: %s', mapUser[socket.id].id);
       delete mapUser[socket.id];
@@ -132,5 +134,15 @@ module.exports = function (io) {
       console.log('[socket.io] TITLE UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('MODIFY_TITLE', data)
     });
+
+    socket.on('EXEC_CODE_R', data => {
+      console.log('[socket.io] R CODE EXECUTED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('LOAD_CODE_R', data)
+    })
+
+    socket.on('EXEC_CODE_PYTHON', data => {
+      console.log('[socket.io] PYTHON CODE EXECUTED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('LOAD_CODE_PYTHON', data)
+    })
   })
 };
