@@ -23,10 +23,10 @@ module.exports = function (io) {
    * @param socket -> Contain the client informations
    */
   io.on('connection', (socket) => {
-    mapUser[socket.id] = new User(socket.id)
+    mapUser[socket.id] = new User(socket.id);
 
-    console.log('[socket.io] New User Map :')
-    console.log(mapUser)
+    console.log('[socket.io] New User Map :');
+    console.log(mapUser);
     socket.on('disconnect', () => {
       console.log('[socket.io] AN USER JUST DISCONNECTED: %s', mapUser[socket.id].id);
       delete mapUser[socket.id];
@@ -79,7 +79,7 @@ module.exports = function (io) {
     socket.on('NEW_TAG', data => {
       console.log('[socket.io] NEW TAG ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('ADD_TAG', data)
-    })
+    });
 
     socket.on('NEW_ONE_BLOCK', data => {
       console.log('[socket.io] ONE BLOCK ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
@@ -109,7 +109,12 @@ module.exports = function (io) {
     socket.on('NEW_COMMENT', data => {
       console.log('[socket.io] NEW COMMENT ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('ADD_COMMENT', data)
-    })
+    });
+
+    socket.on('NEW_COLLABORATOR', data => {
+      console.log('[socket.io] NEW COLLABORATOR ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('ADD_COLLABORATOR', data)
+    });
 
     /**
      * The next "REMOVE_" are used to delete some blocks / content
@@ -126,8 +131,8 @@ module.exports = function (io) {
     });
 
     /**
-     * The next "UPDATE_" are used to update figures and picture inserted
-     * in the article.
+     * The next "UPDATE_" are used to update figures and picture blocks
+     * inserted in the article.
      * It responds a "MODIFY_" socket instruction
      */
     socket.on('UPDATE_BLOCK_PICTURE', data => {
@@ -140,14 +145,25 @@ module.exports = function (io) {
       socket.to(mapUser[socket.id].idArticle).emit('MODIFY_TITLE', data)
     });
 
+    socket.on('UPDATE_COLLABORATOR', data => {
+      console.log('[socket.io] COLLABORATOR ROLES UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('MODIFY_COLLABORATOR', data)
+    });
+
+    /**
+     * The next "EXEC_CODE_" are used to update the figures and
+     * information about the figure code and graphs.
+     * It responds a "LOAD_CODE_" socket instruction.
+     * This part is used in the client at ScriptPython & ScriptR
+     */
     socket.on('EXEC_CODE_R', data => {
       console.log('[socket.io] R CODE EXECUTED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('LOAD_CODE_R', data)
-    })
+    });
 
     socket.on('EXEC_CODE_PYTHON', data => {
       console.log('[socket.io] PYTHON CODE EXECUTED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('LOAD_CODE_PYTHON', data)
-    })
+    });
   })
 };

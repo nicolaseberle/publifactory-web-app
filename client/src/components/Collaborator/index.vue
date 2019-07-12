@@ -99,9 +99,7 @@ const shortid = require('shortid');
 export default {
   name: 'addCollaborator',
   components: {},
-  props: {
-    authors: {}
-  },
+  props: ["authors", "socket"],
   data() {
     return {
       list: null,
@@ -165,12 +163,24 @@ export default {
     this.total = 2
   },
   mounted() {
-      this.list = this.authors
-      this.oldList = this.list.map(v => Number(v.rank))
-      this.newList = this.oldList.slice()
-      this.$nextTick(() => {
-        this.setSort()
-      })
+    /**
+     * Socket instructions from API
+     */
+    this.socket.on('ADD_COLLABORATOR', data => {
+      this.list = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_COLLABORATOR', data => {
+      this.list = data.list;
+      this.$forceUpdate();
+    })
+
+    this.list = this.authors
+    this.oldList = this.list.map(v => Number(v.rank))
+    this.newList = this.oldList.slice()
+    this.$nextTick(() => {
+      this.setSort()
+    })
   },
   methods: {
     setSort() {
@@ -219,6 +229,9 @@ export default {
       this.newList = this.list.map(v => Number(v.rank))
       this.$forceUpdate()
       this.cleanForm()
+      this.socket.emit('NEW_COLLABORATOR', {
+        list: this.newList
+      })
     },
     invite (email, firstname, lastname) {
       let sender = this.userId;
@@ -298,8 +311,7 @@ export default {
       }).catch(() => {})
     },
     onChange() {
-      const newAuthors = this.list
-      axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: newAuthors },
+      axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: this.list },
         { headers: {'Authorization': `Bearer ${this.accessToken}`} })
         .then(() => {
           this.$message({
@@ -311,7 +323,9 @@ export default {
             type: "error",
             message: this.$t('message.changeRoleFail')
           })
-      })
+      }).finally(() => this.socket.emit('UPDATE_COLLABORATOR', {
+        list: this.newList
+      }));
       this.$emit('close')
     }
   }

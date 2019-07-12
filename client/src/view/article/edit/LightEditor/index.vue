@@ -143,7 +143,7 @@
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="70%">
-    <addCollaborator v-bind:authors='postForm.authors' v-on:close="diagAuthorVisible=false"/>
+    <addCollaborator v-bind:authors='postForm.authors' :socket="this.socket" v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
@@ -190,7 +190,7 @@
           <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+      <scriptPython :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigurePythonVisible" ref="pythonChild"
                     v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
@@ -211,7 +211,7 @@
           <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+      <scriptR :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigureRVisible" ref="rChild"
                v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
@@ -423,6 +423,9 @@ export default {
   mounted() {
     this.fetchData(this.id)
 
+    /**
+     * Socket instructions from API
+     */
     this.socket.emit('SET_ARTICLE', {
       id_article: this.id
     })
@@ -443,14 +446,23 @@ export default {
       data => this.addChartBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
     this.socket.on('ADD_BLOCK_PICTURE',
       data => this.addPictureBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_COLLABORATOR',);
     this.socket.on('DELETE_BLOCK',
       data => this.removeBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
     this.socket.on('DELETE_ROW', data => this.removeRow(data.ev, data.key, true));
     this.socket.on('MODIFY_BLOCK_PICTURE',
       data => this.updatePictureBlock(data.key, data.subkey, data.subsubkey, data.idPicture, true));
     this.socket.on('MODIFY_TITLE', data => this.postForm.title = data.title);
-    this.socket.on('LOAD_CODE_R', () => this.execRCodeSocket)
-    this.socket.on('LOAD_CODE_PYTHON', () => this.execPythonCodeSocket)
+    this.socket.on('LOAD_CODE_R', () => this.execRCode);
+    this.socket.on('LOAD_CODE_PYTHON', () => this.execPythonCode);
+    this.socket.on('ADD_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
 
     asideRightAnimation()
     //this.updateUserList()
@@ -866,19 +878,11 @@ export default {
       })
     },
     async execPythonCode () {
-      this.socket.emit('EXEC_CODE_PYTHON', {});
-      this.execPythonCodeSocket()
-    },
-    async execRCode () {
-      this.socket.emit('EXEC_CODE_R', {});
-      this.execRCodeSocket()
-    },
-    async execPythonCodeSocket () {
       this.renderLoading = true
       await this.$refs.pythonChild.execCode()
       this.renderLoading = false
     },
-    async execRCodeSocket () {
+    async execRCode () {
       this.renderLoading = true
       await this.$refs.rChild.execCode()
       this.renderLoading = false
