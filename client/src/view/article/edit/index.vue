@@ -63,7 +63,7 @@
   </div>
   <div>
 
-      <component  v-bind:is="currentEditor" :hidePDF="flagHidePDF" v-on:changecomment='onChangeComment'/>
+      <component  v-bind:is="currentEditor" :socket="socket" :hidePDF="flagHidePDF" v-on:changecomment='onChangeComment'/>
   </div>
   <el-dialog
     title="Submission process"
@@ -151,7 +151,8 @@
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
-      journalList: []//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
+      journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
+      socket: io('http://localhost:4000')
     }
   },
   computed: {
@@ -167,6 +168,18 @@
   },
   mounted() {
     this.getJournalList()
+
+    /**
+     * Socket instructions from API
+     */
+    this.socket.emit('SET_ARTICLE', {
+      id_article: this.id
+    });
+
+    this.socket.on('MODIFY_STATUS', () => {
+      this.getStatus();
+      this.$router.push('/')
+    })
   },
   methods: {
     showCOmmentReviewPanel () {
@@ -283,15 +296,15 @@
           .then(data => resolve(data.data))
           .catch(err => reject(err))
       });
+      let nextStatus = '';
       if (this.articleInfo.status === 'Submited')
-        axios.patch(`/api/articles/${this.id}/review`, {},
-          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+        nextStatus = 'review';
       else if (this.articleInfo.status === 'Reviewing')
-        axios.patch(`/api/articles/${this.id}/publish`, {},
-          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+        nextStatus = 'publish';
       else if (this.articleInfo.status === 'Draft')
-        axios.patch(`/api/articles/${this.id}/submit`, {},
-          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+        nextStatus = 'submit'
+      await axios.patch(`/api/articles/${this.id}/${nextStatus}`, {},
+        { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       this.$router.push(this.$route.query.redirect || '/')
     },
     getJournalList () {

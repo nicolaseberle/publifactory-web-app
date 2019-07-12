@@ -1,6 +1,6 @@
 'use strict';
 
-class User {
+class SocketUser {
   constructor (id) {
     this.id = id
     console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
@@ -23,9 +23,9 @@ module.exports = function (io) {
    * @param socket -> Contain the client informations
    */
   io.on('connection', (socket) => {
-    mapUser[socket.id] = new User(socket.id);
+    mapUser[socket.id] = new SocketUser(socket.id);
 
-    console.log('[socket.io] New User Map :');
+    console.log('[socket.io] New SocketUser Map :');
     console.log(mapUser);
     socket.on('disconnect', () => {
       console.log('[socket.io] AN USER JUST DISCONNECTED: %s', mapUser[socket.id].id);
@@ -148,6 +148,11 @@ module.exports = function (io) {
     socket.on('UPDATE_COLLABORATOR', data => {
       console.log('[socket.io] COLLABORATOR ROLES UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
       socket.to(mapUser[socket.id].idArticle).emit('MODIFY_COLLABORATOR', data)
+    });
+
+    socket.on('UPDATE_STATUS', data => {
+      console.log('[socket.io] STATUS UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('MODIFY_STATUS', data)
     });
 
     /**

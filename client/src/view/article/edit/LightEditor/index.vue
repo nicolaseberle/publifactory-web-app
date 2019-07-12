@@ -143,7 +143,7 @@
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="70%">
-    <addCollaborator v-bind:authors='postForm.authors' :socket="this.socket" v-on:close="diagAuthorVisible=false"/>
+      <addCollaborator v-bind:authors='postForm.authors' :socket="this.socket" v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
@@ -330,6 +330,9 @@ const options = {
 
 export default {
   name: 'LightEditor',
+  props: [
+    "socket"
+  ],
   components: {
     InsertFigure,
     ImportData,
@@ -401,9 +404,7 @@ export default {
     }, {
       value: 'vertical',
       label: 'Vertical'
-    }],
-
-      socket: io('http://localhost:4000')
+    }]
   }
 
   },
@@ -426,10 +427,6 @@ export default {
     /**
      * Socket instructions from API
      */
-    this.socket.emit('SET_ARTICLE', {
-      id_article: this.id
-    })
-
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
       this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content);

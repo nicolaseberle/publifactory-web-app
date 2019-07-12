@@ -168,10 +168,12 @@ export default {
      */
     this.socket.on('ADD_COLLABORATOR', data => {
       this.list = data.list;
+      this.setSort();
       this.$forceUpdate();
     });
     this.socket.on('MODIFY_COLLABORATOR', data => {
       this.list = data.list;
+      this.setSort();
       this.$forceUpdate();
     })
 
