@@ -274,7 +274,7 @@
   import addCollaborator from '../../../../components/Collaborator'
   import ImportData from '../../../../components/ImportData/index'
   import InsertFigure from '../../../../components/InsertFigure/index'
-  import io from 'socket.io-client'
+  
   //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');

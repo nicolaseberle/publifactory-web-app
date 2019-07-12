@@ -135,6 +135,7 @@
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
   const printJS = require( 'print-js')
+  import io from 'socket.io-client'
 
   export default {
   name: 'ArticleDetail',
