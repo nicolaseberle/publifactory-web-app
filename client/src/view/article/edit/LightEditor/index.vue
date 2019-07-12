@@ -134,7 +134,9 @@
     </el-card>
     <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
     <aside type="button" class="content-comments-reviews" id="triggerAside">
-      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
+      <keep-alive>
+        <reviewComponent :uuid='uuid_comment' :socket='this.socket' v-on:changecomment='onChangeComment'/>
+      </keep-alive>
     </aside>
 
     <el-dialog

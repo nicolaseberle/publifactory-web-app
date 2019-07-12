@@ -106,6 +106,11 @@ module.exports = function (io) {
       socket.to(mapUser[socket.id].idArticle).emit('ADD_BLOCK_PICTURE', data)
     });
 
+    socket.on('NEW_COMMENT', data => {
+      console.log('[socket.io] NEW COMMENT ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle)
+      socket.to(mapUser[socket.id].idArticle).emit('ADD_COMMENT', data)
+    })
+
     /**
      * The next "REMOVE_" are used to delete some blocks / content
      * It responds a "DELETE_" socket instruction
