@@ -1,6 +1,6 @@
 'use strict';
 
-const history = require('../api/article/history');
+const history = require('../api/article/history/history.controller');
 
 class SocketUser {
   constructor (id) {

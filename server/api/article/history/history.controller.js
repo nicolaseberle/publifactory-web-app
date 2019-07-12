@@ -9,12 +9,24 @@ function addInstruction (User, instruction) {
     date: new Date(),
     instruction: instruction
   };
-  const query = pattern;
-  query.date = patter.date - ;
-  History.find()
-  new History(pattern).save();
+  const query = {
+    id_user: pattern.id_user,
+    id_article: pattern.id_article,
+    instruction: pattern.instruction,
+    data: {
+      $gt: pattern.date - 300000
+    }
+  };
+  History.find(query)
+    .sort({ date: -1 })
+    .limit(1)
+    .exec((err, history) => {
+      if (err) throw err;
+      if (history.length === 0)
+        new History(pattern).save();
+    })
 }
 
-modules.export = {
+module.exports = {
   addInstruction: addInstruction
 };

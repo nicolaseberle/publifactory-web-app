@@ -136,7 +136,6 @@
   import axios from 'axios'
   import io from 'socket.io-client'
   const printJS = require( 'print-js')
-  import io from 'socket.io-client'
 
   export default {
   name: 'ArticleDetail',
