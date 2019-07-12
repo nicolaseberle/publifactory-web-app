@@ -134,6 +134,7 @@
   import markdownEditorComponent from './MarkdownEditorComponent'
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
+  import io from 'socket.io-client'
   const printJS = require( 'print-js')
   import io from 'socket.io-client'
 
@@ -157,7 +158,7 @@
     }
   },
   computed: {
-    ...mapGetters(['accessToken'])
+    ...mapGetters(['accessToken', 'userId'])
   },
   created() {
 
@@ -174,7 +175,8 @@
      * Socket instructions from API
      */
     this.socket.emit('SET_ARTICLE', {
-      id_article: this.id
+      id_article: this.id,
+      id_user: this.userId
     });
 
     this.socket.on('MODIFY_STATUS', () => {
