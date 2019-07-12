@@ -81,7 +81,7 @@ var populateBase = function () {
       User.find({}, async function (err, users) {
         if (err) throw err
         //createComment(users)
-        await createArticles(users);
+        //await createArticles(users);
         createJournals(users);
       })
       }).catch(function (error) {
@@ -328,7 +328,7 @@ function createUsers() {
         avatar: '/static/img/Nicolas_Eberle.png',
         field: 'Physics',
         isVerified: true
-      }, /*{
+      }, {
         provider: 'local',
         role: 'admin',
         roles : ['admin'],
@@ -342,7 +342,7 @@ function createUsers() {
         avatar: '/static/img/Defaut.png',
         field: 'Administrator',
         isVerified: true
-      },*/ {
+      }, {
         provider: 'local',
         role: 'user',
         roles : ['user'],
