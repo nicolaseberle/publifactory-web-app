@@ -257,7 +257,7 @@ function resetPassword(req, res, next) {
         "updated_at": current,
         "link": newLink,
         "recieptEmail": email,
-        "senderId": newLink,
+        "senderId": senderName,
         "senderMsg": senderMsg,
         "senderName": senderName
       });
