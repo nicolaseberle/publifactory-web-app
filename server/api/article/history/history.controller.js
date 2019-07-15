@@ -12,17 +12,15 @@ function addInstruction (User, instruction) {
   const query = {
     id_user: pattern.id_user,
     id_article: pattern.id_article,
-    instruction: pattern.instruction,
-    data: {
-      $gt: pattern.date - 300000
-    }
+    instruction: pattern.instruction
   };
   History.find(query)
     .sort({ date: -1 })
     .limit(1)
     .exec((err, history) => {
       if (err) throw err;
-      if (history.length === 0)
+      console.log(history)
+      if (!history.length || (history.length && history[0].date < Date.now() - 300000))
         new History(pattern).save();
     })
 }
