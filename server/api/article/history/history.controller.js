@@ -19,7 +19,6 @@ function addInstruction (User, instruction) {
     .limit(1)
     .exec((err, history) => {
       if (err) throw err;
-      console.log(history)
       if (!history.length || (history.length && history[0].date < Date.now() - 300000))
         new History(pattern).save();
     })
