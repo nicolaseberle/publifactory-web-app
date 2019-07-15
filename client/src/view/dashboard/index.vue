@@ -3,7 +3,7 @@
     <div class="dashboard-container">
       <component :is="currentRole"/>
 
-      <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" show-close>
+      <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
         <h1>Welcome </h1>
         <h2></h2>
         <p>Change your password</p>
@@ -106,13 +106,15 @@
     changePassword () {
       this.$refs.form.validate(async valid => {
         if (valid) {
+
           await this.resetGuestPassword({id: this.userId,
             email: this.form.email,
             password: this.form.password,
             token: this.accessToken
           }).then((data) => {
+            console.log(data)
             this.visibleDiagFirstConnexion = false
-          })
+          }).catch((err)=>console.log(err))
         }
       })
     }

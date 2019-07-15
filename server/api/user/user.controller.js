@@ -208,10 +208,13 @@ async function changeGuestPassword(req, res, next) {
   try {
     var userId = req.params.id
     var newPass = String(req.body.password)
-
+    console.log("changeGuestPassword :: beginning ",userId )
     let user = await User.findById(userId)
+    console.log("changeGuestPassword :: ", user)
     const invite = await Invitation.findById(user.invitationId)
+    console.log("changeGuestPassword :: ", invite)
     if (user.authenticate(invite.senderId)) {
+      console.log("user.authenticate :: ")
       const query = {
         _id: userId
       };
@@ -224,7 +227,7 @@ async function changeGuestPassword(req, res, next) {
         }
       };
       const updatedUser = await User.findOneAndUpdate(query, toSet);
-      console.log("changeGuestPassword :: ",updateUser)
+      console.log("changeGuestPassword ::  ",updateUser)
       const token = await jwt.sign({
         _id: updatedUser._id,
         name: updatedUser.name,
@@ -248,7 +251,10 @@ function resetPassword(req, res, next) {
     while(newLink.indexOf('-')>=0){
       newLink = shortid.generate()
     }
-
+    let senderId = shortid.generate()
+    while(senderId.indexOf('-')>=0){
+      senderId = shortid.generate()
+    }
     User.findOne({"email": email}, async function (_err, user) {
       let senderName = user._id
       let current = new Date().toISOString()
@@ -257,7 +263,7 @@ function resetPassword(req, res, next) {
         "updated_at": current,
         "link": newLink,
         "recieptEmail": email,
-        "senderId": senderName,
+        "senderId": senderId,
         "senderMsg": senderMsg,
         "senderName": senderName
       });
@@ -266,17 +272,17 @@ function resetPassword(req, res, next) {
           return console.log(error);
         } else {
           //we send en email to reset the password
-          const clientUrl = `${configEmail.rootHTML}/recover/password/${senderName}-${newLink}`;
+          const clientUrl = `${configEmail.rootHTML}/recover/password/${senderId}-${newLink}`;
           const gmail = new Email(email);
           gmail.sendRecuperationPassword(clientUrl);
           //sendResetEmail(email, newLink, newLink);
         }
       })
       // temporary password is newLink - a random key
-      user.password = newLink
-      //user.role = 'guest'
+      user.password = senderId
+      user.role = 'guest'
       user.roles = ['guest']
-      user.save(function (err) {
+      await user.save(function (err) {
         if (err) return validationError(res, err)
         var token = jwt.sign({
            _id: user._id,
