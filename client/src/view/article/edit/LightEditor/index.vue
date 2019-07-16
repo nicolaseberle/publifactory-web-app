@@ -131,15 +131,16 @@
     </main>
 
     </el-card>
-    <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
-    <aside type="button" class="content-comments-reviews" id="triggerAside">
-      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
-    </aside>
-    <aside  class="activity" ><p>Activity</p></aside>
-    <aside type="button" class="content-comments-reviews" id="triggerAside">
-      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
-    </aside>
-    </aside>
+    <div class='leftpanel'>
+      <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
+      <aside type="button" class="content-comments-reviews" id="triggerAside">
+        <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
+      </aside>
+      <aside  class="activity" ><p>Activity</p></aside>
+      <aside type="button" class="content-activity" id="triggerAside">
+        <activityComponent/>
+      </aside>
+    </div>
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
@@ -264,6 +265,7 @@
   import velocity from 'velocity-animate'
   import asideRightAnimation from '../../../../utils/js/animation/aside.right.js'
   import reviewComponent from '../../../../components/Review'
+  import activityComponent from '../../../../components/Activity'
   import quilleditor from '../../../../components/QuillEditor'
   import VuePlotly from '@statnett/vue-plotly'
   import figureComponent from '../../../../components/Figure'
@@ -333,7 +335,19 @@ export default {
   components: {
     InsertFigure,
     ImportData,
-    addCollaborator,importImage, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
+    addCollaborator,
+    importImage,
+    imageComponent,
+    figureComponent,
+    VuePlotly,
+    figureFactory,
+    scriptPython,
+    MarkdownEditor,
+    'medium-editor': editor ,
+    reviewComponent,
+    'quill-editor' : quilleditor,
+    scriptR,
+    activityComponent},
   data() {
     return {
       timeoutId: Number,
@@ -652,7 +666,7 @@ export default {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
       this.save(ev)
     },
-    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {Activity
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       const response = await axios.get('/api/figure/' + this.editidfigure, {

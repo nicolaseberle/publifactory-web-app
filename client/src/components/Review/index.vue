@@ -40,7 +40,7 @@
       <section class="content comments">
         <el-collapse v-model="activeComments" accordion>
           <div v-for="t in Comments">
-            <article>
+            <article>this.list
               <section>
                 <el-collapse-item :title="t.name" :name="t.id">
 
