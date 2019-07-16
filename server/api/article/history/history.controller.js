@@ -15,6 +15,8 @@ const ENUM_INSTRUCTION = {
   NEW_COMMENT: 'added a new comment.',
   NEW_COLLABORATOR: 'added a new collaborator.',
   NEW_DATA: 'imported a new data.',
+  NEW_REVIEWER: 'invited a new reviewer.',
+  NEW_ASSOCIATE_EDITOR: 'invited a new Associate Editor.',
   REMOVE_BLOCK: 'removed a block.',
   REMOVE_ROW: 'removed a row.',
   REMOVE_DATA: 'removed a data.',
@@ -29,12 +31,17 @@ const ENUM_INSTRUCTION = {
 };
 
 function addInstruction (User, instruction) {
+  if (!Object.keys(ENUM_INSTRUCTION).includes(instruction))
+    throw { code: 404, message: 'Unknown instruction.' };
   const pattern = {
     id_user: User.idUser,
     id_article: User.idArticle,
     date: new Date(),
     instruction: instruction
   };
+  if (instruction === 'UPDATE_STATUS' || instruction === 'NEW_COLLABORATOR' || instruction === 'NEW_REVIEWER'
+    ||instruction === 'NEW_ASSOCIATE_EDITOR')
+    pattern.priority = 1;
   const query = {
     id_user: pattern.id_user,
     id_article: pattern.id_article,
@@ -66,7 +73,23 @@ async function getHistory(req, res, next) {
   }
 }
 
+async function insertInstruction (req, res, next) {
+  try {
+    if (req.body.instruction === undefined)
+      throw { code: 422, message: "Missing parameter in the body field." };
+    const userClass = {
+      idUser: req.decoded._id,
+      idArticle: req.params.id
+    };
+    addInstruction(userClass, req.body.instruction);
+    res.status(201).json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
   addInstruction: addInstruction,
+  insertInstruction: insertInstruction,
   getHistory: getHistory
 };

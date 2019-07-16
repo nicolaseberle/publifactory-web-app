@@ -23,6 +23,10 @@ const HistorySchema = new Schema({
     type: String,
     required: true,
     default: new Date()
+  },
+  priority: {
+    type: Number,
+    default: 0
   }
 });
 

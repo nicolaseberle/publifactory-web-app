@@ -7,5 +7,6 @@ const articleRole = require('../../roles/article/roles.article.controller')
 var router = express.Router()
 
 router.get('/:id_article/:id_user?', articleRole.checkHistoryRight, controller.getHistory);
+router.post('/:id_article', articleRole.inviteAe, controller.insertInstruction);
 
 module.exports = router;

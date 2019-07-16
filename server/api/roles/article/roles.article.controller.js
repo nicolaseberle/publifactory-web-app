@@ -6,7 +6,8 @@
  */
 const Roles = require('./roles.article.model')
 const Article = require('../../article/article.model')
-const User = require('../../user/user.model')
+const User = require('../../user/user.model');
+const History = require('../../article/history/history.controller')
 
 /**
  * This route permit to get all the users of an article with their rights.
@@ -142,6 +143,18 @@ async function createRole (req, res, next) {
     const right = req.body.right;
     const roles = new Roles({ id_user, id_article, right });
     roles.save();
+    if (req.body.right === 'associate_editor')
+      History.addInstruction({
+        idUser: req.body.id_user,
+        idArticle: req.body.id_article,
+        instruction: 'NEW_ASSOCIATE_EDITOR'
+      });
+    else if (req.body.right === 'reviewer')
+      History.addInstruction({
+        idUser: req.body.id_user,
+        idArticle: req.body.id_article,
+        instruction: 'NEW_REVIEWER'
+      });
     res.json({ success: true })
   } catch (e) {
     next(e);
@@ -201,7 +214,7 @@ async function switchRoute (route, articleInfo) {
         })
       })
       if (infoAuthor.role !== 'editor')
-        throw { message: 'Only the editor and associate_editor are able to invite reviewers.' };
+        throw { message: 'Only the editors are able to invite associate_editors.' };
       break;
     case 'history':
       status = await new Promise((resolve, reject) => {
@@ -243,6 +256,15 @@ async function historicAuthor (req, res, next) {
   }
 }
 
+async function inviteAe (req, res, next) {
+  try {
+    req.route = 'inviteAssociateEditor';
+    await doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
+  }
+}
+
 async function doYouHaveThisRight (req, res, next) {
   try {
     const articleInfo = await new Promise((resolve, reject) => {
@@ -275,5 +297,6 @@ module.exports = {
   getUserRoles: getUserRoles,
   getRoleById: getRoleById,
   checkHistoryRight: historicAuthor,
+  inviteAe: inviteAe,
   doYouHaveThisRight: doYouHaveThisRight
 };

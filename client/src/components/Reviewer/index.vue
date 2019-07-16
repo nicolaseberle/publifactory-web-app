@@ -125,6 +125,9 @@
           if (valid) {
             this.addReviewer()
             //change status of the article
+            axios.post('/api/history/' + this.article_id,
+              { instruction: 'UPDATE_STATUS'},
+              { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
             this.changeStatus()
           } else {
             debug('error submit!!');

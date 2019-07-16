@@ -129,7 +129,6 @@
         }).then(res => {
           console.log('fetchAssociateEditor :: ', res.data.users)
           this.list = res.data.users
-          console.log(this.list)
         }).catch(err => {
           console.error(err)
         })
