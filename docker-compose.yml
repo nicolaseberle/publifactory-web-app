@@ -19,6 +19,7 @@ services:
       NODE_ENV: development
       BASE_MONGO : mongo
       ROOT_APP : "http://app.publifactory.co"
+      DOCKER: "true"
     networks:
       - backend
       - frontend
@@ -45,7 +46,7 @@ services:
       context: ./
       dockerfile: client.dockerfile
     volumes:
-      - ./:/src/app
+      - ./:/src/app/
       - /src/app/node_modules
     environment:
       - PORT=9001

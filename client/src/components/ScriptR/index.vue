@@ -59,7 +59,7 @@
   export default {
     name: 'ScriptR',
     locales,
-    props: ["idfigure"],
+    props: ["idfigure", "socket"],
     components: { VuePlotly },
     data () {
       return {
@@ -100,6 +100,14 @@
       ...mapGetters(['accessToken'])
     },
     async mounted () {
+      /**
+       * Socket instructions from API
+       */
+      this.socket.on('LOAD_CODE_R', async data => {
+        await this.fetchFigure(data.id)
+        await this.execCode()
+      })
+
       await this.fetchFigure(this.idfigure)
       this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
         value: '',
@@ -244,10 +252,13 @@
             center: true,
             duration: 2000
           });
+          this.socket.emit('EXEC_CODE_R', {
+            id: this.idfigure
+          })
         } catch (e) {
           this.$message({
             message: 'An error occurred during the save of your figure.',
-            type: 'success',
+            type: 'error',
             center: true,
             duration: 2000
           });

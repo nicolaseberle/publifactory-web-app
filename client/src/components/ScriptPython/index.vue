@@ -57,7 +57,7 @@
   export default {
   name: 'ScriptPython',
   locales,
-  props: ["idfigure"],
+  props: ["idfigure", "socket"],
   components: { VuePlotly, PulseLoader },
   data () {
     return {
@@ -105,6 +105,11 @@
     ...mapGetters(['accessToken'])
   },
   async mounted () {
+    /**
+     * Socket instructions from API
+     */
+    this.socket.on('LOAD_CODE_PYTHON', async data => await this.fetchFigure(data.id))
+
     await this.fetchFigure(this.idfigure)
     this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
       value: '',
@@ -127,7 +132,8 @@
           this.$emit('loading', true)
         }, 3000)
       }
-    })
+    });
+    this.editor.refresh();
     this.execCode();
     var y0 = [];
     var y1 = [];
@@ -210,8 +216,7 @@
           this.codemirrorOptions(newTabName)
           this.editableTabsValue = newTabName;
         })
-      }
-      if (action === 'remove') {
+      } else if (action === 'remove') {
         const tabs = this.editableTabs;
         let activeName = this.editableTabsValue;
         if (activeName === targetName) {
@@ -252,7 +257,7 @@
       } catch (e) {
         this.$message({
           message: 'An error occurred during the save of your figure.',
-          type: 'success',
+          type: 'error',
           center: true,
           duration: 2000
         });
@@ -321,6 +326,9 @@
           offset: 100,
           showClose: false
         })
+        this.socket.emit('EXEC_CODE_PYTHON', {
+          id: this.id
+        });
       } catch (e) {
         this.$notify({
           title: 'Error during the script',

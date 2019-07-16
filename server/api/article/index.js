@@ -65,6 +65,7 @@ router.use('/:id', async function (req, res, next) {
   }
 })
 
+router.post('/:id/version', articlesController.createVersion);
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
 // TODO set deprecated, to replace with PATCH /:id/
 router.put('/:id/authors', articlesController.updateAuthorOfArticle);

@@ -203,6 +203,20 @@ async function switchRoute (route, articleInfo) {
       if (infoAuthor.role !== 'editor')
         throw { message: 'Only the editor and associate_editor are able to invite reviewers.' };
       break;
+    case 'history':
+      status = await new Promise((resolve, reject) => {
+        const query = { _id: articleInfo.id_article }
+        Article.findOne(query, (err, data) => {
+          if (err || !data) reject(err)
+          else resolve(data.status)
+        })
+      })
+      if (articleInfo.right !== 'author')
+        throw { message: 'Only the authors are able to consult the article history during the draft.' };
+      else if (status === 'Reviewing' && articleInfo.right === 'associate_editor')
+        throw { message: 'Only the authors and associate_editors are ' +
+            'able to consult the article history during the review.' };
+      break;
     case 'inviteCollaborator':
       if (articleInfo.right !== 'author')
         throw { message: 'Only the lead author is able to invite other collaborator' };
@@ -217,6 +231,15 @@ async function switchRoute (route, articleInfo) {
         if (authors[i].author._id.toString() === articleInfo.id_user.toString() && authors[i].role === 'Lead')
           return;
       throw { message: 'Only the lead author is able to invite other collaborator' };
+  }
+}
+
+async function historicAuthor (req, res, next) {
+  try {
+    req.route = 'history';
+    await doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    return res.status(401).json({ success: false, message: e.message });
   }
 }
 
@@ -251,5 +274,6 @@ module.exports = {
   getArticleUsers: getArticleUsers,
   getUserRoles: getUserRoles,
   getRoleById: getRoleById,
+  checkHistoryRight: historicAuthor,
   doYouHaveThisRight: doYouHaveThisRight
 };

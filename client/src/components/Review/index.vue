@@ -159,7 +159,7 @@ export default {
   name: 'reportComponent',
   locales,
   components: {'tree-comment': TreeComment,'font-awesome-icon': FontAwesomeIcon, VuePlotly},
-  props: ['uuid'],
+  props: ['uuid', 'socket'],
   data () {
     return {
       qualitybiblioscore:0,
@@ -262,6 +262,8 @@ export default {
 
   },
   mounted () {
+    this.socket.on('ADD_COMMENT', data => this.fetchReport(data.id))
+
     asideRightAnimation()
     axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
@@ -364,6 +366,9 @@ export default {
       .then(response => {
         response__ = response.data;
         this.errors.message = 'createReport success ';
+        this.socket.emit('NEW_COMMENT', {
+          id: this.id
+        })
         this.fetchReport(this.id)
       })
       .catch(err => {

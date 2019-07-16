@@ -31,10 +31,6 @@ var backendBase = {
 }
 
 var development = {
-  ssl: {
-    cert: fs.readFileSync('./server.dev.cert'),
-    key: fs.readFileSync('./server.dev.key')
-  },
   email : {
     rootHTML:  process.env.ROOT_APP, // || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
@@ -44,6 +40,11 @@ var development = {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
     clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
     callbackUrl: 'http://api:4000/api/auth/local/orcid/callback'
+  },
+  google: {
+    client_id	: "512110219820-jg8kgmn0keerqaq6iktdp6th80gqguvv.apps.googleusercontent.com",
+    client_secret: "bP63zGcgNyfv5jBDKYdsgpbE",
+    callbackUrl: 'http://localhost:9001'
   },
   frontend: {
     port: 9001,
@@ -73,10 +74,6 @@ var development = {
   })
 }
 var production = {
-  ssl: {
-    cert: fs.readFileSync('./server.prod.cert'),
-    key: fs.readFileSync('./server.prod.key')
-  },
   email : {
     rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",

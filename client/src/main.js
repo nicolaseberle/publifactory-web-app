@@ -54,6 +54,7 @@ routerHook(userPromise)
 // import './socket'
 // Vue.use( CKEditor );
 
+
 // register global utility filters.
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

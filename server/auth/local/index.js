@@ -46,6 +46,14 @@ router.post('/orcid', async function (req, res, next) {
   res.json({ success: true });
 })
 
+router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.status(201).json({success: true});
+  });
+
 /**
 router.get('/orcid', passport.authenticate('orcid'));
 

@@ -31,13 +31,13 @@
                       :min-height="30"
                       :cols="35"
                       :max-height="350"
-                      @input="save($event)"
+                      @input="updateTitle"
                     ></textarea-autosize>
                     <br>
                   </form>
                </h1>
                 <div class="article-author">
-                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
+                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
                   <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
@@ -57,7 +57,8 @@
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
-                  <medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
+                  <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
+                  <quill-editor v-bind:content="postForm.abstract" v-on:edit='applyAbstractEdit' ></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -145,7 +146,7 @@
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="70%">
-    <addCollaborator v-bind:authors='postForm.authors' v-on:close="diagAuthorVisible=false"/>
+      <addCollaborator v-bind:authors='postForm.authors' :socket="this.socket" v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
@@ -192,7 +193,7 @@
           <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+      <scriptPython :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigurePythonVisible" ref="pythonChild"
                     v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
@@ -213,7 +214,7 @@
           <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+      <scriptR :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigureRVisible" ref="rChild"
                v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
@@ -224,7 +225,7 @@
       :visible.sync="importDialogVisible"
       width="80%"
       top="0">
-      <ImportData ref="importDataDialog"></ImportData>
+      <ImportData :socket="this.socket" ref="importDataDialog"></ImportData>
     </el-dialog>
 
     <el-dialog
@@ -332,6 +333,9 @@ const options = {
 
 export default {
   name: 'LightEditor',
+  props: [
+    "socket"
+  ],
   components: {
     InsertFigure,
     ImportData,
@@ -434,6 +438,49 @@ export default {
   },
   mounted() {
     this.fetchData(this.id)
+
+    /**
+     * Socket instructions from API
+     */
+    this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
+    this.socket.on('SECTION_UPDATE', data =>
+      this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content);
+    this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
+    this.socket.on('ADD_TAG', data => {
+      this.newTag = data.newTag;
+      this.addNewTag(data.ev, true)
+    })
+    this.socket.on('ADD_ONE_BLOCK', data => this.addOneBlock(data.ev, data.key, true));
+    this.socket.on('ADD_TWO_BLOCK', data => this.addTwoBlocks(data.ev, data.key, true));
+    this.socket.on('ADD_BLOCK_TEXT',
+      data => this.addTextBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_BLOCK_CHART',
+      data => this.addChartBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_BLOCK_PICTURE',
+      data => this.addPictureBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_COLLABORATOR',);
+    this.socket.on('DELETE_BLOCK',
+      data => this.removeBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('DELETE_ROW', data => this.removeRow(data.ev, data.key, true));
+    this.socket.on('MODIFY_BLOCK_PICTURE',
+      data => this.updatePictureBlock(data.key, data.subkey, data.subsubkey, data.idPicture, true));
+    this.socket.on('MODIFY_TITLE', data => this.postForm.title = data.title);
+    this.socket.on('LOAD_CODE_R', () => this.execRCode);
+    this.socket.on('LOAD_CODE_PYTHON', () => this.execPythonCode);
+    this.socket.on('ADD_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_VERSION', data => {
+      this.postForm.title = data.title;
+      this.postForm.abstract = data.abstract;
+      this.postForm.arr_content = data.arr_content;
+    });
+
     asideRightAnimation()
     //this.updateUserList()
     /*this.$watch(this.dialogVisible, (val) => {
@@ -544,10 +591,15 @@ export default {
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
-    addNewTag (ev) {
+    addNewTag (ev, socket = false) {
       this.inputTagsVisible = false
       if (this.newTag !== '') {
         this.postForm.tags.push(this.newTag)
+        if (!socket)
+          this.socket.emit('NEW_TAG', {
+            ev: ev,
+            newTag: this.newTag
+          })
         this.save(ev)
       }
       this.newTag = ''
@@ -605,26 +657,34 @@ export default {
         console.log(e)
       })
     },
-    applyAbstractEdit (ev) {
-      if (ev.event.target) {
-        this.postForm.abstract = ev.event.target.innerHTML
-        //this.save(ev);
-        setTimeout(async ()=>{
-          this.save(ev)
-         },2000);
-      }
+    applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
+      this.postForm.abstract = editor.root.innerHTML
+      this.socket.emit('ABSTRACT_EDIT', {
+        content: this.postForm.abstract
+      })
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+       },200);
     },
+
     applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+      this.socket.emit('SECTION_EDIT', {
+        content: this.postForm.arr_content[key].block[subkey][subsubkey].content,
+        key: key,
+        subkey: subkey,
+        subsubkey: subsubkey
+      })
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },2000);
+       },200);
       //this.updateUserList(editor)
     },
-    addNewRow (ev,key) {
+    addNewRow (ev,key, socket = false) {
       var uuid_ = String(uuidv4())
       var uuid_block = String(uuidv4())
       var new_content = {
@@ -638,32 +698,67 @@ export default {
         display:true
       }
       this.postForm.arr_content.splice(key+1,0, new_content);
+      if (!socket)
+        this.socket.emit('NEW_ROW', {
+          key: key,
+          ev: ev
+        })
       this.save(ev)
     },
-    addTextBlock (ev,key,subkey,subsubkey) {
+    addTextBlock (ev,key,subkey,subsubkey, socket = false) {
       var uuid_block = String(uuidv4())
       var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'}
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      if (!socket)
+        this.socket.emit('NEW_BLOCK_TEXT', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
       this.save(ev)
     },
-    async addChartBlock (ev, key, subkey, subsubkey) {
+    async addChartBlock (ev, key, subkey, subsubkey, socket = false) {
       const idFigure = await this.createFigure()
       console.log("addChartBlock::idFigure: " + idFigure)
       var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
-      this.openEditFigure()
+      if (!socket) {
+        this.openEditFigure()
+        this.socket.emit('NEW_BLOCK_CHART', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
+      }
     },
-    addPictureBlock (ev,key,subkey,subsubkey) {
+    addPictureBlock (ev,key,subkey,subsubkey, socket = false) {
       var uuid_block = String(uuidv4())
       var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0}
       this.poseditfigure = [key, subkey, subsubkey]
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
-      this.openEditPicture()
+      if (!socket) {
+        this.openEditPicture()
+        this.socket.emit('NEW_BLOCK_PICTURE', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
+      }
     },
-    removeBlock (ev,key,subkey,subsubkey) {
+    removeBlock (ev,key,subkey,subsubkey, socket = false) {
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      if (!socket)
+        this.socket.emit('REMOVE_BLOCK', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
       this.save(ev)
     },
     async editChartBlock (ev, key, subkey, subsubkey, idFigure) {Activity
@@ -680,30 +775,52 @@ export default {
         this.diagInsertFigurePlotlyVisible = true
       }
     },
-    updatePictureBlock(key, subkey, subsubkey, idPicture) {
+    updatePictureBlock(key, subkey, subsubkey, idPicture, socket = false) {
       this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture
       this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++
+      if (!socket)
+        this.socket.emit('UPDATE_BLOCK_PICTURE', {
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey,
+          idPicture: idPicture
+        })
       this.save(this.$event)
     },
     editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
       this.editidfigure = idPicture
       this.openEditPicture ()
     },
-    addOneBlock (ev,key) {
+    addOneBlock (ev,key, socket = false) {
       var uuid_block = String(uuidv4())
       var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}]
       this.postForm.arr_content[key].block.push(new_block);
+      if (!socket)
+        this.socket.emit('NEW_ONE_BLOCK', {
+          ev: ev,
+          key: key
+        })
       this.save(ev)
     },
-    addTwoBlocks (ev,key) {
+    addTwoBlocks (ev,key, socket = false) {
       var uuid_block_1 = String(uuidv4())
       var uuid_block_2 = String(uuidv4())
       var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}]
       this.postForm.arr_content[key].block.push(new_block);
+      if (!socket)
+        this.socket.emit('NEW_TWO_BLOCK', {
+          ev: ev,
+          key: key
+        })
       this.save(ev)
     },
-    removeRow (ev,key) {
+    removeRow (ev,key, socket = false) {
       this.postForm.arr_content.splice(key, 1);
+      if (!socket)
+        this.socket.emit('REMOVE_ROW', {
+          ev: ev,
+          key: key
+        })
       this.save(ev)
       if(this.postForm.arr_content == ''){
         var uuid_block_1 = String(uuidv4())
@@ -719,7 +836,15 @@ export default {
         this.postForm.arr_content.splice(key+1,0, new_content);
         this.save(ev)
       }
-
+    },
+    updateTitle () {
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.socket.emit('UPDATE_TITLE', {
+          title: this.postForm.title
+        });
+        this.save(this.$event)
+      }, 500);
     },
     openEditFigure () {
       this.dialogVisible = true
@@ -770,6 +895,10 @@ export default {
     },
     changePythonVersion (newValue) {
       this.$refs.pythonChild.setVersion(newValue)
+    },
+    handleCollaboratorInvitations() {
+      this.dialogTableVisible = true
+      this.diagAuthorVisible=true
     }
   }
 }

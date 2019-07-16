@@ -145,30 +145,33 @@ module.exports.scripts = async (req, res, next) => {
  */
 async function pythonExec(req, res, next) {
   try {
+    console.log(process.env.DOCKER)
+    console.log(typeof process.env.DOCKER)
     const version = `python${req.body.version}`
     const options = {
       mode: 'text',
       pythonPath: `/usr/bin/${version}`,
       pythonOptions: ['-u'],
-      scriptPath: '/tmp',
+      scriptPath: (process.env.DOCKER === 'true' ? '/tmp/' : __dirname),
       args: []
     };
     for (let i = 0, len = req.body.content.length; i < len; i++)
-      await fs.writeFileSync(`/tmp/${req.body.content[i].title}`, req.body.content[i].content);
+      await fs.writeFileSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + req.body.content[i].title,
+        req.body.content[i].content);
     await new Promise((resolve, reject) => {
       PythonShell.run('main.py', options, (err) => {
         if (err) reject(err);
         resolve('OK')
       })
     });
-    //for (let i = 0, len = req.body.content.length; i < len; ++i)
-      //await fs.unlinkSync(`/tmp/${req.body.content[i].title}`);
-    const jsonRawData = fs.readFileSync('/tmp/example.json')
+    for (let i = 0, len = req.body.content.length; i < len; ++i)
+      await fs.unlinkSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + req.body.content[i].title);
+    const jsonRawData = fs.readFileSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + 'example.json')
     const json = JSON.parse(jsonRawData);
-    await fs.unlinkSync('/tmp/example.json');
+    await fs.unlinkSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + 'example.json');
     res.json({ success: true, values: json });
   } catch (e) {
-    console.log(e);
+    console.log(e)
     res.status(500).json({ success: false, message: e})
   }
 }
@@ -185,15 +188,15 @@ async function pythonExec(req, res, next) {
 async function rExec(req, res, next) {
   try {
     for (let i = 0, len = req.body.content.length; i < len; i++)
-      await fs.writeFileSync(`/tmp/${req.body.content[i].title}`, req.body.content[i].content);
-    const response = await rscript.callSync('/tmp/main.R');
-    console.log(response)
+      await fs.writeFileSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + req.body.content[i].title,
+        req.body.content[i].content);
+    const response = await rscript.callSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + 'main.R');
     const json = JSON.parse(response.x.data)
-    //for (let i = 0, len = req.body.content.length; i < len; ++i)
-      //await fs.unlinkSync(`/tmp/${req.body.content[i].title}`);
+    for (let i = 0, len = req.body.content.length; i < len; ++i)
+      await fs.unlinkSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + req.body.content[i].title);
     res.json({ success: true, values: json });
   } catch (e) {
-    console.log(e);
+    console.log(e)
     res.status(500).json({ success: false, message: "Your script isn't correct. Please check your syntax." })
   }
 }

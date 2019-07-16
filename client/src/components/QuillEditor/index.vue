@@ -95,6 +95,7 @@
   import 'quill-cursors/dist/quill-cursors.css'
   import 'v-autocomplete/dist/v-autocomplete.css'
   import QuillCursors from 'quill-cursors/src/cursors'
+  const io = require('socket.io-client');
 
   Vue.use(Autocomplete)
 
@@ -153,12 +154,25 @@ Quill.register(ProcLink, true);
 export default {
   name: 'QuillEditor',
   props: {
-    cursors: [Object],
-    content: [String],
-    uuid: [String],
-    numBlock: {},
-    numSubBlock: {},
-    numSubSubBlock: {},
+    content: {
+      type: String
+    },
+    uuid: {
+      type: String,
+      default: 'abstract'
+    },
+    numBlock: {
+      type: Number,
+      default: 0
+    },
+    numSubBlock: {
+      type: Number,
+      default: 0
+    },
+    numSubSubBlock: {
+      type: Number,
+      default: 0
+    },
     output: {
         default : 'delta'
     },
@@ -190,7 +204,8 @@ export default {
       template: ItemTemplate,
       actionValidate: 0,
       mouse_pos : '',
-      hostname: ''
+      hostname: '',
+      timeoutId : ''
     }
   },
   created() {
@@ -198,7 +213,6 @@ export default {
 
   },
   mounted() {
-
     var quill = window.quill = new Quill('#'+this.idEditor, {
       modules: {
         cursors:  {
@@ -211,7 +225,7 @@ export default {
       history: {
         userOnly: true
       },
-      placeholder: 'Compose an epic...',
+      placeholder: this.content,
       theme: 'bubble'  // or 'bubble',
 
     });
@@ -248,7 +262,12 @@ export default {
     var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
-        this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        await this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+       },2000);
+
+
     });
 
     cursorsModule.registerTextChangeListener();
@@ -462,6 +481,16 @@ export default {
     ...mapGetters(['userId'])
   },
   methods:{
+    sendUpdates () {
+      this.socket.emit('UPDATE_SECTION', {
+        content: this.content,
+        numBlock: this.numBlock,
+        numSubBlock: this.numSubBlock,
+        numSubSubBlock: this.numSubSubBlock
+      })
+    },
+
+
     /*Hightlight Functions*/
     highlightSelection () {
         var userSelection = window.getSelection().getRangeAt(0);
@@ -581,7 +610,9 @@ export default {
     },
     deleteBlock () {
       this.$emit('delete',true)
-    }
+    },
+
+
   }
 }
 </script>

@@ -55,6 +55,7 @@
   export default {
   name: 'UploadExcel',
   components: { UploadExcelComponent },
+  props: ['socket'],
   data() {
     return {
       tableData: [],
@@ -72,6 +73,10 @@
     const id = this.$route.params && this.$route.params.id
     this.id = id
     this.loadData(id)
+  },
+  mounted() {
+    this.socket.on('ADD_DATA', () => this.loadData(this.id));
+    this.socket.on('DELETE_DATA', () => this.loadData(this.id));
   },
   methods: {
     handleDelete(index, row) {
@@ -98,6 +103,12 @@
       this.tableFiles.push({name: JSON.stringify(name), file: JSON.stringify(name),size: JSON.stringify(size)})
       console.log(this.tableFiles)
       this.save(name, header, results, size)
+      this.socket.emit('NEW_DATA', {
+        name: name,
+        results: results,
+        header: header,
+        size: size
+      })
     },
     save(name, header, results,size) {
       // console.log(JSON.stringify(this.id))
@@ -112,9 +123,8 @@
     loadData(id) {
       axios.get(`/api/data/${this.id}`, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-      .then(response => {
-        if(response.data.length!=0)
+      }).then(response => {
+        if(response.data.length !== 0)
         {
           this.keyCurrentTableData = 0
           // on n'affiche que le premier fichier
@@ -126,13 +136,16 @@
             vm.tableFiles.push( {name: JSON.parse(el.name), file: JSON.parse(el.name), size:  JSON.parse(el.size)})
           })
         }
-      })
-      .catch(e => {
+      }).catch(e => {
         console.log(e)
       })
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
+      this.socket.emit('REMOVE_DATA', {
+        file: file,
+        fileList: fileList
+      })
     },
     handlePreview(file) {
       console.log(file);

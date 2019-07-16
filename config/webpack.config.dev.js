@@ -65,7 +65,7 @@ const webpackConfig = merge(commonConfig, {
         proxy: {
           '/api': { target: `http://${process.env.BASE_API}:4000`, changeOrigin: true },
           '/static': { target: 'http://localhost:9001',  pathRewrite: {'^/static' : '/client/static'}},
-          '/public': { target: 'http://localhost:9001',  pathRewrite: {'^/public' : '/client/public'}},
+          '/public': { target: 'http://client_dev:9001',  pathRewrite: {'^/public' : '/client/public'}},
           '/socket.io': { target: 'http://api:' + backendBase.port, changeOrigin: true, ws: true },
           '/cursors': { target: 'http://api:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
           '/mevn-dev': { target: 'http://api:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
