@@ -27,7 +27,7 @@ aside.related {
         justify-content: space-between;
         align-items: center;
         margin: 57px 0px;
-        
+
         a {
             text-decoration: none;
 
@@ -186,6 +186,52 @@ aside.comments-reviews {
         height: 20px;
 
         background: url('/static/icons/Book.svg') no-repeat;
+        transform: rotateZ(-180deg) translateX(50%);
+    }
+}
+aside.activity {
+    box-sizing: border-box;
+    //display: inline-block;
+    // position: relative;
+    position: fixed;
+    right: 0;
+    top: 75%;
+    height: 160px;
+    width: 54px;
+    background-color: royalblue;
+    color: white;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    transform: translateY(-50%);
+    padding-top: 20px;
+    z-index: 499;
+    cursor: pointer;
+
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
+
+    p {
+        position: relative;
+        height: auto;
+        transform: rotateZ(180deg);
+        text-align: right;
+        margin: 0;
+        line-height: 54px;
+        writing-mode: vertical-lr;
+
+    }
+
+    p::before {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        content: '';
+        width: 25px;
+        height: 25px;
+        background: url('/static/icons/vectorpaint.svg');
         transform: rotateZ(-180deg) translateX(50%);
     }
 }

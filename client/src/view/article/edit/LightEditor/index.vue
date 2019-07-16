@@ -135,7 +135,11 @@
     <aside type="button" class="content-comments-reviews" id="triggerAside">
       <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
     </aside>
-
+    <aside  class="activity" ><p>Activity</p></aside>
+    <aside type="button" class="content-comments-reviews" id="triggerAside">
+      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
+    </aside>
+    </aside>
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"

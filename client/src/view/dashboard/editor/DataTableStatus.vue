@@ -153,9 +153,8 @@ export default {
           break;
       }
     },
-    async fetchArticles (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      await axios.get('/api/articles/', {
+    fetchArticles () {
+      axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         if(this.desiredstatus === 'All')
