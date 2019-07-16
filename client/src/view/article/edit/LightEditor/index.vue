@@ -473,8 +473,7 @@ export default {
     });
     this.socket.on('MODIFY_VERSION', data => {
       this.postForm.title = data.title;
-      this.postForm.abstract = data.article;
-      this.postForm.content = data.content;
+      this.postForm.abstract = data.abstract;
       this.postForm.arr_content = data.arr_content;
     });
 

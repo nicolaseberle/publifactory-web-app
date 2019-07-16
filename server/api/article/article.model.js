@@ -121,9 +121,6 @@ const ArticleSchema = new Schema({
       type: String,
       required: true
     },
-    content: {
-      type: String
-    },
     arr_content:[{
       title:String,
       content:String,//deprecated

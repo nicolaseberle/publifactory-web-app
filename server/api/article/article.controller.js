@@ -363,22 +363,23 @@ module.exports.addAssociateEditor = async function (req, res, next) {
 
 module.exports.createVersion = async function (req, res, next) {
   try {
-    if (!req.body.name || !req.body.title || !req.body.abstract
-      || !req.body.content || !req.body.arr_content)
+    if (req.body.name === undefined || req.body.title === undefined ||
+      req.body.abstract === undefined || req.body.arr_content === undefined)
       throw { code: 422, message: 'Missing parameters in body field.' };
     const newVersion = {
       name: req.body.name,
       title: req.body.title,
       abstract: req.body.abstract,
-      content: req.body.content,
       arr_content: req.body.arr_content,
       date: new Date()
     };
     const query = {
       _id: req.params.id
-    }, toPush = {
+    };
+    const toPush = {
       $push : { version: newVersion }
-    }, options = {
+    };
+    const options = {
       new: true
     };
     await Article.findOneAndUpdate(query, toPush, options).exec();
@@ -386,4 +387,4 @@ module.exports.createVersion = async function (req, res, next) {
   } catch (e) {
     next(e);
   }
-}
+};

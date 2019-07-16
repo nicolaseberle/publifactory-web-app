@@ -16,8 +16,8 @@
             <el-button class="el-button-action" round>Version<i class="el-icon-arrow-down" style='margin-left:10px'/></el-button>
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="item in articleInfo.versions" :command="setVersion(item)">{{item.name}}</el-dropdown-item>
-            <el-dropdown-item :command="createVersion"><i class="el-icon-plus"/>Create version</el-dropdown-item>
+            <el-dropdown-item v-for="item in articleInfo.version" :command="item" v-bind:key="item.name">{{item.name}} - {{item.date}}</el-dropdown-item>
+            <el-dropdown-item command="new"><i class="el-icon-plus"> Create version</i></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -180,12 +180,14 @@
     
     this.socket.on('MODIFY_VERSION', data => {
       this.articleInfo.title = data.title;
-      this.articleInfo.abstract = data.article;
-      this.articleInfo.content = data.content;
+      this.articleInfo.abstract = data.abstract;
       this.articleInfo.arr_content = data.arr_content;
     });
 
-    this.socket.on('ADD_VERSION', data => this.articleInfo.version.push(data))
+    this.socket.on('ADD_VERSION', data => {
+      this.articleInfo.version.push(data);
+      this.$forceUpdate();
+    })
   },
   methods: {
     setVersion (item) {
@@ -198,13 +200,14 @@
           name: promptName,
           title: this.articleInfo.title,
           abstract: this.articleInfo.abstract,
-          content: this.articleInfo.content,
           arr_content: this.articleInfo.arr_content,
           date: new Date()
         };
-        this.socket.emit('NEW_VERSION', body);
         await axios.post(`/api/articles/${this.id}/version`, body,
-          { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
+          { headers: { 'Authorization': 'Bearer ' + this.accessToken } });
+        this.socket.emit('NEW_VERSION', body);
+        this.articleInfo.version.push(body);
+        this.$forceUpdate();
       } catch (e) {
         this.$message({
           message: 'Something went wrong when creating your version.',
@@ -217,8 +220,13 @@
     showCOmmentReviewPanel () {
       $("aside.content-comments-reviews").css('display', 'block')
     },
-    actionHandleCommand (action) {
-
+    async actionHandleCommand (action) {
+      await this.getStatus();
+      if (action === 'new') {
+        await this.createVersion()
+      } else {
+        this.setVersion(action)
+      }
     },
     async handleDownload() {
       this.socket.emit('EXEC_PDF', {});
