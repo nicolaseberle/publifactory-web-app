@@ -2,21 +2,25 @@
 
 const history = require('../api/article/history/history.controller');
 
+/**
+ * @class SocketUser
+ * @description this class is used to stock with generic parameters a list of users.
+ * @author Léo Riberon-Piatyszek
+ */
 class SocketUser {
   constructor (id) {
     this.id = id;
     console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
   }
 
-  setArticleId (idArticle) {
-    this.idArticle = idArticle
-  }
-
-  setUserId (idUser) {
-    this.idUser = idUser
-  }
+  setArticleId (idArticle) { this.idArticle = idArticle }
+  setUserId (idUser) { this.idUser = idUser }
 }
 
+/**
+ *
+ * @type {{SocketUser}}
+ */
 const mapUser = {};
 
 /**
@@ -39,8 +43,9 @@ module.exports = function (io) {
     });
 
     /**
-     * Data contain id_article
+     * Data contain id_article and id_user
      * We put the user socket in a room to broadcast just only specific users
+     * We set the userId and the articleId to the class of the user.
      */
     socket.on('SET_ARTICLE', (data) => {
       mapUser[socket.id].setArticleId(data.id_article);
@@ -134,6 +139,18 @@ module.exports = function (io) {
       socket.to(mapUser[socket.id].idArticle).emit('ADD_COLLABORATOR', data)
     });
 
+    socket.on('NEW_DATA', data => {
+      console.log('[socket.io] NEW DATA ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'NEW_DATA');
+      socket.to(mapUser[socket.id].idArticle).emit('ADD_DATA', data)
+    });
+
+    socket.on('NEW_VERSION', data => {
+      console.log('[socket.io] NEW VERSION ADDED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'NEW_VERSION');
+      socket.to(mapUser[socket.id].idArticle).emit('ADD_VERSION', data)
+    });
+
     /**
      * The next "REMOVE_" are used to delete some blocks / content
      * It responds a "DELETE_" socket instruction
@@ -148,6 +165,18 @@ module.exports = function (io) {
       console.log('[socket.io] ROW REMOVED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
       history.addInstruction(mapUser[socket.id], 'REMOVE_ROW');
       socket.to(mapUser[socket.id].idArticle).emit('DELETE_ROW', data)
+    });
+
+    socket.on('REMOVE_COLLABORATOR', data => {
+      console.log('[socket.io] COLLABORATOR REMOVED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'REMOVE_COLLABORATOR');
+      socket.to(mapUser[socket.id].idArticle).emit('DELETE_COLLABORATOR', data)
+    });
+
+    socket.on('REMOVE_DATA', data => {
+      console.log('[socket.io] DATA REMOVED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'REMOVE_DATA');
+      socket.to(mapUser[socket.id].idArticle).emit('DELETE_DATA', data)
     });
 
     /**
@@ -179,6 +208,12 @@ module.exports = function (io) {
       socket.to(mapUser[socket.id].idArticle).emit('MODIFY_STATUS', data)
     });
 
+    socket.on('UPDATE_VERSION', data => {
+      console.log('[socket.io] VERSION UPDATED BY %s IN ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'UPDATE_VERSION');
+      io.in(mapUser[socket.id].idArticle).emit('MODIFY_VERSION', data)
+    });
+
     /**
      * The next "EXEC_CODE_" are used to update the figures and
      * information about the figure code and graphs.
@@ -196,5 +231,10 @@ module.exports = function (io) {
       history.addInstruction(mapUser[socket.id], 'EXEC_CODE_PYTHON');
       socket.to(mapUser[socket.id].idArticle).emit('LOAD_CODE_PYTHON', data)
     });
+
+    socket.on('EXEC_PDF', () => {
+      console.log('[socket.io] PDF DOWNLOADED BY %s OF ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      history.addInstruction(mapUser[socket.id], 'EXEC_PDF');
+    })
   })
 };

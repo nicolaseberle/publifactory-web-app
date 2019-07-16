@@ -222,7 +222,7 @@
       :visible.sync="importDialogVisible"
       width="80%"
       top="0">
-      <ImportData ref="importDataDialog"></ImportData>
+      <ImportData :socket="this.socket" ref="importDataDialog"></ImportData>
     </el-dialog>
 
     <el-dialog
@@ -335,7 +335,19 @@ export default {
   components: {
     InsertFigure,
     ImportData,
-    addCollaborator,importImage, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
+    addCollaborator,
+    importImage,
+    imageComponent,
+    figureComponent,
+    VuePlotly,
+    figureFactory,
+    scriptPython,
+    MarkdownEditor,
+    'medium-editor': editor ,
+    reviewComponent,
+    'quill-editor' : quilleditor,
+    scriptR
+  },
   data() {
     return {
       timeoutId: Number,
@@ -458,6 +470,12 @@ export default {
     this.socket.on('MODIFY_COLLABORATOR', data => {
       this.postForm.authors = data.list;
       this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_VERSION', data => {
+      this.postForm.title = data.title;
+      this.postForm.abstract = data.article;
+      this.postForm.content = data.content;
+      this.postForm.arr_content = data.arr_content;
     });
 
     asideRightAnimation()
@@ -636,17 +654,6 @@ export default {
         console.log(e)
       })
     },
-    /*applyAbstractEdit (ev, socket = false) {
-      if (!socket)
-        this.socket.emit('ABSTRACT_EDIT', {ev: ev})
-      if (ev.event.target) {
-        this.postForm.abstract = ev.event.target.innerHTML
-        //this.save(ev);
-        setTimeout(async ()=>{
-          this.save(ev)
-         },2000);
-      }
-    },*/
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.abstract = editor.root.innerHTML
       this.socket.emit('ABSTRACT_EDIT', {

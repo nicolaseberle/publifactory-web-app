@@ -132,7 +132,8 @@
           this.$emit('loading', true)
         }, 3000)
       }
-    })
+    });
+    this.editor.refresh();
     this.execCode();
     var y0 = [];
     var y1 = [];
@@ -215,8 +216,7 @@
           this.codemirrorOptions(newTabName)
           this.editableTabsValue = newTabName;
         })
-      }
-      if (action === 'remove') {
+      } else if (action === 'remove') {
         const tabs = this.editableTabs;
         let activeName = this.editableTabsValue;
         if (activeName === targetName) {
@@ -257,7 +257,7 @@
       } catch (e) {
         this.$message({
           message: 'An error occurred during the save of your figure.',
-          type: 'success',
+          type: 'error',
           center: true,
           duration: 2000
         });

@@ -175,7 +175,13 @@ export default {
       this.list = data.list;
       this.setSort();
       this.$forceUpdate();
-    })
+    });
+    this.socket.on('DELETE_COLLABORATOR', data => {
+      this.list = this.list.filter(function( el ) {
+        return el._id !== data.id;
+      });
+      this.newList = this.list.map(v => Number(v.rank))
+    });
 
     this.list = this.authors
     this.oldList = this.list.map(v => Number(v.rank))
@@ -307,6 +313,9 @@ export default {
           this.$message({
             type: 'success',
             message: this.$t('message.removed')
+          })
+          this.socket.emit('REMOVE_COLLABORATOR', {
+            id: _removedAuthorId
           })
           this.fetchMyArticles()
         })

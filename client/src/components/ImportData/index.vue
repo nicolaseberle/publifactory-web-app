@@ -3,7 +3,7 @@
     <h2 style="text-align:left;">Import</h2>
 
     <el-tabs stretch type="border-card" style='vertical-align:middle'>
-      <el-tab-pane label="Upload"><uploadData/></el-tab-pane>
+      <el-tab-pane label="Upload"><uploadData :socket="this.socket"/></el-tab-pane>
       <el-tab-pane label="by URL">(not yet)</el-tab-pane>
       <!--<el-tab-pane>
         <span slot="label">by Drive<img src='/static/icons/drive.svg' style='width:20px'></img></span>
@@ -39,10 +39,11 @@
   import uploadData from '../../view/article/edit/LightEditor/uploadData'
 
   export default {
-  name: 'ImportData',
-  components: {
-    uploadData
-  }
+    name: 'ImportData',
+    props: ['socket'],
+    components: {
+      uploadData
+    }
 }
 </script>
 

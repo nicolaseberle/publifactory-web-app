@@ -16,10 +16,8 @@
             <el-button class="el-button-action" round>Version<i class="el-icon-arrow-down" style='margin-left:10px'/></el-button>
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="v1">Submited</el-dropdown-item>
-            <el-dropdown-item command="v2">Reviewed - 01/08/2018</el-dropdown-item>
-            <el-dropdown-item command="v3">Reviewed - 10/09/2018</el-dropdown-item>
-            <el-dropdown-item command="v4">Reviewed - 15/09/2018</el-dropdown-item>
+            <el-dropdown-item v-for="item in articleInfo.versions" :command="setVersion(item)">{{item.name}}</el-dropdown-item>
+            <el-dropdown-item :command="createVersion"><i class="el-icon-plus"/>Create version</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -148,7 +146,7 @@
       flagHidePDF:1,
       editorType: false,
       id: '',
-      articleInfo : '',
+      articleInfo : {},
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
@@ -160,12 +158,9 @@
     ...mapGetters(['accessToken', 'userId'])
   },
   created() {
-
-    if (1) {
-      this.id = this.$route.params && this.$route.params.id
-      this.currentEditor = 'lightEditorComponent'
-      this.getStatus()
-    }
+    this.id = this.$route.params && this.$route.params.id;
+    this.currentEditor = 'lightEditorComponent';
+    this.getStatus();
   },
   mounted() {
     this.getJournalList()
@@ -181,9 +176,44 @@
     this.socket.on('MODIFY_STATUS', () => {
       this.getStatus();
       this.$router.push('/')
-    })
+    });
+    
+    this.socket.on('MODIFY_VERSION', data => {
+      this.articleInfo.title = data.title;
+      this.articleInfo.abstract = data.article;
+      this.articleInfo.content = data.content;
+      this.articleInfo.arr_content = data.arr_content;
+    });
+
+    this.socket.on('ADD_VERSION', data => this.articleInfo.version.push(data))
   },
   methods: {
+    setVersion (item) {
+      this.socket.emit('UPDATE_VERSION', item);
+    },
+    async createVersion() {
+      const promptName = prompt('Which name would you like for this version?');
+      try {
+        const body = {
+          name: promptName,
+          title: this.articleInfo.title,
+          abstract: this.articleInfo.abstract,
+          content: this.articleInfo.content,
+          arr_content: this.articleInfo.arr_content,
+          date: new Date()
+        };
+        this.socket.emit('NEW_VERSION', body);
+        await axios.post(`/api/articles/${this.id}/version`, body,
+          { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
+      } catch (e) {
+        this.$message({
+          message: 'Something went wrong when creating your version.',
+          type: 'Error',
+          center: true,
+          duration: 2000
+        });
+      }
+    },
     showCOmmentReviewPanel () {
       $("aside.content-comments-reviews").css('display', 'block')
     },
@@ -191,6 +221,7 @@
 
     },
     async handleDownload() {
+      this.socket.emit('EXEC_PDF', {});
 /*
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
@@ -282,7 +313,7 @@
       this.visibleDialogSubmProcess = false
     },
     async getStatus() {
-        this.articleInfo = await new Promise((resolve, reject) => {
+      this.articleInfo = await new Promise((resolve, reject) => {
         axios.get('/api/articles/' + this.id, { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
           .then(data => resolve(data.data))
           .catch(err => reject(err))
@@ -298,6 +329,7 @@
           .then(data => resolve(data.data))
           .catch(err => reject(err))
       });
+      this.socket.emit('UPDATE_STATUS', {});
       let nextStatus = '';
       if (this.articleInfo.status === 'Submited')
         nextStatus = 'review';
@@ -309,16 +341,15 @@
         { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       this.$router.push(this.$route.query.redirect || '/')
     },
-    getJournalList () {
-      axios.get('/api/journals/', {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.journalList = list.data.journals
-        //console.log('intern function findFollowedJournals :: ',this.followedJournals)
-        resolve(this.journalList);
-      }).catch(err => {
-        reject(err);
-      })
+    async getJournalList () {
+      try {
+        const response = await axios.get('/api/journals/', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        });
+        return response.data.journals;
+      } catch (e) {
+        throw e;
+      }
     },
     sendNotificationByMail () {
       //send a notification to authors
