@@ -107,7 +107,15 @@ export default {
       },
       notifications:{review:0,submited:0,published:0},
       formVisible: false,
-      articles: [],
+      articles: [{
+          id: '',
+          creationDate: '',
+          title: '',
+          address: '',
+          status: '',
+          authors: '',
+          reviewers: ''
+        }],
       flagAddReviewer: false
     }
   },
