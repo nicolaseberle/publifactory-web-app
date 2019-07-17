@@ -7,13 +7,12 @@ chai.use(require('chai-http'));
 
 const expect = require('chai').expect;
 const fs = require('fs');
-const path = require('path');
 
-const config = require('../../config/test')
+const config = require('../../config/test');
 
 const connection = require('../../app');
 
-describe('[USER]', async () => {
+describe('[USER]', function () {
   const headers = {
     'Content-Type': 'application/json',
     'authorization': `Bearer ${config.token}`
@@ -22,23 +21,32 @@ describe('[USER]', async () => {
   let body = {};
 
   before('Retrieve token', function () {
-    chai.request(connection).post('/api/auth/local')
-      .set({'Content-Type': 'application/json'})
-      .send({'login': config.email, 'password': config.password})
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status(200);
+    const user = {
+      email: config.email,
+      password: config.password
+    };
+    return new Promise(resolve => {
+      chai.request(connection).post('/api/auth/local')
+        .set({'Content-Type': 'application/json'})
+        .send(user)
+        .end(function (req, res) {
+          console.error('KEK');
+          console.error(res);
+          expect(res).to.exist;
+          expect(res).to.have.status(200);
 
-        //Check body params
-        expect(res.body).to.contain.key("token");
-        //Write token for other tests
-        if (res.body.token !== undefined) {
-          headers["authorization"] = 'Bearer' + res.body.token;
-          config.token = res.body.token;
-          fs.unlinkSync(path.join('../../config/test.json'));
-          fs.writeFileSync(path.join('../../config/test.json'), JSON.stringify(config));
-        }
-      })
+          //Check body params
+          expect(res.body).to.contain.key("token");
+          //Write token for other tests
+          if (res.body.token !== undefined) {
+            headers["authorization"] = 'Bearer' + res.body.token;
+            config.token = res.body.token;
+            fs.unlinkSync('../../config/test.json');
+            fs.writeFileSync('../../config/test.json', JSON.stringify(config));
+          }
+          resolve();
+        })
+    })
   });
 
   it('POST -> create user', function(done) {
