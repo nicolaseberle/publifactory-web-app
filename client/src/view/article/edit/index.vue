@@ -163,8 +163,8 @@
     this.currentEditor = 'lightEditorComponent';
     this.getStatus();
   },
-  mounted() {
-    this.getJournalList()
+  async mounted() {
+    this.journalList = await this.getJournalList()
 
     /**
      * Socket instructions from API
@@ -178,7 +178,7 @@
       this.getStatus();
       this.$router.push('/')
     });
-    
+
     this.socket.on('MODIFY_VERSION', data => {
       this.articleInfo.title = data.title;
       this.articleInfo.abstract = data.abstract;
@@ -355,6 +355,7 @@
         const response = await axios.get('/api/journals/', {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         });
+        console.log(response.data.journals)
         return response.data.journals;
       } catch (e) {
         throw e;

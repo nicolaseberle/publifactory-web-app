@@ -51,11 +51,13 @@
           <h2>Associate Editors</h2>
           <div style='float: right;margin-bottom:3px'>
             <el-button  icon="el-icon-plus" size="mini" v-on:click='addAssociateEditor()' circle></el-button>
+            <!--  <el-button style='margin-top:30px;' v-on:click="applyToJournal(journal._id)" type="primary" plain round mini>Apply</el-button>-->
           </div>
           <li>
             <el-row>
               <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
               <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
+
             </el-row>
           </li>
         </div>

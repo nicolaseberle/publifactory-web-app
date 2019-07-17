@@ -14,19 +14,21 @@
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
-        <dataTableStatus desiredstatus="All"/>
+        <dataTableStatus desiredstatus="All" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
       </el-tab-pane>
       <el-tab-pane label="Submited" name="second">
-        <span slot="label">Submited<el-badge :value="notifications.submited" lass="mark"/></span>
-        <dataTableStatus desiredstatus="Submited"/>
+        <span slot="label">Submited
+          <el-badge v-if='notifications.submited>0' :value="notifications.submited" lass="mark"/>
+        </span>
+        <dataTableStatus desiredstatus="Submited" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
       </el-tab-pane>
       <el-tab-pane label="in Reviewing" name="third">
-        <span slot="label">Review<el-badge :value="notifications.review" lass="mark"/></span>
-        <dataTableStatus desiredstatus="Reviewing"/>
+        <span slot="label">Review<el-badge v-if='notifications.review>0' :value="notifications.review" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Reviewing" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
       </el-tab-pane>
       <el-tab-pane label="Published" name="fourth">
-        <span slot="label">Published<el-badge :value="notifications.published" lass="mark"/></span>
-        <dataTableStatus desiredstatus="Published"/>
+        <span slot="label">Published<el-badge v-if='notifications.published>0' :value="notifications.published" lass="mark"/></span>
+        <dataTableStatus desiredstatus="Published" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
       </el-tab-pane>
   </el-tabs>
   </div>
@@ -36,6 +38,16 @@
     :visible.sync="flagAddReviewer"
     width="70%">
     <addReviewer v-if="flagAddReviewer" :article_id="selectedArticleId" v-on:close="flagAddReviewer = false"/>
+    <!--<span slot="footer" class="dialog-footer">
+      <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
+      <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
+    </span>-->
+  </el-dialog>
+  <el-dialog
+    title="Add Associate Editor"
+    :visible.sync="flagAddAE"
+    width="70%">
+    <addAE v-if="flagAddAE" :article_id="selectedArticleId" v-on:close="flagAddAE = false"/>
     <!--<span slot="footer" class="dialog-footer">
       <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
       <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
@@ -63,6 +75,7 @@ import { mapGetters } from 'vuex'
 import locales from '../../../locales/article'
 import axios from 'axios'
 import addReviewer from '../../../components/Reviewer'
+import addAE from '../../../components/AE'
 import dataTableStatus from './DataTableStatus'
 
 const debug = require('debug')('frontend')
@@ -73,6 +86,7 @@ export default {
   data () {
     return {
       flagVisibleAddReviewer: false,
+      flagAddAE: false,
       activeName: 'first',
       options:{
         value:"option 1",
@@ -105,32 +119,11 @@ export default {
   },
   components: {
     dataTableStatus,
-    addReviewer
+    addReviewer,
+    addAE
   },
   methods: {
-    setSelectedRow (row, event, column) {
-      this.selectedRow = row
-      this.selectedArticleId = row.id
-    },
-    handleClick(tab, event) {
-        console.log(tab, event);
-    },
-    setSelectedRow (row, event, column) {
-        this.selectedRow = row
-        this.selectedArticleId = row.id
-      },
-    actionHandleCommand (action) {
-      switch (action) {
-        case 'settings':
-          break;
-        case 'openArticle':
-          this.$router.push({ path: `/articles/${this.selectedArticleId}` })
-          break;
-        case 'assignReviewer':
-          this.flagAddReviewer = true
-          break;
-      }
-    },/*
+    /*
     createArticle () {
       var uuid_block = String(uuidv4())
       //this.formVisible = true

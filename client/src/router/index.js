@@ -124,16 +124,15 @@ export const constantRouterMap = [{
       name: 'reviewer_matcher',
       meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
       component: () => import('../view/applications/reviewermatcher/index.vue')
-    },
+    },/*
     {
       path: 'preprintsearch',
       name: 'preprint_search',
       meta: { title: 'preprint_search', icon: 'search', noCache: true },
       component: () => import('../view/applications/preprintsearch/index.vue')
-    },
+    },*/
     {
       path: 'applications',
-      hidden: true,
       component: () => import('../view/applications/index.vue')
     }
   ]

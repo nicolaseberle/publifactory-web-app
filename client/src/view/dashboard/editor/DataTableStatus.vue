@@ -58,6 +58,7 @@
               <el-dropdown-menu slot="dropdown" >
                 <el-dropdown-item  command="settings" disabled>Access & settings</el-dropdown-item>
                 <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
+                <el-dropdown-item  command="assignAE" >Assign an associate editor</el-dropdown-item>
                 <el-dropdown-item  command="assignReviewer" >Assign a reviewer</el-dropdown-item>
                 <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
                 <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
@@ -149,7 +150,10 @@ export default {
           this.$router.push({ path: `/articles/${this.selectedArticleId}` })
           break;
         case 'assignReviewer':
-          this.flagAddReviewer = true
+          this.$emit("assignReviewer",true)
+          break;
+        case 'assignAE':
+          this.$emit("assignAE",true)
           break;
       }
     },
