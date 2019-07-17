@@ -17,6 +17,10 @@ const ArticleSchema = new Schema({
     type: String,
     required: true
   },
+  journal: {
+    type: Schema.Types.ObjectId,
+    ref: 'Journal'
+  },
   content: {
     type: String
   },
