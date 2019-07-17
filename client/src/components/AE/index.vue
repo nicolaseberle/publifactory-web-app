@@ -11,7 +11,7 @@
       <el-row>
           <el-col :span="6">
             <el-form-item label="Select" prop="AE">
-            <el-select v-model="value" placeholder="Select">
+            <el-select v-model="selectedAE" placeholder="Select">
               <el-option
                 v-for="item in listOfAE"
                 :key="item.value"
@@ -110,11 +110,12 @@
     name: 'viewAddAE',
     components: {},
     props: {
-      article_id: {}
+      idarticle: ''
     },
     data () {
       return {
-        listOfAE : [],
+        selectedAE: '',
+        listOfAE : [{value: '',label:''}],
         message: 'Integer congue turpis a orci lacinia elementum eu iaculis leo. Pellentesque porttitor nunc sed efficitur feugiat. Nulla facilisi. Aliquam sagittis aliquam est, non fringilla lorem porttitor ac. Aliquam ut mauris pulvinar, elementum odio nec, ullamcorper est. Etiam quis egestas enim, id lacinia nisi. Sed aliquet in urna vitae bibendum. Phasellus varius sit amet lectus malesuada bibendum. Vivamus interdum lectus quis augue varius, quis aliquet massa venenatis. Duis consectetur porttitor ultricies. Sed eget tristique tortor. Aenean et ultricies turpis. Cras venenatis dui sit amet finibus dapibus. Vestibulum dictum massa non est ultricies ultricies. Aliquam et erat pellentesque, faucibus odio sit amet, dignissim ligula.',
         dynamicValidateForm: {
           email: '',
@@ -143,23 +144,34 @@
         'accessToken'
       ])
     },
-    async mounted () {
-      this.list = await new Promise((resolve, reject) => {
-        axios.get(`/api/articles/${this.article_id}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
-          .then(data => {
-            resolve(data.data.reviewers)
-          })
-          .catch(err => reject(err))
-      })
-      debug(this.list)
+    watch: {
+      idarticle (newVal) {
+        if(newVal!==undefined) {
+          console.log(this.idarticle)
+          this.initComponent()
+        }
+      }
+    },
+    mounted () {
+      this.initComponent()
     },
     methods: {
+      initComponent () {
+        this.list = new Promise((resolve, reject) => {
+          axios.get(`/api/articles/${this.idarticle}/`, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+            .then(data => {
+              console.log("AE : " , data.data.journal)
+              resolve(data.data.journal)
+            })
+            .catch(err => reject(err))
+        })
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.addAE()
             //change status of the article
-            axios.post('/api/history/' + this.article_id,
+            axios.post('/api/history/' + this.idarticle,
               { instruction: 'UPDATE_STATUS'},
               { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
 
@@ -195,7 +207,7 @@
         let name = this.userId;
 
         return new Promise((resolve, reject) => {
-          axios.post('/api/invitations/invite/reviewer?id_article=' + this.article_id, {
+          axios.post('/api/invitations/invite/reviewer?id_article=' + this.idarticle, {
             "sender": sender,
             "link": link,
             "to": inviteTo,
@@ -215,7 +227,7 @@
         const _newAE = {
           'email': email
         }
-        axios.put('/api/articles/'+ this.article_id +'/addAssociateEditor',{ 'associate_editors' : _newAE}, {
+        axios.put('/api/articles/'+ this.idarticle +'/addAssociateEditor',{ 'associate_editors' : _newAE}, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(res => {
             return res
@@ -244,7 +256,7 @@
             return el._id !== _removeAeId;
           });
 
-          axios.put('/api/articles/' + this.article_id + '/removeReviewer',{ 'reviewerId' : _removeAeId}, {
+          axios.put('/api/articles/' + this.idarticle + '/removeReviewer',{ 'reviewerId' : _removeAeId}, {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
           })
             .then(() => {

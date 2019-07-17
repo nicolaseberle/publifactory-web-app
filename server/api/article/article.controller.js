@@ -50,7 +50,7 @@ exports.getArticles = async function (req, res, next) {
 
   try {
     console.log(req.decoded);
-    const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors.author reviewers',lean: true });
+    const articles = await Article.paginate({ deleted: false, published: true }, { page, limit,populate: 'authors.author journal reviewers',lean: true });
     console.log(JSON.stringify(articles, null, "\t"))
     renameObjectProperty(articles, 'docs', 'articles');
 

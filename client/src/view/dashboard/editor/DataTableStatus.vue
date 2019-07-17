@@ -109,6 +109,8 @@ export default {
       },
       formVisible: false,
       flagAddReviewer: false,
+      selectedRow: '',
+      selectedArticleId: '',
       articles: [{
           id: '',
           creationDate: '',
@@ -132,15 +134,9 @@ export default {
   },
   methods: {
     setSelectedRow (row, event, column) {
-      this.selectedRow = row
-      this.selectedArticleId = row.id
-    },
-    handleClick(tab, event) {
-        console.log(tab, event);
-    },
-    setSelectedRow (row, event, column) {
         this.selectedRow = row
         this.selectedArticleId = row.id
+        console.log("setSelectedRow :: ",this.selectedArticleId)
       },
     actionHandleCommand (action) {
       switch (action) {
@@ -150,10 +146,10 @@ export default {
           this.$router.push({ path: `/articles/${this.selectedArticleId}` })
           break;
         case 'assignReviewer':
-          this.$emit("assignReviewer",true)
+          this.$emit("assignReviewer",this.selectedArticleId)
           break;
         case 'assignAE':
-          this.$emit("assignAE",true)
+          this.$emit("assignAE",this.selectedArticleId)
           break;
       }
     },

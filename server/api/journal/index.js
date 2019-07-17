@@ -11,7 +11,8 @@ var router = express.Router()
 
 router.post('/', journalController.createJournal);
 router.get('/:id?', journalController.getJournals);
-router.post('/:id/article', roles.owner, journalController.addArticleToJournal);
+//router.post('/:id/article', roles.owner, journalController.addArticleToJournal);
+router.post('/:id/article', journalController.addArticleToJournal);
 router.delete('/:id/article/:id_article', roles.owner, journalController.removeArticleFromJournal);
 router.put('/:id', roles.administration, journalController.findJournalByIdAndUpdate);
 

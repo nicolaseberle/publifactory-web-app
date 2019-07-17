@@ -345,7 +345,12 @@
       else if (this.articleInfo.status === 'Reviewing')
         nextStatus = 'publish';
       else if (this.articleInfo.status === 'Draft')
-        nextStatus = 'submit'
+      {
+        nextStatus = 'submit';
+        console.log("changeStatus :: submit :: in :: ",this.formSubmArticle.journal)
+        await axios.post(`/api/journals/${this.formSubmArticle.journal}/article`, {},
+          { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
+      }
       await axios.patch(`/api/articles/${this.id}/${nextStatus}`, {},
         { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       this.$router.push(this.$route.query.redirect || '/')

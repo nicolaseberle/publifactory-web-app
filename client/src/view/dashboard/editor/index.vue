@@ -14,21 +14,21 @@
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="All" name="first">
-        <dataTableStatus desiredstatus="All" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
+        <dataTableStatus desiredstatus="All" v-on:assignReviewer="assignReviewer()" v-on:assignAE="assignAE"/>
       </el-tab-pane>
       <el-tab-pane label="Submited" name="second">
         <span slot="label">Submited
           <el-badge v-if='notifications.submited>0' :value="notifications.submited" lass="mark"/>
         </span>
-        <dataTableStatus desiredstatus="Submited" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
+        <dataTableStatus desiredstatus="Submited" v-on:assignReviewer="assignReviewer" v-on:assignAE="assignAE"/>
       </el-tab-pane>
       <el-tab-pane label="in Reviewing" name="third">
         <span slot="label">Review<el-badge v-if='notifications.review>0' :value="notifications.review" lass="mark"/></span>
-        <dataTableStatus desiredstatus="Reviewing" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
+        <dataTableStatus desiredstatus="Reviewing" v-on:assignReviewer="assignReviewer" v-on:assignAE="assignAE"/>
       </el-tab-pane>
       <el-tab-pane label="Published" name="fourth">
         <span slot="label">Published<el-badge v-if='notifications.published>0' :value="notifications.published" lass="mark"/></span>
-        <dataTableStatus desiredstatus="Published" v-on:assignReviewer="flagAddReviewer=true" v-on:assignAE="flagAddAE=true"/>
+        <dataTableStatus desiredstatus="Published" v-on:assignReviewer="assignReviewer" v-on:assignAE="assignAE"/>
       </el-tab-pane>
   </el-tabs>
   </div>
@@ -37,7 +37,7 @@
     title="Add Reviewer"
     :visible.sync="flagAddReviewer"
     width="70%">
-    <addReviewer v-if="flagAddReviewer" :article_id="selectedArticleId" v-on:close="flagAddReviewer = false"/>
+    <addReviewer v-if="flagAddReviewer" :idarticle="selectedArticleId" v-on:close="flagAddReviewer = false"/>
     <!--<span slot="footer" class="dialog-footer">
       <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
       <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
@@ -47,7 +47,7 @@
     title="Add Associate Editor"
     :visible.sync="flagAddAE"
     width="70%">
-    <addAE v-if="flagAddAE" :article_id="selectedArticleId" v-on:close="flagAddAE = false"/>
+    <addAE v-if="flagAddAE" :idarticle="selectedArticleId" v-on:close="flagAddAE = false"/>
     <!--<span slot="footer" class="dialog-footer">
       <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
       <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
@@ -116,7 +116,8 @@ export default {
           authors: '',
           reviewers: ''
         }],
-      flagAddReviewer: false
+      flagAddReviewer: false,
+      selectedArticleId : ''
     }
   },
   computed: {
@@ -131,36 +132,6 @@ export default {
     addAE
   },
   methods: {
-    /*
-    createArticle () {
-      var uuid_block = String(uuidv4())
-      //this.formVisible = true
-      const newArticle = {
-          title: String('Article title'),
-          abstract:  String('abstract'),
-          status: 'Draft',
-          arr_content: [{
-                          name:"titre_1",
-                          title:"Titre 1",
-                          title_placeholder:"Titre 1",
-                          block: [[{ type: 'text',uuid: uuid_block,content: 'Type your text'}]],
-                          content:"Type the text",
-                          display:true
-                        }],
-          category : String('Biology'),
-          id_author : this.userId,
-          published: true
-        };
-        axios.post('/api/articles/', newArticle, { headers: {'Authorization': `Bearer ${this.accessToken}`}})
-        .then(response => {
-          let new_article_id = response.data
-          debug("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
-        })
-        .catch(e => {
-          console.log(e)
-        })
-    },*/
     async fetchArticles () {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
       await axios.get('/api/articles/', {
@@ -179,6 +150,17 @@ export default {
     },
     closeCreationDialog () {
       this.formVisible = false
+    },
+    handleClick(tab, event) {
+        console.log(tab, event);
+    },
+    assignReviewer(selectedArticleId) {
+      this.flagAddReviewer=true
+      this.selectedArticleId = selectedArticleId
+    },
+    assignAE(selectedArticleId) {
+      this.flagAddAE=true
+      this.selectedArticleId = selectedArticleId
     },
     cancelForm () {
       this.form.title = ''
