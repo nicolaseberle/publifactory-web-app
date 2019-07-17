@@ -179,7 +179,8 @@ module.exports.addArticleToJournal = async (req, res, next) => {
     query = { _id: req.params.id }
     const toAdd = { $push: { content: { published: false, reference: req.body.id_article } } };
     const options = { new: true };
-    await Journal.findOneAndUpdate(query, toAdd, options)
+    await Journal.findOneAndUpdate(query, toAdd, options).exec();
+    await Article.findOneAndUpdate({_id: req.body.id_article}, { $set: { journal: req.params.id } }).exec();
     res.json({success: true})
   } catch (e) {
     next(e)
