@@ -7,12 +7,15 @@ chai.use(require('chai-http'));
 
 const expect = require('chai').expect;
 const fs = require('fs');
+const path = require('path');
 
 const config = require('../../config/test');
 
 const connection = require('../../app');
+const requester = chai.request(connection).keepOpen();
 
 describe('[USER]', function () {
+  this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
     'authorization': `Bearer ${config.token}`
@@ -20,33 +23,31 @@ describe('[USER]', function () {
 
   let body = {};
 
-  before('Retrieve token', function () {
+  before('Retrieve token', function (done) {
     const user = {
       email: config.email,
       password: config.password
     };
-    return new Promise(resolve => {
-      chai.request(connection).post('/api/auth/local')
-        .set({'Content-Type': 'application/json'})
-        .send(user)
-        .end(function (req, res) {
-          console.error('KEK');
-          console.error(res);
-          expect(res).to.exist;
-          expect(res).to.have.status(200);
+    requester.post('/api/auth/local')
+      .set({'Content-Type': 'application/json'})
+      .send(user)
+      .end((req, res) => {
+        console.error('KEK');
+        console.error(res.body);
+        expect(res).to.exist;
+        expect(res).to.have.status(200);
 
-          //Check body params
-          expect(res.body).to.contain.key("token");
-          //Write token for other tests
-          if (res.body.token !== undefined) {
-            headers["authorization"] = 'Bearer' + res.body.token;
-            config.token = res.body.token;
-            fs.unlinkSync('../../config/test.json');
-            fs.writeFileSync('../../config/test.json', JSON.stringify(config));
-          }
-          resolve();
-        })
-    })
+        //Check body params
+        expect(res.body).to.contain.key("token");
+        //Write token for other tests
+        if (res.body.token !== undefined) {
+          headers["authorization"] = 'Bearer ' + res.body.token;
+          config.token = res.body.token;
+          fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
+          fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
+        }
+        done();
+      });
   });
 
   it('POST -> create user', function(done) {
@@ -55,7 +56,7 @@ describe('[USER]', function () {
       password: 'user_pwd',
       provider: 'local'
     };
-    chai.request(connection).post('/api/users')
+    requester.post('/api/users')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -72,7 +73,7 @@ describe('[USER]', function () {
       password: 'user_pwd',
       provider: 'local'
     };
-    chai.request(connection).post('/api/users')
+    requester.post('/api/users')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -90,7 +91,7 @@ describe('[USER]', function () {
       email: 'unit@test.fr',
       provider: 'local'
     };
-    chai.request(connection).post('/api/users/')
+    requester.post('/api/users/')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -110,7 +111,7 @@ describe('[USER]', function () {
       firstname: 'guest',
       lastname: 'guest'
     };
-    chai.request(connection).post('/api/users/guest')
+    requester.post('/api/users/guest')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -134,7 +135,7 @@ describe('[USER]', function () {
       email: 'guest@test.fr',
       password: 'kek'
     };
-    chai.request(connection).post('/api/users/guest')
+    requester.post('/api/users/guest')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -149,17 +150,16 @@ describe('[USER]', function () {
 
 
   it('GET -> get user informations', function(done) {
-    chai.request(connection).get('/api/users/me')
+    requester.get('/api/users/me')
       .set(headers)
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res).to.contain('user');
-        expect(res.body.user).to.contain.key('name', 'username', 'orcid', 'lastname', 'firstname',
+        expect(res.body).to.contain.key('name', 'username', 'orcid', 'lastname', 'firstname',
         'email', 'roles', 'isVerified');
-        expect(res.body.user.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
-        expect(res.body.user.isVerified).to.be.true;
-        expect(res.body.user.roles[0]).to.be.equal('editor');
+        expect(res.body.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
+        expect(res.body.isVerified).to.be.true;
+        expect(res.body.roles[0]).to.be.equal('editor');
         done();
       })
   });
@@ -170,22 +170,21 @@ describe('[USER]', function () {
       lastname: 'Riberon-Piatyszek',
       field: 'Developer'
     };
-    chai.request(connection).put('/api/users/updateUser')
+    requester.put('/api/users/updateUser')
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('user');
-        expect(res.body.user).to.contain.key('name', 'firstname', 'lastname',
-          'username', 'orcid', 'lastname', 'firstname',
-          'email', 'roles', 'isVerified', 'field');
-        expect(res.body.user.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
-        expect(res.body.user.isVerified).to.be.true;
-        expect(res.body.user.roles[0]).to.be.equal('editor');
-        expect(res.body.user.firstname).to.be.equal('Léo');
-        expect(res.body.user.lastname).to.be.equal('Riberon-Piatyszek');
-        expect(res.body.user.field).to.be.equal('Developer');
+        expect(res.body).to.contain.key('name', 'orcid', 'lastname', 'firstname',
+          'email', 'roles', 'isVerified', '__v', '_id', 'articleRights', 'avatar', 'field', 'hashedPassword',
+          'invitationId', 'link', 'lockedAccount', 'provider', 'role', 'salt', 'tags');
+        expect(res.body.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
+        expect(res.body.isVerified).to.be.true;
+        expect(res.body.roles[0]).to.be.equal('editor');
+        expect(res.body.firstname).to.be.equal('Léo');
+        expect(res.body.lastname).to.be.equal('Riberon-Piatyszek');
+        expect(res.body.field).to.be.equal('Developer');
         done();
       })
   });
@@ -195,7 +194,7 @@ describe('[USER]', function () {
       firstname: 'Léo',
       field: 'Developer'
     };
-    chai.request(connection).put('/api/users/updateUser')
+    requester.put('/api/users/updateUser')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -213,7 +212,7 @@ describe('[USER]', function () {
       oldPassword: 'Vtqlf&wD',
       newPassword: '-Ksg&wsD6'
     };
-    chai.request(connection).put('/api/users/changePassword')
+    requester.put('/api/users/changePassword')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -229,7 +228,7 @@ describe('[USER]', function () {
     body = {
       newPassword: '-Ksg&wsD6'
     };
-    chai.request(connection).post('/api/users/changePassword')
+    requester.put('/api/users/changePassword')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -247,7 +246,7 @@ describe('[USER]', function () {
       oldPassword: '-Ksg&wsD6',
       newPassword: '-Ksg&wsD6'
     };
-    chai.request(connection).put('/api/users/changePassword')
+    requester.put('/api/users/changePassword')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -264,7 +263,7 @@ describe('[USER]', function () {
     body = {
       email: 'user@test.fr'
     };
-    chai.request(connection).put('/api/users/resetPassword')
+    requester.put('/api/users/resetPassword')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -277,7 +276,7 @@ describe('[USER]', function () {
 
   it('PUT -> reset password with missing parameters', function(done) {
     body = {};
-    chai.request(connection).put('/api/users/resetPassword')
+    requester.put('/api/users/resetPassword')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -294,7 +293,7 @@ describe('[USER]', function () {
     body = {
       email: 'non-existantUser@test.fr'
     };
-    chai.request(connection).put('/api/users/resetPassword')
+    requester.put('/api/users/resetPassword')
       .set(headers)
       .send(body)
       .end((req, res) => {

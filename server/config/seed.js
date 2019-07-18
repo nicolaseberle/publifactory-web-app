@@ -72,7 +72,6 @@ var populateUsers = new Promise(
       return users
     })
     resolve(users);
-
 })
 
 var populateBase = function () {

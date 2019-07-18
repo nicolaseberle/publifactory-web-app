@@ -6,6 +6,7 @@ var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 const shortid = require('shortid');
+const bcrypt = require('bcrypt');
 
 const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model');
@@ -226,7 +227,7 @@ async function changePassword(req, res, next) {
     var newPass = String(req.body.newPassword);
 
     const user = await User.findById(userId);
-    if (user.authenticate(oldPass)) {
+    if (bcrypt.compareSync(oldPass, user.hashedPassword)) {
       user.password = newPass;
       user.save(function (err) {
         if (err) return validationError(res, err);

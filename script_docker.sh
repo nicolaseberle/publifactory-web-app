@@ -32,6 +32,23 @@ print_help () {
   printf "prod\tLaunch the prod options with nginx"
 }
 
+build_container () {
+  echo -ne '##############            (66%)\r'
+  debug "Begin build container.\n"
+  sudo docker-compose build
+  echo -ne '###############           (72%)\r'
+  debug "Images built.\n"
+}
+
+up_database () {
+  debug "Up the database.\n"
+  echo -ne '################          (76%)\r'
+  sudo docker-compose up -d mongo
+  debug 'Populating database'
+  sudo docker exec -i `sudo docker ps -f name=mongo -q` sh -c 'mongorestore --archive' < db.dump
+  echo -ne '#################         (80%)\r'
+}
+
 execution_time () {
   date_end=`date +%s`
   diff=`expr ${date_end} - ${DATE_BEGIN}`
@@ -41,20 +58,13 @@ execution_time () {
 }
 
 start () {
-  echo -ne '##############            (66%)\r'
-  debug "Begin build container.\n"
-  sudo docker-compose build
-  echo -ne '###############           (72%)\r'
-  debug "Images built.\n"
-  debug "Up the database.\n"
-  echo -ne '################          (76%)\r'
-  sudo docker-compose up -d mongo
-  echo -ne '#################         (80%)\r'
+  build_container
+  up_database
   debug "Up ssh tunnel to access data visualization.\n"
   sudo docker-compose up -d ssh_tunnel
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
-  if [ ${options} = "prod" ];
+  if [[ ${options} = "prod" ]];
   then
     echo "prod"
   else
@@ -86,15 +96,22 @@ stop () {
   debug "Every programs has been stopped !...\n"
 }
 
+make_test () {
+  build_container
+  up_database
+  npm test
+  stop
+}
+
 echo -ne '#                         (5%)\r'
-if [ ${USER} != 'root' ];
+if [[ ${USER} != 'root' ]];
 then
   debug "You must be root to execute this script.\n"
   exit 1
 fi
 
 echo -ne '##                        (10%)\r'
-if [ "$#" -lt 1 ];
+if [[ "$#" -lt 1 ]];
 then
   debug "You must provide a command after the binary.\n"
   print_help
@@ -116,6 +133,14 @@ case "$command" in
     echo -ne '########################  (100%)\r'
     execution_time
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
+    exit 0
+    ;;
+  test)
+    echo -ne '######                    (33%)\r'
+    make_test
+    echo -ne '########################  (100%)\r'
+    debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
+    execution_time
     exit 0
     ;;
   help)

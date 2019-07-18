@@ -4,6 +4,8 @@ const express = require('express')
 const passport = require('passport')
 const auth = require('../auth.service')
 const UserController = require('../../api/user/user.controller')
+const UserModel = require('../../api/user/user.model');
+const bcrypt = require('bcrypt');
 
 const router = express.Router()
 
@@ -14,20 +16,20 @@ const router = express.Router()
  */
 router.post('/', async function (req, res, next) {
   try {
-    passport.authenticate('local', async function (err, user, info) {
-      const error = err || info
-      if (error) throw { code: 401, message: error };
-      if (!user) throw { code: 404, message: 'User not found.' };
-      if (user.isVerified === false) {
-        // We send an email confirmation because the first link hasn't been activated yet
-        // The older mail could be removed or loose for any reasons, then we send another one
-        await UserController.createVerificationEmailInvitation(user)
-        throw { code: 401, message: 'You didn\'t verify your email. Confirm your email first before to log in.' };
-      }
-      const token = auth.signToken(user);
-      res.json({token: token})
-    })(req, res, next)
+    const user = await UserModel.findOne({ email: req.body.email });
+    if (!user) throw { code: 404, message: 'User not found.' };
+    if (user.isVerified === false) {
+      // We send an email confirmation because the first link hasn't been activated yet
+      // The older mail could be removed or loose for any reasons, then we send another one
+      await UserController.createVerificationEmailInvitation(user)
+      throw { code: 401, message: 'You didn\'t verify your email. Confirm your email first before to log in.' };
+    }
+    const response = bcrypt.compareSync(req.body.password, user.hashedPassword);
+    console.log(response);
+    const token = auth.signToken(user);
+    res.json({token: token})
   } catch (e) {
+    console.error(e)
     next(e);
   }
 });
