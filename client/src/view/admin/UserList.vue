@@ -13,7 +13,8 @@
             <el-table-column property="role" :label="$t('user.model.role')" min-width="90"></el-table-column>
             <el-table-column property="isVerified" :label="$t('user.model.validated')" min-width="90">
               <template slot-scope="scope">
-                {{scope.row.isVerified}}
+                <el-tag v-if="scope.row.isVerified===true" type="success">Yes</el-tag>
+                <el-tag v-else type="info">No</el-tag>
               </template>
             </el-table-column>
             <el-table-column :label="$t('operation.operation')" align="center" width="120">
