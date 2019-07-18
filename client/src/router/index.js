@@ -145,14 +145,26 @@ export const constantRouterMap = [{
   meta: { title: 'Admin', icon: 'lock', noCache: true, roles: ['admin'] },
   children: [
     {
+      path: 'activity',
+      name: 'Activity',
+      meta: { title: 'Activity', icon: 'dashboard', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/Activity.vue')
+    },
+    {
       path: 'user',
       name: 'Users',
       meta: { title: 'Users', icon: 'profile', noCache: true, roles: ['admin'] },
       component: () => import('../view/admin/UserList.vue')
     },
     {
+      path: 'publisher',
+      name: 'Publishers',
+      meta: { title: 'Publishers', icon: 'books_1', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/Publishers.vue')
+    },
+    {
       path: 'admin',
-      component: () => import('../view/admin/UserList.vue')
+      component: () => import('../view/admin/Activity.vue')
     }
   ]
 },

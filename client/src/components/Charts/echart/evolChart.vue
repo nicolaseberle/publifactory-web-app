@@ -4,7 +4,7 @@
 
 <script>
   import echarts from 'echarts'
-  import resize from './mixins/resize'
+  import resize from '../mixins/resize'
 
   export default {
   mixins: [resize],
@@ -23,7 +23,7 @@
     },
     height: {
       type: String,
-      default: '100%'
+      default: '400px'
     }
   },
   data() {
@@ -45,27 +45,82 @@
     initChart() {
       this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption(
-          {
-              xAxis: {
-                  type: 'category',
-              },
-              yAxis: {
-                  type: 'value',
-                  show : false
-              },
-              series: [{
-                  data: [0, 1, 3, 2, 5],
-                  type: 'line'
-              },
-              {
-                  data: [0, 0.5, 2, 3, 4],
-                  type: 'line'
-              },
-              {
-                  data: [0, -0.3, -1, -0.8, -2],
-                  type: 'line'
-              }]
-          }
+    {
+    title: {
+        text: 'Activity'
+    },
+    tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
+        }
+    },
+    legend: {
+        data:['Articles','Associate Editor','Reviewer','Users']
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis : [
+        {
+            type : 'category',
+            boundaryGap : false,
+            data : ['01/01/2020','01/02/2020','01/03/2020','01/04/2020','01/05/2020','01/06/2020','01/07/2020']
+        }
+    ],
+    yAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    series : [
+        {
+            name:'Articles',
+            type:'line',
+            stack: '总量',
+            areaStyle: {},
+            data:[220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+            name:'Associate Editor',
+            type:'line',
+            stack: '总量',
+            areaStyle: {},
+            data:[150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+            name:'Reviewer',
+            type:'line',
+            stack: '总量',
+            areaStyle: {normal: {}},
+            data:[320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+            name:'Users',
+            type:'line',
+            stack: '总量',
+            label: {
+                normal: {
+                    show: true,
+                    position: 'top'
+                }
+            },
+            areaStyle: {normal: {}},
+            data:[820, 932, 901, 934, 1290, 1330, 1320]
+        }
+    ]
+}
       )
     }
   }
