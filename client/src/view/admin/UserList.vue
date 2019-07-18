@@ -11,6 +11,11 @@
             <el-table-column property="lastname" label="Lastname" sortable min-width="120"></el-table-column>
             <el-table-column property="email" label="Email" sortable min-width="120"></el-table-column>
             <el-table-column property="role" :label="$t('user.model.role')" min-width="90"></el-table-column>
+            <el-table-column property="isVerified" :label="$t('user.model.validated')" min-width="90">
+              <template slot-scope="scope">
+                {{scope.row.isVerified}}
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('operation.operation')" align="center" width="120">
               <template slot-scope="scope">
                 <!--<router-link :to="'/example/edit/'+scope.row.id">-->
@@ -149,3 +154,8 @@
   }
 }
 </script>
+<style>
+.el-table__header{
+  text-align:left;
+}
+</style>
