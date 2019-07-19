@@ -165,7 +165,7 @@
     let str_ip = process.env.SITE_IP
     str_ip = str_ip.replace(/"/g,"");
     this.socket = io('http://' + str_ip + ':4000')
-    
+
     this.getStatus();
 
 
