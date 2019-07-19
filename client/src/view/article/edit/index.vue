@@ -164,10 +164,8 @@
 
     //let str_ip = process.env.SITE_IP
     //str_ip = str_ip.replace(/"/g,"");
-    this.socket = io.connect(window.location.origin)
-
+    this.socket = io()
     this.getStatus();
-
 
     console.log('ArticleDetail ::  index :: ',str_ip)
   },
