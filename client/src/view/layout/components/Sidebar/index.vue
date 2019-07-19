@@ -2,7 +2,7 @@
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <div class="logo-wrapper">
       <transition name="fade">
-         <router-link v-if="!isCollapse" to="/" exact>PubliFactory</router-link>
+         <router-link v-if="!isCollapse" to="/" exact>PubliFactory <el-tag style='transform:translate(8px,-8px)' color='#EE8E4A' effect="dark" type='warning' size="mini">Beta</el-tag></router-link>
       </transition>
          <router-link v-if="isCollapse" to="/" exact><div class='filter-logo' >P</div></router-link>
     </div>
@@ -71,5 +71,29 @@
   top: 0;
   padding-top: 10px;
   font-size: 2rem;
+}
+/*
+.scrollbar-wrapper:after{
+  content: "beta";
+  position: fixed;
+  width: 80px;
+  height: 25px;
+  background: #EE8E4A;
+  top: 7px;
+  left: -20px;
+  text-align: center;
+  font-size: 13px;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #fff;
+  line-height: 27px;
+  -ms-transform:rotate(-45deg);
+  -webkit-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+  z-index:1000;
+}*/
+.logo-wrapper{
+  /*margin-top:20px;*/
 }
 </style>
