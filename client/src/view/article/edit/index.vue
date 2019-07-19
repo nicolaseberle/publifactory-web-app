@@ -162,6 +162,7 @@
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
     this.getStatus();
+    console.log('ArticleDetail ::  index :: ',process.env.SITE_IP)
   },
   async mounted() {
     this.journalList = await this.getJournalList()
