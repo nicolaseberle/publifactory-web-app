@@ -33,7 +33,7 @@ module.exports = function (app) {
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
-    next({ code: 404 });
+    next({ code: 404, message: 'This route does not exist.' });
   });
 
   // error handling

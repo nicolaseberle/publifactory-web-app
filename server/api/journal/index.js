@@ -20,7 +20,7 @@ router.use('/:id/removeJournal', async function (req, res, next) {
     req.route = 'removeJournal'
     await rolesJournal.doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 router.delete('/:id/removeJournal', journalController.deleteJournal);
@@ -30,7 +30,7 @@ router.use('/:id/addAssociateEditor', async function (req, res, next) {
     req.route = 'inviteAssociateEditor'
     await rolesJournal.doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 
@@ -41,7 +41,7 @@ router.use('/:id/removeAssociateEditor', async function (req, res, next) {
     req.route = 'removeAssociateEditor'
     await rolesJournal.doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 router.put('/:id/removeAssociateEditor', journalController.removeAssociateEditor);
@@ -56,7 +56,7 @@ router.use('/:id/follow', async function (req, res, next) {
     req.route = 'unfollowJournal'
     await rolesJournal.doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 router.post('/:id/follow', journalController.followJournal)

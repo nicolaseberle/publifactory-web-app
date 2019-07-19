@@ -31,23 +31,16 @@ const DEFAULT_LIMIT = 10;
 async function getArticleComments(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
-
   try {
-    console.log('getArticleComments');
     const article = await Article.findOne({ _id: req.params.id }).populate('comments').exec();
-
-    if (!article) return res.boom.notFound();
-
+    if (!article)
+      throw { code: 404, message: 'Comments not found.' };
     const comments = await article.comments;
     const childComments = await comments.childComment
-    console.log(childComments)
-
-    //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
     renameObjectProperty(comments, 'docs', 'comments');
-
-    return res.status(200).json(comments);
+    res.json(comments);
   } catch (err) {
-    return next(err);
+    throw err;
   }
 }
 
@@ -63,10 +56,33 @@ async function getArticleComments(req, res, next) {
 async function getArticleComment(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
-
   try {
+    const article = await Article.findOne({
+      _id: req.params.id,
+      comments: {
+        uuidComment: req.params.uuid
+      }
+    }).populate('comments').exec();
+    if (!article)
+      throw { code: 404, message: 'Comments not found.' };
+    const comments = await article.comments;
+    await comments.childComment
+    //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
+    renameObjectProperty(comments, 'docs', 'comments');
+    res.json(comments);
   } catch (err) {
-    return next(err);
+    throw err;
+  }
+}
+
+async function getComments (req, res, next) {
+  try {
+    if (req.params.uuid !== undefined)
+      await getArticleComment(req, res, next);
+    else
+      await getArticleComments(req, res, next);
+  } catch (e) {
+    next(e)
   }
 }
 
@@ -88,14 +104,16 @@ async function createArticleComment(req, res, next) {
       return res.status(400).json({ errors: validationResult.array() });
     }
     */
-    console.log(req.user);
-    console.log('createArticleComment');
+    if (req.body.uuidComment === undefined || req.body.anonymousFlag === undefined ||
+      req.body.commentFlag === undefined || req.body.reviewRequest === undefined ||
+      req.body.content === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const commentFlag = req.body.commentFlag;
     const anonymousFlag = req.body.anonymousFlag;
     const reviewRequest = req.body.reviewRequest;
     const uuidComment = req.body.uuidComment;
     const content = req.body.content.trim();
-    const userId = await User.findById( req.body.userId ).exec();
+    const userId = await User.findById( req.decoded._id ).exec();
     const newComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag })
     const comment = await newComment.save();
 
@@ -117,9 +135,9 @@ async function createArticleComment(req, res, next) {
       await article.save();
     }
 
-    return res.status(200).json(comment);
+    res.status(201).json(comment);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -134,18 +152,17 @@ async function createArticleComment(req, res, next) {
  */
 async function updateScoreVote(req, res, next) {
   try {
-    console.log('updateScores');
+    if (req.body.upvote === undefined || req.body.downvote === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const upvote = req.body.upvote;
     const downvote = req.body.downvote;
-    console.log(upvote,downvote);
     const comment = await Comment.findOneAndUpdate(
       { uuidComment: req.params.uuid },
       { $inc: { 'scores.upvote': upvote,'scores.downvote': downvote} }
     ).exec();
-
-    return res.json(comment);
+    res.json(comment);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
 
@@ -160,7 +177,7 @@ async function updateScoreVote(req, res, next) {
 async function updateComment(req, res, next) {
   try {
     if (!req.body.content)
-      throw { code: 422, message: "Missing parameter in the body field." };
+      throw { code: 422, message: "Missing parameters." };
     const toFind = { uuidComment: req.params.uuid };
     const toUpdate = { $set: { content: req.body.content } };
     await Comment.findOneAndUpdate(toFind, toUpdate).exec();
@@ -218,31 +235,30 @@ async function findCommentAndDelete(req, res, next) {
  */
 async function answerComment(req, res, next) {
   try {
+    if (req.body.reviewRequest === undefined || req.body.uuidComment === undefined ||
+      req.body.content === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const commentFlag = false;
     const anonymousFlag = req.body.anonymousFlag ? req.body.anonymous : false;
     const reviewRequest = req.body.reviewRequest;
     const uuidComment = req.body.uuidComment;
-    const uuidParentComment = req.body.uuidParentComment;
-    console.log("uuidParentComment : ",uuidParentComment)
+    const uuidParentComment = req.params.uuid;
     const content = req.body.content.trim();
     const userId = await User.findById( req.body.userId ).exec();
     const childComment = new Comment({ userId , content, reviewRequest, commentFlag, uuidComment, anonymousFlag });
-    console.log("childComment", childComment)
-    const newComment = await childComment.save()
-    const parentComment = await Comment.findOneAndUpdate(
+    const newComment = await childComment.save();
+    await Comment.findOneAndUpdate(
       { uuidComment: uuidParentComment },
       { $push: { childComment: newComment } }
-    )
-    console.log("parentComment", parentComment)
-    res.json({ success: true })
+    );
+    res.status(201).json({ success: true })
   } catch (e) {
     next(e);
   }
 }
 
 module.exports = {
-  getArticleComments: getArticleComments,
-  getArticleComment: getArticleComment,
+  getComments: getComments,
   createArticleComment: createArticleComment,
   updateComment: updateScoreVote,
   updateCommentContent: updateComment,

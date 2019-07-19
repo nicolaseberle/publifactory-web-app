@@ -252,7 +252,7 @@ async function historicAuthor (req, res, next) {
     req.route = 'history';
     await doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -261,7 +261,7 @@ async function inviteAe (req, res, next) {
     req.route = 'inviteAssociateEditor';
     await doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 

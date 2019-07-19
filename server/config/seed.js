@@ -11,6 +11,7 @@ var Journals = require('../api/journal/journal.model');
 const Figure = require('../api/figure/figure.model');
 var RolesArticle = require('../api/roles/article/roles.article.model');
 var RolesJournal = require('../api/roles/journal/roles.journal.model');
+var Invitation = require('../api/invitations/invitations.model');
 var Picture = require('../api/picture/picture.model');
 const Historic = require('../api/article/history/history.model')
 var seedDB = require('../../config.js').backend.seedDB
@@ -84,6 +85,8 @@ var populateBase = function () {
         //createComment(users)
         //await createArticles(users);
         createJournals(users);
+        createComment();
+        Invitation.find({}).remove().exec();
       })
       }).catch(function (error) {
           console.log(error.message);
@@ -99,21 +102,8 @@ if (seedDB === 'true') {
 
 function createComment(user_tmp) {
   Comments.find({}).remove()
-    .then(() => {
-      let comments = Comments.create(
-      {
-        userId: [user_tmp[0]._id],
-        content: 'ceci est un commentaire',
-        reviewRequest: 'Simple comment'
-      },
-      {
-        userId: [user_tmp[0]._id],
-        content: 'ceci est un autre commentaire',
-        reviewRequest: 'Simple comment'
-      });
-  })
-  .then(() => {console.log('finished populating comments');})
-  .catch(err => console.log('error populating comments', err));
+    .then(() => {console.log('finished populating comments');})
+    .catch(err => console.log('error populating comments', err));
 
 }
 
@@ -433,8 +423,8 @@ function createUsers() {
       },
       {
         provider: 'local',
-        role: 'editor',
-        roles : ['editor'],
+        role: 'user',
+        roles : ['user'],
         name: 'leo',
         firstname: 'Leo',
         username: 'Leo',

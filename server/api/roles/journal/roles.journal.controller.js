@@ -91,7 +91,7 @@ async function invite (req, res, next) {
     } else
       next()
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -100,7 +100,7 @@ async function publish (req, res, next) {
     req.route = 'publish'
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -110,7 +110,7 @@ async function owner (req, res, next) {
     req.params.id_article = req.params.id_article || req.body.id_article
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -119,7 +119,7 @@ async function administration (req, res, next) {
     req.route = 'admin'
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 

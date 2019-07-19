@@ -29,7 +29,7 @@ router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async
       await rolesJournal.doYouHaveThisRight(req, res, next);
     }
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 

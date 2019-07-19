@@ -32,8 +32,6 @@ describe('[USER]', function () {
       .set({'Content-Type': 'application/json'})
       .send(user)
       .end((req, res) => {
-        console.error('KEK');
-        console.error(res.body);
         expect(res).to.exist;
         expect(res).to.have.status(200);
 
@@ -159,7 +157,7 @@ describe('[USER]', function () {
         'email', 'roles', 'isVerified');
         expect(res.body.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
         expect(res.body.isVerified).to.be.true;
-        expect(res.body.roles[0]).to.be.equal('editor');
+        expect(res.body.roles[0]).to.be.equal('user');
         done();
       })
   });
@@ -181,7 +179,7 @@ describe('[USER]', function () {
           'invitationId', 'link', 'lockedAccount', 'provider', 'role', 'salt', 'tags');
         expect(res.body.email).to.be.equal('leo.riberon-piatyszek@epitech.eu');
         expect(res.body.isVerified).to.be.true;
-        expect(res.body.roles[0]).to.be.equal('editor');
+        expect(res.body.roles[0]).to.be.equal('user');
         expect(res.body.firstname).to.be.equal('Léo');
         expect(res.body.lastname).to.be.equal('Riberon-Piatyszek');
         expect(res.body.field).to.be.equal('Developer');
