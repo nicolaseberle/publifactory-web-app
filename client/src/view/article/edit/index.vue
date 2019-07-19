@@ -152,7 +152,7 @@
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
       journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: {}
+      socket: io('http://api:4000')
     }
   },
   computed: {
@@ -161,11 +161,6 @@
   created() {
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
-
-    let str_ip = process.env.BASE_API
-    str_ip = str_ip.replace(/"/g,"");
-    this.socket = io('http://' + str_ip + ':4000')
-
     this.getStatus();
 
 
