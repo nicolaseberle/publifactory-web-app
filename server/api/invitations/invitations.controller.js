@@ -24,6 +24,9 @@ const Email = require('../email/email.controller');
 
 async function createInvitation(req, res, next) {
   try {
+    if (req.body.link === undefined || req.body.msg === undefined ||
+      req.body.to === undefined || req.body.name === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     let senderId = req.body.link,
         senderMsg = req.body.msg,
         receiverEmail = req.body.to,
@@ -82,15 +85,8 @@ async function getMyInvitations (req, res, next) {
   try {
     let link=req.query.link
     console.log(link)
-    const invitations = await Invitation.findOne({ senderId: link }, (error, doc) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(doc);
-          res.status(200).send(doc.rows);
-        }
-      }
-    );
+    const invitations = await Invitation.findOne({ senderId: link });
+    res.json(invitations);
   } catch (err) {
     return next(err);
   }
@@ -132,7 +128,7 @@ async function checkInvitation(req, res, next) {
     invitation.senderLastname = _sender.lastname
     invitation.senderFirstname = _sender.firstname
 
-    return res.status(200).json(invitation);
+    return res.json(invitation);
 
   } catch (err) {
     return next(err);

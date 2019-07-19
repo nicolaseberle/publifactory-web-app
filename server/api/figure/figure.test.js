@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('../../config/test')
+const ArticleModel = require('../article/article.model');
 
 const connection = require('../../app');
 const requester = chai.request(connection).keepOpen()

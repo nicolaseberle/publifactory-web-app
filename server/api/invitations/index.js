@@ -9,7 +9,6 @@ const jwtCheck = require('../../auth/jwt');
 
 var router = express.Router()
 
-router.get('/myInvitations', controller.getMyInvitations)
 router.get('/invite/:id', controller.checkInvitation)
 
 router.use(function(req, res, next) {
