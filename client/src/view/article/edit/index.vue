@@ -162,10 +162,13 @@
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
 
-    //let str_ip = process.env.SITE_IP
-    //str_ip = str_ip.replace(/"/g,"");
-    this.socket = io()
+    let str_ip = process.env.SITE_IP
+    str_ip = str_ip.replace(/"/g,"");
+    this.socket = new io.Socket();
+    socket.connect('http://' + str_ip + ':4000')
+
     this.getStatus();
+
 
     console.log('ArticleDetail ::  index :: ',str_ip)
   },
