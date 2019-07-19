@@ -8,7 +8,7 @@
           <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
           <!--<el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
           <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>-->
-          <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latex</el-button>
+          <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latefamilx</el-button>
           <el-button v-if="valueTypeEditor!=3" type="" round @click="changeEditor('LatexEditor')">Latex</el-button>
         </el-button-group>
         <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
@@ -17,7 +17,7 @@
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in articleInfo.version" :command="item" v-bind:key="item.name">{{item.name}} - {{item.date}}</el-dropdown-item>
-            <el-dropdown-item command="new"><i class="el-icon-plus"> Create version</i></el-dropdown-item>
+            <el-dropdown-item command="new"><i class="el-icon-plus"><span style="font-family: 'DNLTPro-medium'">  Create version</span></i></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -152,7 +152,7 @@
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
       journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: io('http://localhost:4000')
+      socket: io(`http://${process.env.BASE_API}:4000`)
     }
   },
   computed: {
