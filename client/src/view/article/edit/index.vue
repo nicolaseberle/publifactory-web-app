@@ -134,7 +134,11 @@
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
 
-  const io = require('socket.io-client')
+  import io from 'socket.io-client'
+  const socketOptions = {
+    transports: [ 'polling' ]
+  };
+
   const printJS = require( 'print-js')
 
   export default {
@@ -153,10 +157,7 @@
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
       journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: io('http://' + window.location.hostname + ':4000/',
-      {
-          transports: ['xhr-polling']
-      })
+      socket: io('http://' + window.location.hostname + ':4000/', socketOptions)
     }
   },
   computed: {
