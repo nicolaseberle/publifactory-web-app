@@ -133,7 +133,10 @@
   import markdownEditorComponent from './MarkdownEditorComponent'
   import latexEditorComponent from './LatexEditorComponent'
   import axios from 'axios'
-  import io from 'socket.io-client'
+  
+  const io = require('socket.io-client')({
+      'transports': ['xhr-polling']
+  })
   const printJS = require( 'print-js')
 
   export default {
