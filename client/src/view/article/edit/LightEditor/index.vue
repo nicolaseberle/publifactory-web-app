@@ -844,7 +844,7 @@ export default {
           title: this.postForm.title
         });
         this.save(this.$event)
-      }, 500);
+      }, 100);
     },
     openEditFigure () {
       this.dialogVisible = true

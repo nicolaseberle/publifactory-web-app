@@ -262,10 +262,11 @@ export default {
     var cursorsModule = this.editor.getModule('cursors');
 
     this.editor.on('text-change', (delta, oldDelta, source) => {
-      if (this.timeoutId) clearTimeout(this.timeoutId);
+      await this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
+      /*if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         await this.$emit('edit', this.editor, delta, oldDelta,this.numBlock,this.numSubBlock,this.numSubSubBlock)
-       },2000);
+      },2000);*/
 
 
     });
