@@ -20,7 +20,6 @@ module.exports = function (app) {
     jwtCheck(req, res, next);
   })
 
-  app.use('/api/things', require('./api/thing'))
   app.use('/api/articles', require('./api/article'))
   app.use('/api/journals', require('./api/journal'))
   app.use('/api/comments', require('./api/comment'))

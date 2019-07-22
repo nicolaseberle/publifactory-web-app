@@ -10,13 +10,13 @@ const fs = require('fs');
 const path = require('path');
 const uuidv4 = require('uuid').v4();
 
-const config = require('../../config/test');
-const ArticleModel = require('../article/article.model');
+const config = require('../../../config/test');
+const ArticleModel = require('../../article/article.model');
 
-const connection = require('../../app');
+const connection = require('../../../app');
 const requester = chai.request(connection).keepOpen()
 
-describe('[ARTICLE]', function () {
+describe('[HISTORY]', function () {
   this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
@@ -44,10 +44,10 @@ describe('[ARTICLE]', function () {
         if (res.body.token !== undefined) {
           headers["authorization"] = 'Bearer ' + res.body.token;
           config.token = res.body.token;
-          fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
-          fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
+          fs.unlinkSync(path.join(__dirname, '../../../config/test.json'));
+          fs.writeFileSync(path.join(__dirname, '../../../config/test.json'), JSON.stringify(config));
         }
-        ArticleModel.findOne({}).order({creationDate: -1})
+        ArticleModel.findOne({}).sort({creationDate: -1})
           .exec(function (err, doc) {
             idArticle = doc._id;
             done();

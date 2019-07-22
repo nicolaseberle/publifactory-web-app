@@ -17,7 +17,7 @@ const ArticleModel = require('../article/article.model');
 const connection = require('../../app');
 const requester = chai.request(connection).keepOpen();
 
-describe('[ARTICLE]', function () {
+describe('[INVITATION]', function () {
   this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ describe('[ARTICLE]', function () {
           fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
           fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
         }
-        ArticleModel.findOne({}).order({creationDate: -1})
+        ArticleModel.findOne({}).sort({creationDate: -1})
           .exec(function (err, doc) {
             idArticle = doc._id;
           });
@@ -74,7 +74,7 @@ describe('[ARTICLE]', function () {
       to: inviteTo,
       name: idUser
     };
-    requester.post('api/invitations/invite/collaborator')
+    requester.post('/api/invitations/invite/collaborator')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -101,7 +101,7 @@ describe('[ARTICLE]', function () {
       to: inviteTo,
       name: idUser
     };
-    requester.post('api/invitations/invite/reviewer')
+    requester.post('/api/invitations/invite/reviewer')
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -122,7 +122,7 @@ describe('[ARTICLE]', function () {
       to: inviteTo,
       name: idUser
     };
-    requester.post('api/invitations/invite/')
+    requester.post('/api/invitations/invite/')
       .set(headers)
       .send(body)
       .end((req, res) => {

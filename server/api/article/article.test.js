@@ -389,10 +389,15 @@ describe('[ARTICLE]', function () {
     requester.delete('/api/articles/' + idArticle)
       .set(headers)
       .end((req, res) => {
+        console.log('HEREEEE')
         expect(res).to.exist;
+        console.log('HEREEEE')
         expect(res).to.have.status(204);
+        console.log('HEREEEE')
         expect(res.body).to.be.empty;
+        console.log('HEREEEE')
         done();
+        console.log('HEREEEE')
       });
   });
 });

@@ -11,7 +11,7 @@ var router = express.Router()
 
 router.post('/', journalController.createJournal);
 router.get('/:id?', journalController.getJournals);
-router.post('/:id/article', roles.owner, journalController.addArticleToJournal);
+router.post('/:id/article', journalController.addArticleToJournal);
 router.delete('/:id/article/:id_article', roles.owner, journalController.removeArticleFromJournal);
 router.put('/:id', roles.administration, journalController.findJournalByIdAndUpdate);
 router.patch('/:id/tags', roles.administration, journalController.updateTags)
@@ -48,7 +48,7 @@ router.use('/:id/removeAssociateEditor', async function (req, res, next) {
 router.put('/:id/removeAssociateEditor', journalController.removeAssociateEditor);
 
 
-router.get('/:id/users/:role(editor|associate_editor|user)', journalController.getJournalsUser)
+router.get('/:id/users/:role(editor|associate_editor|user)?', journalController.getJournalsUser)
 router.patch('/:id/article/:id_article', roles.publish, journalController.setArticlePublish)
 router.post('/:id/invite/:right(associate_editor|user)', roles.invite, journalController.inviteUser)
 

@@ -16,7 +16,7 @@ const ArticleModel = require('../article/article.model');
 const connection = require('../../app');
 const requester = chai.request(connection).keepOpen()
 
-describe('[ARTICLE]', function () {
+describe('[COMMENTS]', function () {
   this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ describe('[ARTICLE]', function () {
           fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
           fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
         }
-        ArticleModel.findOne({}).order({creationDate: -1})
+        ArticleModel.findOne({}).sort({creationDate: -1})
           .exec(function(err, doc) {
             idArticle = doc._id;
             done();
@@ -139,7 +139,7 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -157,7 +157,7 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -170,7 +170,8 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body).to.be.an.instanceOf(Array);
+        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -188,7 +189,8 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body).to.be.an.instanceOf(Array);
+        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -228,7 +230,7 @@ describe('[ARTICLE]', function () {
 
   it('PUT -> update score vote with missing parameters', function (done) {
     body = {}
-    requester.post(`/api/comments/${idArticle}/${uuidComment}`)
+    requester.put(`/api/comments/${idArticle}/${uuidComment}`)
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -245,7 +247,7 @@ describe('[ARTICLE]', function () {
     body = {
       content: 'My new content after update'
     };
-    requester.put(`/api/comments/${idArticle}/${uuidComment}`)
+    requester.put(`/api/comments/${idArticle}/${uuidComment}/content`)
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -259,7 +261,7 @@ describe('[ARTICLE]', function () {
 
   it('PUT -> update comment with missing content', function (done) {
     body = {};
-    requester.put(`/api/comments/${idArticle}/${uuidComment}`)
+    requester.put(`/api/comments/${idArticle}/${uuidComment}/content`)
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -271,5 +273,4 @@ describe('[ARTICLE]', function () {
         done();
       })
   });
-
 });

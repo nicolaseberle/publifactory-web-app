@@ -15,7 +15,7 @@ const ArticleModel = require('../article/article.model');
 const connection = require('../../app');
 const requester = chai.request(connection).keepOpen()
 
-describe('[ARTICLE]', function () {
+describe('[FIGURE]', function () {
   this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ describe('[ARTICLE]', function () {
           fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
           fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
         }
-        ArticleModel.findOne({}).order({creationDate: -1})
+        ArticleModel.findOne({}).sort({creationDate: -1})
           .exec(function (err, doc) {
             idArticle = doc._id;
             done();
@@ -74,8 +74,7 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(201);
-        expect(res.body).to.contain.key('_id');
-        idFigure = res.body._id;
+        idFigure = res.body;
         done()
       });
   });
@@ -119,7 +118,7 @@ describe('[ARTICLE]', function () {
         content: [{
           title: 'main.R',
           name: '1',
-          content: this.$t('template.RFirst')
+          content: 'CONTNET'
         }]
       },
       infos: {
@@ -135,7 +134,6 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('_id');
         done();
       });
   });
@@ -179,8 +177,8 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('figure');
-        expect(res.body.figure).to.be.an.instanceOf(Array);
+        expect(res.body).to.contain.key('__v', '_id', 'data', 'infos', 'layout',
+          'option', 'script');
         done();
       });
   });
@@ -191,9 +189,7 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('figure');
-        expect(res.body.figure).to.be.an.instanceOf(Array);
-        expect(res.body.figure).to.be.empty;
+        expect(res.body).to.be.empty;
         done();
       });
   });

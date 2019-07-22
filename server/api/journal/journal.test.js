@@ -18,7 +18,7 @@ const ArticleModel = require('../article/article.model');
 const connection = require('../../app');
 const requester = chai.request(connection).keepOpen()
 
-describe('[ARTICLE]', function () {
+describe('[JOURNAL]', function () {
   this.timeout(10000)
   const headers = {
     'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ describe('[ARTICLE]', function () {
           fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
           fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
         }
-        ArticleModel.findOne({}).order({creationDate: -1})
+        ArticleModel.findOne({}).sort({creationDate: -1})
           .exec(function (err, doc) {
             idArticle = doc._id;
           });
@@ -97,7 +97,7 @@ describe('[ARTICLE]', function () {
         expect(res).to.have.status(422);
         expect(res.body).to.contain.key('success', 'message');
         expect(res.body.success).to.be.false;
-        expect(res.body.message).to.be.equal('Missing parameters;');
+        expect(res.body.message).to.be.equal('Missing parameters.');
         done();
     })
   });
@@ -119,13 +119,15 @@ describe('[ARTICLE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('journals');
+        expect(res.body).to.contain.key('__v', '_id', 'abstract', 'color_1', 'color_2',
+          'content', 'creationDate', 'deleted', 'doi', 'published', 'slug', 'status',
+          'tags', 'title', 'users');
         done();
       })
   });
 
   it('GET -> get journal with wrong id', function (done) {
-    requester.get('/api/journals/23456789876543a')
+    requester.get('/api/journals/54759eb3c090d83494e2d804')
       .set(headers)
       .end((req, res) => {
         expect(res).to.exist;
@@ -144,8 +146,9 @@ describe('[ARTICLE]', function () {
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
         done();
     })
   });
@@ -182,9 +185,9 @@ describe('[ARTICLE]', function () {
 
   it('PUT -> update a journal', function (done) {
     body = {
-      title: 'TEST JOURNAL',
+      title: 'TESTJOURNAL',
       abstract: 'My Test Journal For Fun',
-      published: false
+      published: true
     };
     requester.put(`/api/journals/${idJournal}`)
       .set(headers)
