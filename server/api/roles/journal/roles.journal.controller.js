@@ -180,7 +180,7 @@ async function doYouHaveThisRight (req, res, next) {
     console.error(e);
     // Throw to catch the error and transmit it to the router.use route.
     // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
-    throw e;
+    throw { code: 403, message: e.message };
   }
 }
 

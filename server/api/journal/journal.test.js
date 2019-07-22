@@ -1,5 +1,7 @@
 'use strict';
 
+const shortid = require("shortid");
+
 const chai = require('chai');
 chai.use(require('chai-json-schema'));
 chai.use(require('chai-match-pattern'));
@@ -9,7 +11,8 @@ const expect = require('chai').expect;
 const fs = require('fs');
 const path = require('path');
 
-const config = require('../../config/test')
+const config = require('../../config/test');
+const UserModel = require('../user/user.model');
 const ArticleModel = require('../article/article.model');
 
 const connection = require('../../app');
@@ -23,7 +26,7 @@ describe('[ARTICLE]', function () {
   };
 
   let body, query = {};
-  let idArticle, idJournal = '';
+  let idArticle, idJournal, userId = '';
 
   before('Retrieve token', function (done) {
     const user = {
@@ -49,8 +52,11 @@ describe('[ARTICLE]', function () {
         ArticleModel.findOne({}).order({creationDate: -1})
           .exec(function (err, doc) {
             idArticle = doc._id;
-            done();
           });
+        UserModel.findOne({}).exec(function (err, doc) {
+          userId = doc._id;
+          done();
+        });
       });
   });
 
@@ -178,9 +184,9 @@ describe('[ARTICLE]', function () {
     body = {
       title: 'TEST JOURNAL',
       abstract: 'My Test Journal For Fun',
-      published: true
+      published: false
     };
-    requester.post('/api/journals')
+    requester.put(`/api/journals/${idJournal}`)
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -198,7 +204,7 @@ describe('[ARTICLE]', function () {
       title: 'TEST JOURNAL',
       published: true
     };
-    requester.post('/api/journals')
+    requester.put(`/api/journals/${idJournal}`)
       .set(headers)
       .send(body)
       .end((req, res) => {
@@ -211,183 +217,243 @@ describe('[ARTICLE]', function () {
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('PUT -> invite associate editor', function (done) {
+    body = {
+      associate_editor: {
+        email: 'michael@example.com'
+      }
+    };
+    requester.put(`/api/journals/${idJournal}/addAssociateEditor`)
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('PUT -> invite associate editor with missing parameter', function (done) {
+    body = {}
+    requester.put(`/api/journals/${idJournal}/addAssociateEditor`)
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(422);
+        expect(res.body).to.contain.key('success', 'message');
+        expect(res.body.success).to.be.false;
+        expect(res.body.message).to.be.equal('Missing parameters.');
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('GET -> journal\'s users', function (done) {
+    requester.get(`/api/journals/${idJournal}/users/`)
       .set(headers)
-      .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'users');
+        expect(res.body.success).to.be.true;
+        expect(res.body.users).to.be.an.instanceOf(Array);
+        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('GET -> journal\'s associate_editor', function (done) {
+    requester.get(`/api/journals/${idJournal}/users/associate_editor`)
       .set(headers)
-      .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'users');
+        expect(res.body.success).to.be.true;
+        expect(res.body.users).to.be.an.instanceOf(Array);
+        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
+        done();
+      })
+  });
+
+  it('GET -> journal\'s editor', function (done) {
+    requester.get(`/api/journals/${idJournal}/users/editor`)
+      .set(headers)
+      .end((req, res) => {
+        expect(res).to.exist;
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'users');
+        expect(res.body.success).to.be.true;
+        expect(res.body.users).to.be.an.instanceOf(Array);
+        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
+        done();
+      })
+  });
+
+  it('GET -> journal\'s users', function (done) {
+    requester.get(`/api/journals/${idJournal}/users/user`)
+      .set(headers)
+      .end((req, res) => {
+        expect(res).to.exist;
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'users');
+        expect(res.body.success).to.be.true;
+        expect(res.body.users).to.be.an.instanceOf(Array);
+        expect(res.body.users).to.be.empty;
+        done();
+      })
+  });
+
+  it('PATCH -> set article to published', function (done) {
+    requester.patch(`/api/journals/${idJournal}/article/${idArticle}`)
+      .set(headers)
+      .end((req, res) => {
+        expect(res).to.exist;
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('POST -> invite new user to follow journal', function (done) {
+    let shortId = shortid.generate();
+    while (shortId.indexOf('-') >= 0)
+      shortId = shortid.generate();
+    let link = shortId;
+    let inviteTo = 'user@test.fr';
+    let message = "toto";
+    body = {
+      link: link,
+      msg: message,
+      to: inviteTo,
+      name: userId
+    };
+    requester.post(`/api/journals/${idJournal}/invite/user`)
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('POST -> invite new associate editor to follow journal', function (done) {
+    let shortId = shortid.generate();
+    while (shortId.indexOf('-') >= 0)
+      shortId = shortid.generate();
+    let link = shortId;
+    let inviteTo = 'ae@test.fr';
+    let message = "toto";
+    body = {
+      link: link,
+      msg: message,
+      to: inviteTo,
+      name: userId
+    };
+    requester.post(`/api/journals/${idJournal}/invite/associate_editor`)
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
+        done();
+      })
+  });
+
+  it('POST -> invite new user with missing parameter', function (done) {
+    let inviteTo = 'user@test.fr';
+    let message = "toto";
+    body = {
+      msg: message,
+      to: inviteTo,
+      name: userId
+    };
+    requester.post(`/api/journals/${idJournal}/invite/user`)
+      .set(headers)
+      .send(body)
+      .end((req, res) => {
+        expect(res).to.exist;
+        expect(res).to.have.status(422);
+        expect(res.body).to.contain.key('success', 'message');
+        expect(res.body.success).to.be.false;
+        expect(res.body.message).to.be.equal('Missing parameters.');
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('GET -> my followed journals', function (done) {
+    requester.get('/api/journals/followed')
       .set(headers)
-      .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'journals');
+        expect(res.body.success).to.be.true;
+        expect(res.body.journals).to.be.an.instanceOf(Array);
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('POST -> try to unfollow your journal', function (done) {
+    requester.post('/api/journals/' + idJournal + '/follow')
       .set(headers)
-      .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(403);
+        expect(res.body).to.contain.key('success', 'message');
+        expect(res.body.success).to.be.false;
+        expect(res.body.message).to.be.equal('Editor and Associate Editor can not unfollow a journal');
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('DELETE -> remove journal', function (done) {
+    requester.delete('/api/journals/' + idJournal + '/removeJournal')
       .set(headers)
-      .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(204);
+        expect(res.body).to.be.empty;
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('PATCH -> update tags', function (done) {
+    body = {
+      tags: ['Dev', 'test', 'unit']
+    };
+    requester.patch('/api/journals/' + idJournal + '/tags')
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success');
+        expect(res.body.success).to.be.true;
         done();
     })
   });
 
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
+  it('PATCH -> update tags', function (done) {
+    body = {};
+    requester.patch('/api/journals/' + idJournal + '/tags')
       .set(headers)
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
+        expect(res).to.have.status(200);
+        expect(res.body).to.contain.key('success', 'message');
+        expect(res.body.success).to.be.false;
+        expect(res.body.message).to.be.equal('Missing parameters.');
         done();
-    })
-  });
-
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
-      .set(headers)
-      .send(body)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
-        done();
-    })
-  });
-
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
-      .set(headers)
-      .send(body)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
-        done();
-    })
-  });
-
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
-      .set(headers)
-      .send(body)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
-        done();
-    })
-  });
-
-  it(' -> ', function (done) {
-    requester.post('/api/journals')
-      .set(headers)
-      .send(body)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status();
-        expect(res.body).to.contain.key('');
-        done();
-    })
+      });
   });
 });

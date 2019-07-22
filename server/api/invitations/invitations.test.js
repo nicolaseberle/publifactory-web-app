@@ -11,7 +11,7 @@ const path = require('path');
 const shortid = require('shortid');
 
 const config = require('../../config/test');
-const UserModel = require('../user/user.model');;
+const UserModel = require('../user/user.model');
 const ArticleModel = require('../article/article.model');
 
 const connection = require('../../app');

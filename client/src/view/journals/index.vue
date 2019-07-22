@@ -111,7 +111,7 @@
   methods: {
     initialize () {
       return new Promise((resolve, reject) => {
-        axios.get('/api/journals/followed/all', {
+        axios.get('/api/journals/followed', {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(list => {
           this.followedJournals = list.data.journals
