@@ -10,6 +10,8 @@ USER=`whoami`
 command=$1
 options=$2
 
+export BASE_MONGO=localhost
+export BASE_API=localhost
 export SITE_IP='35.246.243.12'
 export ROOT_APP="http://${SITE_IP}/"
 
