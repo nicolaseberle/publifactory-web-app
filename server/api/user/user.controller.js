@@ -6,29 +6,30 @@ var config = require('../../../config').backend
 var jwt = require('jsonwebtoken')
 var paging = require('../paging')
 const shortid = require('shortid');
+const bcrypt = require('bcrypt');
 
 const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model');
 const Email = require('../email/email.controller');
 
-var validationError = function (res, err) {
-  return res.status(422).json(err)
-}
-
 /**
  * Get list of users
  * restriction: 'admin'
  */
-function index (req, res) {
-  var search = {...req.query.search, ...{ role: 'user' }}
-  var page = {current : 1 ,limit: 10}
-  paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
-    if (err) return res.status(500).send(err)
-    res.status(200).json(json)
-  })
+function index(req, res, next) {
+  try {
+    const search = {...req.query.search, ...{role: 'user'}};
+    var page = {current: 1, limit: 10};
+    paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
+      if (err) throw {code: 500, message: err};
+      res.json(json)
+    })
+  } catch (e) {
+    next(e);
+  }
 }
 
-async function createVerificationEmailInvitation (user) {
+async function createVerificationEmailInvitation(user) {
   try {
     let email = String(user.email)
     let senderMsg = 'verification'
@@ -68,7 +69,7 @@ function orcidCreation(req, res, next) {
     * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
     */
     User.findOne({email: req.body.email}, async function (err, user) {
-      if(user===null) {
+      if (user === null) {
         var newUser = new User(req.body)
         newUser.provider = req.body.provider
         newUser.role = 'user'
@@ -81,13 +82,13 @@ function orcidCreation(req, res, next) {
               _id: user._id,
               name: user.name,
               role: user.role
-            }, config.secrets.session, { expiresIn: '7d' })
+            }, config.secrets.session, {expiresIn: '7d'})
             resolve(token)
           })
         })
-        res.json({ success: true, token: newToken })
+        res.json({success: true, token: newToken})
       } else
-        res.json({ success: true })
+        res.json({success: true})
     })
   } catch (err) {
     return next(err)
@@ -100,7 +101,7 @@ function googleCreation(req, res, next) {
     * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
     */
     User.findOne({email: req.body.email}, async function (err, user) {
-      if(user===null) {
+      if (user === null) {
         var newUser = new User(req.body)
         newUser.provider = req.body.provider
         newUser.role = 'user'
@@ -113,13 +114,13 @@ function googleCreation(req, res, next) {
               _id: user._id,
               name: user.name,
               role: user.role
-            }, config.secrets.session, { expiresIn: '7d' })
+            }, config.secrets.session, {expiresIn: '7d'})
             resolve(token)
           })
         })
-        res.json({ success: true, token: newToken })
+        res.json({success: true, token: newToken})
       } else
-        res.json({ success: true })
+        res.json({success: true})
     })
   } catch (err) {
     return next(err)
@@ -129,107 +130,114 @@ function googleCreation(req, res, next) {
 /**
  * Creates a new user
  */
-function create(req, res, next) {
+async function create(req, res, next) {
   try {
     /*
     * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
     */
-    User.findOne({email: req.body.email}, async function (err, user) {
-      if(user===null) {
-        var newUser = new User(req.body)
-        newUser.provider = req.body.provider
-        newUser.role = 'user'
-        newUser.roles = ['user']
-        const newToken = await new Promise((resolve, reject) => {
-          newUser.save(async function (err, user) {
-            //if (err) return validationError(res, err)
-            if (err) reject(err)
-            const token = jwt.sign({
-              _id: user._id,
-              name: user.name,
-              role: user.role
-            }, config.secrets.session, { expiresIn: '7d' })
-            await createVerificationEmailInvitation(user)
-            resolve(token)
-          })
+    if (!(req.body.email !== undefined && req.body.password !== undefined && req.body.provider !== undefined))
+      throw {code: 422, message: 'Missing parameters.'};
+    const user = await User.findOne({email: req.body.email});
+    if (user === null) {
+      var newUser = new User(req.body)
+      newUser.provider = req.body.provider
+      newUser.role = 'user'
+      newUser.roles = ['user']
+      const newToken = await new Promise((resolve, reject) => {
+        newUser.save(async function (err, user) {
+          //if (err) return validationError(res, err)
+          if (err) reject(err)
+          const token = jwt.sign({
+            _id: user._id,
+            name: user.name,
+            role: user.role
+          }, config.secrets.session, {expiresIn: '7d'})
+          await createVerificationEmailInvitation(user)
+          resolve(token)
         })
-        res.json({ token: newToken })
-      }
-      else {
-        res.status(403).json({ message: 'This email exists already' })
-      }
-    })
-  }
-  catch (err) {
-     return next(err)
+      })
+      res.status(201).json({token: newToken})
+    } else {
+      throw {code: 403, message: 'This email exists already'}
+    }
+  } catch (err) {
+    next(err)
   }
 }
+
 /**
  * Create a guest account - a guest have to reset his password during the first connection
  */
-function createGuest(req, res, next) {
-  req.body.isVerified = true;
-  var newUser = new User(req.body)
-  newUser.provider = 'local'
-  newUser.role = 'guest'
-  newUser.roles = ['guest']
-  newUser.save(function (err, user) {
-    if (err){
-      return validationError(res, err)
-    }
-    var token = jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
-    res.json({ user: newUser })
-  })
+async function createGuest(req, res, next) {
+  try {
+    if (!(req.body.email && req.body.password && req.body.firstname && req.body.lastname))
+      throw { code: 422, message: 'Missing parameters.'};
+    req.body.isVerified = true;
+    var newUser = new User(req.body)
+    newUser.provider = 'local'
+    newUser.role = 'guest'
+    newUser.roles = ['guest']
+    const user = await newUser.save()
+    jwt.sign({_id: user._id, name: user.name, role: user.role}, config.secrets.session, {expiresIn: '7d'});
+    res.json({user: newUser})
+  } catch (e) {
+    next(e)
+  }
 }
+
 /**
  * Get a single user
  */
-function show(req, res, next) {
-  var userId = req.params.id
-
-  User.findById(userId, function (err, user) {
-    if (err) return next(err)
-    if (!user) return res.sendStatus(404)
+async function show(req, res, next) {
+  try {
+    var userId = req.params.id
+    const user = await User.findById(userId);
+    if (!user)
+      throw { code: 404, message: 'User not found.' };
     res.json(user.profile)
-  })
+  } catch (e) {
+    next(e);
+  }
 }
 
 /**
  * Deletes a user
  * restriction: 'admin'
  */
-function destroy(req, res) {
-  User.findByIdAndRemove(req.params.id, function (err, user) {
-    if (err) return res.status(500).send(err)
-    return res.sendStatus(204)
-  })
+async function destroy(req, res, next) {
+  try {
+    await User.findByIdAndRemove(req.params.id);
+    res.sendStatus(204);
+  } catch (e) {
+    next(e);
+  }
 }
 
 /**
  * Change a users password
  */
-function changePassword(req, res, next) {
+async function changePassword(req, res, next) {
   try {
-    var userId = req.user._id
-    var oldPass = String(req.body.oldPassword)
-    var newPass = String(req.body.newPassword)
+    if (req.body.oldPassword === undefined || req.body.newPassword === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
+    if (req.body.oldPassword === req.body.newPassword)
+      throw { code: 409, message: 'Duplicate entry.' };
+    var userId = req.decoded._id;
+    var oldPass = String(req.body.oldPassword);
+    var newPass = String(req.body.newPassword);
 
-    User.findById(userId, function (err, user) {
-      if (err) {
-        // handler error
-      }
-      if (user.authenticate(oldPass)) {
-        user.password = newPass
-        user.save(function (err) {
-          if (err) return validationError(res, err)
-          res.status(200).json({ message: 'ok' })
-        })
-      } else {
-        res.status(403).json({ message: 'Old password is not correct.' })
-      }
-    })
+    const user = await User.findById(userId);
+    if (bcrypt.compareSync(oldPass, user.hashedPassword)) {
+      user.password = newPass;
+      user.save(function (err) {
+        if (err) return validationError(res, err);
+        res.json({success: true})
+      })
+    } else {
+      throw { code: 403, message: 'Old password is not correct.' };
+    }
   } catch (err) {
-      return next(err)
+    next(err)
   }
 }
 
@@ -240,7 +248,7 @@ async function changeGuestPassword(req, res, next) {
   try {
     var userId = req.params.id
     var newPass = String(req.body.password)
-    console.log("changeGuestPassword :: beginning ",userId )
+    console.log("changeGuestPassword :: beginning ", userId)
     let user = await User.findById(userId)
     console.log("changeGuestPassword :: ", user)
     const invite = await Invitation.findById(user.invitationId)
@@ -259,7 +267,7 @@ async function changeGuestPassword(req, res, next) {
         }
       };
       const updatedUser = await User.findOneAndUpdate(query, toSet);
-      console.log("changeGuestPassword ::  ",updateUser)
+      console.log("changeGuestPassword ::  ", updateUser)
       const token = await jwt.sign({
         _id: updatedUser._id,
         name: updatedUser.name,
@@ -268,121 +276,125 @@ async function changeGuestPassword(req, res, next) {
       res.json({token: token})
     }
   } catch (err) {
-    return next(err)
+    next(err)
   }
 }
 
 /**
  * Reset the password and convert it in user // we check that the guest is on the list
  */
-function resetPassword(req, res, next) {
+async function resetPassword(req, res, next) {
   try {
+    if (req.body.email === undefined)
+      throw {code: 422, message: 'Missing parameters.'};
     let email = String(req.body.email)
     let senderMsg = 'reset'
     let newLink = shortid.generate()
-    while(newLink.indexOf('-')>=0){
+    while (newLink.indexOf('-') >= 0) {
       newLink = shortid.generate()
     }
     let senderId = shortid.generate()
-    while(senderId.indexOf('-')>=0){
+    while (senderId.indexOf('-') >= 0) {
       senderId = shortid.generate()
     }
-    User.findOne({"email": email}, async function (_err, user) {
-      let senderName = user._id
-      let current = new Date().toISOString()
-      const newInvitation = new Invitation({
-        "created_at": current,
-        "updated_at": current,
-        "link": newLink,
-        "recieptEmail": email,
-        "senderId": senderId,
-        "senderMsg": senderMsg,
-        "senderName": senderName
-      });
-      const invitation = await newInvitation.save((error, result) => {
-        if (error) {
-          return console.log(error);
-        } else {
-          //we send en email to reset the password
-          const clientUrl = `${configEmail.rootHTML}/recover/password/${senderId}-${newLink}`;
-          const gmail = new Email(email);
-          gmail.sendRecuperationPassword(clientUrl);
-          //sendResetEmail(email, newLink, newLink);
-        }
-      })
-      // temporary password is newLink - a random key
-      user.password = senderId
-      user.role = 'guest'
-      user.roles = ['guest']
-      await user.save(function (err) {
-        if (err) return validationError(res, err)
-        var token = jwt.sign({
-           _id: user._id,
-           name: user.name,
-           role: user.role },
-           config.secrets.session, { expiresIn: '7d' })
-        res.json({ token: token })
-      })
-      console.log(invitation)
+    const user = await User.findOne({"email": email});
+    if (!user)
+      throw { code: 403, message: 'User not found.' };
+    let senderName = user._id
+    let current = new Date().toISOString()
+    const newInvitation = new Invitation({
+      "created_at": current,
+      "updated_at": current,
+      "link": newLink,
+      "recieptEmail": email,
+      "senderId": senderId,
+      "senderMsg": senderMsg,
+      "senderName": senderName
+    });
+    const invitation = await newInvitation.save((error, result) => {
+      if (error) {
+        return console.log(error);
+      } else {
+        //we send en email to reset the password
+        const clientUrl = `${configEmail.rootHTML}/recover/password/${senderId}-${newLink}`;
+        const gmail = new Email(email);
+        gmail.sendRecuperationPassword(clientUrl);
+        //sendResetEmail(email, newLink, newLink);
+      }
     })
+    // temporary password is newLink - a random key
+    user.password = senderId
+    user.role = 'guest'
+    user.roles = ['guest']
+    await user.save(function (err) {
+      if (err) return validationError(res, err)
+      var token = jwt.sign({
+          _id: user._id,
+          name: user.name,
+          role: user.role
+        },
+        config.secrets.session, {expiresIn: '7d'})
+      res.json({token: token})
+    })
+    console.log(invitation)
   } catch (err) {
-      return next(err)
+    return next(err)
   }
 }
 
 /**
  * update user settings - firstname, lastname, field... (no password)
  */
-async function updateUser (req, res, next) {
+async function updateUser(req, res, next) {
   try {
-    var userId = req.params.id
+    if (!(req.body.firstname && req.body.lastname && req.body.field))
+      throw { code: 422, message: 'Missing parameters.' };
+    var userId = req.decoded._id
     var firstname = String(req.body.firstname)
     var lastname = String(req.body.lastname)
     var field = String(req.body.field)
     console.log(firstname)
-
     const user = await User.findOneAndUpdate(
-            { _id: userId },
-            { $set: { firstname, lastname, field } },
-            { new: true })
-
-    if (!user) return res.sendStatus(404);
-
-    return res.status(200).json(user);
+      {_id: userId},
+      {$set: {firstname, lastname, field}},
+      {new: true});
+    if (!user)
+      throw { code: 404, message: 'User not found.'}
+    return res.json(user);
   } catch (err) {
-      return next(err)
+    return next(err)
   }
 };
 
 /**
  * Get my info
  */
-function me(req, res, next) {
-  var userId = req.user._id
-  User.findOne({
-    _id: userId
-  }, '-salt -hashedPassword', function (err, user) { // don't ever give out the password or salt
-    if (err) return next(err)
-    if (!user) return res.json(401)
+async function me(req, res, next) {
+  try {
+    var userId = req.decoded._id
+    const user = await User.findOne({
+      _id: userId
+    }, '-salt -hashedPassword');
+    if (!user)
+      throw { code: 401, message: 'User not found.' };
     res.json(user)
-  })
+  } catch (e) {
+    next(e)
+  }
 }
 
 /**
  * This method will be use to check if a user has verified his email !
  */
-function emailConfirmation (req, res, next) {
+async function emailConfirmation(req, res, next) {
   try {
     if (!req.body.userId)
-      throw { code: 422, message: "Missing parameter." }
+      throw { code: 422, message: "Missing parameter." };
     const regExp = /(.*?)-(.*?)$/g
     const match = regExp.exec(req.body.userId);
-    const query = { _id: match[1] };
-    const toReplace = { $set: { isVerified: true } };
-    User.updateOne(query, toReplace, (err, result) => {
-      if (err) throw err;
-      console.log("User verified.");
-    });
+    const query = {_id: match[1]};
+    const toReplace = {$set: {isVerified: true}};
+    await User.updateOne(query, toReplace)
     res.json({ success: true });
   } catch (e) {
     next(e);

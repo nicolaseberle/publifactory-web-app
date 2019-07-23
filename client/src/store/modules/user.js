@@ -182,7 +182,7 @@ const actions = {
   // changePassword action
   changePassword ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      changePassword(payload.id, payload.oldPassword, payload.newPassword, payload.token).then(data => {
+      changePassword(payload.oldPassword, payload.newPassword, payload.token).then(data => {
         if (!data) {
           reject('error')
         }
@@ -204,8 +204,7 @@ const actions = {
   // updateUser action
   updateUser ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      updateUser(payload.id,
-                  payload.firstname,
+      updateUser(payload.firstname,
                   payload.lastname,
                   payload.field,
                   payload.token).then(data => {

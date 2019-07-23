@@ -182,7 +182,7 @@ export default {
       })
     },
     async fetchMyArticles () {
-      await axios.get(`/api/articles/mine/${this.userId}`, {
+      await axios.get(`/api/articles/mine`, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles

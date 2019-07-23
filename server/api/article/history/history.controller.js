@@ -76,7 +76,7 @@ async function getHistory(req, res, next) {
 async function insertInstruction (req, res, next) {
   try {
     if (req.body.instruction === undefined)
-      throw { code: 422, message: "Missing parameter in the body field." };
+      throw { code: 422, message: "Missing parameters." };
     const userClass = {
       idUser: req.decoded._id,
       idArticle: req.params.id

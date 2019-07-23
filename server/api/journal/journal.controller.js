@@ -1,6 +1,7 @@
 'use strict';
 
-const User = require('../user/user.model')
+const UserModel = require('../user/user.model')
+const UserController = require('../user/user.controller')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
 const RolesJournal = require('../roles/journal/roles.journal.model')
@@ -47,7 +48,6 @@ exports.getJournals = async (req, res, next) => {
       journals = await Journal.paginate({ deleted: false, published: true }, {
         page,
         limit,
-        populate: 'users',
         lean: true
       });
       console.log(JSON.stringify(journals, null, "\t"))
@@ -59,7 +59,8 @@ exports.getJournals = async (req, res, next) => {
         .populate('article')
         .lean();
       console.log(JSON.stringify(journals, null, "\t"))
-      if (!journals) return res.sendStatus(404);
+      if (!journals)
+        throw { code: 404, message: 'Journals not found.' };
     }
     return res.status(200).json(journals);
   } catch (err) {
@@ -76,13 +77,10 @@ exports.getJournals = async (req, res, next) => {
  */
 module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
   try {
-    /*req.check(ArticleValidator.checkArticleData);
-    const validationResult = await req.getValidationResult();
-    if (!validationResult.isEmpty()) {
-      return res.status(400).json({ errors: validationResult.array() });
-    }*/
-    console.log(JSON.stringify("findJournalbyIdAndUpdate", null, "\t"))
-    const title = req.body.title.trim();
+    if (req.body.title === undefined || req.body.abstract === undefined ||
+      req.body.published === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
+    const title = req.body.title;
     const abstract = req.body.abstract;
     const published = req.body.published;
     const journal = await Journal
@@ -91,10 +89,9 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
         { $set: { title, abstract, published } },
         { new: true }
       );
-
-    if (!article) return res.sendStatus(404);
-
-    return res.status(200).json(journal);
+    if (!journal)
+      throw { code: 404, message: 'Journal not found.' }
+    return res.json(journal);
   } catch (err) {
     return next(err);
   }
@@ -116,26 +113,20 @@ module.exports.createJournal = async (req, res, next) => {
       return res.status(400).json({ errors: validationResult.array() });
     }*/
 
+    if (req.body.title === undefined || req.body.abstract === undefined ||
+      req.body.published === undefined || req.body.tags === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const title = req.body.title.trim();
     const abstract = req.body.abstract.trim();
     const tags = req.body.tags;
     const published = req.body.published;
-    //console.log(published);
-
     const newJournal = new Journal({ title, abstract, tags, published});
-    console.log(JSON.stringify(req.decoded._id, null, "\t"));
-    //Add Author to the Journal
-    const user = await User.findById( req.decoded._id ).exec();
-    // console.log(JSON.stringify(author, null, "\t"));
     newJournal.users[0] = req.decoded._id;
     const journal = await newJournal.save();
     new RolesJournal({ id_user: req.decoded._id, id_journal: journal._id, right: 'editor' }).save();
-
-    console.log(JSON.stringify(journal._id, null, "\t"));
-
-    return res.status(200).json({ success: true, journal: journal });
+    res.status(201).json({ success: true, journal: journal });
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
@@ -153,7 +144,7 @@ module.exports.deleteJournal = async (req, res, next) => {
     const query = { _id: req.params.id };
     await Journal.findOneAndRemove(query);
     await RolesJournal.deleteMany({ id_journal: req.params.id });
-    res.json({ success: true });
+    res.status(204).json({ success: true });
   } catch (e) {
     next(e);
   }
@@ -170,10 +161,12 @@ module.exports.deleteJournal = async (req, res, next) => {
  */
 module.exports.addArticleToJournal = async (req, res, next) => {
   try {
+    if (req.body.id_article === undefined)
+      throw { code: 422, message: 'Missing parameters.'}
     let query = { id_journal: req.params.id, right: 'editor' };
     const journalInfo = await RolesJournal.find(query);
     if (journalInfo.length === 0)
-      throw { success: false, message: "There are no editor on this journal." };
+      throw { code: 404, message: "Journals not found." };
     for (let i = 0, len = journalInfo.length; i < len; ++i)
       new RolesArticle({ id_user: journalInfo[i].id_user, id_article: req.body.id_article, right: 'editor'}).save()
     query = { _id: req.params.id }
@@ -213,7 +206,7 @@ module.exports.getJournalsUser = async (req, res, next) => {
     const query = { _id: req.params.id };
     if (req.params.role !== undefined)
       query.right = req.params.role;
-    const users = await RolesJournal.find(query);
+    const users = await RolesJournal.find(query).exec();
     res.json({ success: true, users: users });
   } catch (e) {
     next(e);
@@ -233,6 +226,9 @@ module.exports.setArticlePublish = async (req, res, next) => {
 
 module.exports.inviteUser = async (req, res, next) => {
   try {
+    if (req.body.link === undefined || req.body.msg === undefined ||
+      req.body.to === undefined || req.body.name === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     let senderId = req.body.link,
       senderMsg = req.body.msg,
       receiverEmail = req.body.to,
@@ -262,7 +258,14 @@ module.exports.inviteUser = async (req, res, next) => {
         if (req.params.right === 'user') {
           await mail.sendInvitationJournalUser(senderId, clientUrl)
         } else {
-          const userInfo = await User.findOne({ email: req.body.to });
+          let userInfo = await UserModel.findOne({ email: req.body.to });
+          if (!userInfo) {
+            req.body.email = receiverEmail;
+            req.body.password = shortid;
+            req.body.firstname = 'None';
+            req.body.lastname = 'None';
+            userInfo = await UserController.createGuest(req, res, next);
+          }
           const role = new RolesJournal({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
           await role.save();
           await mail.sendInvitationJournalAssociateEditor(senderId, clientUrl)
@@ -297,14 +300,14 @@ module.exports.followJournal = async (req, res, next) => {
 module.exports.addAssociateEditor = async (req,res,next) => {
   try{
     if (req.body.associate_editor === undefined)
-      throw { success: false, message: 'Missing parameters in body field.' };
-    const user = await User.findOne({ email: req.body.associate_editor.email }).exec();
+      throw { code: 422, message: 'Missing parameters.' };
+    const user = await UserModel.findOne({ email: req.body.associate_editor.email }).exec();
     const query = { _id: req.params.id };
     const toAdd = { $push: { users: user._id } };
     const options = { new: true };
     await Journal.findOneAndUpdate(query, toAdd, options);
     const newAE = await new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
-    res.json({ success: true});
+    res.json({ success: true, user: newAE});
   }
   catch (e) {
     next(e);
@@ -314,15 +317,14 @@ module.exports.addAssociateEditor = async (req,res,next) => {
 module.exports.removeAssociateEditor = async (req,res,next) => {
   try{
     if (req.body.associate_editor_id === undefined)
-      throw { success: false, message: 'Missing parameters in body field.' };
-    const user = await User.findOne({ _id: req.body.associate_editor_id }).exec();
-    //const query = { _id: req.params.id };
+      throw { code: 422, message: 'Missing parameters.' };
+    const user = await UserModel.findOne({ _id: req.body.associate_editor_id }).exec();
+    let query = { _id: req.params.id };
     //we keep the user in journal.user matrix
-    //const toRemove = { $pull: { users: user._id } };
-    //await Journal.findOneAndUpdate(query, toRemove);
-    const query = { id_user: user._id, id_journal: req.params.id }
-    const roles = await RolesJournal.findOneAndRemove( query );
-    //new RolesJournal({ id_user: user._id, id_journal: req.params.id, right: 'associate_editor' }).save();
+    const toRemove = { $pull: { users: user._id } };
+    await Journal.findOneAndUpdate(query, toRemove);
+    query = { id_user: user._id, id_journal: req.params.id }
+    await RolesJournal.findOneAndRemove( query );
     res.json({ success: true });
   }
   catch (e) {
@@ -330,18 +332,24 @@ module.exports.removeAssociateEditor = async (req,res,next) => {
   }
 }
 
-
+module.exports.updateTags = async (req, res, next) => {
+  try {
+    if (req.body.tags === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
+    const query = { _id: req.params.id };
+    const toReplace = { $set: { tags: req.body.tags } };
+    await Journal.findOneAndUpdate(query, toReplace);
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+};
 
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
-
-    const query = RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal');
-    await query.exec(function (err, docs) {
-      console.log('userFollowedJournals :: response :: ', docs)
-      res.json({success: true, journals: docs})
-    });
-
-  } catch (e){
+    const result = await RolesJournal.find({ id_user: req.decoded._id }).exec()
+    res.json({success: true, journals: result});
+  } catch (e) {
     console.log('userFollowedJournals :: error :: ',e)
     next(e)
   }

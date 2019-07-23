@@ -42,9 +42,7 @@ async function getArticleUsers (req, res, next) {
 async function getUserRoles (req, res, next) {
   try {
     const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
-    const response = await new Promise(async (resolve, reject) => {
-      resolve(await Roles.find(query));
-    });
+    const response = await Roles.find(query).exec();
     res.json({ success: true, role: response })
   } catch (e) {
     next(e);
@@ -135,9 +133,9 @@ async function modifyRight (req, res, next) {
 async function createRole (req, res, next) {
   try {
     if (!(req.body.id_user && req.body.id_article && req.body.right))
-      throw { code: 422, message: "Missing parameters in body field." }
+      throw { code: 422, message: "Missing parameters." }
     if (!['author', 'associate_editor', 'reviewer', 'guest'].includes(req.body.right))
-      throw { code: 404, message: "This right doesn't exist." }
+      throw { code: 404, message: "This right doesn't exist." };
     const id_user = req.body.id_user;
     const id_article = req.body.id_article;
     const right = req.body.right;
@@ -252,7 +250,7 @@ async function historicAuthor (req, res, next) {
     req.route = 'history';
     await doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -261,7 +259,7 @@ async function inviteAe (req, res, next) {
     req.route = 'inviteAssociateEditor';
     await doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 

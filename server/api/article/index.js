@@ -10,14 +10,14 @@ var router = express.Router()
 
 router.post('/', articlesController.createArticle);
 router.get('/', articlesController.getArticles);
-router.get('/mine/:id', articlesController.getMyArticles);
+router.get('/mine', articlesController.getMyArticles);
 
 router.use('/:id/:status', async function (req, res, next) {
   try {
     req.route = req.params.status;
     await rolesArticle.doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 });
 
@@ -28,7 +28,7 @@ router.use('/:id/addReviewer', async function (req, res, next) {
     req.route = 'inviteReviewer'
     await rolesArticle.doYouHaveThisRight(req, res, next)
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 
@@ -40,7 +40,7 @@ router.use('/:id', async function (req, res, next) {
     req.route = 'articleRead';
     await rolesArticle.doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 })
 
@@ -51,14 +51,12 @@ router.use('/:id', async function (req, res, next) {
     req.route = 'articleModify';
     await rolesArticle.doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
-})
+});
 
 router.post('/:id/version', articlesController.createVersion);
 router.put('/:id', articlesController.findArticlebyIdAndUpdate);
-// TODO set deprecated, to replace with PATCH /:id/
-router.put('/:id/authors', articlesController.updateAuthorOfArticle);
 router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
 router.put('/:id/removeAuthor', articlesController.removeAuthorOfArticle);
 router.patch('/:id/authorRights', articlesController.updateAuthorRights);
