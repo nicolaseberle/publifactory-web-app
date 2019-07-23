@@ -58,6 +58,7 @@ execution_time () {
   diff=$(expr "${date_end}" - "${DATE_BEGIN}")
   # shellcheck disable=SC2003
   second=$(expr "${diff}" % 60)
+  # shellcheck disable=SC2003
   minute=$(expr "${diff}" / 60)
   debug "Execution time : $minute minutes and $second second"
 }
@@ -110,8 +111,9 @@ stop () {
 }
 
 make_test () {
-  build_container
+  sudo docker-compose build mongo
   up_database
+  npm install --silent
   npm test
   stop
 }
