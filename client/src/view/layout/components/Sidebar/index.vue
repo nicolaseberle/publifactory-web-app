@@ -2,7 +2,7 @@
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <div class="logo-wrapper">
       <transition name="fade">
-         <router-link v-if="!isCollapse" to="/" exact>PubliFactory <el-tag style='transform:translate(8px,-8px)' color='#EE8E4A' effect="dark" type='warning' size="mini">Beta</el-tag></router-link>
+         <router-link v-if="!isCollapse" to="/" exact>PubliFactory <el-tag style='transform:translate(8px,-8px)' color='#EE8E4A' effect="dark" type='warning' size="mini">Alpha</el-tag></router-link>
       </transition>
          <router-link v-if="isCollapse" to="/" exact><div class='filter-logo' >P</div></router-link>
     </div>
