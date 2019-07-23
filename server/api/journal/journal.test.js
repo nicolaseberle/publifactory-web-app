@@ -279,9 +279,7 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success', 'users');
         expect(res.body.success).to.be.true;
         expect(res.body.users).to.be.an.instanceOf(Array);
-        console.log(':::USERS JOURNAL:::')
-        console.log(res.body.users)
-        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right', 'option')
+        expect(res.body.users).to.be.empty;
         done();
       })
   });
@@ -295,9 +293,7 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success', 'users');
         expect(res.body.success).to.be.true;
         expect(res.body.users).to.be.an.instanceOf(Array);
-        console.log(':::USERS JOURNAL:::')
-        console.log(res.body.users)
-        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
+        expect(res.body.users).to.be.empty;
         done();
       })
   });

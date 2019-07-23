@@ -177,8 +177,7 @@ describe('[FIGURE]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.contain.key('__v', '_id', 'data', 'infos', 'layout',
-          'option', 'script');
+        expect(res.body).to.contain.key('__v', '_id', 'data', 'infos', 'layout', 'script');
         done();
       });
   });
