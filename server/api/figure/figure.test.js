@@ -182,15 +182,4 @@ describe('[FIGURE]', function () {
         done();
       });
   });
-
-  it('GET -> get figure by wrong id', function (done) {
-    requester.get('/api/figure/5197c6b453cce2ec3a743811')
-      .set(headers)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status(200);
-        expect(res.body).to.be.empty;
-        done();
-      });
-  });
 });

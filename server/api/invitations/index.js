@@ -17,12 +17,11 @@ router.use(function(req, res, next) {
 
 router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async function (req, res, next) {
   try {
-    if(req.params.role === 'reviewer' || req.params.role  === 'collaborator') {
+    if (req.params.role === 'reviewer' || req.params.role  === 'collaborator') {
       req.route = `invite${req.params.role === 'reviewer' ? 'Reviewer' : 'Collaborator'}`;
       req.params.id = req.query.id_article;
       await rolesArticle.doYouHaveThisRight(req, res, next);
-    }
-    else {
+    } else {
       req.route = `invite${req.params.role} === 'associate_editor' ? 'AssociateEditor' : 'Editor'}`;
       req.params.id = req.query.id_journal;
       await rolesJournal.doYouHaveThisRight(req, res, next);

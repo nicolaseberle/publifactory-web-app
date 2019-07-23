@@ -170,8 +170,7 @@ describe('[COMMENTS]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.be.an.instanceOf(Array);
-        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -189,8 +188,7 @@ describe('[COMMENTS]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body).to.be.an.instanceOf(Array);
-        expect(res.body[0]).to.contain.key('creationDate', 'uuidComment', 'userId',
+        expect(res.body).to.contain.key('creationDate', 'uuidComment', 'userId',
           'anonymousFlag', 'commentFlag', 'content', 'reviewRequest', 'scores',
           'childComment');
         done();
@@ -198,7 +196,7 @@ describe('[COMMENTS]', function () {
   });
 
   it('GET -> nonexistent comment', function (done) {
-    requester.get(`/api/comments/${idArticle}/${uuidv4}`)
+    requester.get(`/api/comments/${idArticle}/d6fc8f78-f9f2-4328-809c-0257ad8b7808`)
       .set(headers)
       .end((req, res) => {
         expect(res).to.exist;

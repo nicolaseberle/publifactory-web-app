@@ -57,18 +57,11 @@ async function getArticleComment(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
   try {
-    const article = await Article.findOne({
-      _id: req.params.id,
-      comments: {
-        uuidComment: req.params.uuid
-      }
-    }).populate('comments').exec();
-    if (!article)
+    const comments = await Comment.findOne({ uuidComment: req.params.uuid });
+    const article = await Article.findOne({ _id: req.params.id });
+    if (!article || !comments || !article.comments.includes(comments._id))
       throw { code: 404, message: 'Comments not found.' };
-    const comments = await article.comments;
-    await comments.childComment
     //const comments = await Comment.paginate({ article }, { page, limit, lean: true });
-    renameObjectProperty(comments, 'docs', 'comments');
     res.json(comments);
   } catch (err) {
     throw err;

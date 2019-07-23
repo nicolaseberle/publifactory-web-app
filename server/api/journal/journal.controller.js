@@ -1,6 +1,7 @@
 'use strict';
 
-const User = require('../user/user.model')
+const UserModel = require('../user/user.model')
+const UserController = require('../user/user.controller')
 const Article = require('../article/article.model')
 const Journal = require('./journal.model')
 const RolesJournal = require('../roles/journal/roles.journal.model')
@@ -88,10 +89,8 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
         { $set: { title, abstract, published } },
         { new: true }
       );
-
     if (!journal)
-      throw { code: 404, message: 'Journal not found.' };
-
+      throw { code: 404, message: 'Journal not found.' }
     return res.json(journal);
   } catch (err) {
     return next(err);
@@ -258,7 +257,14 @@ module.exports.inviteUser = async (req, res, next) => {
         if (req.params.right === 'user') {
           await mail.sendInvitationJournalUser(senderId, clientUrl)
         } else {
-          const userInfo = await User.findOne({ email: req.body.to });
+          let userInfo = await UserModel.findOne({ email: req.body.to });
+          if (!userInfo) {
+            req.body.email = receiverEmail;
+            req.body.password = shortid;
+            req.body.firstname = 'None';
+            req.body.lastname = 'None';
+            userInfo = await UserController.createGuest(req, res, next);
+          }
           const role = new RolesJournal({ id_user: userInfo._id, id_journal: req.params.id, right: 'associate_editor' });
           await role.save();
           await mail.sendInvitationJournalAssociateEditor(senderId, clientUrl)
@@ -293,8 +299,8 @@ module.exports.followJournal = async (req, res, next) => {
 module.exports.addAssociateEditor = async (req,res,next) => {
   try{
     if (req.body.associate_editor === undefined)
-      throw { success: false, message: 'Missing parameters.' };
-    const user = await User.findOne({ email: req.body.associate_editor.email }).exec();
+      throw { code: 422, message: 'Missing parameters.' };
+    const user = await UserModel.findOne({ email: req.body.associate_editor.email }).exec();
     const query = { _id: req.params.id };
     const toAdd = { $push: { users: user._id } };
     const options = { new: true };
@@ -310,8 +316,8 @@ module.exports.addAssociateEditor = async (req,res,next) => {
 module.exports.removeAssociateEditor = async (req,res,next) => {
   try{
     if (req.body.associate_editor_id === undefined)
-      throw { success: false, message: 'Missing parameters.' };
-    const user = await User.findOne({ _id: req.body.associate_editor_id }).exec();
+      throw { code: 422, message: 'Missing parameters.' };
+    const user = await UserModel.findOne({ _id: req.body.associate_editor_id }).exec();
     let query = { _id: req.params.id };
     //we keep the user in journal.user matrix
     const toRemove = { $pull: { users: user._id } };
@@ -340,11 +346,14 @@ module.exports.updateTags = async (req, res, next) => {
 
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
-    const query = RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal');
-    await query.exec(function (err, docs) {
-      console.log('userFollowedJournals :: response :: ', docs)
-      res.json({success: true, journals: docs})
-    });
+    RolesJournal.find({ id_user: req.decoded._id })
+      .populate('id_journal')
+      .exec(function (err, docs) {
+        console.log(':::FOLLOWED JOURNAL:::\n');
+        console.log(docs);
+        console.log('\n');
+        res.json({success: true, journals: docs})
+      });
   } catch (e){
     console.log('userFollowedJournals :: error :: ',e)
     next(e)

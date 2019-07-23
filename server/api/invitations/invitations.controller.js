@@ -46,26 +46,25 @@ async function createInvitation(req, res, next) {
       "senderMsg": senderMsg,
       "senderName": senderName
     });
-    const invitation = await newInvitation.save(async (error, result) => {
-      if (error) {
-        return console.log(error);
-      } else {
-        //we send the email to invite the new author to access
-        const mail = new Email(receiverEmail);
-        if(req.params.role === 'collaborator' || req.params.role === 'reviewer') {
-        const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
-        req.params.role === 'collaborator' ?
-          await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
-          await mail.sendInvitationReviewer(req.body.sender, clientUrl);
-        } else {
-          const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
-          req.params.role === 'editor' ?
-            await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
-            await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
-        }
-      }
-    })
+    console.log("HERRE")
+    await newInvitation.save();
+    console.log("HERRE")
+    const mail = new Email(receiverEmail);
+    console.log("HERRE")
+    if (req.params.role === 'collaborator' || req.params.role === 'reviewer') {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'collaborator' ?
+        await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
+        await mail.sendInvitationReviewer(req.body.sender, clientUrl);
+    } else {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'editor' ?
+        await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
+        await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
+    }
+    console.log("HERRE")
     const receiver = await User.findOne({ email: receiverEmail }).exec()
+    console.log("HERRE")
     res.json(receiver)
   } catch (err) {
     next(err);

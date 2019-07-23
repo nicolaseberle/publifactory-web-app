@@ -42,9 +42,7 @@ async function getArticleUsers (req, res, next) {
 async function getUserRoles (req, res, next) {
   try {
     const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
-    const response = await new Promise(async (resolve, reject) => {
-      resolve(await Roles.find(query));
-    });
+    const response = await Roles.find(query).exec();
     res.json({ success: true, role: response })
   } catch (e) {
     next(e);

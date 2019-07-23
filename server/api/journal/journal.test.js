@@ -195,7 +195,7 @@ describe('[JOURNAL]', function () {
       .end((req, res) => {
         expect(res).to.exist;
         expect(res).to.have.status(200);
-        expect(res.body.journal).to.contain.key('_id', 'creationDate', 'abstract',
+        expect(res.body).to.contain.key('_id', 'creationDate', 'abstract',
           'published', 'status', 'doi', 'slug', 'color_1', 'color_2', 'users',
           'tags', 'content');
         done();
@@ -262,7 +262,10 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success', 'users');
         expect(res.body.success).to.be.true;
         expect(res.body.users).to.be.an.instanceOf(Array);
-        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
+        console.log(':::USERS JOURNAL:::')
+        console.log(res.body.users)
+        if (res.body.users.length)
+          expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
         done();
     })
   });
@@ -276,7 +279,9 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success', 'users');
         expect(res.body.success).to.be.true;
         expect(res.body.users).to.be.an.instanceOf(Array);
-        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
+        console.log(':::USERS JOURNAL:::')
+        console.log(res.body.users)
+        expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right', 'option')
         done();
       })
   });
@@ -290,6 +295,8 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success', 'users');
         expect(res.body.success).to.be.true;
         expect(res.body.users).to.be.an.instanceOf(Array);
+        console.log(':::USERS JOURNAL:::')
+        console.log(res.body.users)
         expect(res.body.users[0]).to.contain.key('id_article', 'id_user', '_id', 'right')
         done();
       })
@@ -418,17 +425,6 @@ describe('[JOURNAL]', function () {
     })
   });
 
-  it('DELETE -> remove journal', function (done) {
-    requester.delete('/api/journals/' + idJournal + '/removeJournal')
-      .set(headers)
-      .end((req, res) => {
-        expect(res).to.exist;
-        expect(res).to.have.status(204);
-        expect(res.body).to.be.empty;
-        done();
-    })
-  });
-
   it('PATCH -> update tags', function (done) {
     body = {
       tags: ['Dev', 'test', 'unit']
@@ -442,7 +438,7 @@ describe('[JOURNAL]', function () {
         expect(res.body).to.contain.key('success');
         expect(res.body.success).to.be.true;
         done();
-    })
+      })
   });
 
   it('PATCH -> update tags', function (done) {
@@ -452,11 +448,22 @@ describe('[JOURNAL]', function () {
       .send(body)
       .end((req, res) => {
         expect(res).to.exist;
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(422);
         expect(res.body).to.contain.key('success', 'message');
         expect(res.body.success).to.be.false;
         expect(res.body.message).to.be.equal('Missing parameters.');
         done();
       });
+  });
+
+  it('DELETE -> remove journal', function (done) {
+    requester.delete('/api/journals/' + idJournal + '/removeJournal')
+      .set(headers)
+      .end((req, res) => {
+        expect(res).to.exist;
+        expect(res).to.have.status(204);
+        expect(res.body).to.be.empty;
+        done();
+    })
   });
 });

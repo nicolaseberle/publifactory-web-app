@@ -34,11 +34,9 @@ const DEFAULT_LIMIT = 10;
 
 exports.getFigure = async (req, res, next) => {
   try {
-    const figureId = req.params.id.trim()
-    let figure = await Figure.findById(figureId).lean();
-    if (figure === undefined || figure.length === 0) {
+    let figure = await Figure.findOne({ _id: req.params.id });
+    if (figure === undefined || figure.length === 0)
       figure = []
-    }
     res.json(figure);
   } catch (err) {
     next(err);

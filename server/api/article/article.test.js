@@ -324,10 +324,9 @@ describe('[ARTICLE]', function () {
       });
   });
 
-  it('DELETE -> remove author from an article', function (done) {
+  it('DELETE -> remove author from an article', function () {
     return new Promise(async resolve => {
       const user = await UserModel.findOne({email: 'michael@example.com'})
-      console.log(user)
       body = {
         authorId: user._id
       };
@@ -340,7 +339,7 @@ describe('[ARTICLE]', function () {
           expect(res.body).to.be.empty;
           resolve()
         });
-    }).then(done)
+    })
   });
 
   it('DELETE -> remove author from an article with missing parameters', function (done) {
@@ -385,19 +384,16 @@ describe('[ARTICLE]', function () {
       });
   });
 
-  it('DELETE -> delete article', function (done) {
-    requester.delete('/api/articles/' + idArticle)
-      .set(headers)
-      .end((req, res) => {
-        console.log('HEREEEE')
-        expect(res).to.exist;
-        console.log('HEREEEE')
-        expect(res).to.have.status(204);
-        console.log('HEREEEE')
-        expect(res.body).to.be.empty;
-        console.log('HEREEEE')
-        done();
-        console.log('HEREEEE')
-      });
+  it('DELETE -> delete article', function () {
+    return new Promise(resolve => {
+      requester.delete('/api/articles/' + idArticle)
+        .set(headers)
+        .end((req, res) => {
+          expect(res).to.exist;
+          expect(res).to.have.status(204);
+          expect(res.body).to.be.empty;
+          resolve()
+        });
+    })
   });
 });
