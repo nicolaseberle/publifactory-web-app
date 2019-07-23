@@ -1,9 +1,9 @@
 FROM node:latest
 
 # Import pip and python packages needed
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python2 get-pip.py && \
-    python3 get-pip.py
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+RUN python2 get-pip.py
+RUN python3 get-pip.py
 RUN python2 -m pip install --upgrade pip
 RUN python2 -m pip install --no-cache-dir numpy plotly pandas
 RUN python3 -m pip install --upgrade pip

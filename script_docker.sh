@@ -50,7 +50,7 @@ up_database () {
   sudo docker-compose up -d mongo
   debug 'Populating database'
   # shellcheck disable=SC2046
-  sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive' < db.dump
+  sudo cat db.dump | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
   echo -ne '#################         (80%)\r'
 }
 
