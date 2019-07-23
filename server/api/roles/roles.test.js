@@ -62,23 +62,22 @@ describe('[ROLES]', function () {
   });
 
   describe('[ARTICLES]', function () {
-    it('GET -> get my roles', function () {
-      return new Promise(resolve => {
-        requester.get(`/api/roles/article/user`)
-          .set(headers)
-          .end((req, res) => {
-            expect(res).to.exist;
-            expect(res).to.have.status(200);
-            expect(res.body).to.contain.key('success', 'role');
-            expect(res.body.success).to.be.true;
-            expect(res.body.role).to.be.an.instanceOf(Array);
-            expect(res.body.role[0]).to.contain.key('id_user', 'id_article', '_id', 'right');
-          })
-      })
+    it('GET -> get my roles', function (done) {
+      requester.get(`/api/roles/article/user/all`)
+        .set(headers)
+        .end((req, res) => {
+          expect(res).to.exist;
+          expect(res).to.have.status(200);
+          expect(res.body).to.contain.key('success', 'role');
+          expect(res.body.success).to.be.true;
+          expect(res.body.role).to.be.an.instanceOf(Array);
+          expect(res.body.role[0]).to.contain.key('id_user', 'id_article', '_id', 'right');
+          done()
+        })
     });
 
     it('GET -> get users roles', function (done) {
-      requester.get(`/api/roles/article/user/${userId}`)
+      requester.get(`/api/roles/article/user/all/${userId}`)
         .set(headers)
         .end((req, res) => {
           expect(res).to.exist;
@@ -144,23 +143,21 @@ describe('[ROLES]', function () {
   });
 
   describe('[JOURNALS]', function() {
-    it('GET -> get my roles', function () {
-      return new Promise(resolve => {
-        requester.get(`/api/roles/journal/user`)
-          .set(headers)
-          .end((req, res) => {
-            expect(res).to.exist;
-            expect(res).to.have.status(200);
-            expect(res.body).to.contain.key('success', 'role');
-            expect(res.body.success).to.be.true;
-            expect(res.body.role).to.be.an.instanceOf(Array);
-            expect(res.body.role[0]).to.contain.key('id_user', 'id_journal', '_id', 'right');
-          })
-      })
+    it('GET -> get my roles', function (done) {
+      requester.get(`/api/roles/journal/user/all`)
+        .set(headers)
+        .end((req, res) => {
+          expect(res).to.exist;
+          expect(res).to.have.status(200);
+          expect(res.body).to.contain.key('success', 'role');
+          expect(res.body.success).to.be.true;
+          expect(res.body.role).to.be.an.instanceOf(Array);
+          done()
+        })
     });
 
     it('GET -> get users roles', function (done) {
-      requester.get(`/api/roles/journal/user/${userId}`)
+      requester.get(`/api/roles/journal/user/all/${userId}`)
         .set(headers)
         .end((req, res) => {
           expect(res).to.exist;
@@ -186,7 +183,7 @@ describe('[ROLES]', function () {
     });
 
     it('GET -> get editors on an article', function (done) {
-      requester.get(`/api/roles/article/all/${idJournal}/editor`)
+      requester.get(`/api/roles/journal/all/${idJournal}/editor`)
         .set(headers)
         .end((req, res) => {
           expect(res).to.exist;

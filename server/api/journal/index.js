@@ -15,6 +15,7 @@ router.post('/:id/article', journalController.addArticleToJournal);
 router.delete('/:id/article/:id_article', roles.owner, journalController.removeArticleFromJournal);
 router.put('/:id', roles.administration, journalController.findJournalByIdAndUpdate);
 router.patch('/:id/tags', roles.administration, journalController.updateTags)
+router.get('/followed/all', journalController.userFollowedJournals)
 router.use('/:id/removeJournal', async function (req, res, next) {
   try {
     req.route = 'removeJournal'
@@ -61,8 +62,5 @@ router.use('/:id/follow', async function (req, res, next) {
   }
 })
 router.post('/:id/follow', journalController.followJournal)
-
-router.get('/followed', journalController.userFollowedJournals)
-
 
 module.exports = router;

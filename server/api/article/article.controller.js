@@ -235,10 +235,9 @@ module.exports.removeAuthorOfArticle = async function (req, res, next) {
   try {
     if (req.body.authorId === undefined)
       throw { code: 422, message: 'Missing parameters.' };
-    const authorToRemove = await User.findById( req.body.authorId  ).exec();
     await Article.findOneAndUpdate(
         { _id: req.params.id },
-        { $pull: { authors: { _id: authorToRemove._id } } },
+        { $pull: { authors: { _id: req.body.authorId } } },
         {multi: false}
       );
     const query = { id_user: req.body.authorId, id_article: req.params.id };

@@ -24,7 +24,7 @@ describe('[ARTICLE]', function () {
   };
 
   let body, query = {};
-  let idArticle = '';
+  let idArticle, userToRemove = '';
 
   before('Retrieve token', function (done) {
     const user = {
@@ -47,7 +47,10 @@ describe('[ARTICLE]', function () {
           fs.unlinkSync(path.join(__dirname, '../../config/test.json'));
           fs.writeFileSync(path.join(__dirname, '../../config/test.json'), JSON.stringify(config));
         }
-        done();
+        UserModel.findOne({email: 'michael@example.com'}).exec(function (err, doc) {
+          userToRemove = doc._id;
+          done();
+        });
       });
   });
 
@@ -324,25 +327,7 @@ describe('[ARTICLE]', function () {
       });
   });
 
-  it('DELETE -> remove author from an article', function () {
-    return new Promise(async resolve => {
-      const user = await UserModel.findOne({email: 'michael@example.com'})
-      body = {
-        authorId: user._id
-      };
-      requester.put('/api/articles/' + idArticle + '/removeAuthor')
-        .set(headers)
-        .send(body)
-        .end((req, res) => {
-          expect(res).to.exist;
-          expect(res).to.have.status(204);
-          expect(res.body).to.be.empty;
-          resolve()
-        });
-    })
-  });
-
-  it('DELETE -> remove author from an article with missing parameters', function (done) {
+  it('PUT -> remove author from an article with missing parameters', function (done) {
     body = {};
     requester.put('/api/articles/' + idArticle + '/removeAuthor')
       .set(headers)

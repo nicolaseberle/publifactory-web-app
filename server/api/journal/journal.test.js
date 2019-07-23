@@ -396,7 +396,7 @@ describe('[JOURNAL]', function () {
   });
 
   it('GET -> my followed journals', function (done) {
-    requester.get('/api/journals/followed')
+    requester.get('/api/journals/followed/all')
       .set(headers)
       .end((req, res) => {
         expect(res).to.exist;

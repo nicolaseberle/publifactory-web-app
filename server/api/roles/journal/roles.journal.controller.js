@@ -62,7 +62,7 @@ async function getRoleById (req, res, next) {
 async function getUserRoles (req, res, next) {
   try {
     const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
-    const response = await RolesJournal.find(query);
+    const response = await RolesJournal.find(query).exec();
     res.json({ success: true, role: response })
   } catch (e) {
     next(e);

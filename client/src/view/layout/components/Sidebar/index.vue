@@ -51,7 +51,7 @@
   methods:{
     ...mapActions(['updateRoutes']),
     findFollowedJournals () {
-      axios.get('/api/journals/followed', {
+      axios.get('/api/journals/followed/all', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.followedJournals = list.data.journals
