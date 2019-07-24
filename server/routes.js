@@ -20,7 +20,6 @@ module.exports = function (app) {
     jwtCheck(req, res, next);
   })
 
-  app.use('/api/things', require('./api/thing'))
   app.use('/api/articles', require('./api/article'))
   app.use('/api/journals', require('./api/journal'))
   app.use('/api/comments', require('./api/comment'))
@@ -31,29 +30,22 @@ module.exports = function (app) {
   app.use('/api/pictures', require('./api/picture'))
   app.use('/api/history', require('./api/article/history'))
 
-  // All undefined asset or api routes should return a 404
-  app.route('/:url(api|auth|static|public)/*').get(errors[404])
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next) {
+    next({ code: 404, message: 'This route does not exist.' });
+  });
 
-  // All other routes should redirect to the index.html
-  if (config.serverFrontend) {
-    app.route('/*').get(function (req, res) {
-      res.sendFile(path.join(config.frontend, '/index.html'))
-    })
-  }
-
-  // TODO implement error handling and replace old responses of every controller
-  /*
+  // error handling
   app.use(function(err, req, res, next) {
     try {
       res.status(err.code ? err.code : 500).json({
         success: false,
-        message: err.message
+        message: err.message ? err.message : "Something went wrong"
       });
     } catch (e) {
       return res.status(500).json({
         success : false,
-        error : "Unknown server error."});
+        message : "Unknown server error."});
     }
   });
-  */
-}
+};

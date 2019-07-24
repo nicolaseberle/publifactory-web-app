@@ -24,6 +24,9 @@ const Email = require('../email/email.controller');
 
 async function createInvitation(req, res, next) {
   try {
+    if (req.body.link === undefined || req.body.msg === undefined ||
+      req.body.to === undefined || req.body.name === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     let senderId = req.body.link,
         senderMsg = req.body.msg,
         receiverEmail = req.body.to,
@@ -43,26 +46,25 @@ async function createInvitation(req, res, next) {
       "senderMsg": senderMsg,
       "senderName": senderName
     });
-    const invitation = await newInvitation.save(async (error, result) => {
-      if (error) {
-        return console.log(error);
-      } else {
-        //we send the email to invite the new author to access
-        const mail = new Email(receiverEmail);
-        if(req.params.role === 'collaborator' || req.params.role === 'reviewer') {
-        const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
-        req.params.role === 'collaborator' ?
-          await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
-          await mail.sendInvitationReviewer(req.body.sender, clientUrl);
-        } else {
-          const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
-          req.params.role === 'editor' ?
-            await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
-            await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
-        }
-      }
-    })
+    console.log("HERRE")
+    await newInvitation.save();
+    console.log("HERRE")
+    const mail = new Email(receiverEmail);
+    console.log("HERRE")
+    if (req.params.role === 'collaborator' || req.params.role === 'reviewer') {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'collaborator' ?
+        await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
+        await mail.sendInvitationReviewer(req.body.sender, clientUrl);
+    } else {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'editor' ?
+        await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
+        await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
+    }
+    console.log("HERRE")
     const receiver = await User.findOne({ email: receiverEmail }).exec()
+    console.log("HERRE")
     res.json(receiver)
   } catch (err) {
     next(err);
@@ -82,15 +84,8 @@ async function getMyInvitations (req, res, next) {
   try {
     let link=req.query.link
     console.log(link)
-    const invitations = await Invitation.findOne({ senderId: link }, (error, doc) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(doc);
-          res.status(200).send(doc.rows);
-        }
-      }
-    );
+    const invitations = await Invitation.findOne({ senderId: link });
+    res.json(invitations);
   } catch (err) {
     return next(err);
   }
@@ -132,7 +127,7 @@ async function checkInvitation(req, res, next) {
     invitation.senderLastname = _sender.lastname
     invitation.senderFirstname = _sender.firstname
 
-    return res.status(200).json(invitation);
+    return res.json(invitation);
 
   } catch (err) {
     return next(err);

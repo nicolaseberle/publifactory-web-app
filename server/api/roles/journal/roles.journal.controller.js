@@ -62,7 +62,7 @@ async function getRoleById (req, res, next) {
 async function getUserRoles (req, res, next) {
   try {
     const query = { id_user: (req.params.id ? req.params.id : req.decoded._id) };
-    const response = await RolesJournal.find(query);
+    const response = await RolesJournal.find(query).exec();
     res.json({ success: true, role: response })
   } catch (e) {
     next(e);
@@ -91,7 +91,7 @@ async function invite (req, res, next) {
     } else
       next()
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -100,7 +100,7 @@ async function publish (req, res, next) {
     req.route = 'publish'
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -110,7 +110,7 @@ async function owner (req, res, next) {
     req.params.id_article = req.params.id_article || req.body.id_article
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -119,7 +119,7 @@ async function administration (req, res, next) {
     req.route = 'admin'
     await doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
 }
 
@@ -180,7 +180,7 @@ async function doYouHaveThisRight (req, res, next) {
     console.error(e);
     // Throw to catch the error and transmit it to the router.use route.
     // The router.use will res.status(e.code).json({ success: false, message: "THE ERROR MESSAGE" });
-    throw e;
+    throw { code: 403, message: e.message };
   }
 }
 

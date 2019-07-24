@@ -290,7 +290,7 @@ export default {
   },
   methods: {
     fetchReport(id) {
-      axios.get('/api/comments/'  + id + '/comments', {
+      axios.get('/api/comments/'  + id, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.reports = response.data
@@ -360,7 +360,7 @@ export default {
         this.editReport = ''
         this.reviewRequest = ''
       }
-      axios.post('/api/comments/'  + this.id + '/comment', newComment, {
+      axios.post('/api/comments/'  + this.id, newComment, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(response => {

@@ -1,18 +1,10 @@
 'use strict';
 
-var User = require('../user/user.model');
-var Article = require('../article/article.model');
-var Data = require('../data/data.model');
 var Figure = require('./figure.model');
 
 const fs = require('fs');
-const path = require('path');
 let {PythonShell} = require('python-shell');
 const rscript = require('js-call-r');
-
-var validationError = function (res, err) {
-  return res.status(422).json(err)
-}
 
 /**
  * Get list of articles
@@ -41,20 +33,13 @@ const DEFAULT_LIMIT = 10;
  */
 
 exports.getFigure = async (req, res, next) => {
-
-
   try {
-    let data = [];
-    console.log("getFigure");
-    const figureId = req.params.id.trim()
-    let figure = await Figure.findById(figureId).lean();
-    if (figure === undefined) {
+    let figure = await Figure.findOne({ _id: req.params.id });
+    if (figure === undefined || figure.length === 0)
       figure = []
-    }
-    return res.status(200).json(figure);
+    res.json(figure);
   } catch (err) {
-
-    return next(err);
+    next(err);
   }
 };
 
@@ -67,22 +52,21 @@ exports.getFigure = async (req, res, next) => {
  */
 module.exports.createFigure = async (req, res, next) => {
   try {
+    if (req.body.data === undefined || req.body.layout === undefined ||
+      req.body.option === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const data = req.body.data;
     const layout = req.body.layout;
     const option = req.body.option;
-    console.log("createFigure");
     const newFigure = new Figure({
       data: data,
       layout: layout,
       option: option
     });
-
     const figure = await newFigure.save();
-    console.log(JSON.stringify(figure._id, null, "\t"));
-
-    return res.status(200).json(figure._id);
+    res.status(201).json(figure._id);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
@@ -95,6 +79,10 @@ module.exports.createFigure = async (req, res, next) => {
  */
 module.exports.updateFigure = async (req, res, next) => {
   try {
+    if (req.body.data === undefined || req.body.layout === undefined ||
+      req.body.option === undefined || req.body.script === undefined ||
+      req.body.infos === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     const data = req.body.data;
     const layout = req.body.layout;
     const option = req.body.option;
@@ -109,9 +97,9 @@ module.exports.updateFigure = async (req, res, next) => {
 
     if (!updatedFigure) return res.sendStatus(404);
 
-    return res.status(200).json(updatedFigure._id);
+    res.json(updatedFigure._id);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
@@ -127,7 +115,7 @@ module.exports.updateFigure = async (req, res, next) => {
 module.exports.scripts = async (req, res, next) => {
   try {
     if (req.body.content === undefined || (req.params.script === 'python' && req.body.version === undefined))
-      throw { code: 422, message: "Missing parameters in body field." };
+      throw { code: 422, message: "Missing parameters." };
     req.params.script === 'r' ? rExec(req, res, next) : pythonExec(req, res, next);
   } catch (e) {
     next(e);
@@ -145,8 +133,6 @@ module.exports.scripts = async (req, res, next) => {
  */
 async function pythonExec(req, res, next) {
   try {
-    console.log(process.env.DOCKER)
-    console.log(typeof process.env.DOCKER)
     const version = `python${req.body.version}`
     const options = {
       mode: 'text',
@@ -171,7 +157,6 @@ async function pythonExec(req, res, next) {
     await fs.unlinkSync((process.env.DOCKER === 'true' ? '/tmp/' : './') + 'example.json');
     res.json({ success: true, values: json });
   } catch (e) {
-    console.log(e)
     res.status(500).json({ success: false, message: e})
   }
 }

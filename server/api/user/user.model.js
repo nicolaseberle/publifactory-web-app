@@ -3,6 +3,7 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var crypto = require('crypto')
+const bcrypt = require('bcrypt');
 
 var UserSchema = new Schema({
   name: {
@@ -86,7 +87,7 @@ UserSchema
   .virtual('password')
   .set(function (password) {
     this._password = password
-    this.salt = this.makeSalt()
+    this.salt = 16
     this.hashedPassword = this.encryptPassword(password)
   })
   .get(function () {
@@ -172,26 +173,6 @@ UserSchema
  * Methods
  */
 UserSchema.methods = {
-  /**
-   * Authenticate - check if the passwords are the same
-   *
-   * @param {String} plainText
-   * @return {Boolean}
-   * @api public
-   */
-  authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashedPassword
-  },
-
-  /**
-   * Make salt
-   *
-   * @return {String}
-   * @api public
-   */
-  makeSalt: function () {
-    return crypto.randomBytes(16).toString('base64')
-  },
 
   /**
    * Encrypt password
@@ -201,9 +182,7 @@ UserSchema.methods = {
    * @api public
    */
   encryptPassword: function (password) {
-    if (!password || !this.salt) return ''
-    var salt = new Buffer(this.salt, 'base64')
-    return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('base64')
+    return !password || !this.salt ? '' : bcrypt.hashSync(password, 16);
   }
 }
 

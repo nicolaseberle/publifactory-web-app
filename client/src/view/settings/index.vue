@@ -348,7 +348,7 @@
       this.imagecropperShow = false
     },
     onSave () {
-      this.updateUser({id: this.userId,
+      this.updateUser({
                   firstname: this.form.firstname,
                   lastname: this.form.lastname,
                   field: this.form.field,
@@ -369,7 +369,6 @@
       this.$refs.formPassword.validate(valid => {
         if (valid) {
           this.changePassword({
-            id: this.userId,
             oldPassword:this.formPassword.oldPassword,
             newPassword:this.formPassword.newPassword,
             token:this.accessToken
