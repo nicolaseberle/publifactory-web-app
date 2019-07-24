@@ -16,5 +16,6 @@ exports.searchReviewers = async (req, res, next) => {
   axios.get('http://35.241.170.253:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
 }
 exports.getInfoFile =  = async (req, res, next) => {
-  axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((res)=>console.log("uploadSectionFile :: " , res))
+  await axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', , { headers: { 'Content-Type': 'multipart/form-data' } })
+
 }

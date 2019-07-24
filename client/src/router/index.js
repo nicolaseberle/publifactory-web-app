@@ -117,12 +117,13 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'applications',
   // hidden: true,
-  meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true },
+  meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true , skipAuth: true},
   children: [
     {
       path: 'reviewermatcher',
       name: 'reviewer_matcher',
-      meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
+      meta: { title: 'reviewer_matcher', icon: 'network', noCache: true,skipAuth: true },
+
       component: () => import('../view/applications/reviewermatcher/index.vue')
     },/*
     {
