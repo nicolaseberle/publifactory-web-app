@@ -208,9 +208,6 @@
       this.fetchEditor()
       this.$forceUpdate();
     }
-    addMonitor () {
-      
-    }
   },
   methods:{
     fetch () {
@@ -248,6 +245,9 @@
     },
     addAssociateEditor () {
       this.diagAssociateEditorVisible = true
+    },
+    addMonitor () {
+
     },
     removeJournal(journal_id) {
       this.$confirm(`Are you sure to remove the journal and the collection of articles`, this.$t('confirm.title'), {
