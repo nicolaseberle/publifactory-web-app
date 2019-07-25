@@ -62,6 +62,20 @@
           </li>
         </div>
         <div class='details'>
+          <h2>Monitoring Committee</h2>
+          <div style='float: right;margin-bottom:3px'>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addMonitor()' circle></el-button>
+            <!--  <el-button style='margin-top:30px;' v-on:click="applyToJournal(journal._id)" type="primary" plain round mini>Apply</el-button>-->
+          </div>
+          <li>
+            <el-row>
+              <div v-if='monitors.length==0' style='color:#e8e8e8'>None</div>
+              <div v-for='monitor in monitors'>{{monitor.id_user.firstname}} {{monitor.id_user.lastname}}</div>
+
+            </el-row>
+          </li>
+        </div>
+        <div class='details'>
           <li>
             Licence: <a href='https://creativecommons.org/licenses/by-nd/4.0/'><u>CC BY-ND 4.0</u></a>
           </li>
@@ -144,6 +158,7 @@
       journal: '',
       editors: '',
       associate_editors: '',
+      monitors: '',
       articles: [
         {_id: '#MLKSdmlqjsdnml',
         title:'First report on the effective intraperitoneal therapy of insulin-dependent diabetes mellitus in pet dogs using “Neo-Islets”, aggregates of adipose stem and pancreatic islet cells',
@@ -192,6 +207,9 @@
     addAssociateEditor () {
       this.fetchEditor()
       this.$forceUpdate();
+    }
+    addMonitor () {
+      
     }
   },
   methods:{

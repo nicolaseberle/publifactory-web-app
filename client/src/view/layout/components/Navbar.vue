@@ -8,6 +8,13 @@
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
 
+        <el-switch
+          v-model="flag_user"
+          inactive-text="User view"
+          active-text="Editor view"
+          style='vertical-align:middle'>
+        </el-switch>
+
         <el-tooltip :content="$t('navbar.nightmode')" effect="dark" placement="bottom">
           <nightmode class="nightmode right-menu-item"/>
         </el-tooltip>
@@ -70,6 +77,11 @@ export default {
     // SizeSelect,
     LangSelect
   },
+  data () {
+    return {
+      flag_user: false
+    }
+  },
   computed: {
     ...mapGetters([
       'username',
@@ -106,3 +118,10 @@ export default {
   }
 }
 </script>
+<style>
+.el-switch{
+  display: block;
+  margin-bottom: 25px;
+  margin-right: 30px;
+}
+</style>
