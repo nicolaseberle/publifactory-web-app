@@ -24,12 +24,6 @@ services:
       - backend
       - frontend
 
-  ssh_tunnel:
-    build: ./.tunnel/
-    networks:
-      - backend
-      - frontend
-
   mongo:
     image: mongo
     restart: always
@@ -59,28 +53,6 @@ services:
       - api
     networks:
       - frontend
-
-  client_prod:
-    restart: always
-    build:
-      context: ./
-      dockerfile: client.prod.dockerfile
-    volumes:
-      - ./:/src/app/
-      - /src/app/node_modules
-    environment:
-      - NODE_OPTIONS="–max-old-space-size=4096"
-      - PORT=9001
-      - NODE_ENV=production
-      - BASE_API=api
-      - SITE_IP="35.246.243.12"
-    depends_on:
-      - api
-    links:
-      - api
-    networks:
-      - frontend
-
 
 networks:
   backend:

@@ -1,0 +1,26 @@
+server {
+  listen 80;
+
+  root /usr/share/nginx/html;
+
+  index index.html;
+
+  server_name localhost;
+
+  location / {
+    try_files $uri $uri/ @rewrites;
+  }
+
+  location /static {
+    root /static;
+  }
+
+  location @rewrites {
+    rewrite ^(.+)$ /index.html last;
+  }
+
+  location /api/ {
+    proxy_pass http://127.0.0.1:4000;
+    rewrite ^/api(.*) /$1 break;
+  }
+}
