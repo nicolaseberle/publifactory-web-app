@@ -1,26 +1,55 @@
+upstream backend_api {
+	 server 0.0.0.0:4000;
+}
+
+
 server {
   listen 80;
 
-  root /usr/share/nginx/html;
+	gzip                on;
+  gzip_proxied        any;
+  gzip_http_version   1.1;
+  gzip_comp_level     5;
+  gzip_min_length     256;
+  gzip_vary           on;
+  gzip_types text/css text/javascript text/xml text/plain application/javascript application/x-javascript application/json;
+
+
+  root /home/nicolas/workspace/publifactory-project/dist/;
 
   index index.html;
 
   server_name localhost;
 
   location / {
-    try_files $uri $uri/ @rewrites;
+		try_files $uri $uri/ =404;
   }
 
   location /static {
-    root /static;
   }
 
-  location @rewrites {
-    rewrite ^(.+)$ /index.html last;
+  location /js {
+  }
+
+  location /css {
+    root /home/nicolas/workspace/publifactory-project/dist/css/;
   }
 
   location /api/ {
-    proxy_pass http://127.0.0.1:4000;
-    rewrite ^/api(.*) /$1 break;
+    include proxy_params;
+    proxy_pass http://backend_api;
+    proxy_redirect     off;
+
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+
   }
+
+	location ~ \.css {
+	    add_header  Content-Type    text/css;
+	}
+	location ~ \.js {
+	    add_header  Content-Type    application/x-javascript;
+	}
+
 }

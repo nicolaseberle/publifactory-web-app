@@ -169,6 +169,7 @@
     "chai-match-pattern": "^1.1.0",
     "compression-webpack-plugin": "~2.0",
     "connect-history-api-fallback": "^1.3.0",
+    "copy-webpack-plugin": "^5.0.4",
     "countable": "^3.0.1",
     "cross-env": "^5.2.0",
     "cross-spawn": "^5.1.0",

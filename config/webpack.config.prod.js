@@ -12,6 +12,7 @@ const helpers                  = require('./helpers');
 const commonConfig             = require('./webpack.config.common');
 const isProd                   = process.env.NODE_ENV === 'production';
 const environment              = isProd ? require('./env/prod.env') : require('./env/staging.env');
+const CopyWebpackPlugin        = require('copy-webpack-plugin');
 
 const webpackConfig = merge(commonConfig, {
     mode: 'production',
