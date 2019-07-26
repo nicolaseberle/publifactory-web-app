@@ -21,7 +21,9 @@ RUN mkdir /src
 COPY ./ /src
 WORKDIR /src
 ADD ./package.json /src/package.json
-RUN npm install --silent
+RUN npm i -g node-gyp bcrypt
+RUN npm i --save bcrypt
+RUN npm i --silent
 
 EXPOSE 4000
 

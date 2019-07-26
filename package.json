@@ -25,7 +25,7 @@
     "server-prod": "node server/app.js",
     "test": "./node_modules/.bin/mocha ./server/api --recursive --reporter nyan --silent --exit",
     "staging": "./node_modules/.bin/cross-env NODE_ENV=staging webpack",
-    "build": "./node_modules/.bin/cross-env NODE_ENV=production webpack",
+    "build": "NODE_ENV=production ./node_modules/.bin/cross-env webpack",
     "svgo": "svgo -f ./client/src/icons/svg --config=./client/src/icons/svgo.yml"
   },
   "dependencies": {
