@@ -200,6 +200,12 @@
     }
   },
   methods: {
+    destroy() {
+      this.$destroy()
+    },
+    beforeDestroy() {
+      this.$destroy()
+    },
     handleTabsEdit (targetName, action) {
       if (action === 'add') {
         let newTabName = ++this.tabIndex + '';
