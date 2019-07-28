@@ -12,7 +12,7 @@ const helpers                  = require('./helpers');
 const commonConfig             = require('./webpack.config.common');
 const isProd                   = process.env.NODE_ENV === 'production';
 const environment              = isProd ? require('./env/prod.env') : require('./env/staging.env');
-const CopyWebpackPlugin        = require('copy-webpack-plugin');
+const CopyPlugin               = require('copy-webpack-plugin');
 
 const webpackConfig = merge(commonConfig, {
     mode: 'production',
@@ -52,6 +52,10 @@ const webpackConfig = merge(commonConfig, {
         }
     },
     plugins: [
+        new CopyPlugin([
+          { from: '../client/static/img/*', to: '../dist/static' },
+          { from: '../client/static/Default.png', to: '../dist/static/' }
+        ]),
         new webpack.EnvironmentPlugin(environment),
         new webpack.ProvidePlugin({
           $: 'jquery',
@@ -100,7 +104,8 @@ const webpackConfig = merge(commonConfig, {
             }
           }
         }),
-        new webpack.HashedModuleIdsPlugin()
+        new webpack.HashedModuleIdsPlugin(),
+
     ]
 });
 

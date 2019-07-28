@@ -103,11 +103,11 @@ const webpackConfig = {
     plugins: [
         new VueLoaderPlugin(),
         //new HtmlPlugin({ template: 'index.html', chunksSortMode: 'dependency' })
-	new HtmlPlugin({
-	    filename: 'index.html',
-	    template: 'client/index.html',
-	    inject: true
-	})
+      	new HtmlPlugin({
+      	    filename: 'index.html',
+      	    template: 'client/index.html',
+      	    inject: true
+      	})
     ]
 };
 
