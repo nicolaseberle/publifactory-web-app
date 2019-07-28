@@ -52,10 +52,6 @@ const webpackConfig = merge(commonConfig, {
         }
     },
     plugins: [
-        new CopyPlugin([
-          { from: '../client/static/img/*', to: '../dist/static' },
-          { from: '../client/static/Default.png', to: '../dist/static/' }
-        ]),
         new webpack.EnvironmentPlugin(environment),
         new webpack.ProvidePlugin({
           $: 'jquery',
@@ -105,6 +101,10 @@ const webpackConfig = merge(commonConfig, {
           }
         }),
         new webpack.HashedModuleIdsPlugin(),
+        new CopyPlugin([
+          { from: helpers.root('client/static/img'), to: '../dist/static/img' },
+          { from: helpers.root('client/static/Default.png'), to: '../dist/static' }
+        ]),
 
     ]
 });
