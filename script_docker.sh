@@ -74,14 +74,18 @@ start () {
   echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
   then
-    echo "prod"
+    debug "Build production client\n"
+    npm run build
+    echo -ne '###################       (88%)\r'
+    debug "Up the API and NGINX \n"
+    sudo docker-compose up -d api nginx
   else
     debug "Launching the DEV app\n"
     sudo docker-compose up -d client_dev
+    echo -ne '###################       (88%)\r'
+    debug "Up the API.\n"
+    sudo docker-compose up -d api
   fi
-  echo -ne '###################       (88%)\r'
-  debug "Up the API.\n"
-  sudo docker-compose up -d api nginx
   debug "All is up.\n"
 }
 
@@ -119,6 +123,11 @@ make_test () {
   npm test
   stop
 }
+
+build_client () {
+  npm run build
+}
+
 
 echo -ne '#                         (5%)\r'
 if [[ ${USER} != 'root' ]];
