@@ -81,7 +81,7 @@ start () {
   fi
   echo -ne '###################       (88%)\r'
   debug "Up the API.\n"
-  sudo docker-compose up -d api
+  sudo docker-compose up -d api nginx
   debug "All is up.\n"
 }
 
