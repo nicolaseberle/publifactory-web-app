@@ -127,11 +127,6 @@ make_test () {
   stop
 }
 
-build_client () {
-  npm run build
-}
-
-
 echo -ne '#                         (5%)\r'
 if [[ ${USER} != 'root' ]];
 then
