@@ -10,6 +10,7 @@ const helpers              = require('./helpers');
 // const utils = require('./utils')
 const isDev                = process.env.NODE_ENV === 'development';
 
+
 function resolve (dir) {
   return path.join(__dirname, '../client/', dir)
 }
@@ -103,11 +104,11 @@ const webpackConfig = {
     plugins: [
         new VueLoaderPlugin(),
         //new HtmlPlugin({ template: 'index.html', chunksSortMode: 'dependency' })
-	new HtmlPlugin({
-	    filename: 'index.html',
-	    template: 'client/index.html',
-	    inject: true
-	})
+      	new HtmlPlugin({
+      	    filename: 'index.html',
+      	    template: 'client/index.html',
+      	    inject: true
+      	})
     ]
 };
 

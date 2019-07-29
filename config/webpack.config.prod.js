@@ -12,6 +12,7 @@ const helpers                  = require('./helpers');
 const commonConfig             = require('./webpack.config.common');
 const isProd                   = process.env.NODE_ENV === 'production';
 const environment              = isProd ? require('./env/prod.env') : require('./env/staging.env');
+const CopyPlugin               = require('copy-webpack-plugin');
 
 const webpackConfig = merge(commonConfig, {
     mode: 'production',
@@ -99,7 +100,12 @@ const webpackConfig = merge(commonConfig, {
             }
           }
         }),
-        new webpack.HashedModuleIdsPlugin()
+        new webpack.HashedModuleIdsPlugin(),
+        new CopyPlugin([
+          { from: helpers.root('client/static/img'), to: '../dist/static/img' },
+          { from: helpers.root('client/static/Default.png'), to: '../dist/static' }
+        ]),
+
     ]
 });
 

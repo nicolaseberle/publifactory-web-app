@@ -48,6 +48,7 @@ exports.getJournals = async (req, res, next) => {
       journals = await Journal.paginate({ deleted: false, published: true }, {
         page,
         limit,
+        populate: 'users',
         lean: true
       });
       console.log(JSON.stringify(journals, null, "\t"))
