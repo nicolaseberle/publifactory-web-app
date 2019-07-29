@@ -9,8 +9,9 @@ var PictureSchema = new Schema({
     type: String,
     required: true
   },
-  path:{
-    type: String
+  content: {
+		data: Buffer,
+		contentType: String
   },
   size: {
     type: Number,
