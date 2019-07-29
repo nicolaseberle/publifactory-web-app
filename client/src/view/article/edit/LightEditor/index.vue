@@ -643,6 +643,7 @@ export default {
         "abstract": this.postForm.abstract,
         "content": this.postForm.content,
         "arr_content": this.postForm.arr_content,
+        "status": this.postForm.status,
         "tags": this.postForm.tags,
         "published": true
       }, {

@@ -119,6 +119,7 @@ module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
       return res.status(400).json({ errors: validationResult.array() });
     }*/
     // console.log(JSON.stringify("findArticlebyIdAndUpdate", null, "\t"))
+    console.log(req.body)
     if (req.body.title === undefined || req.body.abstract === undefined || req.body.arr_content === undefined ||
       req.body.content === undefined || req.body.status === undefined || req.body.published === undefined ||
       req.body.tags === undefined)
