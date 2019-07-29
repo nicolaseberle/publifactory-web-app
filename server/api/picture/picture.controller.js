@@ -1,7 +1,6 @@
 'use strict';
 
 const Picture = require("./picture.model"); // register your schema
-const fs = require('fs');
 
 async function addPicture (req, res, next) {
   try {
@@ -12,7 +11,7 @@ async function addPicture (req, res, next) {
     const fields = {
       name: req.body.name,
       content: {
-				data: fs.readFileSync(req.file.path),
+				data: req.file.buffer,
 				contentType: 'image/jpeg'
 			},
       size: req.file.size,

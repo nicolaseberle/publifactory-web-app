@@ -6,27 +6,24 @@
           <el-upload
             class="avatar-uploader"
             action=""
+            :limit="1"
             :http-request="uploadSectionFile"
             :show-file-list="false"
             :before-upload="beforeAvatarUpload"
             >
-            <img id="picture" v-if="pictureSource!==''" :src="pictureSource"/>
+            <!--<img id="picture" v-if="pictureSource!==''" :src="pictureSource"/>-->
 
-              <!--<el-image
+            <el-image
+                v-if="pictureSource!==''"
                 style="width: 400px; height: 400px"
-
+                :src="pictureSource"
                 fit="contain">
-              </el-image>-->
+            </el-image>
 
 
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 
           </el-upload>
-
-
-          <!--<input type="file" id="file" name="pciture" ref="file" v-on:change="handleFileUpload()"/>->
-
-          <button v-on:click="submitFile()">Submit</button>-->
 
         </div>
       </el-col>
@@ -85,7 +82,8 @@
   },
   mounted () {
     this.imageUrl = ''
-    this.fetchPicture(this.idpicture)
+    if(this.idpicture !== 0 )
+      this.fetchPicture(this.idpicture)
   },
   methods: {
     reset () {
@@ -111,7 +109,6 @@
       let formData = new FormData();
       formData.append('picture', data.file);
       formData.append('name', data.file.name);
-
        axios.post('/api/pictures/',formData,{headers: {
          'Authorization': `Bearer ${this.accessToken}`}
        }).then(res => {
@@ -144,13 +141,6 @@
 						this.postForm.content = res.data.picture.content;
             this.pictureSource = base64Flag + this.refreshPicture(res.data.picture.content.data.data);
         })
-      },
-      handleFileUpload(){
-        this.file = this.$refs.file.files[0];
-
-      },
-      handlePictureCardPreview(file) {
-       this.dialogImageUrl = file.url;
       },
       refreshPicture (buffer) {
         let binary = '';

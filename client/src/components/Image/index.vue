@@ -3,12 +3,13 @@
 	<div >
 
 		<figure>
-				<figcaption>Fig.1 : {{infos.name}}</figcaption>{{pictureSource}}
+				<figcaption>Fig.1 : {{infos.name}}</figcaption>
 				<div style='text-align:center'>
-					<img
-						id="picture"
-						:src="pictureSource"
-						style="width: 400px; height: 400px;"/>
+					<el-image
+							style="width: 400px; height: 400px"
+							:src="pictureSource"
+							fit="contain">
+					</el-image>
 				</div>
 				<div class='action-button'>
 						<el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
