@@ -58,6 +58,7 @@ const ArticleSchema = new Schema({
   },//deprecated
   status: {
     type: String,
+    required: true,
     default: 'draft'
   },
   doi: {

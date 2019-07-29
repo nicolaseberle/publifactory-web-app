@@ -652,7 +652,7 @@ export default {
         }
       })
       .then(response => {
-        console.log("article saved")
+        console.log("saved")
       })
       .catch(e => {
         console.log(e)
