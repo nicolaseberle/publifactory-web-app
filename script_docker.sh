@@ -39,6 +39,10 @@ print_help () {
 build_container () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
+  if [[ ${options} = "prod" ]];
+  then
+  npm run build
+  fi
   sudo docker-compose build
   echo -ne '###############           (72%)\r'
   debug "Images built.\n"
@@ -75,7 +79,6 @@ start () {
   if [[ ${options} = "prod" ]];
   then
     debug "Build production client\n"
-    npm run build
     echo -ne '###################       (88%)\r'
     debug "Up the API and NGINX \n"
     sudo docker-compose up -d api nginx
