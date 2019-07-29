@@ -1,8 +1,6 @@
 'use strict';
 
-require("./picture.model"); // register your schema
-const Picture = require('mongoose').model('Picture'); // load your schema
-var mongoose = require('mongoose');
+const Picture = require("./picture.model"); // register your schema
 
 async function addPicture (req, res, next) {
   try {
@@ -12,16 +10,19 @@ async function addPicture (req, res, next) {
       throw { code: 422, message: 'Missing parameter in body field.' };
     const fields = {
       name: req.body.name,
-      path: req.file.path,
+      content: {
+				data: req.file.buffer,
+				contentType: 'image/jpeg'
+			},
       size: req.file.size,
       id_user: req.decoded._id,
-    }
+    };
     if (req.body.legend !== undefined)
       fields.legend = req.body.legend;
     if (req.body.license !== undefined)
       fields.license = req.body.license;
-    const newPicture = await new Picture(fields).save()
-    console.log(newPicture)
+    const picture = new Picture(fields);
+    const newPicture = await picture.save();
     res.status(201).json({success: true, picture: newPicture})
   } catch (e) {
     next(e);
