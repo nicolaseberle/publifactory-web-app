@@ -247,7 +247,7 @@
           option: this.option,
           layout: this.layout,
           script: {
-            language: "R",
+            language: "Python",
             content: this.content
           },
           infos: this.postForm
