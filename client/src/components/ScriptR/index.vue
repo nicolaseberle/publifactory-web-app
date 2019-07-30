@@ -236,7 +236,7 @@
         try {
           await axios.put('/api/figure/' + this.idfigure, {
             data: this.currentData,
-            option: this.option,
+            option: this.options,
             layout: this.layout,
             script: {
               language: "R",
@@ -269,7 +269,7 @@
         if (response.data.script.content !== undefined && response.data.script.content.length !== 0) {
           this.currentData = response.data.data
           this.layout = response.data.layout
-          this.option = response.data.option
+          this.options = response.data.option
           this.editableTabs = response.data.script.content
           this.editableTabsValue = '1'
           this.tabIndex = response.data.script.content !== undefined ? response.data.script.content.length : 1

@@ -352,16 +352,26 @@ export default {
     }
   },
   methods: {
+
+
     saveFigure () {
+
+      let chartInfos: {
+        legend: '',
+        source: 'http://dx.doi.org/00.0000/e0000000',
+        name: this.layout.title,
+        uuid_figure: this.idfigure
+      }
       console.log("saveFigure ", this.currentData.y)
       axios.put('/api/figure/'  + this.idfigure, {
         data: this.currentData,
-        option:this.option,
+        option:this.options,
         layout: this.layout,
         script: {
           language: "Light",
           content: null
-        }
+        },
+        infos: chartInfos
       }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
