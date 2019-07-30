@@ -1,6 +1,8 @@
 # Created by https://www.gitignore.io/api/node,vuejs,webstorm+all
 # Edit at https://www.gitignore.io/?templates=node,vuejs,webstorm+all
 
+ssl/
+nginx/dhparam.pem
 srv
 heroku-app
 script_set_var_prod_heroku.sh
