@@ -7,15 +7,14 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-
-        <el-switch
-          v-model="flag_user"
-          inactive-text="User view"
-          active-text="Editor view"
-          style='vertical-align:middle'
-          class="right-menu-item">
-        </el-switch>
-
+        <div style='vertical-align:middle' class="right-menu-item">
+          <el-switch
+            v-model="flag_user"
+            inactive-text="User view"
+            active-text="Editor view"
+            >
+          </el-switch>
+        </div>
         <el-tooltip :content="$t('navbar.nightmode')" effect="dark" placement="bottom">
           <nightmode class="nightmode right-menu-item"/>
         </el-tooltip>

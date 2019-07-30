@@ -356,7 +356,7 @@ export default {
 
     saveFigure () {
 
-      let chartInfos: {
+      let chartInfos = {
         legend: '',
         source: 'http://dx.doi.org/00.0000/e0000000',
         name: this.layout.title,
