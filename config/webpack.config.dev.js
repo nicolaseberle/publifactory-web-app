@@ -16,6 +16,8 @@ const backendBase = {
   // Server port
   port: process.env.PORT || 4000,
 
+  socketPort: process.env.SOCKET_PORT || 4001,
+
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
     session: process.env.SECRET || 'publifactory-project-secret'
@@ -63,10 +65,10 @@ const webpackConfig = merge(commonConfig, {
         // host: process.env.SITE_IP,
         disableHostCheck: true,
         proxy: {
-          '/api': { target: `http://${process.env.BASE_API}:4000`, changeOrigin: true },
+          '/api': { target: `https://${process.env.BASE_API}:${backendBase.port}`, changeOrigin: true, secure: false },
           '/static': { target: 'http://localhost:9001',  pathRewrite: {'^/static' : '/client/static'}},
           '/public': { target: 'http://localhost:9001',  pathRewrite: {'^/public' : '/client/public'}},
-          '/socket.io': { target: `http://${process.env.BASE_API}:` + backendBase.port, changeOrigin: true, ws: true },
+          '/socket.io': { target: `http://${process.env.BASE_API}:${backendBase.socketPort}`, changeOrigin: true, ws: true },
           '/cursors': { target: 'http://api:' + backendBase.port + '/cursors', changeOrigin: true, ws: true },
           '/mevn-dev': { target: 'http://api:' + backendBase.port + '/mevn-dev', changeOrigin: true, ws: true }
         },

@@ -12,6 +12,9 @@ var backendBase = {
   // Server port
   port: process.env.PORT || 4000,
 
+  // Socket port
+  socketPort: process.env.SOCKET_PORT || 4001,
+
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
     session: process.env.SECRET || 'publifactory-project-secret'
