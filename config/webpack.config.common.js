@@ -79,23 +79,23 @@ const webpackConfig = {
             {
                 test: /\.css$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
                     { loader: 'css-loader', options: { sourceMap: isDev } },
                 ]
             },
             {
                 test: /\.scss$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    'css-loader',
                     { loader: 'sass-loader', options: { sourceMap: isDev } }
                 ]
             },
             {
                 test: /\.sass$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    'css-loader',
                     { loader: 'sass-loader', options: { sourceMap: isDev } }
                 ]
             }

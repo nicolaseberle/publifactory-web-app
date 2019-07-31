@@ -193,7 +193,6 @@ header {
             -ms-transform: translateX(-40px);
             transform: translateX(-40px);
         }*/
-/*
         img + img {
             float: left;
             -webkit-transform: translateX(-40px);
@@ -201,7 +200,7 @@ header {
             transform: translateX(-40px) translateX(-50%);
             z-index: -1;
 
-        }*/
+        }
         @for $i from 1 through 10 {
         img:nth-child(#{$i}) {
 
@@ -212,8 +211,8 @@ header {
           margin: 0;
           border: 2px solid white;
           float: left;
-          -webkit-transform: translateX(-40px);
-          -ms-transform: translateX(-40px);
+          -webkit-transform: translateX(-40px) translateX(get-pos-img($i));
+          -ms-transform: translateX(-40px) translateX(get-pos-img($i));
           transform: translateX(-20px) translateX(get-pos-img($i));
           z-index: get-zindex-img($i);
           }

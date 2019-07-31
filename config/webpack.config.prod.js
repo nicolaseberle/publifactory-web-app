@@ -87,6 +87,7 @@ const webpackConfig = merge(commonConfig, {
           },
           chunks: ['manifest', 'vendor', 'element', 'app'],
           // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+          
           chunksSortMode: function (a, b) {
             var orders = ['manifest', 'vendor', 'element', 'app']
             var order1 = orders.indexOf(a.names[0])
