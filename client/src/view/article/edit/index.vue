@@ -287,7 +287,7 @@
   		});*/
 
 
-      printJS({printable:'article-page',header:'', type:'html',css:'/dist/css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
+      printJS({printable:'article-page',header:'', type:'html',css:'./css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
     },
     handleHidePDF () {
       if(this.flagHidePDF == 1){
