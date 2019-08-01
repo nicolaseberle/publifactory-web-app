@@ -4,8 +4,8 @@
 RED='\033[0;31m' # Red Color
 NC='\033[0m' # No Color
 
-DATE_BEGIN=`date +%s`
-USER=`whoami`
+DATE_BEGIN=$(date +%s)
+USER=$(whoami)
 
 command=$1
 options=$2
@@ -17,7 +17,7 @@ export ROOT_APP="http://${SITE_IP}/"
 
 debug () {
   # shellcheck disable=SC2059
-  printf "${RED}`date '+%H:%M:%S:%N'`${NC} -> $1";
+  printf "${RED}$(date '+%H:%M:%S:%N')${NC} -> $1";
 }
 
 log_path="$(pwd)/logs/${DATE_BEGIN}.log"
@@ -69,21 +69,19 @@ start () {
   build_container
   up_database
   debug "Up ssh tunnel to access data visualization.\n"
-  sudo docker-compose up -d ssh_tunnel
+  sudo docker-compose up --no-deps -d ssh_tunnel
+  echo -ne '###################       (88%)\r'
+  debug "Up the API.\n"
+  sudo docker-compose up --no-deps -d api
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
   then
-    debug "Build production client\n"
-    echo -ne '###################       (88%)\r'
-    debug "Up the API and NGINX \n"
-    sudo docker-compose up -d api nginx
+    debug "Up NGiNX \n"
+    sudo docker-compose up --no-deps -d nginx
   else
     debug "Launching the DEV app\n"
     sudo docker-compose up -d client_dev
-    echo -ne '###################       (88%)\r'
-    debug "Up the API.\n"
-    sudo docker-compose up -d api
   fi
   debug "All is up.\n"
 }
@@ -122,6 +120,13 @@ make_test () {
   npm test
   stop
 }
+
+save_data () {
+  debug "Creating the database dump file"
+  # shellcheck disable=SC2046
+  sudo docker exec $(sudo docker ps -f name=mongo -q) sh -c 'mongodump --archive' | sudo tee db.dump
+}
+
 
 echo -ne '#                         (5%)\r'
 if [[ ${USER} != 'root' ]];
@@ -183,6 +188,15 @@ case "$command" in
     echo -ne '##############            (66%)\r'
     # shellcheck disable=SC2086
     start >> ${log_path} 2>&1
+    echo -ne '#####################     (90%)\r'
+    execution_time
+    echo -ne '########################  (100%)\r'
+    debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
+    exit 0
+    ;;
+  save)
+    echo -ne '########                  (33%)\r'
+    save_data
     echo -ne '#####################     (90%)\r'
     execution_time
     echo -ne '########################  (100%)\r'

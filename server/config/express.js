@@ -4,14 +4,17 @@
 
 'use strict'
 
-var express = require('express')
-var path = require('path')
-var compression = require('compression')
-var bodyParser = require('body-parser')
-var methodOverride = require('method-override')
-var cookieParser = require('cookie-parser')
-var config = require('../../config')
-var passport = require('passport')
+const express = require('express');
+const path = require('path');
+const compression = require('compression');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+const cookieParser = require('cookie-parser');
+const config = require('../../config');
+const passport = require('passport');
+const helmet = require('helmet');
+const cors = require('cors');
+const logger = require('morgan');
 
 module.exports = function (app) {
   // render
@@ -19,12 +22,15 @@ module.exports = function (app) {
   app.engine('html', require('ejs').renderFile)
   app.set('view engine', 'html')
 
-  app.use(compression())
+  app.use(cors());
+  app.use(logger('dev'));
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(bodyParser.json())
   app.use(methodOverride())
   app.use(cookieParser())
   app.use(passport.initialize())
+  app.use(helmet());
+  app.use(compression());
 
   if (config.backend.serverFrontend) {
     var staticPath = path.posix.join(config.frontend.assetsPublicPath, config.frontend.assetsSubDirectory)

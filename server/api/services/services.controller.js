@@ -1,5 +1,5 @@
 'use strict';
-import axios from 'axios'
+const axios = require('axios');
 
 /**
  * getArticles - Returns an array of articles requested with a page offset and limit,
@@ -15,7 +15,7 @@ import axios from 'axios'
 exports.searchReviewers = async (req, res, next) => {
   axios.get('http://35.241.170.253:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
 }
-exports.getInfoFile =  = async (req, res, next) => {
-  await axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', , { headers: { 'Content-Type': 'multipart/form-data' } })
+exports.getInfoFile =  async (req, res, next) => {
+  await axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', { headers: { 'Content-Type': 'multipart/form-data' } })
 
 }

@@ -157,7 +157,7 @@
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
       journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: io('http://' + window.location.hostname + ':4000/', socketOptions)
+      socket: io('http://' + window.location.hostname + ':4001/', socketOptions)
     }
   },
   computed: {
