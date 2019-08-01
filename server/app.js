@@ -9,15 +9,11 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const express = require('express');
 const favicon = require('express-favicon');
-const mongoose = require('mongoose');
 const config = require('../config').backend;
 const serveStatic = require('serve-static');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
-
-// Connect to database
-mongoose.connect(config.mongo.uri, config.mongo.options).then(() => console.log('Server is connected to mongoDB.'));
 
 // insure DB with admin user data
 // require('./config/seed')
@@ -25,9 +21,15 @@ mongoose.connect(config.mongo.uri, config.mongo.options).then(() => console.log(
 // SSL/TLS definition
 const privateKeyApi = fs.readFileSync(path.join(__dirname, '../ssl/api_publifactory.key'));
 const certificateApi = fs.readFileSync(path.join(__dirname, '../ssl/api_publifactory.crt'));
+const privateKeyMongo = fs.readFileSync(path.join(__dirname, '../ssl/db_publifactory.key'));
+const certificateMongo = fs.readFileSync(path.join(__dirname, '../ssl/db_publifactory.crt'));
 const credentialsApi = {
   key: privateKeyApi,
   cert: certificateApi
+};
+const credentialsMongo = {
+  key: privateKeyMongo,
+  cert: certificateMongo
 };
 
 // Setup server
@@ -35,10 +37,8 @@ const app = express();
 const serverApi = require('https').createServer(credentialsApi, app);
 const serverSocket = require('http').createServer(app);
 const socketIo = require('socket.io')(serverSocket);
-const socketOptions = {
-  origins: "https://localhost:* https://127.0.0.1:* https://app.publifactory.co:*",
-};
-require('./config/socketio')(socketIo, socketOptions);
+require('./config/database')(credentialsMongo);
+require('./config/socketio')(socketIo, { origins: '*:*' });
 require('./config/express')(app);
 require('./routes')(app);
 
