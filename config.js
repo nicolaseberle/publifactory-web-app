@@ -113,10 +113,14 @@ var production = {
 
     // Server port
     port: process.env.APP_PORT || process.env.PORT || 8080,
+
+    //Socket.io port
+    socketPort: process.env.SOCKET_PORT || 4001,
+
     // MongoDB connection options
     mongo: {
       //uri: process.env.MONGODB_URI
-      uri: 'mongodb://localhost:27017/mevn-dev',
+      uri: 'mongodb://localhost:27017/mevn-dev?ssl=true',
     },
 
     // frontend folder
