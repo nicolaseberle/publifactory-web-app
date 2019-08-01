@@ -123,12 +123,12 @@ make_test () {
 
 save_data () {
   # shellcheck disable=SC2012
-  files_number=$(ls -lrt | awk '{print $9}' | tail +2 | wc -l)
+  files_number=$(ls -lrt ./database | awk '{print $9}' | tail +2 | wc -l)
   if [[ ${files_number} -gt 5 ]];
   then
     # shellcheck disable=SC2046
     # shellcheck disable=SC2012
-    sudo rm -f $(ls -lrt | awk '{print $9}' | tail +2 | head -1)
+    sudo rm -f $(ls -lrt ./database | awk '{print $9}' | tail +2 | head -1)
   fi
   debug "Creating the database dump file"
   # shellcheck disable=SC2046
