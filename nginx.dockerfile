@@ -5,7 +5,6 @@ ADD ./package.json /src/package.json
 RUN npm install --silent
 RUN npm run build
 
-
 FROM nginx
 # Create container's directory
 RUN mkdir -p /etc/ssl/certs/
