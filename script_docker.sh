@@ -70,8 +70,6 @@ execution_time () {
 start () {
   build_container
   up_database
-  debug "Up ssh tunnel to access data visualization.\n"
-  sudo docker-compose up --no-deps -d ssh_tunnel
   echo -ne '###################       (88%)\r'
   debug "Up the API.\n"
   sudo docker-compose up --no-deps -d api
@@ -116,6 +114,7 @@ stop () {
 }
 
 make_test () {
+  sudo apt-get install -y nodejs
   sudo docker-compose build mongo
   up_database
   npm install --silent
@@ -173,7 +172,7 @@ case "$command" in
     ;;
   test)
     echo -ne '######                    (33%)\r'
-    make_test
+    make_test >> "${log_path}" 2>&1
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     execution_time
@@ -181,9 +180,9 @@ case "$command" in
     ;;
   deploy)
     echo -ne '######                    (33%)\r'
-    stop
-    make_test
-    start
+    stop >> "${log_path}" 2>&1
+    make_test >> "${log_path}" 2>&1
+    start >> "${log_path}" 2>&1
     sudo docker-compose up --no-deps -d whale
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
