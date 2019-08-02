@@ -2,7 +2,7 @@
  * Project config file includes dev/prod and frontend/backend
  */
 var path = require('path');
-const fs = require('fs');
+/// const fs = require('fs');
 // var _ = require('lodash')
 
 var backendBase = {
