@@ -45,12 +45,14 @@ build_container () {
 }
 
 up_database () {
+  # shellcheck disable=SC2012
+  db_chosen=$(ls -lt ./database/ | awk '{print $9}' | tail +2 | head -1)
   debug "Up the database.\n"
   echo -ne '################          (76%)\r'
   sudo docker-compose up -d mongo
   debug 'Populating database'
   # shellcheck disable=SC2046
-  sudo cat db.dump | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
+  sudo cat ./database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
   echo -ne '#################         (80%)\r'
 }
 
@@ -155,6 +157,7 @@ case "$command" in
   start)
     echo -ne '######                    (33%)\r'
     start >> "${log_path}" 2>&1
+    sudo docker-compose up --no-deps -d whale
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     execution_time
@@ -181,6 +184,7 @@ case "$command" in
     stop
     make_test
     start
+    sudo docker-compose up --no-deps -d whale
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     execution_time
@@ -196,7 +200,7 @@ case "$command" in
     echo -ne '##############            (66%)\r'
     # shellcheck disable=SC2086
     start >> ${log_path} 2>&1
-    echo -ne '#####################     (90%)\r'
+    sudo docker-compose up --no-deps -d whale
     execution_time
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"

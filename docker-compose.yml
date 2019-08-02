@@ -1,5 +1,9 @@
 version: "3.3"
 services:
+  whale:
+    image: docker/whalesay
+    command: ["cowsay", "Containers are deployed !"]
+
   api:
     restart: always
     build:
@@ -32,6 +36,8 @@ services:
       - "27017:27017"
     networks:
       - backend
+    depends_on:
+      - whale
 
   client_dev:
     restart: always
