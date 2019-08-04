@@ -21,6 +21,7 @@
 <script>
   import axios from 'axios'
   import { mapGetters } from 'vuex'
+  import asideRightActivity from '../../utils/js/animation/activity.right.js'
 
   const shortid = require('shortid');
   const debug = require('debug')('frontend');
@@ -49,6 +50,9 @@
 
         this.list = await axios.get(`/api/history/${this.article_id}/`,
             { headers: { 'Authorization': `Bearer ${this.accessToken}` }
+        })
+        window.addEventListener('load', () => {
+          asideRightActivity()
         })
       }
       catch(e) {

@@ -115,6 +115,8 @@
   import VuePlotly from '@statnett/vue-plotly'
   import TreeComment from './TreeComment.vue'
 
+  import asideRightAnimation from '../../utils/js/animation/aside.right.js'
+
   var uuidv4 = require('uuid/v4');
 
   const debug = require('debug')('frontend');
@@ -284,6 +286,9 @@ export default {
       fill: 'toself',
       name: 'review 2'
     }]
+    window.addEventListener('load', () => {
+      asideRightAnimation()
+    })
   },
   methods: {
     fetchReport(id) {
