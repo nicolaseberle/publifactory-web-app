@@ -2,22 +2,22 @@ import $ from 'jquery'
 
 const debug = require('debug')('frontend');
 
-function asideRightAnimation () {
+function asideRightActivity () {
     // Selectors object
     // ----------------
-  var asideRight = {
+  const asideRightActivity = {
     tags: $('.header-activity'),
     button: $('aside.activity'),
     pannel: {
       all: $('aside.content-activity'),
       links: $('aside.content-activity a'),
-      reviews: $('aside.content-activity a.showreviews'),
-      comments: $('aside.content-activity a.showcomments'),
-      close: $('aside.content-activity a.close'),
-      article: $('aside.content-activity  [data-review]')
+      // reviews: $('aside.content-activity a.showactivity'),
+      // comments: $('aside.content-activity a.showcomments'),
+      close: $(' aside.content-activity a.close-activity'),
+      //article: $('aside.content-activity  [data-review]')
     },
-    comments: $('aside.content-activity section.comments'),
-    reviews: $('aside.content-activity section.reviews'),
+    // comments: $('aside.content-activity section.comments'),
+    // reviews: $('aside.content-activity section.reviews'),
     scroll: {
       reviews: 0,
       comments: 0
@@ -26,16 +26,17 @@ function asideRightAnimation () {
 
   // Functions show or hide pannel
   // -----------------------------
-  function showCommentsReviewsPannel () {
-    asideRight.pannel.all.css('display', 'block')
+  function showActivityPannel () {
+    asideRightActivity.pannel.all.css('display', 'block')
   }
 
-  function hideCommentsReviewsPannel () {
-    asideRight.pannel.all.css('display', 'none')
+  function hideActivityPannel () {
+    asideRightActivity.pannel.all.css('display', 'none')
   }
 
   // Function maj the scroll position object
   // ---------------------------------------
+  /*
   function majScrollPosition () {
     if (asideRight.comments.css('display') === 'block') {
       asideRight.scroll.comments = asideRight.comments.scrollTop()
@@ -44,10 +45,11 @@ function asideRightAnimation () {
       asideRight.scroll.reviews = asideRight.reviews.scrollTop()
       debug(asideRight.scroll.reviews)
     }
-  }
+  }*/
 
   // Function go to the previous position scroll of the pannel
   // ---------------------------------------------------------
+  /*
   function goPreviousScrollPosition () {
     var offset = 0
     var delay = 0
@@ -60,32 +62,33 @@ function asideRightAnimation () {
         scrollTop: asideRight.scroll.reviews - offset
       }, delay)
     }
-  }
+  }*/
 
     // Show the pannel on click
     // ------------------------
-  asideRight.button.on('click', () => {
+  asideRightActivity.button.on('click', () => {
     debug('asideRight_button_click')
-    showCommentsReviewsPannel()
-    goPreviousScrollPosition()
+    showActivityPannel()
+    // goPreviousScrollPosition()
   })
 
-  asideRight.tags.on('click', () => {
+  asideRightActivity.tags.on('click', () => {
     debug('tags_button_click')
-    showCommentsReviewsPannel()
-    goPreviousScrollPosition()
+    showActivityPannel()
+    // goPreviousScrollPosition()
   })
 
   // Close the pannel on click
   // -------------------------
-  asideRight.pannel.close.on('click', () => {
+  asideRightActivity.pannel.close.on('click', () => {
     debug('asideRight_pannel_close')
-    majScrollPosition()
-    hideCommentsReviewsPannel()
+    // majScrollPosition()
+    hideActivityPannel()
   })
 
   // Comments or Reviews pannel selection
   // ------------------------------------
+  /*
   asideRight.pannel.comments.on('click', () => {
     asideRight.pannel.links.removeClass('active')
     asideRight.pannel.comments.addClass('active')
@@ -104,8 +107,6 @@ function asideRightAnimation () {
     goPreviousScrollPosition()
   })
 
-  // Scroll to the related section reviewed in the article
-  // -----------------------------------------------------
   asideRight.pannel.article.on('click', function () {
     const markup = $(this).attr('data-review')
     debug('markup : ' + markup)
@@ -131,7 +132,7 @@ function asideRightAnimation () {
     const markup = $(this).attr('data-review')
     const articleText = $("main article span[data-review='" + markup + "'")
     articleText.css('background-color', 'white')
-  })
+  })*/
 }
 
-export default asideRightAnimation
+export default asideRightActivity

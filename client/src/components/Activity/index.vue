@@ -1,20 +1,26 @@
 
 <template>
+
+
   <div class="wrapper">
     <header class="wrapper">
-        <a href="#" title="Check Activity of the article" class="showreviews active"><svg-icon icon-class='history-clock-button' style='margin:0 10px 0 10px'/>Activity</a>
-        <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
+        <a href="#" title="Check Activity of the article" class="showactivity active"><svg-icon icon-class='history-clock-button' style='margin:0 10px 0 10px'/>Activity</a>
+        <a href="#" title="Close activity bar" class="close-activity"><img src="/static/icons/Close.svg" class="close-activity svg" alt="Close this activty bar"></a>
     </header>
-    <section class="content reviews">
-      {{list}}
+    <section class="content">
+        <el-timeline>
+          <el-timeline-item v-for='oneEvent in list.data.history' :key='oneEvent.date' :timestamp="oneEvent.date | moment('DD/MM/YYYY')" placement="top">
+            <el-card>
+              <p><strong>{{oneEvent.id_user.firstname}} {{oneEvent.id_user.lastname}}</strong> {{oneEvent.instruction}}</p>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
     </section>
   </div>
 </template>
 <script>
   import axios from 'axios'
   import { mapGetters } from 'vuex'
-  import asideRightAnimation from '../../utils/js/animation/activity.right.js'
-
 
   const shortid = require('shortid');
   const debug = require('debug')('frontend');
@@ -38,8 +44,9 @@
       this.article_id = this.$route.params && this.$route.params.id
     },
     async mounted () {
+
       try{
-        asideRightAnimation()
+
         this.list = await axios.get(`/api/history/${this.article_id}/`,
             { headers: { 'Authorization': `Bearer ${this.accessToken}` }
         })

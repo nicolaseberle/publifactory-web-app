@@ -2,6 +2,12 @@
 
 const History = require('./history.model');
 
+/* HELPERS */
+const renameObjectProperty = require('../../../helpers/renameObjectProperty');
+
+const DEFAULT_PAGE_OFFSET = 1;
+const DEFAULT_LIMIT = 10;
+
 const ENUM_INSTRUCTION = {
   SECTION_EDIT: 'has modified a text block.',
   ABSTRACT_EDIT: 'has modified the abstract.',
@@ -58,16 +64,20 @@ function addInstruction (User, instruction) {
 }
 
 async function getHistory(req, res, next) {
+  const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
+  const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
   try {
     const query = {
       id_article: req.params.id_article
     };
     if (req.params.id_user)
       query.id_user = req.params.id_user;
-    const response = await History.find(query).sort({ date: -1 }).exec();
-    for (let i = 0, len = response.length; i < len; ++i)
-      response[i].instruction = ENUM_INSTRUCTION[response[i].instruction];
-    res.json({success: true, history: response});
+    const response = await History.paginate(query, { page, limit,populate: 'id_user',lean: true });
+    renameObjectProperty(response, 'docs', 'history');
+    // const response = await History.find(query).sort({ date: -1 }).exec();
+    for (let i = 0, len = response.history.length; i < len; ++i)
+      response.history[i].instruction = ENUM_INSTRUCTION[response.history[i].instruction];
+    res.json({success: true, history: response.history});
   } catch (e) {
     next(e)
   }

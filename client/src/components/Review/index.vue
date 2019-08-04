@@ -113,7 +113,6 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   // import hightlightText from '../../utils/js/animation/highlight.js';
   import VuePlotly from '@statnett/vue-plotly'
-  import asideRightAnimation from '../../utils/js/animation/aside.right.js'
   import TreeComment from './TreeComment.vue'
 
   var uuidv4 = require('uuid/v4');
@@ -263,8 +262,6 @@ export default {
   },
   mounted () {
     this.socket.on('ADD_COMMENT', data => this.fetchReport(data.id))
-
-    asideRightAnimation()
     axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
     }).then(response => {

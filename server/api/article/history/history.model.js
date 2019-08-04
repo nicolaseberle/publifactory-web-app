@@ -1,6 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
+
 
 const Schema = mongoose.Schema;
 
@@ -29,6 +31,8 @@ const HistorySchema = new Schema({
     default: 0
   }
 });
+
+HistorySchema.plugin(mongoosePaginate);
 
 const History = mongoose.model('History', HistorySchema);
 
