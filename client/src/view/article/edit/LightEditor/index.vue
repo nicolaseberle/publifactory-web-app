@@ -58,7 +58,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-on:edit='applyAbstractEdit' ></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:references="references" v-on:edit='applyAbstractEdit' ></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -76,7 +76,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-bind:references="references" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -93,7 +93,7 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-bind:references="references" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -127,6 +127,16 @@
       					</footer>
               </section>
             </div>
+            <section id="references">
+                <h2>
+                  <i class="el-icon-arrow-right"></i>
+                  References
+                </h2>
+                <el-col :span='24' v-for="(ref) in references" v-bind:key="ref.id">
+                  [{{ref.id}}] -  {{ref.name}}
+                </el-col>
+
+            </section>
             <span id="triggerEndNav"></span>
         </article>
     </main>
@@ -355,6 +365,7 @@ export default {
     activityComponent},
   data() {
     return {
+      references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
@@ -482,9 +493,10 @@ export default {
       this.postForm.arr_content = data.arr_content;
 
     });
+
     window.addEventListener('load', () => {
-      asideRightActivity()
       asideRightAnimation()
+      asideRightActivity()
     })
     //this.updateUserList()
     /*this.$watch(this.dialogVisible, (val) => {
@@ -657,6 +669,22 @@ export default {
       })
       .then(response => {
         console.log("saved")
+      })
+      .catch(e => {
+        console.log(e)
+      })
+    },
+    updateReferences () {
+      console.log(this.references)
+      axios.put('/api/articles/'  + this.id + '/updateReferences', {
+        "references": this.references,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
+      .then(response => {
+        console.log("References updated")
       })
       .catch(e => {
         console.log(e)
@@ -916,6 +944,9 @@ export default {
     margin-left: 15px;
   }
   .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .el-icon-arrow-right {
     font-size: 12px;
   }
 
