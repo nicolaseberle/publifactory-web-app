@@ -133,7 +133,7 @@
                   References
                 </h2>
                 <el-col :span='24' v-for="(ref) in references" v-bind:key="ref.id">
-                  [{{ref.id}}] -  {{ref.name}}
+                  [R{{ref.id}}] -  {{ref.name}}
                 </el-col>
 
             </section>

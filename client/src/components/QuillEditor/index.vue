@@ -144,16 +144,13 @@ class ProcRef extends Embed {
         let node = super.create(value);
         // give it some margin
         node.setAttribute('style', "background-color : Transparent; border: none;");
-        node.setAttribute('href', '#references');
-        node.setAttribute('title',"Hello World!");
-        node.setAttribute('target', '_blank');
-
+        node.setAttribute('href', 'https://www.nasa.gov/');
         node.innerHTML = value.text;
         return node;
     }
 
     static value(node) {
-      debug(node  )
+      console.log(node  )
       return {
         value: node.getAttribute('ref'),
         text: node.innerHTML
@@ -163,7 +160,7 @@ class ProcRef extends Embed {
 
 ProcRef.blotName = 'ref';
 ProcRef.className = 'ref';
-ProcRef.tagName = 'button-ref';
+ProcRef.tagName = 'a';
 
 /*Link the new button in quill*/
 Quill.register(ProcLink, true);
