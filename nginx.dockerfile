@@ -25,6 +25,8 @@ COPY ./ssl/web_publifactory.crt /etc/ssl/certs/web_publifactory.crt
 COPY ./ssl/web_publifactory.key /etc/ssl/private/web_publifactory.key
 COPY ./ssl/api_publifactory.crt /etc/ssl/certs/api_publifactory.crt
 COPY ./ssl/api_publifactory.key /etc/ssl/private/api_publifactory.key
+COPY ./ssl/socket_publifactory.crt /etc/ssl/certs/socket_publifactory.crt
+COPY ./ssl/socket_publifactory.key /etc/ssl/private/socket_publifactory.key
 COPY ./nginx/dhparam.pem /etc/nginx/
 
 # Expose the port 80 for HTTP and port 443 for HTTPS

@@ -23,6 +23,8 @@ const privateKeyApi = fs.readFileSync(path.join(__dirname, '../ssl/api_publifact
 const certificateApi = fs.readFileSync(path.join(__dirname, '../ssl/api_publifactory.crt'));
 const privateKeyMongo = fs.readFileSync(path.join(__dirname, '../ssl/db_publifactory.key'));
 const certificateMongo = fs.readFileSync(path.join(__dirname, '../ssl/db_publifactory.crt'));
+const privateKeySocket = fs.readFileSync(path.join(__dirname, '../ssl/socket_publifactory.key'));
+const certificateSocket = fs.readFileSync(path.join(__dirname, '../ssl/socket_publifactory.crt'));
 const credentialsApi = {
   key: privateKeyApi,
   cert: certificateApi
@@ -31,14 +33,18 @@ const credentialsMongo = {
   key: privateKeyMongo,
   cert: certificateMongo
 };
+const credentialsSocket = {
+	key: privateKeySocket,
+	cert: certificateSocket
+};
 
 // Setup server
 const app = express();
 const serverApi = require('https').createServer(credentialsApi, app);
-const serverSocket = require('http').createServer(app);
+const serverSocket = require('https').createServer(credentialsSocket, app);
 const socketIo = require('socket.io')(serverSocket);
 require('./config/database')(credentialsMongo);
-require('./config/socketio')(socketIo, { origins: '*:*' });
+require('./config/socketio')(socketIo);
 require('./config/express')(app);
 require('./routes')(app);
 
