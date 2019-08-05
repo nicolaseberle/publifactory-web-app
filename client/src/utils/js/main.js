@@ -14,6 +14,7 @@ import headerNavigation from './animation/header.js'
 import navAnimation from './animation/nav.js'
 import accordion from './animation/accordion.js'
 import asideRightAnimation from './animation/aside.right.js'
+import asideRightActivity from './animation/activity.right.js'
 
 // Call instances
 // --------------
@@ -22,6 +23,8 @@ var inst_navAnimation = new navAnimation();
 var inst_headerAnimation = new headerNavigation();
 var inst_accordion = new accordion();
 var inst_asideRightAnimation = new asideRightAnimation();
+var inst_asideRightActivity = new asideRightActivity();
+
 
 // Init LinkScroll on every a[href^='#']
 // -------------------------------------

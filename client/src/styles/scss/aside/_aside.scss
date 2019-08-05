@@ -3,6 +3,22 @@
 
 @import 'variables';
 
+@-webkit-keyframes slide {
+    100% { right: 0; }
+}
+
+@keyframes slide {
+    100% { right: 0; }
+}
+
+@-webkit-keyframes slideback {
+    100% { right: -$asideRightWidth; }
+}
+
+@keyframes slideback {
+    100% { right: -$asideRightWidth; }
+}
+
 // Scss rules
 // ----------
 
@@ -288,29 +304,13 @@ aside.related {
   }
 }
 
-@-webkit-keyframes slide {
-    100% { right: 0; }
-}
-
-@keyframes slide {
-    100% { right: 0; }
-}
-
-@-webkit-keyframes slideback {
-    100% { right: -$asideRightWidth; }
-}
-
-@keyframes slideback {
-    100% { right: -$asideRightWidth; }
-}
-
 aside.content-activity{
   position: fixed;
   right: -$asideRightWidth;
   top: $headerHeight;
   width: $asideRightWidth;
   height: calc(100% - #{$headerHeight});
-  z-index: 2000!important;
+  z-index: 2000 !important;
   background-color: white;
   display: none;
 
@@ -378,13 +378,13 @@ aside.content-activity{
                       height: 15px;
                   }
 
-                  svg.close {
+                  svg.close-activity {
                       width: 14px;
                       height: 14px;
                   }
               }
 
-              a.close {
+              a.close-activity {
                   width: 10%;
                   margin-right: 15px;
                   text-align: left;

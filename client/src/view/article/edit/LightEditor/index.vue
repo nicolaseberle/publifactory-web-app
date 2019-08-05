@@ -138,7 +138,7 @@
         <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
       </aside>
       <aside  class="activity" ><p>Activity</p></aside>
-      <aside type="button" class="content-activity" id="triggerAside">
+      <aside type="button" class="content-activity" id="triggerActivity">
         <activityComponent/>
       </aside>
     </div>
@@ -265,6 +265,7 @@
   import axios from 'axios'
   import velocity from 'velocity-animate'
   import asideRightAnimation from '../../../../utils/js/animation/aside.right.js'
+  import asideRightActivity from '../../../../utils/js/animation/activity.right.js'
   import reviewComponent from '../../../../components/Review'
   import activityComponent from '../../../../components/Activity'
   import quilleditor from '../../../../components/QuillEditor'
@@ -479,9 +480,12 @@ export default {
       this.postForm.title = data.title;
       this.postForm.abstract = data.abstract;
       this.postForm.arr_content = data.arr_content;
-    });
 
-    asideRightAnimation()
+    });
+    window.addEventListener('load', () => {
+      asideRightActivity()
+      asideRightAnimation()
+    })
     //this.updateUserList()
     /*this.$watch(this.dialogVisible, (val) => {
       this.$refs.insertFigureDialog.setDialogStatus(val)

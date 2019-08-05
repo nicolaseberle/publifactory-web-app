@@ -62,7 +62,7 @@
     </div>
   </div>
     <!--<div class='bottom-right'/>-->
-    <div class="questions">
+    <div class='questions' v-bind:id="idZotero">
       <!--<div class="close-toto"><i class="fa fa-times"></i>
       </div>-->
       <div class="question">
@@ -196,6 +196,7 @@ export default {
       idToolBar: this.setIdToolBar(),
       idButton: this.setIdButton(),
       idButtonZotero: this.setIdButtonZotero(),
+      idZotero : this.setIdZotero(),
       idInputZotero: this.setIdInputZotero(),
       idButtonComment: this.setIdButtonComment(),
       idButtonHighlight: this.setIdButtonHighlight(),
@@ -512,10 +513,10 @@ export default {
       var offset = this.mouse_pos
       debug(offset.offsetY)
 
-      $('.questions')
+      $("#"+this.idZotero)
         .fadeIn()
         .css({
-          left: Math.min(0, $(window).innerWidth()-$('.questions').outerWidth()),
+          left: Math.min(0, $(window).innerWidth()-$("#"+this.idZotero).outerWidth()),
           top: offset.offsetY + 36
         });
     },
@@ -557,7 +558,7 @@ export default {
       if(item){
         if(this.actionValidate == 1){
           $("#"+this.idInputZotero).toggle()
-          $(".questions").toggle()
+          $("#"+this.idZotero).toggle()
         }
         this.actionValidate = 1
 
@@ -580,6 +581,9 @@ export default {
     },
     setIdButton () {
       return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+    },
+    setIdZotero () {
+      return 'zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
     },
     setIdButtonZotero () {
       return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
