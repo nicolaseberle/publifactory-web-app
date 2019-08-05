@@ -133,7 +133,8 @@ save_data () {
     cd ${CWD}/database || exit
     # shellcheck disable=SC2046
     # shellcheck disable=SC2012
-    sudo rm -f $(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | head -1)
+    # shellcheck disable=SC2003
+    sudo rm -f $(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | head -$(expr "${files_number}" - 5))
     cd ..
   fi
   debug "Creating the database dump file"
