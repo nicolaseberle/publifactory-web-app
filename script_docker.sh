@@ -33,10 +33,14 @@ print_help () {
   printf "COMMAND:\n"
   printf "start\tBegin the script and launch the docker.\n"
   printf "stop\tStop the docker and close well everything.\n"
+  printf "restart\tRun stop and start the docker.\n"
+  printf "test\tRun the mocha tests.\n"
+  printf "deploy\tRun stop, test and start.\n"
+  printf "save\tCreate mongo dump for cron jobs.\n"
   printf "help\tDisplay this box.\n\n"
   printf "OPTIONS:\n"
-  printf "dev\tLaunch the dev options with logs and webpack dev server"
-  printf "prod\tLaunch the prod options with nginx"
+  printf "dev\tLaunch the dev options with logs and webpack dev server.\n"
+  printf "prod\tLaunch the prod options with nginx.\n"
 }
 
 build_container () {
