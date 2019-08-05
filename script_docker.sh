@@ -4,9 +4,12 @@
 RED='\033[0;31m' # Red Color
 NC='\033[0m' # No Color
 
+# Constants
 DATE_BEGIN=$(date +%s)
 USER=$(whoami)
+CWD='/home/nicolas/web-app'
 
+# Variable
 command=$1
 options=$2
 
@@ -20,7 +23,7 @@ debug () {
   printf "${RED}$(date '+%H:%M:%S:%N')${NC} -> $1";
 }
 
-log_path="$(pwd)/logs/${DATE_BEGIN}.log"
+log_path="${CWD}/logs/${DATE_BEGIN}.log"
 debug "All the logs will be saved in $log_path\n"
 
 print_help () {
@@ -46,13 +49,13 @@ build_container () {
 
 up_database () {
   # shellcheck disable=SC2012
-  db_chosen=$(ls -lt ./database/ | awk '{print $9}' | tail +2 | head -1)
+  db_chosen=$(ls -lt ${CWD}/database/ | awk '{print $9}' | tail +2 | head -1)
   debug "Up the database.\n"
   echo -ne '################          (76%)\r'
   sudo docker-compose up -d mongo
   debug 'Populating database'
   # shellcheck disable=SC2046
-  sudo cat ./database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
+  sudo cat ${CWD}/database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
   echo -ne '#################         (80%)\r'
 }
 
@@ -124,16 +127,18 @@ make_test () {
 
 save_data () {
   # shellcheck disable=SC2012
-  files_number=$(ls -lrt ./database | awk '{print $9}' | tail +2 | wc -l)
+  files_number=$(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | wc -l)
   if [[ ${files_number} -gt 5 ]];
   then
+    cd ${CWD}/database || exit
     # shellcheck disable=SC2046
     # shellcheck disable=SC2012
-    sudo rm -f $(ls -lrt ./database | awk '{print $9}' | tail +2 | head -1)
+    sudo rm -f $(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | head -1)
+    cd ..
   fi
   debug "Creating the database dump file"
   # shellcheck disable=SC2046
-  sudo docker exec $(sudo docker ps -f name=mongo -q) sh -c 'mongodump --archive' | sudo tee db.dump
+  sudo docker exec $(sudo docker ps -f name=mongo -q) sh -c 'mongodump --archive' | sudo tee ${CWD}/database/db_"${DATE_BEGIN}".dump
 }
 
 
