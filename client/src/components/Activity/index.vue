@@ -51,9 +51,6 @@
         this.list = await axios.get(`/api/history/${this.article_id}/`,
             { headers: { 'Authorization': `Bearer ${this.accessToken}` }
         })
-        window.addEventListener('load', () => {
-          asideRightActivity()
-        })
       }
       catch(e) {
           this.list = []

@@ -286,9 +286,6 @@ export default {
       fill: 'toself',
       name: 'review 2'
     }]
-    window.addEventListener('load', () => {
-      asideRightAnimation()
-    })
   },
   methods: {
     fetchReport(id) {

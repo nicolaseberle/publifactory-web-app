@@ -495,13 +495,9 @@ export default {
     });
 
     window.addEventListener('load', () => {
-      asideRightAnimation()
       asideRightActivity()
+      asideRightAnimation()
     })
-    //this.updateUserList()
-    /*this.$watch(this.dialogVisible, (val) => {
-      this.$refs.insertFigureDialog.setDialogStatus(val)
-    })*/
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
