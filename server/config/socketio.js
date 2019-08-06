@@ -17,7 +17,7 @@ class SocketUser {
   setUserId (idUser) {
   	this.idUser = idUser;
   	this.name = new Promise(async resolve => {
-  		resolve((await User.findOne({ _id: idUser })).lastname);
+  		resolve((await User.findOne({ _id: idUser })));
 		})
   }
 }

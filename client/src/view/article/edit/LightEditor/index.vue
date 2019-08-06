@@ -13,9 +13,9 @@
 
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
-                <div v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
-                  <td type='success'>{{connectedUser}}</td>
-                </div>
+                <ul v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
+                  <li type='success'>{{connectedUser}}</li>
+                </ul>
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -61,7 +61,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" v-bind:socket="socket"></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" numBlock='-1' numSubBlock='0' numSubSubBlock='0' v-bind:socket="socket"></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -497,7 +497,7 @@ export default {
     /*this.$watch(this.dialogVisible, (val) => {
       this.$refs.insertFigureDialog.setDialogStatus(val)
     })*/
-    window.setInterval(()=>{ this.socket.emit('GET_USERS',{idArticle : this.id}) }, 1000);
+    window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
