@@ -17,7 +17,7 @@ class SocketUser {
   setUserId (idUser) {
   	this.idUser = idUser;
   	this.name = new Promise(async resolve => {
-  		resolve(await User.findOne({ _id: idUser }));
+  		resolve((await User.findOne({ _id: idUser })).lastname);
 		})
   }
 }
@@ -57,7 +57,7 @@ module.exports = function (io) {
 				if (mapUser.hasOwnProperty(user) && data.idArticle === user.idArticle)
 					userList.push(user);
 			}
-			socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS');
+			socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS', userList);
 		});
 
     /**

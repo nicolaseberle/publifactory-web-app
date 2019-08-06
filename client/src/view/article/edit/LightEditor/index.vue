@@ -13,6 +13,9 @@
 
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
+                <div v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
+                  <td type='success'>{{connectedUser}}</td>
+                </div>
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -355,6 +358,7 @@ export default {
     activityComponent},
   data() {
     return {
+      listConnectedUsers: Array,
       timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
@@ -482,6 +486,9 @@ export default {
       this.postForm.arr_content = data.arr_content;
 
     });
+    this.socket.on('RESULT_USERS', data => {
+      this.listConnectedUsers = data
+    });
     window.addEventListener('load', () => {
       asideRightActivity()
       asideRightAnimation()
@@ -490,6 +497,7 @@ export default {
     /*this.$watch(this.dialogVisible, (val) => {
       this.$refs.insertFigureDialog.setDialogStatus(val)
     })*/
+    window.setInterval(()=>{ this.socket.emit('GET_USERS') }, 1000);
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
