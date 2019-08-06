@@ -47,12 +47,25 @@ module.exports = function (io) {
       delete mapUser[socket.id];
     });
 
+		/**
+		 *	This part is used to retrieve all the users actually connected
+		 *  on an article specified in the data parts.
+		 */
+		socket.on('GET_USERS', data => {
+			const userList = [];
+			for (let user in mapUser) {
+				if (mapUser.hasOwnProperty(user) && data.idArticle === user.idArticle)
+					userList.push(user);
+			}
+			socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS');
+		});
+
     /**
      * Data contain id_article and id_user
      * We put the user socket in a room to broadcast just only specific users
      * We set the userId and the articleId to the class of the user.
      */
-    socket.on('SET_ARTICLE', (data) => {
+    socket.on('SET_ARTICLE', data => {
       mapUser[socket.id].setArticleId(data.id_article);
       mapUser[socket.id].setUserId(data.id_user);
       socket.join(data.id_article);
@@ -66,7 +79,7 @@ module.exports = function (io) {
      * - numSubBlock
      * - numSubSubBlock
      */
-    socket.on('SECTION_EDIT', (data) => {
+    socket.on('SECTION_EDIT', data => {
       console.log('[socket.io] %s TRANSMIT INFORMATION', mapUser[socket.id].id);
       history.addInstruction(mapUser[socket.id], 'SECTION_EDIT');
       socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, data)
@@ -80,7 +93,7 @@ module.exports = function (io) {
     /**
      * This one is used to update the abstract
      */
-    socket.on('ABSTRACT_EDIT', (data) => {
+    socket.on('ABSTRACT_EDIT', data => {
       console.log('[socket.io] %s TRANSMIT ABSTRACT', mapUser[socket.id].id);
       history.addInstruction(mapUser[socket.id], 'ABSTRACT_EDIT');
       socket.to(mapUser[socket.id].idArticle).emit('ABSTRACT_UPDATE', data)
