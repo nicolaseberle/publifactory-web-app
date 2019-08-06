@@ -149,7 +149,7 @@
       </aside>
       <aside  class="activity" ><p>Activity</p></aside>
       <aside type="button" class="content-activity" id="triggerActivity">
-        <activityComponent/>
+        <activityComponent ref="activityRef"/>
       </aside>
     </div>
     <el-dialog
@@ -493,11 +493,11 @@ export default {
       this.postForm.arr_content = data.arr_content;
 
     });
-
-    window.addEventListener('load', () => {
-      asideRightActivity()
+    $(document).ready(function(){
       asideRightAnimation()
-    })
+      asideRightActivity()
+    });
+
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {

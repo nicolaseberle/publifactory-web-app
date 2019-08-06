@@ -45,17 +45,14 @@
       this.article_id = this.$route.params && this.$route.params.id
     },
     async mounted () {
-
       try{
-
         this.list = await axios.get(`/api/history/${this.article_id}/`,
             { headers: { 'Authorization': `Bearer ${this.accessToken}` }
         })
       }
       catch(e) {
-          this.list = []
+          this.list.data = []
       }
-
     },
     methods: {
 
