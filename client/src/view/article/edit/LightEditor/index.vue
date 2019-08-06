@@ -497,7 +497,7 @@ export default {
     /*this.$watch(this.dialogVisible, (val) => {
       this.$refs.insertFigureDialog.setDialogStatus(val)
     })*/
-    window.setInterval(()=>{ this.socket.emit('GET_USERS') }, 1000);
+    window.setInterval(()=>{ this.socket.emit('GET_USERS',{idArticle : this.id}) }, 1000);
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
