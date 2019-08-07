@@ -16,6 +16,7 @@
                 <ul v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
                   <li type='success'>{{connectedUser}}</li>
                 </ul>
+
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -41,7 +42,7 @@
                </h1>
                 <div class="article-author">
                   <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
-                  <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                  <img class='active'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
