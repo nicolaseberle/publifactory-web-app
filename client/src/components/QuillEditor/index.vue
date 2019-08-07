@@ -114,16 +114,7 @@ const debug = require('debug')('frontend');
 
 const Embed = Quill.import('blots/embed');
 var sharedbWSAddress = ''
-/*
-if (process.env.NODE_ENV === 'production'){
-  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
-} else {
-  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
-}
 
-var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
-var shareDBConnection = new ShareDB.Connection(shareDBSocket);
-*/
 /*Zotero, highlight button in quill toolbar*/
 class ProcLink extends Embed {
     static create(value) {
@@ -148,8 +139,32 @@ ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
 
+class ProcRef extends Embed {
+    static create(value) {
+        let node = super.create(value);
+        // give it some margin
+        node.setAttribute('style', "background-color : Transparent; border: none;");
+        node.setAttribute('href', 'https://www.nasa.gov/');
+        node.innerHTML = value.text;
+        return node;
+    }
+
+    static value(node) {
+      console.log(node  )
+      return {
+        value: node.getAttribute('ref'),
+        text: node.innerHTML
+      };
+    }
+}
+
+ProcRef.blotName = 'ref';
+ProcRef.className = 'ref';
+ProcRef.tagName = 'a';
+
 /*Link the new button in quill*/
 Quill.register(ProcLink, true);
+Quill.register(ProcRef, true);
 
 export default {
   name: 'QuillEditor',
@@ -172,6 +187,9 @@ export default {
     numSubSubBlock: {
       type: Number,
       default: 0
+    },
+    references: {
+      type: Array
     },
     output: {
         default : 'delta'
@@ -214,7 +232,7 @@ export default {
 
   },
   mounted() {
-    var quill = window.quill = new Quill('#'+this.idEditor, {
+    this.editor = window.quill = new Quill('#'+this.idEditor, {
       modules: {
         cursors:  {
           hideDelayMs: 5000,
@@ -244,21 +262,31 @@ export default {
 
     //shareDBConnection.createSubscribeQuery(collectionName, query, options, callback)
 
-    let self = this
+    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
+      var range = this.editor.getSelection(focus = true);
+      $("#"+this.idInputZotero).toggle()
+      //var html_ = '<a href="#" style="color:red">[R'+ this.nbReferences +']</a>'
+      //var html_ =  '<button-ref>R</button-ref>'
+      //quill.clipboard.dangerouslyPasteHTML(range.index, "<button-ref>R1</button-ref>", "api");
+      var uuid_ref = String(uuidv4())
 
-    document.querySelector('#' + this.idButtonZotero).addEventListener('click', function() {
-      var range = quill.getSelection(focus = true);
-      $("#"+self.idInputZotero).toggle()
-      var html_ = '<a href="#" tooltip="" style="color:red">[R1]</a>'
-      self.pasteHtmlAtCaret(html_)
+      var range = this.editor.getSelection();
+
+      //var selectedText = this.editor.getText(range.index, range.length);
+      var cObj = {text : "[R1]", value : uuid_ref};
+      //this.editor.deleteText(range.index  , range.length);
+      this.editor.insertEmbed(range.index,"ref",cObj)
+
+      //this.insertStar()
+      //this.pasteHtmlAtCaret(html_)
     });
 
-    document.querySelector('#' + this.idButtonComment).addEventListener('click', function() {
-      self.highlightSelection()
+    document.querySelector('#' + this.idButtonComment).addEventListener('click', ()=> {
+      this.highlightSelection()
     });
 
 
-    this.editor = quill
+
 
     var cursorsModule = this.editor.getModule('cursors');
 
@@ -274,7 +302,6 @@ export default {
     cursorsModule.registerTextChangeListener();
     //axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"arr_content": this.postForm.arr_content,"published": true })
 
-    self = this
     this.editor.root.innerHTML = this.content
     /*
     doc.subscribe(function(err) {
@@ -410,33 +437,33 @@ export default {
 */
     window.cursors = this.cursors
 
-    $('#'+this.idButtonZotero).click(function () {
-      self.showZoteroMenu(
+    $('#'+this.idButtonZotero).click( () => {
+      this.showZoteroMenu(
         $(this));
     });
-    $('.close-toto').click(function (e) {
+    $('.close-toto').click( (e) => {
       e.stopPropagation();
       $(this).parent().hide();
       $('.items').removeClass('no-effect');
     });
 
-    $(document).ready(function() {
-        $("#"+self.idButton).toggle();
-        self.editor.on('selection-change', function(range, oldRange, source) {
+    $(document).ready(() => {
+        $("#"+this.idButton).toggle();
+        this.editor.on('selection-change', (range, oldRange, source) => {
         if (range === null && oldRange !== null) {
           // debug('blur');
-          $("#"+self.idButton).toggle()
+          $("#"+this.idButton).toggle()
         } else if (range !== null && oldRange === null)
           // debug('focus');
-          $("#"+self.idButton).toggle()
+          $("#"+this.idButton).toggle()
         });
     });
 
-    $(document).on('contextmenu', '#'+this.idEditor , function(e) {
+    $(document).on('contextmenu', '#'+this.idEditor , (e) => {
       e.preventDefault();
-      quill.theme.tooltip.edit();
-      quill.theme.tooltip.show();
-      self.mouse_pos = e
+      this.editor.theme.tooltip.edit();
+      this.editor.theme.tooltip.show();
+      this.mouse_pos = e
       return false;
     });
 
@@ -482,6 +509,19 @@ export default {
     ...mapGetters(['userId'])
   },
   methods:{
+    insertStar() {
+      const cursorPosition = this.editor.getSelection().index;
+      // this.editor.insertText(cursorPosition, "★");
+
+      // var bufferText = $("#" + this.idEditor).html().replace(/<em class="my-icon">/g, "").replace(/<\/em>/g, "");
+
+      // var tmpOut = bufferText.replace(/★/g, "<button>R1</button>");
+
+      // $("#" + this.idEditor).html(tmpOut);
+
+      this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
+      this.editor.setSelection(cursorPosition + 2);
+    },
     sendUpdates () {
       this.socket.emit('UPDATE_SECTION', {
         content: this.content,
@@ -781,5 +821,15 @@ p {
     position: absolute;
     right:10px;
     top:5px;
+}
+button-ref{
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: 1px solid black;
+    margin-left:5px;
+    margin-right: 5px;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
 }
 </style>
