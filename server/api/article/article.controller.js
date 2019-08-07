@@ -99,7 +99,7 @@ module.exports.findArticleById = async function (req, res, next) {
 
     return res.status(200).json(article);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
