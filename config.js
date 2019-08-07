@@ -71,8 +71,7 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: `mongodb://${process.env.BASE_MONGO}:27017/`,
-      useNewUrlParser: true
+      uri: `mongodb://${process.env.BASE_MONGO}:27017/mevn-dev`
     }
   })
 }
@@ -120,7 +119,7 @@ var production = {
     // MongoDB connection options
     mongo: {
       //uri: process.env.MONGODB_URI
-      uri: 'mongodb://localhost:27017/mevn-dev?ssl=true',
+      uri: 'mongodb://localhost:27017/mevn-dev',
     },
 
     // frontend folder

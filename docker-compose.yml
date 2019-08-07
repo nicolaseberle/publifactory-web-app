@@ -32,6 +32,8 @@ services:
   mongo:
     image: mongo
     restart: always
+    command:
+    - --smallfiles
     ports:
       - "27017:27017"
     networks:
