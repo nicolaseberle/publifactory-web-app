@@ -11,13 +11,18 @@ const User = require('../api/user/user.model');
 class SocketUser {
   constructor (id) {
     this.id = id;
+    this.idUser = '';
+    this.name = '';
     console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
   }
+
   setArticleId (idArticle) { this.idArticle = idArticle }
-  setUserId (idUser) {
+
+  async setUserId (idUser) {
   	this.idUser = idUser;
-  	this.name = new Promise(async resolve => {
-  		resolve((await User.findOne({ _id: idUser })));
+  	this.name = await new Promise(async resolve => {
+  		const user = await User.findOne({ _id: idUser });
+  		resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`)
 		})
   }
 }
@@ -52,13 +57,15 @@ module.exports = function (io) {
 		 *  on an article specified in the data parts.
 		 */
 		socket.on('GET_USERS', data => {
-			const userList = [];
-			for (let user in mapUser) {
-        console.log(data.id_article,user.idArticle)
-				if (mapUser.hasOwnProperty(user) && data.id_article === user.idArticle)
-					userList.push(user);
+			try {
+				const userList = [];
+				for (let user in mapUser)
+					if (mapUser.hasOwnProperty(user) && data.id_article === mapUser[user].idArticle)
+						userList.push(user);
+				socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS', userList);
+			} catch (e) {
+				console.error(e);
 			}
-			socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS', userList);
 		});
 
     /**
@@ -66,10 +73,10 @@ module.exports = function (io) {
      * We put the user socket in a room to broadcast just only specific users
      * We set the userId and the articleId to the class of the user.
      */
-    socket.on('SET_ARTICLE', data => {
+    socket.on('SET_ARTICLE', async data => {
       mapUser[socket.id].setArticleId(data.id_article);
-      mapUser[socket.id].setUserId(data.id_user);
-      socket.join(data.id_article);
+			socket.join(data.id_article);
+      await mapUser[socket.id].setUserId(data.id_user);
       console.log('[socket.io] AN USER WORKS ON ARTICLE %s: %s', data.id_article, mapUser[socket.id].id)
     });
 
