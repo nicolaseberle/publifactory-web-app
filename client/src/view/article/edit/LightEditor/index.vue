@@ -13,9 +13,6 @@
 
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
-                <ul v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
-                  <li type='success'>{{connectedUser.idUser}}</li>
-                </ul>
 
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
@@ -42,7 +39,7 @@
                </h1>
                 <div class="article-author">
                   <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
-                  <img v-bind:class='{"active": isUserConnected(postForm.authors.id)}'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                  <img v-bind:class='{"active": item.isActive}'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
@@ -500,6 +497,7 @@ export default {
     });
     this.socket.on('RESULT_USERS', data => {
       this.listConnectedUsers = data
+      this.isUserConnected()
     });
     window.addEventListener('load', () => {
       asideRightActivity()
@@ -561,15 +559,16 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
-    isUserConnected (id) {/*
-      console.log('isUserConnected')
-      console.log(this.listConnectedUsers)
-      for(let user in this.listConnectedUsers){
-        console.log(user)
-        if(user.idUser === id)
-          return true;
-      }*/
-      return false;
+    isUserConnected () {
+      for(let i = 0; i < this.postForm.authors.length; i++) {
+        console.log(this.listConnectedUsers)
+        for(let user in this.listConnectedUsers){
+          if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
+            this.postForm.authors[i].isActive = true;
+            break
+          }
+        }
+      }
     },
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
@@ -646,6 +645,11 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.postForm = response.data
+        for(let i = 0; i < this.postForm.authors.length; i++) {
+          this.postForm.authors[i].isActive = false;
+          if(this.postForm.authors[i].author._id === this.userId)
+            this.postForm.authors[i].isActive = true;
+        }
       }).catch(err => {
         console.log(err)
       })

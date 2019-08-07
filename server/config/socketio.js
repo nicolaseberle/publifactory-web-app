@@ -58,10 +58,12 @@ module.exports = function (io) {
 		 */
 		socket.on('GET_USERS', data => {
 			try {
-				const userList = [];
+				let userList = [];
 				for (let user in mapUser)
-					if (mapUser.hasOwnProperty(user) && data.id_article === mapUser[user].idArticle)
-						userList.push(user);
+					if (mapUser.hasOwnProperty(user) && data.id_article === mapUser[user].idArticle){
+						userList.push(mapUser[user]);
+
+          }
 				socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS', userList);
 			} catch (e) {
 				console.error(e);
