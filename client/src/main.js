@@ -22,7 +22,7 @@ import Icon from 'vue-awesome/components/Icon'
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import './styles/index.scss' // global css
 import 'codemirror/lib/codemirror.css'
-import 'quill-cursors/dist/quill-cursors.css'
+
 // ajax
 import './http'
 

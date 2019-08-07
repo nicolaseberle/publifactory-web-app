@@ -203,6 +203,12 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
     this.getStatus();
+
+    this.socket.emit('SET_ARTICLE', {
+      id_article: this.id,
+      id_user: this.userId
+    });
+    
   },
   async mounted() {
     this.journalList = await this.getJournalList()
@@ -210,10 +216,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
     /**
      * Socket instructions from API
      */
-    this.socket.emit('SET_ARTICLE', {
-      id_article: this.id,
-      id_user: this.userId
-    });
+
 
     this.socket.on('MODIFY_STATUS', () => {
       this.getStatus();
