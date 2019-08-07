@@ -1,6 +1,7 @@
 'use strict';
 
 const history = require('../api/article/history/history.controller');
+const User = require('../api/user/user.model');
 
 /**
  * @class SocketUser
@@ -10,11 +11,20 @@ const history = require('../api/article/history/history.controller');
 class SocketUser {
   constructor (id) {
     this.id = id;
+    this.idUser = '';
+    this.name = '';
     console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
   }
 
   setArticleId (idArticle) { this.idArticle = idArticle }
-  setUserId (idUser) { this.idUser = idUser }
+
+  async setUserId (idUser) {
+  	this.idUser = idUser;
+  	this.name = await new Promise(async resolve => {
+  		const user = await User.findOne({ _id: idUser });
+  		resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`)
+		})
+  }
 }
 
 /**
@@ -42,15 +52,31 @@ module.exports = function (io) {
       delete mapUser[socket.id];
     });
 
+		/**
+		 *	This part is used to retrieve all the users actually connected
+		 *  on an article specified in the data parts.
+		 */
+		socket.on('GET_USERS', data => {
+			try {
+				const userList = [];
+				for (let user in mapUser)
+					if (mapUser.hasOwnProperty(user) && data.id_article === mapUser[user].idArticle)
+						userList.push(user);
+				socket.to(mapUser[socket.id].idArticle).emit('RESULT_USERS', userList);
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
     /**
      * Data contain id_article and id_user
      * We put the user socket in a room to broadcast just only specific users
      * We set the userId and the articleId to the class of the user.
      */
-    socket.on('SET_ARTICLE', (data) => {
+    socket.on('SET_ARTICLE', async data => {
       mapUser[socket.id].setArticleId(data.id_article);
-      mapUser[socket.id].setUserId(data.id_user);
-      socket.join(data.id_article);
+			socket.join(data.id_article);
+      await mapUser[socket.id].setUserId(data.id_user);
       console.log('[socket.io] AN USER WORKS ON ARTICLE %s: %s', data.id_article, mapUser[socket.id].id)
     });
 
@@ -61,7 +87,7 @@ module.exports = function (io) {
      * - numSubBlock
      * - numSubSubBlock
      */
-    socket.on('SECTION_EDIT', (data) => {
+    socket.on('SECTION_EDIT', data => {
       console.log('[socket.io] %s TRANSMIT INFORMATION', mapUser[socket.id].id);
       history.addInstruction(mapUser[socket.id], 'SECTION_EDIT');
       socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, data)
@@ -75,7 +101,7 @@ module.exports = function (io) {
     /**
      * This one is used to update the abstract
      */
-    socket.on('ABSTRACT_EDIT', (data) => {
+    socket.on('ABSTRACT_EDIT', data => {
       console.log('[socket.io] %s TRANSMIT ABSTRACT', mapUser[socket.id].id);
       history.addInstruction(mapUser[socket.id], 'ABSTRACT_EDIT');
       socket.to(mapUser[socket.id].idArticle).emit('ABSTRACT_UPDATE', data)
@@ -234,7 +260,30 @@ module.exports = function (io) {
 
     socket.on('EXEC_PDF', () => {
       console.log('[socket.io] PDF DOWNLOADED BY %s OF ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
-      history.addInstruction(mapUser[socket.id], 'EXEC_PDF');
-    })
-  })
+      history.addInstruction(mapUser[socket.id], 'LOAD_PDF');
+    });
+
+		/**
+		 * The next "QUILL_NEW_" are used to update the cursor positions
+		 * for every author in the view on the LightEditor.
+		 * It responds a "QUILL_EXEC_" socket instruction.
+		 * This part is used in the client at QuillEditor/index.vue.
+		 * This part doesn't need to add these information on the history mongo's table :
+		 * We already have update information in the UPDATE_ part.
+		 */
+		socket.on('QUILL_NEW_USER', data => {
+			console.log('[socket.io] NEW QUILL TEXT UPDATE BY %s OF ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+			socket.to(mapUser[socket.id].idArticle).emit('QUILL_EXEC_USER', data);
+		});
+
+		socket.on('QUILL_NEW_TEXT', data => {
+      console.log('[socket.io] NEW QUILL TEXT UPDATE BY %s OF ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      socket.to(mapUser[socket.id].idArticle).emit('QUILL_EXEC_TEXT', data);
+    });
+
+		socket.on('QUILL_NEW_SELECT', data => {
+      console.log('[socket.io] NEW QUILL SELECTION BY %s OF ARTICLE %s', mapUser[socket.id].id, mapUser[socket.id].idArticle);
+      socket.to(mapUser[socket.id].idArticle).emit('QUILL_EXEC_SELECT', data);
+    });
+	})
 };
