@@ -154,9 +154,6 @@ export default {
 	name: 'QuillEditor',
 	props: {
 	  socket: Object,
-	  userId: {
-	    type: String
-		},
 		content: {
 			type: String
 		},

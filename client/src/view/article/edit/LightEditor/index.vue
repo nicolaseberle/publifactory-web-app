@@ -14,7 +14,7 @@
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
                 <ul v-for='connectedUser in listConnectedUsers' :key='connectedUser.id'>
-                  <li type='success'>{{connectedUser}}</li>
+                  <li type='success'>{{connectedUser.idUser}}</li>
                 </ul>
 
                 <!--<div class="article-info">
@@ -42,7 +42,7 @@
                </h1>
                 <div class="article-author">
                   <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
-                  <img class='active'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                  <img v-bind:class='{"active": isUserConnected(postForm.authors.id)}'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
@@ -62,7 +62,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" numBlock='-1' numSubBlock='0' numSubSubBlock='0' v-bind:socket="socket"></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket"></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -494,10 +494,7 @@ export default {
       asideRightActivity()
       asideRightAnimation()
     })
-    //this.updateUserList()
-    /*this.$watch(this.dialogVisible, (val) => {
-      this.$refs.insertFigureDialog.setDialogStatus(val)
-    })*/
+
     window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
   },
   watch: {
@@ -553,7 +550,16 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
-
+    isUserConnected (id) {/*
+      console.log('isUserConnected')
+      console.log(this.listConnectedUsers)
+      for(let user in this.listConnectedUsers){
+        console.log(user)
+        if(user.idUser === id)
+          return true;
+      }*/
+      return false;
+    },
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
     },
