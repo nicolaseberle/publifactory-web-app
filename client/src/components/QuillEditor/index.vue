@@ -153,6 +153,8 @@ ProcRef.tagName = 'a';
 Quill.register(ProcLink, true);
 Quill.register(ProcRef, true);
 
+
+
 export default {
 	name: 'QuillEditor',
 	props: {
@@ -250,14 +252,15 @@ export default {
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
-	            cursors: {
-	                hideDelayMs: 5000,
-	                hideSpeedMs: 0
-	            },
-	            toolbar: '#' + this.idToolBar
+						formula: true,
+            cursors: {
+                hideDelayMs: 5000,
+                hideSpeedMs: 0
+            },
+            toolbar: '#' + this.idToolBar
 	        },
 	        history: {
-	            userOnly: true
+	        	userOnly: true
 	        },
 	        placeholder: this.content,
 	        theme: 'bubble',  // or 'bubble',
