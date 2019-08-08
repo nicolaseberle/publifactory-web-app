@@ -208,7 +208,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
       id_article: this.id,
       id_user: this.userId
     });
-    
+
   },
   async mounted() {
     this.journalList = await this.getJournalList()
@@ -274,7 +274,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
       }
     },
     async handleDownload() {
-      this.socket.emit('EXEC_PDF', {});
+      // this.socket.emit('EXEC_PDF', {});
 /*
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
@@ -326,7 +326,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
   		});*/
 
 
-      printJS({printable:'article-page',header:'', type:'html',css:'./css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
+      printJS({printable:'article-page',header:'', type:'html',css:'/dist/css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
     },
     handleHidePDF () {
       if(this.flagHidePDF == 1){
