@@ -217,6 +217,7 @@
     "python-shell": "^1.0.7",
     "sass-loader": "~7.1",
     "shelljs": "^0.7.7",
+    "socketio-wildcard": "^2.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "svg-sprite-loader": "3.8.0",
