@@ -1,21 +1,13 @@
 <template>
 	<div>
 	<div>
-			<span v-bind:id="idSharedbSocketIndicator" class='socket-indicator' style='display:none;'></span>
-			<span v-bind:id="idSharedbSocketState" class='socket-state' style='display:none;'></span>
-			<!--<span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
-			<span v-bind:id="idCursorsSocketState" class='socket-state'></span>
-			<div v-bind:id="idUsersList" style='display:none;'></div>-->
-	</div>
-	<div>
 		<div class='insert-button-box' v-bind:id="idButton">
-			<el-button type="" plain class="el-icon-rank" v-on:click='' circle></el-button>
-			<!--<el-button type="" plain v-on:click='' circle><i class="ai ai-zotero ai-1x"></i></el-button>
-			<el-button type="" plain v-on:click='' circle><svg-icon icon-class='sum'/></el-button>-->
-			<el-button type="warning" plain  icon="el-icon-delete" v-on:click='deleteBlock' circle></el-button>
+			<el-button type="" plain class="el-icon-caret-top" v-on:click='' circle size='mini'></el-button>
+			<el-button type="warning" plain  icon="el-icon-delete" v-on:click='deleteBlock' circle size='mini'></el-button>
+			<el-button type="" plain class="el-icon-caret-bottom" v-on:click='' circle size='mini'></el-button>
 		</div>
-		<div class='box'>
-		<div v-bind:id="idToolBar">
+		<div class='box' style='z-index=1000;'>
+		<div v-bind:id="idToolBar"  style='z-index=1000;'>
 			<span class="ql-formats">
 				<button class="ql-bold"></button>
 				<button class="ql-italic"></button>
@@ -44,10 +36,6 @@
 					<svg-icon icon-class='comment-black'/>
 					<!--<i class="ai ai-zotero ai-1x"></i>-->
 				</button>
-				<button v-bind:id="idButtonHighlight" style='margin-left:10px; transform:translate(5px, 0)'>
-					<svg-icon icon-class='underline'/>
-					<!--<i class="ai ai-zotero ai-1x"></i>-->
-				</button>
 				<!--<input  class="ql-input" name="title" type="text"></input>-->
 			</span>
 		</div>
@@ -56,7 +44,7 @@
 				<el-button type='danger' size="mini" icon="el-icon-delete" v-on:click='' circle></el-button>
 			</div>-->
 		<div class='pre' lang='en'>
-			<div   v-bind:id="idEditor">
+			<div v-bind:id="idEditor">
 				<span class='p-span' v-html="content"></span>
 			</div>
 		</div>
@@ -272,7 +260,8 @@ export default {
 	            userOnly: true
 	        },
 	        placeholder: this.content,
-	        theme: 'bubble'  // or 'bubble',
+	        theme: 'bubble',  // or 'bubble',
+					bounds: '#' + this.idEditor
 	    });
 
 	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
@@ -602,12 +591,12 @@ p {
 	display: block;
 	text-align: center;
 	z-index:1;
-
+	float: right;
 
 	margin: 0px 0px 0px 0px;
-	-webkit-transform: translate(-60px,0);
-	-ms-transform: translate(-60px,0px);
-	transform: translate(-60px,0px);
+	-webkit-transform: translate(10px,0);
+	-ms-transform: translate(10px,0px);
+	transform: translate(10px,0px);
 
 }
 .insert-button-box .el-button{

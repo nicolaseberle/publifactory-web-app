@@ -315,8 +315,10 @@ const defaultForm = {
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
-                  block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
-                  content:"Type your text",
+                  block: [[{ type: 'text',uuid: '',content: `Type your text<br><br>
+
+                  `},{ type: 'chart',uuid: '',content: ''}]],
+                  content:`Type your text`,
                   path_figure: "",
                   display:true
                 }],
@@ -1013,6 +1015,10 @@ export default {
 }
 #users-panel .user-data > div {
   flex-grow: 1;
+}
+
+.ql-editor{
+    min-height:100px;
 }
 
 </style>

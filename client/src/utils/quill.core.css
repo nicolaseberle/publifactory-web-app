@@ -14,6 +14,7 @@
 }
 .ql-container.ql-disabled .ql-tooltip {
   visibility: hidden;
+  z-index: 1;
 }
 .ql-container.ql-disabled .ql-editor ul[data-checked] > li::before {
   pointer-events: none;
