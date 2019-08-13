@@ -16,9 +16,9 @@ class SocketUser {
     this.idArticle = id_article;
     this.name = new Promise(async resolve => {
       const user = await User.findOne({_id: id_user});
-      resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`)
+      this.name =`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`;
+      resolve(this.name);
     });
-    console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
   }
 }
 

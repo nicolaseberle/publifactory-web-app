@@ -175,7 +175,7 @@
         id_user: this.userId
       }
     };
-    io('https://' + window.location.hostname + ':4001/', socketOptions)
+    this.socket = io('https://' + window.location.hostname + ':4001/', socketOptions)
     
   },
   async mounted() {
