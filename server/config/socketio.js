@@ -10,21 +10,15 @@ const User = require('../api/user/user.model');
  * @author Léo Riberon-Piatyszek
  */
 class SocketUser {
-  constructor (id) {
+  constructor(id, id_user, id_article) {
     this.id = id;
-    this.idUser = '';
-    this.name = '';
-    console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
-  }
-
-  setArticleId (idArticle) { this.idArticle = idArticle }
-
-  async setUserId (idUser) {
-    this.idUser = idUser;
-    this.name = await new Promise(async resolve => {
-      const user = await User.findOne({_id: idUser});
+    this.idUser = id_user;
+    this.idArticle = id_article;
+    this.name = new Promise(async resolve => {
+      const user = await User.findOne({_id: id_user});
       resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`)
-    })
+    });
+    console.log('[socket.io] NEW USER JUST CONNECTED: %s', this.id)
   }
 }
 
@@ -45,12 +39,21 @@ module.exports = function (io) {
    */
   io.use(middleware);
 
+  io.use((socket, next) => {
+    let queryParameters = socket.handshake.query;
+    if (!(Object.keys(queryParameters).includes('id_article') && Object.keys(queryParameters).includes('id_user')))
+      return next(new Error('authentication error'));
+    else next();
+  });
+
   /**
    * @function This function permit to manage the connections.
    * @param socket -> Contain the client informations
    */
   io.on('connection', (socket) => {
-    mapUser[socket.id] = new SocketUser(socket.id);
+    const queryParameters = socket.handshake.query;
+    mapUser[socket.id] = new SocketUser(socket.id, queryParameters.id_user, queryParameters.id_article);
+    socket.join(queryParameters.id_article);
 
     /**
      * Enumeration of every events to add in history
@@ -92,11 +95,6 @@ module.exports = function (io) {
       EXEC_CODE_PYTHON: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
       QUILL_NEW_TEXT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data),
       QUILL_NEW_SELECT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data),
-      SET_ARTICLE: async data => {
-        mapUser[socket.id].setArticleId(data.id_article);
-        socket.join(data.id_article);
-        await mapUser[socket.id].setUserId(data.id_user);
-      },
       GET_USERS: data => {
         try {
           const userList = [];
