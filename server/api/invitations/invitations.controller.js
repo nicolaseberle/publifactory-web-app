@@ -46,11 +46,8 @@ async function createInvitation(req, res, next) {
       "senderMsg": senderMsg,
       "senderName": senderName
     });
-    console.log("HERRE")
     await newInvitation.save();
-    console.log("HERRE")
     const mail = new Email(receiverEmail);
-    console.log("HERRE")
     if (req.params.role === 'collaborator' || req.params.role === 'reviewer') {
       const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
       req.params.role === 'collaborator' ?
@@ -62,9 +59,7 @@ async function createInvitation(req, res, next) {
         await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
         await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
     }
-    console.log("HERRE")
     const receiver = await User.findOne({ email: receiverEmail }).exec()
-    console.log("HERRE")
     res.json(receiver)
   } catch (err) {
     next(err);

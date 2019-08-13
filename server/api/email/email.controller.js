@@ -2,6 +2,8 @@
 
 const configEmail = require('../../../config.js').email
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 const User = require('../user/user.model');
 
 module.exports = class Email {
@@ -15,19 +17,38 @@ module.exports = class Email {
         user: configEmail.user,
         pass: configEmail.pass
       }
-    })
+    });
+    this.template = fs.readFileSync(path.join(__dirname, '../../views/template_mail.html')).toString();
+  }
+
+  modifyTemplate(options, subject, content, link, contentLink) {
+    options.html = options.html.replace(/%%INSERT_TITLE%%/gm, "Publifactory");
+    options.html = options.html.replace(/%%HEADER%%/gm, subject);
+    options.html = options.html.replace(/%%INSERT_NAME%%/gm, this.email);
+    options.html = options.html.replace(/%%INSERT_CONTENT_TEXT%%/gm, content);
+    options.html = options.html.replace(/%%INSERT_HTML_LINK%%/gm, link);
+    options.html = options.html.replace(/%%INSERT_HTML_CONTENT_LINK%%/gm, contentLink);
+    options.html = options.html.replace(/%%INSERT_COMPANY%%/gm, "Publifactory");
+    return options.html;
   }
 
   sendRecuperationPassword(link) {
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: 'PubliFactory | Récupération de mot de passe',
-      text: "Bonjour,\nVotre lien de récupération de mot de passe est ici : " + link
-    }
+      subject: 'PubliFactory | Password recovering',
+      html: this.template
+    };
 
+    const subject = "PubliFactory | Password recovering";
+    const content = `Hi ${this.email}!
+    You just asked to recover your password on our web application.
+    Please click on the link below to be redirected on the right platform to define a new password.`;
+    const contentLink = "Recover your password!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
     })
   }
@@ -36,15 +57,22 @@ module.exports = class Email {
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: 'PubliFactory | Confirmation d\'e-mail',
-      text: `Bonjour,\nVous trouverez ci-après le lien vous permettant de confirmer votre compte Publifactory :\n${link}\n
-      Une fois activé vous disposerez des droits et privilèges utilisateur.`
-    }
+      subject: 'PubliFactory | e-mail confirmation',
+      html: this.template
+    };
 
+    const subject = "PubliFactory | e-mail confirmation";
+    const content = `Hi ${this.email}!
+    Thank you to have sign up on Publifactory.
+    Your account has been created, but you need to confirm you e-mail address.
+    Please, just click on the button below to access to our platform!`;
+    const contentLink = "Confirm your e-mail!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
-    })
+    });
   }
 
   async sendInvitationCoAuthor (authorId, link) {
@@ -53,14 +81,21 @@ module.exports = class Email {
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: `PubliFactory | ${author.firstname} ${author.lastname} a partagé un article avec vous !`,
-      text: `Bonjour,\nL'auteur ${author.firstname} ${author.lastname} vous a invité à co-écrire un article.\nVous trouverez l'article ici : ${link}`
-    }
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} want to share an article with you!`,
+      html: this.template
+    };
 
+    const subject = `PubliFactory | ${author.firstname} ${author.lastname} want to share an article with you!`;
+    const content = `Hi ${this.email}!
+    An author, ${author.firstname} ${author.lastname} invite you to collaborate on an article.
+    Click on the button below to be redirected on his article.`;
+    const contentLink = "Check the article!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
-    })
+    });
   }
 
   async sendInvitationReviewer (authorId, link) {
@@ -69,16 +104,22 @@ module.exports = class Email {
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: `PubliFactory | ${author.firstname} ${author.lastname} a besoin de votre révision !`,
-      text: `Bonjour,\n
-      L'auteur ${author.firstname} ${author.lastname} vous a invité à réviser son article.\n
-      Vous trouverez l'article ici : ${link}.`
-    }
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} needs your review!`,
+      html: this.template
+    };
 
+    const subject = `PubliFactory | ${author.firstname} ${author.lastname} needs your review!`;
+    const content = `Hi ${this.email}!
+    An author, ${author.firstname} ${author.lastname} invite you to review his article.
+    You will be able to add revision on specific part and on the entire article.
+    Click on the button below to review this article!`;
+    const contentLink = "Review this article!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
-    })
+    });
   }
 
   async sendInvitationJournalUser (authorId, link) {
@@ -87,38 +128,69 @@ module.exports = class Email {
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: `PubliFactory | ${author.firstname} ${author.lastname} vous a partagé un journal !`,
-      text: `Bonjour,\n
-      L'utilisateur ${author.firstname} ${author.lastname} vous a invité à consulté un journal.\n
-      Vous trouverez le journal ici : ${link}.`
-    }
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} shared a journal with you!`,
+      html: this.template
+    };
 
+    const subject = `PubliFactory | ${author.firstname} ${author.lastname} shared a journal with you!`;
+    const content = `Hi ${this.email}!
+    An author, ${author.firstname} ${author.lastname} just shared a journal with you.
+    You will be able to follow this journal and read the article added on it.
+    Click on the button below to inspect the journal!`;
+    const contentLink = "Check the journal!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
-    })
+    });
   }
 
   async sendInvitationCoEditor (authorId, link) {
-
-  }
-
-  async sendInvitationJournalAssociateEditor (authorId, link) {
-    const author = await User.findOne({ _id: authorId })
+    const author = await User.findOne({ _id: authorId });
 
     const options = {
       from: '"PubliFactory" <publifactory.noreply@gmail.com>',
       to: this.email,
-      subject: `PubliFactory | ${author.firstname} ${author.lastname} vous a défini comme éditeur sur un journal !`,
-      text: `Bonjour,\n
-      L'utilisateur ${author.firstname} ${author.lastname} vous a défini comme un co-éditeur d'un journal.\n
-      Vos choix et décisions permettront d'approuver les articles des utilisateurs.\n
-      Vous trouverez le journal ici : ${link}.`
-    }
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} define you as co-editor!`,
+      html: this.template
+    };
 
+    const subject = `PubliFactory | ${author.firstname} ${author.lastname} define you as co-editor!`;
+    const content = `Hi ${this.email}!
+    An author, ${author.firstname} ${author.lastname} define you as co-editor of a journal.
+    You will be in charged to define reviewers on articles and to define if an article could be uploaded on the journal.
+    Click on the button below to inspect the journal!`;
+    const contentLink = "Check the journal!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
     this.transporter.sendMail(options, (error, info) => {
-      if (error) return console.log(error)
+      if (error) return console.log(error);
       else return console.log('Message sent: %s', info.messageId)
-    })
+    });
+  }
+
+  async sendInvitationJournalAssociateEditor (authorId, link) {
+    const author = await User.findOne({ _id: authorId });
+
+    const options = {
+      from: '"PubliFactory" <publifactory.noreply@gmail.com>',
+      to: this.email,
+      subject: `PubliFactory | ${author.firstname} ${author.lastname} define you as associate editor!`,
+      html: this.template
+    };
+
+    const subject = `PubliFactory | ${author.firstname} ${author.lastname} define you as associate editor!`;
+    const content = `Hi ${this.email}!
+    An author, ${author.firstname} ${author.lastname} define you as associate editor of a journal.
+    You will be in charged to define reviewers on articles and to define if an article could be uploaded on the journal.
+    Click on the button below to inspect the journal!`;
+    const contentLink = "Check the journal!";
+
+    options.html = this.modifyTemplate(options, subject, content, link, contentLink);
+    this.transporter.sendMail(options, (error, info) => {
+      if (error) return console.log(error);
+      else return console.log('Message sent: %s', info.messageId)
+    });
   }
 };
