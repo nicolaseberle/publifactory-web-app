@@ -135,45 +135,6 @@
   import axios from 'axios'
 
   import io from 'socket.io-client'
-  const socketOptions = {
-    transports: [ 'polling' ],
-		secure: true,
-		reconnect: true,
-		rejectUnauthorized: false,
-		ca: `-----BEGIN CERTIFICATE-----
-MIIFtjCCA54CCQCSM6FhGQ4oLjANBgkqhkiG9w0BAQsFADCBnDELMAkGA1UEBhMC
-RlIxDjAMBgNVBAgMBVBhcmlzMQ4wDAYDVQQHDAVQYXJpczEVMBMGA1UECgwMUHVi
-bGlmYWN0b3J5MQwwCgYDVQQLDANhcGkxHDAaBgNVBAMME2FwcC5wdWJsaWZhY3Rv
-cnkuY28xKjAoBgkqhkiG9w0BCQEWG25pY29sYXMuZWJlcmxlLjA5QGdtYWlsLmNv
-bTAeFw0xOTA3MzAxMTQzNDBaFw0yMDA3MjkxMTQzNDBaMIGcMQswCQYDVQQGEwJG
-UjEOMAwGA1UECAwFUGFyaXMxDjAMBgNVBAcMBVBhcmlzMRUwEwYDVQQKDAxQdWJs
-aWZhY3RvcnkxDDAKBgNVBAsMA2FwaTEcMBoGA1UEAwwTYXBwLnB1YmxpZmFjdG9y
-eS5jbzEqMCgGCSqGSIb3DQEJARYbbmljb2xhcy5lYmVybGUuMDlAZ21haWwuY29t
-MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsURFgiC/8yG9DYr87ykM
-uxzm2wFSdiifyDKo9ewn9DJrhQFtjyfUs91jLyTbJxeTuWkDEU9wk0rHHIwyuYWE
-cZPihThKMIg8w+7hXaEQ2YaEbyKmYQdSkfR8iRiJvX/kywS2BOAemCwNaWmPyw4s
-18R8MtGLFBXosDtahu1QO46MJ59Z+7BnPGg/dcw7l2dNsZi3UY1CrMFCbUojOJnG
-jaUeNZxo14ZX3+bpztOUaayj2CVNUF62m4mz0l40J0Zw512Ajk4ZLZmItpK75Tkm
-J+fxAM6pqxDEiZSa6fiDB7JtgYQKkmixRirr8Q3wtpy+07A4idq3O1QNRfns7iId
-fhQ6rqXFOHPVHqwWL1EbABvOrdOjAZo062TyIeUs4Awr6CQpUbnhDvmjvzWhjas8
-Qa/EvCfD/5uZZgu6ufr9KDTXatqp1t6MyOlwtOPB5s6+Rt9Cf09PiHjFH7MyJ5sO
-7etbXjX4N+oEJwCk4Kcvt3TBg3SorXb9BokusMirVpfcdkKwnBiR8szdA3gIc39x
-uJyXq+zlk1fje/BHccfj/WEhmffn4oNQxDAXK5UoZudbLrl3znRVsE+vwGwKQKN1
-zyC7wn2HCxMMFa21HpUXzY5TeRg1sOxPDgg0/ea0qJ9ACvz0lZLLVZySpMfp9xx0
-52QkrQYwJ1RQl3p5NMtxM9MCAwEAATANBgkqhkiG9w0BAQsFAAOCAgEAf075rEt7
-tCPQsOM6AipHS3Uic0gceiLWaKKkl/+vPjsZJOylEuD1qjrpiC2OSuECaKAfBFy1
-s785NOd43uYFLGVNKI40paHCbr/6GmJEj4m2ONRy8yJ1o480FlYQ37NJNtupcAK1
-4+/K4X5HXZDkbQDiOUfH1ruS38yzBEHSVXPA+xLsd74OQS4a9MORP6qqUBkrhfOP
-PReL1qEeq2AuNswi5HDheY/jEz7LH8GjHZcDYNm4CqlQb31Zq8ycmKy1whSRWNU9
-F9rmZHvK11Ked23PvVUjUs6+659iF1GbVrH110mHAny4Jh2iBw4WIvA8Z62hKWFp
-dBd1U+QEJW4Ql6vr+5t6XuS7GxL3SKufAoBGT3KYtuiQrCyUFNnyQkIO/WfxEY02
-YCf4r44MmHq+rgvgbJ4xh+CJHuVGreYeszlZOWbjsUgBc+qx6icmnDwwgA5ZL8Ql
-K3XtkBcTQW2M5zBlyiZGIXp2CdeFs9MzADAATWF8elUAw4EKqeJ4N1FSBXuANYwz
-+oHP2YwPof8S0+d3dcjawRIDAoddUkbZ6jVOldXK/cb1EuGjbq43S8ZZK5G46UQR
-h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
-4Z5tllbeRdK8VtHpF+zTTkBSv/PGHdVCfJ0=
------END CERTIFICATE-----`
-  };
 
   const printJS = require( 'print-js')
 
@@ -193,7 +154,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},
       formSubmArticle: {journal:'',options:'open',preprint: 'no',wishDOI:'yes'},
       journalList: [],//[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: io('https://' + window.location.hostname + ':4001/', socketOptions)
+      socket: ''
     }
   },
   computed: {
@@ -203,6 +164,19 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
     this.getStatus();
+
+    const socketOptions = {
+      transports: [ 'polling' ],
+      secure: true,
+      reconnect: true,
+      rejectUnauthorized: false,
+      query: {
+        id_article: this.id,
+        id_user: this.userId
+      }
+    };
+    this.socket = io('https://' + window.location.hostname + ':4001/', socketOptions)
+    
   },
   async mounted() {
     this.journalList = await this.getJournalList()
@@ -210,10 +184,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
     /**
      * Socket instructions from API
      */
-    this.socket.emit('SET_ARTICLE', {
-      id_article: this.id,
-      id_user: this.userId
-    });
+
 
     this.socket.on('MODIFY_STATUS', () => {
       this.getStatus();
@@ -271,7 +242,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
       }
     },
     async handleDownload() {
-      this.socket.emit('EXEC_PDF', {});
+      // this.socket.emit('EXEC_PDF', {});
 /*
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
@@ -323,7 +294,7 @@ h3JKGkgSqfpvZbOGocPZDs3AB35wi10EuAbUB/CNiyxbWQdkYYwf2qhW2adK2Gw2
   		});*/
 
 
-      printJS({printable:'article-page',header:'', type:'html',css:'./css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
+      printJS({printable:'article-page',header:'', type:'html',css:'/dist/css/test.css',targetStyles:'*',documentTitle:'New doc',scanStyles:false})
     },
     handleHidePDF () {
       if(this.flagHidePDF == 1){

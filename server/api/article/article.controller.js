@@ -99,7 +99,7 @@ module.exports.findArticleById = async function (req, res, next) {
 
     return res.status(200).json(article);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };
 
@@ -143,6 +143,37 @@ module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
     return next(err);
   }
 };
+
+
+// #NO TESTED
+
+/**
+ * @function findArticlebyIdAndUpdateReferences
+ * @memberof module:controllers/articles
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+module.exports.findArticlebyIdAndUpdateReferences = async function  (req, res, next) {
+  try {
+    if (req.body.title === undefined )
+      throw { code: 422, message: 'Missing parameters.'}
+    const references = req.body.references;
+    const article = await Article
+      .findOneAndUpdate(
+        { _id: req.params.id },
+        { $set: { references } },
+        { new: true }
+      );
+
+    if (!article) return res.sendStatus(404);
+
+    return res.json(article);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /**
  * @function deleteArticle
  * @memberof module:controllers/articles

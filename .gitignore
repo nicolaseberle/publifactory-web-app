@@ -3,6 +3,7 @@
 
 ssl/
 ssl_cert/
+database/
 nginx/dhparam.pem
 srv
 heroku-app
