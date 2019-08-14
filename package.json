@@ -136,6 +136,7 @@
     "vue-quill": "^1.5.1",
     "vue-resource": "^1.0.3",
     "vue-router": "^3.0.6",
+    "vue-social-sharing": "^2.4.6",
     "vue-split-panel": "^1.0.4",
     "vue-status-indicator": "^1.1.1",
     "vue-textarea-autosize": "^1.0.4",

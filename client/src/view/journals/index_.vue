@@ -83,6 +83,36 @@
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
+          <social-sharing
+                  title="PubliFactory's journal"
+                  description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
+                  hashtags="publifactory, scientist" inline-template>
+            <div>
+              <li>
+              <network network="facebook">
+                <h3><img src="../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
+                 Facebook</h3>
+              </network>
+              </li>
+              <li>
+              <network network="linkedin">
+                <h3><img src="../../../static/img/linkedin-button-sharing.png"
+                     alt="linkedin"/> LinkedIn</h3>
+              </network>
+              </li>
+              <li>
+              <network network="reddit">
+                <h3><img src="../../../static/img/reddit-button-sharing.png"
+                     alt="Reddit"/> Reddit</h3>
+              </network>
+              </li>
+              <li>
+              <network network="twitter">
+                <h3><img src="../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
+              </network>
+              </li>
+            </div>
+          </social-sharing>
         </div>
         </div>
         <div class='footer'>
@@ -142,7 +172,10 @@
   import axios from 'axios'
   import { mapGetters } from 'vuex'
   import addAssociateEditor from '../../components/AssociateEditor'
+  import SocialSharing from 'vue-social-sharing'
+  import Vue from 'vue'
 
+  Vue.use(SocialSharing)
   export default {
   components: {addAssociateEditor},
   data () {
@@ -557,6 +590,12 @@
   display: inline-block;
   text-align: center;
   width: 100%;
+}
+
+img {
+  position: center;
+  width: 24px;
+  height: 24px;
 }
 
  button{
