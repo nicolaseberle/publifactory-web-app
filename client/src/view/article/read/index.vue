@@ -66,7 +66,7 @@
               </div>
 
               <social-sharing
-                      title="PubliFactory's article"
+                      title="PubliFactory's article | Checkout the web application to view the entire article! More info on http://publifactory.co"
                       description="Checkout the web application to view the entire article! More info on http://publifactory.co"
                       hashtags="publifactory, scientist" inline-template>
               <div>

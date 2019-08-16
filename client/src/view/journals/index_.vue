@@ -84,9 +84,9 @@
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
           <social-sharing
-                  title="PubliFactory's journal"
+                  title="PubliFactory's journal | Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
-                  hashtags="publifactory, scientist" inline-template>
+                  v-bind:hashtags="this.journal.title + ', publifactory'" inline-template>
             <div>
               <li>
               <network network="facebook">
