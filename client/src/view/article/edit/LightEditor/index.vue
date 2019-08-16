@@ -896,11 +896,11 @@ export default {
     updateTitle () {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
         this.socket.emit('UPDATE_TITLE', {
           title: this.postForm.title
         });
-        this.save(this.$event)
-      }, 100);
+      }, 1000);
     },
     openEditFigure () {
       this.dialogVisible = true
