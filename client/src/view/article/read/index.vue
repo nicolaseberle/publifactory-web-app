@@ -65,6 +65,37 @@
                 </section>
               </div>
 
+              <social-sharing
+                      title="PubliFactory's article"
+                      description="Checkout the web application to view the entire article! More info on http://publifactory.co"
+                      hashtags="publifactory, scientist" inline-template>
+              <div>
+                  <li>
+                      <network network="facebook">
+                          <h3><img src="../../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
+                              Facebook</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="linkedin">
+                          <h3><img src="../../../../static/img/linkedin-button-sharing.png"
+                                   alt="linkedin"/> LinkedIn</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="reddit">
+                          <h3><img src="../../../../static/img/reddit-button-sharing.png"
+                                   alt="Reddit"/> Reddit</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="twitter">
+                          <h3><img src="../../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
+                      </network>
+                  </li>
+              </div>
+              </social-sharing>
+
               <span id="triggerEndNav"></span>
           </article>
       </main>
@@ -87,6 +118,10 @@
   import VuePlotly from '@statnett/vue-plotly'
   import figureComponent from '../../../components/Figure'
   import reviewComponent from '../../../components/Review'
+  import SocialSharing from 'vue-social-sharing'
+  import Vue from 'vue'
+
+  Vue.use(SocialSharing)
 
   const debug = require('debug')('frontend')
 
