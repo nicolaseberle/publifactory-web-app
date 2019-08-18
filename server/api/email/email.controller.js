@@ -63,7 +63,7 @@ module.exports = class Email {
     Please, just click on the button below to access to our platform!\n`;
     const contentLink = "Confirm your e-mail!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 
@@ -75,7 +75,7 @@ module.exports = class Email {
     Click on the button below to be redirected on his article.\n`;
     const contentLink = "Check the article!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 
@@ -88,7 +88,7 @@ module.exports = class Email {
     Click on the button below to review this article!\n`;
     const contentLink = "Review this article!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 
@@ -101,7 +101,7 @@ module.exports = class Email {
     Click on the button below to inspect the journal!\n`;
     const contentLink = "Check the journal!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 
@@ -114,7 +114,7 @@ module.exports = class Email {
     Click on the button below to inspect the journal!\n`;
     const contentLink = "Check the journal!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 
@@ -127,7 +127,7 @@ module.exports = class Email {
     Click on the button below to inspect the journal!\n`;
     const contentLink = "Check the journal!";
 
-    const options = this.modifyTemplate(options, subject, content, link, contentLink);
+    const options = this.modifyTemplate(subject, content, link, contentLink);
     this.sendMail(options);
   }
 };
