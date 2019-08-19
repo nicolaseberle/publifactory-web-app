@@ -23,6 +23,7 @@ const ENUM_INSTRUCTION = {
   NEW_DATA: 'imported a new data.',
   NEW_REVIEWER: 'invited a new reviewer.',
   NEW_ASSOCIATE_EDITOR: 'invited a new Associate Editor.',
+  NEW_VERSION: 'created a new version',
   REMOVE_BLOCK: 'removed a block.',
   REMOVE_ROW: 'removed a row.',
   REMOVE_DATA: 'removed a data.',
@@ -31,6 +32,7 @@ const ENUM_INSTRUCTION = {
   UPDATE_TITLE: 'has modified the title.',
   UPDATE_COLLABORATOR: 'has modified collaborators rights.',
   UPDATE_STATUS: 'has modified the article status.',
+  UPDATE_VERSION: 'has modified the file version.',
   EXEC_CODE_R: 'has executed the R chart\'s code.',
   EXEC_CODE_PYTHON: 'has executed the Python chart\'s code.',
   EXEC_PDF: 'has downloaded the article as a PDF.'
@@ -38,7 +40,7 @@ const ENUM_INSTRUCTION = {
 
 function addInstruction (User, instruction) {
   if (!Object.keys(ENUM_INSTRUCTION).includes(instruction))
-    throw { code: 404, message: 'Unknown instruction.' };
+    return;
   const pattern = {
     id_user: User.idUser,
     id_article: User.idArticle,

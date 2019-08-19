@@ -13,6 +13,7 @@
 
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
+
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -38,7 +39,7 @@
                </h1>
                 <div class="article-author">
                   <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
-                  <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                  <img v-bind:class='{"active": item.isActive}'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
@@ -58,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-on:edit='applyAbstractEdit' ></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket"></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -76,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
 
-                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -93,7 +94,7 @@
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -127,6 +128,16 @@
       					</footer>
               </section>
             </div>
+            <section id="references">
+                <h2>
+                  <i class="el-icon-arrow-right"></i>
+                  References
+                </h2>
+                <el-col :span='24' v-for="(ref) in references" v-bind:key="ref.id">
+                  [R{{ref.id}}] -  {{ref.name}}
+                </el-col>
+
+            </section>
             <span id="triggerEndNav"></span>
         </article>
     </main>
@@ -139,7 +150,7 @@
       </aside>
       <aside  class="activity" ><p>Activity</p></aside>
       <aside type="button" class="content-activity" id="triggerActivity">
-        <activityComponent/>
+        <activityComponent ref="activityRef"/>
       </aside>
     </div>
     <el-dialog
@@ -304,8 +315,10 @@ const defaultForm = {
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
-                  block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
-                  content:"Type your text",
+                  block: [[{ type: 'text',uuid: '',content: `Type your text<br><br>
+
+                  `},{ type: 'chart',uuid: '',content: ''}]],
+                  content:`Type your text`,
                   path_figure: "",
                   display:true
                 }],
@@ -355,6 +368,8 @@ export default {
     activityComponent},
   data() {
     return {
+      listConnectedUsers: Array,
+      references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
@@ -425,7 +440,7 @@ export default {
 
   },
   computed: {
-    ...mapGetters(['accessToken']),
+    ...mapGetters(['accessToken', 'userId']),
     ...mapActions(['closeSideBar']),
     contentShortLength() {
       return this.postForm.content_short.length
@@ -482,14 +497,16 @@ export default {
       this.postForm.arr_content = data.arr_content;
 
     });
+    this.socket.on('RESULT_USERS', data => {
+      this.listConnectedUsers = data
+      this.isUserConnected()
+    });
     window.addEventListener('load', () => {
       asideRightActivity()
       asideRightAnimation()
     })
-    //this.updateUserList()
-    /*this.$watch(this.dialogVisible, (val) => {
-      this.$refs.insertFigureDialog.setDialogStatus(val)
-    })*/
+
+    window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
@@ -544,7 +561,17 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
-
+    isUserConnected () {
+      for(let i = 0; i < this.postForm.authors.length; i++) {
+        console.log(this.listConnectedUsers)
+        for(let user in this.listConnectedUsers){
+          if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
+            this.postForm.authors[i].isActive = true;
+            break
+          }
+        }
+      }
+    },
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
     },
@@ -620,6 +647,11 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.postForm = response.data
+        for(let i = 0; i < this.postForm.authors.length; i++) {
+          this.postForm.authors[i].isActive = false;
+          if(this.postForm.authors[i].author._id === this.userId)
+            this.postForm.authors[i].isActive = true;
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -662,6 +694,22 @@ export default {
         console.log(e)
       })
     },
+    updateReferences () {
+      console.log(this.references)
+      axios.put('/api/articles/'  + this.id + '/updateReferences', {
+        "references": this.references,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
+      .then(response => {
+        console.log("References updated")
+      })
+      .catch(e => {
+        console.log(e)
+      })
+    },
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.abstract = editor.root.innerHTML
       this.socket.emit('ABSTRACT_EDIT', {
@@ -672,8 +720,11 @@ export default {
         this.save(this.$event)
        },200);
     },
-
-    applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
+    createUuid () {
+      const uuidv4 = require('uuid/v4');
+      return uuidv4();
+		},
+		applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
       // this.postForm.arr_content[key].content =   editor.root.innerHTML
       this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
       this.socket.emit('SECTION_EDIT', {
@@ -845,11 +896,11 @@ export default {
     updateTitle () {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
         this.socket.emit('UPDATE_TITLE', {
           title: this.postForm.title
         });
-        this.save(this.$event)
-      }, 100);
+      }, 1000);
     },
     openEditFigure () {
       this.dialogVisible = true
@@ -918,6 +969,9 @@ export default {
   .el-icon-arrow-down {
     font-size: 12px;
   }
+  .el-icon-arrow-right {
+    font-size: 12px;
+  }
 
 .el-dialog--center .el-dialog__body{
     margin: 0px 0px 0px 0px;
@@ -961,6 +1015,10 @@ export default {
 }
 #users-panel .user-data > div {
   flex-grow: 1;
+}
+
+.ql-editor{
+    min-height:100px;
 }
 
 </style>

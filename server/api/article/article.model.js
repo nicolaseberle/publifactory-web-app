@@ -51,6 +51,10 @@ const ArticleSchema = new Schema({
       }
     }]]
   }],
+  references: [{
+    title: String,
+    doi: String
+  }],
   published: {
     type: Boolean,
     required: true,
