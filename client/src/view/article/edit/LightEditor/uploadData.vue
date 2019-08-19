@@ -98,7 +98,7 @@
     handleSuccess({name, results, header, size }) {
       this.tableData = results
       this.tableHeader = header
-      this.name = name
+      this.name = prompt('Which name would you like for this data file?');
       this.size = size
       this.tableFiles.push({name: JSON.stringify(name), file: JSON.stringify(name),size: JSON.stringify(size)})
       console.log(this.tableFiles)
@@ -129,14 +129,17 @@
       }).then(response => {
         if(response.data.length !== 0)
         {
-          this.keyCurrentTableData = 0
+          this.keyCurrentTableData = 0;
           // on n'affiche que le premier fichier
           this.tableData = JSON.parse(response.data[0].content)
           this.tableHeader = JSON.parse(response.data[0].header)
           // en revanche on charge tous les noms et tailles de fichiers de données
-          response.data.forEach((el) => {
-            this.tableFiles.push( {name: JSON.parse(el.name), file: JSON.parse(el.name), size:  JSON.parse(el.size)})
-          })
+          for (let i = 0, len = response.data.length; i < len;++i)
+            this.tableFiles.push({
+              name: JSON.stringify(response.data[i].name),
+              file: JSON.stringify(response.data[i].name),
+              size: JSON.stringify(response.data[i].size)
+            })
         }
       }).catch(e => {
         console.log(e)
