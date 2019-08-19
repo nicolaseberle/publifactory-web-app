@@ -171,7 +171,6 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigurePlotlyVisible=false" >Cancel</el-button>
           <el-button type="primary" @click="" >Preview</el-button>
           <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
@@ -198,7 +197,6 @@
               <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
           <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
@@ -219,7 +217,6 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigureRVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click="execRCode" :loading="renderLoading">Preview</el-button>
           <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
@@ -230,14 +227,6 @@
     </el-dialog>
 
     <div id="container"></div>
-
-    <el-dialog
-      title="Insert data"
-      :visible.sync="importDialogVisible"
-      width="80%"
-      top="0">
-      <ImportData :socket="this.socket" ref="importDataDialog"></ImportData>
-    </el-dialog>
 
     <el-dialog
       title="Insert a figure"
@@ -288,7 +277,6 @@
   import scriptR from '../../../../components/ScriptR'
   import figureFactory from '../../../../components/Charts'
   import addCollaborator from '../../../../components/Collaborator'
-  import ImportData from '../../../../components/ImportData/index'
   import InsertFigure from '../../../../components/InsertFigure/index'
   //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
@@ -352,7 +340,6 @@ export default {
   ],
   components: {
     InsertFigure,
-    ImportData,
     addCollaborator,
     importImage,
     imageComponent,
@@ -385,7 +372,6 @@ export default {
       diagInsertFigureRVisible: false,
       diagInsertFigurePythonVisible: false,
       diagInsertFigurePlotlyVisible: false,
-      importDialogVisible: false,
       dialogPictureVisible: false,
       userListOptions: [],
       html: '',

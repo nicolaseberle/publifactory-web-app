@@ -20,6 +20,7 @@
             <el-dropdown-item command="new"><i class="el-icon-plus"><span style="font-family: 'DNLTPro-medium'">  Create version</span></i></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <el-button class="el-button-action" @click="importDialogVisible=true" round>Import data</el-button>
       </el-col>
       <el-col :span='6'>
         <el-button-group >
@@ -123,7 +124,13 @@
       <el-button type="primary" @click="onSubmit()">Submit</el-button>
     </span>
   </el-dialog>
-
+    <el-dialog
+            title="Insert data"
+            :visible.sync="importDialogVisible"
+            width="80%"
+            top="0">
+      <ImportData :socket="this.socket" ref="importDataDialog"></ImportData>
+    </el-dialog>
   </div>
 
 </template>
@@ -132,6 +139,7 @@
   import lightEditorComponent from './LightEditor'
   import markdownEditorComponent from './MarkdownEditorComponent'
   import latexEditorComponent from './LatexEditorComponent'
+  import ImportData from '../../../components/ImportData/index'
   import axios from 'axios'
 
   import io from 'socket.io-client'
@@ -140,7 +148,7 @@
 
   export default {
   name: 'ArticleDetail',
-  components: { lightEditorComponent, markdownEditorComponent, latexEditorComponent },
+  components: { ImportData, lightEditorComponent, markdownEditorComponent, latexEditorComponent },
   data() {
     return {
       // postForm: Object.assign({}, defaultForm),
@@ -149,6 +157,7 @@
       flagHidePDF:1,
       editorType: false,
       id: '',
+      importDialogVisible: false,
       articleInfo : {},
       visibleDialogSubmProcess: false,
       commentStateVector: {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0},

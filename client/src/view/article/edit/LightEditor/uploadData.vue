@@ -112,7 +112,10 @@
     },
     save(name, header, results,size) {
       // console.log(JSON.stringify(this.id))
-      axios.post('/api/data/', { "id": this.id, "name": name,"header": header,"content": results, "size": size })
+      axios.post('/api/data/', { "id": this.id, "name": name,"header": header,"content": results, "size": size },
+              {
+                headers: {'Authorization': `Bearer ${this.accessToken}`}
+              })
       .then(response => {
         console.log("save successfully")
       })
@@ -130,10 +133,9 @@
           // on n'affiche que le premier fichier
           this.tableData = JSON.parse(response.data[0].content)
           this.tableHeader = JSON.parse(response.data[0].header)
-          let vm = this
           // en revanche on charge tous les noms et tailles de fichiers de données
-          response.data.forEach(function(el){
-            vm.tableFiles.push( {name: JSON.parse(el.name), file: JSON.parse(el.name), size:  JSON.parse(el.size)})
+          response.data.forEach((el) => {
+            this.tableFiles.push( {name: JSON.parse(el.name), file: JSON.parse(el.name), size:  JSON.parse(el.size)})
           })
         }
       }).catch(e => {
