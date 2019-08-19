@@ -1,18 +1,18 @@
 <template>
   <div>
     <h2 style="text-align:left;">Import</h2>
-
+    <!--
     <el-tabs stretch type="border-card" style='vertical-align:middle'>
-      <el-tab-pane label="Upload"><uploadData :socket="this.socket"/></el-tab-pane>
-      <el-tab-pane label="by URL">(not yet)</el-tab-pane>
-      <!--<el-tab-pane>
+      <el-tab-pane label="Upload"></el-tab-pane>
+      <el-tab-pane label="by URL"><linkData :socket="this.socket" /></el-tab-pane>
+      <el-tab-pane>
         <span slot="label">by Drive<img src='/static/icons/drive.svg' style='width:20px'></img></span>
         (not yet)
       </el-tab-pane>
       <el-tab-pane>
         <span slot="label">by Dropbox<img src='/static/icons/dropbox.svg' style='width:20px'></img></span>
         (not yet)
-      </el-tab-pane>-->
+      </el-tab-pane>
       <el-tab-pane label="SQL">(not yet)</el-tab-pane>
       <el-tab-pane label="Example">
         <el-row>
@@ -32,6 +32,8 @@
         </el-row>
       </el-tab-pane>
     </el-tabs>
+    -->
+    <uploadData :socket="this.socket"/>
   </div>
 </template>
 

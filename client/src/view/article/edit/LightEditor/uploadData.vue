@@ -13,31 +13,18 @@
           multiple
           :on-exceed="handleExceed"
           :file-list="tableFiles">
-          <div slot="tip" class="el-upload__tip">xls/xlsx/csv files with a size less than 5000kb</div>
+          <div slot="tip" class="el-upload__tip">xls/xlsx/csv files with a size less than 5000 Kb</div>
         </el-upload>
-<!--
-        <div class='uploadData'>
-          <el-table :data="tableFiles" border highlight-current-row style="width: 100%;margin-top:20px;">
-            <el-table-column
-              prop="file"
-              label="Files">
-            </el-table-column>
-            <el-table-column
-              prop="size"
-              label="Size (Bytes)">
-            </el-table-column>
-            <el-table-column
-              label="Operations">
-              <template slot-scope="scope">
-                <el-button
-                  type="danger"
-                  icon="el-icon-delete"
-                  circle
-                  @click="handleDelete(scope.$index, scope.row)"></el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>-->
+      </el-col>
+      <el-col>
+        <el-form ref="urlForm" :model="urlForm"  :rules="urlRules">
+          <el-form-item prop="link">
+            <el-input v-model="urlForm.link"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="loadUrl()" round>Load</el-button>
+          </el-form-item>
+        </el-form>
       </el-col>
       <el-col :span="14">
         <el-table :data="tableData" max-height="400" border highlight-current-row style="width: 100%;margin-top:20px;">
@@ -58,6 +45,14 @@
   props: ['socket'],
   data() {
     return {
+      urlForm: {
+        link: ''
+      },
+      urlRules: {
+        link: [{
+          required: true
+        }]
+      },
       tableData: [],
       tableHeader: [],
       tableFiles:[{}],
@@ -100,11 +95,11 @@
       this.tableHeader = header
       this.name = prompt('Which name would you like for this data file?');
       this.size = size
-      this.tableFiles.push({name: JSON.stringify(name), file: JSON.stringify(name),size: JSON.stringify(size)})
+      this.tableFiles.push({name: JSON.stringify(this.name), file: JSON.stringify(this.name),size: JSON.stringify(size)})
       console.log(this.tableFiles)
-      this.save(name, header, results, size)
+      this.save(this.name, header, results, size)
       this.socket.emit('NEW_DATA', {
-        name: name,
+        name: this.name,
         results: results,
         header: header,
         size: size
@@ -160,6 +155,28 @@
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`Delete ${ file.name }？`);
+    },
+    async loadUrl() {
+      const response = await axios.get(this.urlForm.link);
+      const data = response.data;
+      let separator = ',';
+      if (/;/.test(data))
+        separator = ';';
+      const columns = data.split('\n');
+      const object = {
+        name: null,
+        header: columns[0].split(separator),
+        results: [],
+        size: 0
+      };
+      for (let i = 1, len = columns.length; i < len; ++i) {
+        const tmp = columns[i].split(separator);
+        const objectTmp = {};
+        for (let j = 0, len2 = tmp.length; j < len2; ++j)
+          objectTmp[object.header[j]] = tmp[j];
+        object.results.push(objectTmp);
+      }
+      this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
     }
   }
 }
