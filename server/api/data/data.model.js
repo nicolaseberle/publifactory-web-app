@@ -17,14 +17,14 @@ const DataSchema = new Schema({
     type: String,
     default: 'No_DOI'
   },
-  articles: [{
+  id_article: {
     type: Schema.Types.ObjectId,
     ref: 'Article',
-  }],
-  authors: [{
+  },
+  id_user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-  }],
+  },
   tags:[{
     type: String,
   }]
