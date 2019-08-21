@@ -1,18 +1,7 @@
 'use strict';
 
-var User = require('../user/user.model');
 var Article = require('../article/article.model');
 var Data = require('./data.model');
-
-var config = require('../../../config').backend
-var jwt = require('jsonwebtoken')
-var paging = require('../paging')
-var _ = require('lodash')
-var mongoose = require('mongoose');
-
-var validationError = function (res, err) {
-  return res.status(422).json(err)
-}
 
 /**
  * Get list of articles
@@ -59,8 +48,8 @@ module.exports.createData = async (req, res, next) => {
   try {
     const newData = new Data({
       name: req.body.name,
-      header: JSON.stringify(req.body.header),
-      content: JSON.stringify(req.body.content),
+      header: req.body.header,
+      content: req.body.content,
       id_article: req.body.id,
       id_user: req.decoded._id
     });

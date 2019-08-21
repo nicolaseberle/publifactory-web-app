@@ -79,11 +79,6 @@ module.exports.createFigure = async (req, res, next) => {
  */
 module.exports.updateFigure = async (req, res, next) => {
   try {
-    console.log(req.body.data)
-    console.log(req.body.layout)
-    console.log(req.body.script)
-    console.log(req.body.infos)
-    console.log(req.body.option)
     if (req.body.data === undefined || req.body.layout === undefined ||
       req.body.option === undefined || req.body.script === undefined ||
       req.body.infos === undefined)

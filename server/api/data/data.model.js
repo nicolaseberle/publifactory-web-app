@@ -7,12 +7,10 @@ const DataSchema = new Schema({
   name :{
     type: String
   },
-  header: {
+  header: [{
     type: String
-  },
-  content: {
-    type: String
-  },
+  }],
+  content: [{}],
   doi: {
     type: String,
     default: 'No_DOI'
