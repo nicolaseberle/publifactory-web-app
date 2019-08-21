@@ -94,6 +94,9 @@
       this.tableData = results
       this.tableHeader = header
       this.name = prompt('Which name would you like for this data file?');
+      const regexp = /^.*?\.csv$/;
+      if (!regexp.test(this.name))
+        this.name = this.name + '.csv';
       this.size = size
       this.tableFiles.push({name: JSON.stringify(this.name), file: JSON.stringify(this.name),size: JSON.stringify(size)})
       console.log(this.tableFiles)
