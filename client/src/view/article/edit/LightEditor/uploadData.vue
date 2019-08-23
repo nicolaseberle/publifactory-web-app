@@ -1,30 +1,61 @@
 <template>
   <div class="app-container">
-    <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload"/>
     <el-row :gutter="10">
       <el-col :span="10">
+        <el-tabs stretch type="border-card" style='vertical-align:middle'>
+          <el-tab-pane label="Upload">
+            <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload"/>
+          </el-tab-pane>
+          <el-tab-pane label="URL">
+            <el-form ref="urlForm" :model="urlForm"  :rules="urlRules">
+              <el-form-item prop="Link">
+                <el-input v-model="urlForm.link"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="loadUrl()" round>Load</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="SQL">
+            <el-form ref="sqlForm" :model="sqlForm" :rules="sqlRules">
+              <el-form-item prop="type">
+                <el-radio v-model="sqlForm.type" label="1">MySQL</el-radio>
+                <el-radio v-model="sqlForm.type" label="2">PostgreSQL</el-radio>
+                <el-radio v-model="sqlForm.type" label="3">MongoDB</el-radio>
+              </el-form-item>
+              <el-form-item prop="Host">
+                <el-input v-model="sqlForm.host" placeholder="Host"></el-input>
+              </el-form-item>
+              <el-form-item prop="Port">
+                <el-input v-model="sqlForm.port" placeholder="Port"></el-input>
+              </el-form-item>
+              <el-form-item prop="User">
+                <el-input v-model="sqlForm.user" placeholder="Username"></el-input>
+              </el-form-item>
+              <el-form-item prop="Password" type="password">
+                <el-input v-model="sqlForm.password" placeholder="Password"></el-input>
+              </el-form-item>
+              <el-form-item prop="Database">
+                <el-input v-model="sqlForm.database" placeholder="Database"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="connectDatabase()" type="primary" round>Connect</el-button>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+        </el-tabs>
         <el-upload
-          class="upload-demo"
-          action="/api/figure"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :before-remove="beforeRemove"
-          :limit="10"
-          multiple
-          :on-exceed="handleExceed"
-          :file-list="tableFiles">
-          <div slot="tip" class="el-upload__tip">xls/xlsx/csv files with a size less than 5000 Kb</div>
+                class="upload-demo"
+                action="/api/figure"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                :limit="10"
+                multiple
+                :on-exceed="handleExceed"
+                :file-list="tableFiles">
+          <div slot="tip" class="el-upload__tip">xls/xls/csv files with a size less than 5000 Kb</div>
         </el-upload>
-      </el-col>
-      <el-col>
-        <el-form ref="urlForm" :model="urlForm"  :rules="urlRules">
-          <el-form-item prop="link">
-            <el-input v-model="urlForm.link"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="loadUrl()" round>Load</el-button>
-          </el-form-item>
-        </el-form>
       </el-col>
       <el-col :span="14">
         <el-table :data="tableData" max-height="400" border highlight-current-row style="width: 100%;margin-top:20px;">
@@ -52,6 +83,22 @@
         link: [{
           required: true
         }]
+      },
+      sqlForm: {
+        host: '',
+        port: '',
+        user: '',
+        password: '',
+        database: '',
+        type: "1"
+      },
+      sqlRules: {
+        host: [{required: true, message: "Enter URL of the database"}],
+        port: [{required: true}],
+        user: [{required: true}],
+        password: [{message: "Not required."}],
+        database: [{message: "Database to select"}],
+        type: [{message: "Type of the database"}]
       },
       tableData: [],
       tableHeader: [],
@@ -180,6 +227,18 @@
         object.results.push(objectTmp);
       }
       this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
+    },
+    async connectDatabase () {
+      if (this.sqlForm.type === 1)
+        this.sqlForm.type = "mysql";
+      else if (this.sqlForm.type === 2)
+        this.sqlForm.type = "pg";
+      else
+        this.sqlForm.type = "mongodb";
+      const response = await axios.post('/api/data/sql/connect', this.sqlForm, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      });
+      console.log(response.data);
     }
   }
 }

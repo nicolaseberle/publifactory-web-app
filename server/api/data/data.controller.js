@@ -3,6 +3,10 @@
 var Article = require('../article/article.model');
 var Data = require('./data.model');
 
+const mysql = require('mysql');
+const { Pg } = require('pg');
+const mongodb = require('mongoose');
+
 /**
  * Get list of articles
  * restriction: 'admin'
@@ -64,5 +68,54 @@ module.exports.createData = async (req, res, next) => {
   } catch (err) {
     console.log(err)
     next(err);
+  }
+};
+
+module.exports.sqlConnect = async (req, res, next) => {
+  try {
+    if (req.body.type === "mysql") {
+      const config = {
+        connectionLimit: 50,
+        host: req.body.host,
+        database: req.body.database,
+        user: req.body.user,
+        password: req.body.password,
+        port: req.body.port,
+        debug: false
+      };
+      const connection = mysql.createConnection(config);
+      connection.connect(function (err) {
+        if (err) throw err;
+      });
+    } else if (req.body.type === "pg") {
+      const config = {
+        host: req.body.host,
+        database: req.body.database,
+        user: req.body.user,
+        password: req.body.password,
+        port: req.body.port
+      };
+      const client = new Pg(config);
+      await client.connect();
+    } else {
+      let connectionString = 'mongodb://';
+      if (req.body.user && req.body.password)
+        connectionString = connectionString + `${req.body.user}:${req.body.password}@`;
+      connectionString = connectionString + `${req.body.host}:${res.body.port}`;
+      if (req.body.database)
+        connectionString = connectionString + `/${req.body.database}`;
+      await mongodb.connect(connectionString);
+    }
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports.sqlQuery = async (req, res, next) => {
+  try {
+
+  } catch (e) {
+    next(e);
   }
 };
