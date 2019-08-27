@@ -5,7 +5,7 @@ var Data = require('./data.model');
 
 const mysql = require('mysql');
 const { Pg } = require('pg');
-const mongodb = require('mongoose');
+const mongodb = require('mongodb').MongoClient;
 
 /**
  * Get list of articles
@@ -71,11 +71,11 @@ module.exports.createData = async (req, res, next) => {
   }
 };
 
-module.exports.sqlConnect = async (req, res, next) => {
+async function tryConnection(req, res) {
   try {
+    console.log(req.body)
     if (req.body.type === "mysql") {
       const config = {
-        connectionLimit: 50,
         host: req.body.host,
         database: req.body.database,
         user: req.body.user,
@@ -87,6 +87,7 @@ module.exports.sqlConnect = async (req, res, next) => {
       connection.connect(function (err) {
         if (err) throw err;
       });
+      return connection;
     } else if (req.body.type === "pg") {
       const config = {
         host: req.body.host,
@@ -97,6 +98,7 @@ module.exports.sqlConnect = async (req, res, next) => {
       };
       const client = new Pg(config);
       await client.connect();
+      return client;
     } else {
       let connectionString = 'mongodb://';
       if (req.body.user && req.body.password)
@@ -106,6 +108,32 @@ module.exports.sqlConnect = async (req, res, next) => {
         connectionString = connectionString + `/${req.body.database}`;
       await mongodb.connect(connectionString);
     }
+  } catch (e) {
+    console.error(e);
+    throw { code: 100, message: "Connection refused." };
+  }
+}
+
+async function execQuery (req, connection) {
+  try {
+    return await new Promise((resolve, reject) => {
+      if (req.body.type === "mysql" || req.body.type === "pg") {
+        connection.query(req.body.query, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        })
+      } else {
+
+      }
+    });
+  } catch (e) {
+    throw e;
+  }
+}
+
+module.exports.sqlConnect = async (req, res, next) => {
+  try {
+    await tryConnection(req, res);
     res.json({ success: true })
   } catch (e) {
     next(e);
@@ -114,7 +142,9 @@ module.exports.sqlConnect = async (req, res, next) => {
 
 module.exports.sqlQuery = async (req, res, next) => {
   try {
-
+    const connection = await tryConnection(req, res);
+    const response = await execQuery(req, connection);
+    res.json({ success: true, result: response });
   } catch (e) {
     next(e);
   }

@@ -17,31 +17,7 @@
             </el-form>
           </el-tab-pane>
           <el-tab-pane label="SQL">
-            <el-form ref="sqlForm" :model="sqlForm" :rules="sqlRules">
-              <el-form-item prop="type">
-                <el-radio v-model="sqlForm.type" label="1">MySQL</el-radio>
-                <el-radio v-model="sqlForm.type" label="2">PostgreSQL</el-radio>
-                <el-radio v-model="sqlForm.type" label="3">MongoDB</el-radio>
-              </el-form-item>
-              <el-form-item prop="Host">
-                <el-input v-model="sqlForm.host" placeholder="Host"></el-input>
-              </el-form-item>
-              <el-form-item prop="Port">
-                <el-input v-model="sqlForm.port" placeholder="Port"></el-input>
-              </el-form-item>
-              <el-form-item prop="User">
-                <el-input v-model="sqlForm.user" placeholder="Username"></el-input>
-              </el-form-item>
-              <el-form-item prop="Password" type="password">
-                <el-input v-model="sqlForm.password" placeholder="Password"></el-input>
-              </el-form-item>
-              <el-form-item prop="Database">
-                <el-input v-model="sqlForm.database" placeholder="Database"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button @click="connectDatabase()" type="primary" round>Connect</el-button>
-              </el-form-item>
-            </el-form>
+            <component v-bind:is="SqlEditor" v-on:connectdatabase="onSqlChange" v-on:disconnect="disconnectDatabase" :sqlForm="sqlForm" :sqlRules="sqlRules" />
           </el-tab-pane>
         </el-tabs>
         <el-upload
@@ -67,12 +43,14 @@
 </template>
 <script>
   import UploadExcelComponent from '../../../../components/UploadExcel/index.vue'
+  import SqlConnection from '../../../../components/SQL/Connection.vue'
+  import SqlQuery from '../../../../components/SQL/Query.vue'
   import axios from 'axios'
   import { mapGetters } from 'vuex'
 
   export default {
   name: 'UploadExcel',
-  components: { UploadExcelComponent },
+  components: { UploadExcelComponent, SqlConnection, SqlQuery },
   props: ['socket'],
   data() {
     return {
@@ -100,6 +78,7 @@
         database: [{message: "Database to select"}],
         type: [{message: "Type of the database"}]
       },
+      SqlEditor: 'SqlConnection',
       tableData: [],
       tableHeader: [],
       tableFiles:[{}],
@@ -108,9 +87,9 @@
       keyCurrentTableData: 0
     }
   },
-  computed: {
-    ...mapGetters(['accessToken'])
-  },
+    computed: {
+      ...mapGetters(['accessToken'])
+    },
   created() {
     const id = this.$route.params && this.$route.params.id
     this.id = id
@@ -228,18 +207,8 @@
       }
       this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
     },
-    async connectDatabase () {
-      if (this.sqlForm.type === 1)
-        this.sqlForm.type = "mysql";
-      else if (this.sqlForm.type === 2)
-        this.sqlForm.type = "pg";
-      else
-        this.sqlForm.type = "mongodb";
-      const response = await axios.post('/api/data/sql/connect', this.sqlForm, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      });
-      console.log(response.data);
-    }
+    onSqlChange (instance) { this.SqlEditor = instance === true ? 'SqlQuery' : 'SqlConnection'; },
+    disconnectDatabase () { this.SqlEditor = 'SqlConnection' }
   }
 }
 </script>
