@@ -17,12 +17,18 @@
             </el-form>
           </el-tab-pane>
           <el-tab-pane label="SQL">
-            <component v-bind:is="SqlEditor" v-on:connectdatabase="onSqlChange" v-on:disconnect="disconnectDatabase" :sqlForm="sqlForm" :sqlRules="sqlRules" />
+            <component v-bind:is="SqlEditor"
+                       v-on:queryresult="importQuery"
+                       v-on:connectdatabase="onSqlChange"
+                       v-on:disconnect="disconnectDatabase"
+                       :sqlForm="sqlForm"
+                       :sqlRules="sqlRules" />
           </el-tab-pane>
         </el-tabs>
         <el-upload
                 class="upload-demo"
                 action="/api/figure"
+                :headers="headerUpload"
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
                 :before-remove="beforeRemove"
@@ -78,6 +84,9 @@
         database: [{message: "Database to select"}],
         type: [{message: "Type of the database"}]
       },
+      headerUpload: {
+        Authorization: `Bearer ${this.accessToken}`
+      },
       SqlEditor: 'SqlConnection',
       tableData: [],
       tableHeader: [],
@@ -90,10 +99,10 @@
     computed: {
       ...mapGetters(['accessToken'])
     },
-  created() {
+  async created() {
     const id = this.$route.params && this.$route.params.id
     this.id = id
-    this.loadData(id)
+    await this.loadData(id)
   },
   mounted() {
     this.socket.on('ADD_DATA', () => this.loadData(this.id));
@@ -101,11 +110,9 @@
   },
   methods: {
     handleDelete(index, row) {
-        console.log(index, row);
     },
     beforeUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 1
-      console.log(file.name)
       if (isLt1M) {
         return true
       }
@@ -125,7 +132,6 @@
         this.name = this.name + '.csv';
       this.size = size
       this.tableFiles.push({name: JSON.stringify(this.name), file: JSON.stringify(this.name),size: JSON.stringify(size)})
-      console.log(this.tableFiles)
       this.save(this.name, header, results, size)
       this.socket.emit('NEW_DATA', {
         name: this.name,
@@ -147,37 +153,42 @@
         console.log(e)
       })
     },
-    loadData(id) {
-      axios.get(`/api/data/${this.id}`, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-        if(response.data.length !== 0)
-        {
+    async loadData(id) {
+      try {
+        const response = await axios.get(`/api/data/${this.id}`, {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        });
+        if (response.data.length !== 0) {
+          console.log(response.data);
           this.keyCurrentTableData = 0;
           // on n'affiche que le premier fichier
-          this.tableData = JSON.parse(response.data[0].content)
-          this.tableHeader = JSON.parse(response.data[0].header)
+          this.tableData = response.data[0].content;
+          this.tableHeader = response.data[0].header;
           // en revanche on charge tous les noms et tailles de fichiers de données
-          for (let i = 0, len = response.data.length; i < len;++i)
+          for (let i = 0, len = response.data.length; i < len; ++i)
             this.tableFiles.push({
-              name: JSON.stringify(response.data[i].name),
-              file: JSON.stringify(response.data[i].name),
-              size: JSON.stringify(response.data[i].size)
+              position: i,
+              name: response.data[i].name,
+              file: response.data[i].name,
+              size: response.data[i].size,
+              content: response.data[i].content,
+              header: response.data[i].header
             })
         }
-      }).catch(e => {
-        console.log(e)
-      })
+      } catch (e) {
+        console.error(e);
+      }
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
       this.socket.emit('REMOVE_DATA', {
         file: file,
         fileList: fileList
       })
     },
     handlePreview(file) {
-      console.log(file);
+      this.keyCurrentTableData = file.position;
+      this.tableHeader = file.header;
+      this.tableData = file.content;
     },
     handleExceed(files, fileList) {
       this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
@@ -208,7 +219,18 @@
       this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
     },
     onSqlChange (instance) { this.SqlEditor = instance === true ? 'SqlQuery' : 'SqlConnection'; },
-    disconnectDatabase () { this.SqlEditor = 'SqlConnection' }
+    disconnectDatabase () { this.SqlEditor = 'SqlConnection' },
+    importQuery (instance) {
+      const object = {
+        name: null,
+        header: Object.keys(instance[0]),
+        results: [],
+        size: 0
+      };
+      for (let i = 0, len = instance.length; i < len; ++i)
+        object.results.push(instance[i]);
+      this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
+    }
   }
 }
 </script>

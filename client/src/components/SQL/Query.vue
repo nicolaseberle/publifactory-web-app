@@ -6,6 +6,7 @@
         </el-form-item>
         <el-form-item>
             <el-button @click="query()" type="primary" round>Query</el-button>
+            <el-button @click="$emit('disconnect', 'SqlConnection')" type="primary" round>Disconnect</el-button>
         </el-form-item>
     </el-form>
     </div>
@@ -50,7 +51,6 @@
                 lineWrapping: true
             });
             this.editor.on('change', (cm) => {
-               console.log(cm.getDoc().getValue())
                this.queryForm.query = cm.getDoc().getValue();
             });
             this.editor.refresh();
@@ -66,7 +66,7 @@
                 }, {
                     headers: {'Authorization': `Bearer ${this.accessToken}`}
                 });
-                console.log(response.data);
+                this.$emit('queryresult', response.data.result);
             }
         }
     }
