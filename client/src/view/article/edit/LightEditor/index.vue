@@ -150,7 +150,7 @@
       </aside>
       <aside  class="activity" ><p>Activity</p></aside>
       <aside type="button" class="content-activity" id="triggerActivity">
-        <activityComponent ref="activityRef"/>
+        <activityComponent v-on:close='closeActivityTab()'/>
       </aside>
     </div>
     <el-dialog
@@ -355,6 +355,7 @@ export default {
     activityComponent},
   data() {
     return {
+      flagActivity: true,
       listConnectedUsers: Array,
       references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
@@ -487,10 +488,10 @@ export default {
       this.listConnectedUsers = data
       this.isUserConnected()
     });
-    window.addEventListener('load', () => {
-      asideRightActivity()
-      asideRightAnimation()
-    })
+
+    asideRightActivity()
+    asideRightAnimation()
+
 
     window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
   },
@@ -547,6 +548,10 @@ export default {
     /*signalUpdateUserList (newCursors) {
       this.updateUserList (editor)
     },*/
+    closeActivityTab () {
+      $('aside.content-activity').css('display', 'none')
+      console.log('echo')
+    },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
         console.log(this.listConnectedUsers)
