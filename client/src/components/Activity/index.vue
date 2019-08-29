@@ -1,11 +1,8 @@
-
 <template>
-
-
   <div class="wrapper">
     <header class="wrapper">
         <a href="#" title="Check Activity of the article" class="showactivity active"><svg-icon icon-class='history-clock-button' style='margin:0 10px 0 10px'/>Activity</a>
-        <a href="#" title="Close activity bar" class="close-activity"><img src="/static/icons/Close.svg" class="close-activity svg" alt="Close this activty bar"></a>
+        <a href="#" title="Close activity bar" class="close-activity" v-on:click='closeActivityTab()'><img src="/static/icons/Close.svg" class="close-activity svg" alt="Close this activty bar"></a>
     </header>
     <section class="content">
         <el-timeline>
@@ -55,6 +52,9 @@
       }
     },
     methods: {
+      closeActivityTab () {
+        this.$emit('close',true)
+      }
 
     }
   }
