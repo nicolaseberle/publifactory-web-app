@@ -51,7 +51,7 @@
   import 'codemirror/mode/python/python.js'
   import 'codemirror/lib/codemirror.css'
   import '../../styles/one-dark.css'
-  import { mapGetters } from 'vuex'
+  import {mapGetters} from 'vuex'
   import axios from 'axios'
 
   const debug = require('debug')('frontend');
@@ -94,7 +94,7 @@
       }
     },
     created () {
-
+      this.id = this.$route.params && this.$route.params.id
     },
     computed: {
       ...mapGetters(['accessToken'])
@@ -104,11 +104,13 @@
        * Socket instructions from API
        */
       this.socket.on('LOAD_CODE_R', async data => {
-        await this.fetchFigure(data.id)
+        await this.fetchData();
+        await this.fetchFigure(data.id);
         await this.execCode()
-      })
+      });
 
-      await this.fetchFigure(this.idfigure)
+      await this.fetchData();
+      await this.fetchFigure(this.idfigure);
       this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
         value: '',
         lineNumbers: true,
@@ -232,7 +234,6 @@
         }
       },
       async saveFigure () {
-        console.log('saveFigure: ', this.idfigure)
         try {
           await axios.put('/api/figure/' + this.idfigure, {
             data: this.currentData,
@@ -274,9 +275,34 @@
           this.editableTabsValue = '1'
           this.tabIndex = response.data.script.content !== undefined ? response.data.script.content.length : 1
           for (let i = 0, len = this.tabIndex; i < len; ++i)
-            this.codemirrorOptions(response.data.script.content[i].name)
+              this.codemirrorOptions(response.data.script.content[i].name)
           if (response.data.infos !== null)
             this.postForm = this.response.data.infos
+        }
+      },
+      async fetchData () {
+        const datas = await axios.get('/api/data/' + this.id,
+                { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
+        if (datas.data.length !== 0) {
+          for (let object of datas.data) {
+            let stringResult = '';
+            for (let i = 0, len = object.header.length; i < len; ++i) {
+              if (i === len - 1) stringResult = stringResult + object.header[i] + '\n';
+              else stringResult = stringResult + object.header[i] + ', ';
+            }
+            for (let j = 0, len2 = object.content.length; j < len2; ++j) {
+              for (let i = 0, len = object.header.length; i < len; ++i) {
+                if (i === len - 1) stringResult = stringResult + object.content[j][object.header[i]] + '\n';
+                else stringResult = stringResult + object.content[j][object.header[i]] + ', ';
+              }
+            }
+            let newTabName = ++this.tabIndex + '';
+            this.editableTabs.push({
+              title: object.name,
+              name: newTabName,
+              content: stringResult
+            });
+          }
         }
       },
       codemirrorOptions (elementId) {

@@ -15,6 +15,8 @@ RUN apt update
 RUN apt install -y r-base
 RUN R -e "install.packages('plotly',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('rjson',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('readr',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('dplyr',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 # Building API NodeJs
 RUN mkdir /src

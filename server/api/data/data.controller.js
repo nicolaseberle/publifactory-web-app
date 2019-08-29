@@ -1,18 +1,11 @@
 'use strict';
 
-var User = require('../user/user.model');
 var Article = require('../article/article.model');
 var Data = require('./data.model');
 
-var config = require('../../../config').backend
-var jwt = require('jsonwebtoken')
-var paging = require('../paging')
-var _ = require('lodash')
-var mongoose = require('mongoose');
-
-var validationError = function (res, err) {
-  return res.status(422).json(err)
-}
+const mysql = require('mysql');
+const { Pg } = require('pg');
+const mongodb = require('mongodb').MongoClient;
 
 /**
  * Get list of articles
@@ -39,22 +32,10 @@ const DEFAULT_LIMIT = 10;
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-
 exports.getData = async (req, res, next) => {
-
-
   try {
-    let data = [];
-    console.log("getData");
-    const articleId = req.params.id.trim()
-    const article = await Article.findById(articleId).populate('arr_data').lean();
-    if (article.arr_data === undefined || article.arr_data.length == 0) {
-      data = []  // array empty or does not exist
-    }else{
-      data = await Data.find({'_id': { $in: article.arr_data}}).lean();
-    }
-
-    return res.status(200).json(data);
+    const data = await Data.find({id_article: req.params.id}).exec();
+    res.status(200).json(data);
   } catch (err) {
     return next(err);
   }
@@ -69,42 +50,115 @@ exports.getData = async (req, res, next) => {
  */
 module.exports.createData = async (req, res, next) => {
   try {
-    //req.check(ArticleValidator.checkArticleData);
-    //const validationResult = await req.getValidationResult();
-    /*if (!validationResult.isEmpty()) {
-      return res.status(400).json({ errors: validationResult.array() });
-    }*/
-
-    const name = req.body.name;
-    // console.log(JSON.stringify(name));
-    const header = req.body.header;
-    // console.log(JSON.stringify(header));
-    const content = req.body.content;
-    console.log(JSON.stringify(content, null, "\t"))
-
-    //console.log(content);
-    // const published = req.body.published;
-    //console.log(published);
-
-    const newData = new Data({ "name": JSON.stringify(name), "header": JSON.stringify(header),"content": JSON.stringify(content)});
-
-    //Add category to the Article
-    //Catch the good category
-
-    const article = await Article.findById(req.body.id).populate('arr_data').lean();
-    console.log(JSON.stringify(article, null, "\t"));
+    const newData = new Data({
+      name: req.body.name,
+      header: req.body.header,
+      content: req.body.content,
+      id_article: req.body.id,
+      id_user: req.decoded._id
+    });
     const data = await newData.save();
-    console.log(JSON.stringify(data._id, null, "\t"));
 
     // article.arr_data.push(data);
     // article.save();
     Article.findByIdAndUpdate(req.body.id, {
       $push: { arr_data:  data._id}
     }, { 'new': false}).exec()
-    // console.log(JSON.stringify(article._id, null, "\t"));
-
-    return res.status(200).json(data._id);
+    res.status(200).json(data._id);
   } catch (err) {
-    return next(err);
+    console.log(err)
+    next(err);
+  }
+};
+
+async function tryConnection(req) {
+  try {
+    if (!req.body.host || !req.body.port)
+      throw {code: 422, message: 'Missing parameters.'};
+    const config = {
+      host: req.body.host,
+      database: req.body.database,
+      user: req.body.user,
+      password: req.body.password,
+      port: req.body.port
+    };
+    let client;
+    if (req.body.type === "mysql") {
+      client = mysql.createConnection(config);
+      await new Promise((resolve, reject) => {
+        client.connect(function (err) {
+          if (err) reject(err);
+          resolve();
+        });
+      });
+    } else if (req.body.type === "pg") {
+      client = new Pg(config);
+      await client.connect();
+    } else {
+      let connectionString = 'mongodb://';
+      if (req.body.user && req.body.password)
+        connectionString = connectionString + `${req.body.user}:${req.body.password}@`;
+      connectionString = connectionString + `${req.body.host}:${req.body.port}`;
+      if (req.body.database)
+        connectionString = connectionString + `/${req.body.database}`;
+      client = new mongodb(connectionString);
+      await client.connect((err) => {
+        if (err) throw err;
+        client.close();
+      });
+    }
+    return client;
+  } catch (e) {
+    throw { code: 100, message: "Connection refused." };
+  }
+}
+
+async function execQuery (req, connection) {
+  try {
+    if (!req.body.query)
+      throw { code: 422, message: "Missing query parameter." };
+    return await new Promise((resolve, reject) => {
+      if (req.body.type === "mysql" || req.body.type === "pg") {
+        connection.query(req.body.query, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        })
+      } else {
+        req.body.query = JSON.parse(req.body.query);
+        if (req.body.query.collection === undefined || req.body.query.query === undefined)
+          reject({ code: 422, message: 'Missing parameters in the query field.' });
+        connection.connect((err) => {
+          if (err) reject(err);
+          const db = req.body.database ? connection.db(req.body.database) : connection.db();
+          if (db !== null)
+            db.collection(req.body.query.collection).find(req.body.query.query).toArray((err, result) => {
+              if (err) throw err;
+              connection.close();
+              resolve(result);
+            });
+        })
+      }
+    });
+  } catch (e) {
+    throw e;
+  }
+}
+
+module.exports.sqlConnect = async (req, res, next) => {
+  try {
+    await tryConnection(req);
+    res.json({ success: true })
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports.sqlQuery = async (req, res, next) => {
+  try {
+    const connection = await tryConnection(req);
+    const response = await execQuery(req, connection);
+    res.json({ success: true, result: response });
+  } catch (e) {
+    next(e);
   }
 };

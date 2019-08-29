@@ -7,24 +7,22 @@ const DataSchema = new Schema({
   name :{
     type: String
   },
-  header: {
+  header: [{
     type: String
-  },
-  content: {
-    type: String
-  },
+  }],
+  content: [{}],
   doi: {
     type: String,
     default: 'No_DOI'
   },
-  articles: [{
+  id_article: {
     type: Schema.Types.ObjectId,
     ref: 'Article',
-  }],
-  authors: [{
+  },
+  id_user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-  }],
+  },
   tags:[{
     type: String,
   }]
