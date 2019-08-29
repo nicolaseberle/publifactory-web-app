@@ -120,7 +120,7 @@ var production = {
     // MongoDB connection options
     mongo: {
       //uri: process.env.MONGODB_URI
-      uri: 'mongodb://localhost:27017/mevn-dev?ssl=true',
+      uri: 'mongodb://localhost:27017/',
     },
 
     // frontend folder

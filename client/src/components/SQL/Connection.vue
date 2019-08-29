@@ -14,8 +14,8 @@
         <el-form-item prop="User">
             <el-input v-model="sqlForm.user" placeholder="Username"></el-input>
         </el-form-item>
-        <el-form-item prop="Password" type="password">
-            <el-input v-model="sqlForm.password" placeholder="Password"></el-input>
+        <el-form-item prop="Password">
+            <el-input type="password" v-model="sqlForm.password" placeholder="Password"></el-input>
         </el-form-item>
         <el-form-item prop="Database">
             <el-input v-model="sqlForm.database" placeholder="Database"></el-input>

@@ -71,51 +71,52 @@ module.exports.createData = async (req, res, next) => {
   }
 };
 
-async function tryConnection(req, res) {
+async function tryConnection(req) {
   try {
-    console.log(req.body)
+    if (!req.body.host || !req.body.port)
+      throw {code: 422, message: 'Missing parameters.'};
+    const config = {
+      host: req.body.host,
+      database: req.body.database,
+      user: req.body.user,
+      password: req.body.password,
+      port: req.body.port
+    };
+    let client;
     if (req.body.type === "mysql") {
-      const config = {
-        host: req.body.host,
-        database: req.body.database,
-        user: req.body.user,
-        password: req.body.password,
-        port: req.body.port,
-        debug: false
-      };
-      const connection = mysql.createConnection(config);
-      connection.connect(function (err) {
-        if (err) throw err;
+      client = mysql.createConnection(config);
+      await new Promise((resolve, reject) => {
+        client.connect(function (err) {
+          if (err) reject(err);
+          resolve();
+        });
       });
-      return connection;
     } else if (req.body.type === "pg") {
-      const config = {
-        host: req.body.host,
-        database: req.body.database,
-        user: req.body.user,
-        password: req.body.password,
-        port: req.body.port
-      };
-      const client = new Pg(config);
+      client = new Pg(config);
       await client.connect();
-      return client;
     } else {
       let connectionString = 'mongodb://';
       if (req.body.user && req.body.password)
         connectionString = connectionString + `${req.body.user}:${req.body.password}@`;
-      connectionString = connectionString + `${req.body.host}:${res.body.port}`;
+      connectionString = connectionString + `${req.body.host}:${req.body.port}`;
       if (req.body.database)
         connectionString = connectionString + `/${req.body.database}`;
-      await mongodb.connect(connectionString);
+      client = new mongodb(connectionString);
+      await client.connect((err) => {
+        if (err) throw err;
+        client.close();
+      });
     }
+    return client;
   } catch (e) {
-    console.error(e);
     throw { code: 100, message: "Connection refused." };
   }
 }
 
 async function execQuery (req, connection) {
   try {
+    if (!req.body.query)
+      throw { code: 422, message: "Missing query parameter." };
     return await new Promise((resolve, reject) => {
       if (req.body.type === "mysql" || req.body.type === "pg") {
         connection.query(req.body.query, (err, result) => {
@@ -123,7 +124,19 @@ async function execQuery (req, connection) {
           else resolve(result);
         })
       } else {
-
+        req.body.query = JSON.parse(req.body.query);
+        if (req.body.query.collection === undefined || req.body.query.query === undefined)
+          reject({ code: 422, message: 'Missing parameters in the query field.' });
+        connection.connect((err) => {
+          if (err) reject(err);
+          const db = req.body.database ? connection.db(req.body.database) : connection.db();
+          if (db !== null)
+            db.collection(req.body.query.collection).find(req.body.query.query).toArray((err, result) => {
+              if (err) throw err;
+              connection.close();
+              resolve(result);
+            });
+        })
       }
     });
   } catch (e) {
@@ -133,7 +146,7 @@ async function execQuery (req, connection) {
 
 module.exports.sqlConnect = async (req, res, next) => {
   try {
-    await tryConnection(req, res);
+    await tryConnection(req);
     res.json({ success: true })
   } catch (e) {
     next(e);
@@ -142,7 +155,7 @@ module.exports.sqlConnect = async (req, res, next) => {
 
 module.exports.sqlQuery = async (req, res, next) => {
   try {
-    const connection = await tryConnection(req, res);
+    const connection = await tryConnection(req);
     const response = await execQuery(req, connection);
     res.json({ success: true, result: response });
   } catch (e) {

@@ -2,11 +2,13 @@
     <div>
     <el-form ref="queryForm" :model="queryForm" :rules="queryRules">
         <el-form-item prop="Query">
-            <el-input id="queryInput" name="queryInput" v-model="queryForm.query" placeholder="Query (ex: SELECT * FROM column)"></el-input>
+            <el-input style="text-align: left" id="queryInput" name="queryInput" v-model="queryForm.query" placeholder="Query (ex: SELECT * FROM column)"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button @click="query()" type="primary" round>Query</el-button>
-            <el-button @click="$emit('disconnect', 'SqlConnection')" type="primary" round>Disconnect</el-button>
+            <el-button-group>
+                <el-button @click="query()" type="primary" autofocus round>Query</el-button>
+                <el-button @click="$emit('disconnect', 'SqlConnection')" type="primary" round>Disconnect</el-button>
+            </el-button-group>
         </el-form-item>
     </el-form>
     </div>
@@ -17,7 +19,8 @@
     import {mapGetters} from "vuex";
     import CodeMirror from 'codemirror'
     import 'codemirror/mode/sql/sql.js'
-    import '../../styles/one-dark.css'
+    import 'codemirror/mode/javascript/javascript'
+    import 'codemirror/theme/base16-light.css'
     import 'codemirror/lib/codemirror.css'
 
     export default {
@@ -38,18 +41,39 @@
               content: ''
           }
         },
+        created () {
+            if (this.sqlForm.type === "mongodb")
+                this.queryForm.query = `{
+  "collection": "",
+  "query": {
+
+  }
+}`;
+        },
         mounted () {
-            this.editor = CodeMirror.fromTextArea(document.getElementById("queryInput"), {
-                value: '',
-                lineNumbers: false,
-                styleActiveLine: true,
-                matchBrackets: true,
-                indentUnit: 4,
-                smartIndentationFix: true,
-                theme: 'one-dark',
-                mode: "text/x-mysql",
-                lineWrapping: true
-            });
+            if (this.sqlForm.type === "mongodb")
+                this.editor = CodeMirror.fromTextArea(document.getElementById("queryInput"), {
+                    value: '',
+                    styleActiveLine: true,
+                    matchBrackets: true,
+                    indentUnit: 4,
+                    autoCloseBrackets: true,
+                    theme: 'base16-light',
+                    mode: "application/json",
+                    lineWrapping: true,
+                    lineNumbers: true
+                });
+            else
+                this.editor = CodeMirror.fromTextArea(document.getElementById("queryInput"), {
+                    value: '',
+                    styleActiveLine: true,
+                    matchBrackets: true,
+                    indentUnit: 4,
+                    theme: 'base16-light',
+                    mode: "text/x-mysql",
+                    lineNumbers: true,
+                    lineWrapping: true
+                });
             this.editor.on('change', (cm) => {
                this.queryForm.query = cm.getDoc().getValue();
             });
@@ -72,6 +96,9 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+    .CodeMirror {
+        border: 1px solid silver;
+        margin-bottom: 1em;
+    }
 </style>

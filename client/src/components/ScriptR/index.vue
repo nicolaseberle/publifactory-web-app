@@ -275,7 +275,7 @@
           this.editableTabsValue = '1'
           this.tabIndex = response.data.script.content !== undefined ? response.data.script.content.length : 1
           for (let i = 0, len = this.tabIndex; i < len; ++i)
-            this.codemirrorOptions(response.data.script.content[i].name)
+              this.codemirrorOptions(response.data.script.content[i].name)
           if (response.data.infos !== null)
             this.postForm = this.response.data.infos
         }

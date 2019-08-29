@@ -79,7 +79,7 @@
       sqlRules: {
         host: [{required: true, message: "Enter URL of the database"}],
         port: [{required: true}],
-        user: [{required: true}],
+        user: [{}],
         password: [{message: "Not required."}],
         database: [{message: "Database to select"}],
         type: [{message: "Type of the database"}]
@@ -90,7 +90,7 @@
       SqlEditor: 'SqlConnection',
       tableData: [],
       tableHeader: [],
-      tableFiles:[{}],
+      tableFiles:[],
       name : '',
       size: '',
       keyCurrentTableData: 0
@@ -138,7 +138,7 @@
         results: results,
         header: header,
         size: size
-      })
+      });
     },
     save(name, header, results,size) {
       // console.log(JSON.stringify(this.id))
@@ -147,10 +147,10 @@
                 headers: {'Authorization': `Bearer ${this.accessToken}`}
               })
       .then(response => {
-        console.log("save successfully")
+        this.$message.success("Your data has been saved!")
       })
       .catch(e => {
-        console.log(e)
+        this.$message.error("An error occurred during the save of your data.")
       })
     },
     async loadData(id) {
@@ -186,9 +186,11 @@
       })
     },
     handlePreview(file) {
-      this.keyCurrentTableData = file.position;
-      this.tableHeader = file.header;
-      this.tableData = file.content;
+      this.$nextTick(() => {
+        this.keyCurrentTableData = file.position;
+        this.tableHeader = file.header;
+        this.tableData = file.content;
+      })
     },
     handleExceed(files, fileList) {
       this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
@@ -218,8 +220,20 @@
       }
       this.handleSuccess({name: null, results: object.results, header: object.header, size: object.size})
     },
-    onSqlChange (instance) { this.SqlEditor = instance === true ? 'SqlQuery' : 'SqlConnection'; },
-    disconnectDatabase () { this.SqlEditor = 'SqlConnection' },
+    onSqlChange (instance) {
+      if (instance === true) {
+        this.SqlEditor = 'SqlQuery';
+        this.$message.success("You're connected to the database!")
+      } else {
+        this.sqlForm.type = "1";
+        this.SqlEditor = 'SqlConnection';
+        this.$message.error("Connection to database failed.")
+      }
+    },
+    disconnectDatabase () {
+      this.sqlForm.type = "1";
+      this.SqlEditor = 'SqlConnection';
+    },
     importQuery (instance) {
       const object = {
         name: null,
