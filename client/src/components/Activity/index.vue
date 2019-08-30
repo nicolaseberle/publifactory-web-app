@@ -18,7 +18,6 @@
 <script>
   import axios from 'axios'
   import { mapGetters } from 'vuex'
-  import asideRightActivity from '../../utils/js/animation/activity.right.js'
 
   const shortid = require('shortid');
   const debug = require('debug')('frontend');
