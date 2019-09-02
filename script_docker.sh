@@ -84,6 +84,8 @@ start () {
   echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
   then
+    debug "Create fake certificates with certbot\n"
+    yes y | sudo ./init-letsencrypt.sh
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
   else
