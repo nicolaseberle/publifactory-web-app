@@ -23,9 +23,6 @@ debug () {
   printf "${RED}$(date '+%H:%M:%S:%N')${NC} -> $1";
 }
 
-log_path="${CWD}/logs/${DATE_BEGIN}.log"
-debug "All the logs will be saved in $log_path\n"
-
 print_help () {
   printf "USAGE\n"
   # shellcheck disable=SC2059
@@ -167,7 +164,7 @@ fi
 case "$command" in
   start)
     echo -ne '######                    (33%)\r'
-    start >> "${log_path}" 2>&1
+    start
     sudo docker-compose up --no-deps -d whale
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
@@ -176,7 +173,7 @@ case "$command" in
     ;;
   stop)
     echo -ne '########                  (33%)\r'
-    stop >> "${log_path}" 2>&1
+    stop
     echo -ne '########################  (100%)\r'
     execution_time
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
@@ -184,7 +181,7 @@ case "$command" in
     ;;
   test)
     echo -ne '######                    (33%)\r'
-    make_test >> "${log_path}" 2>&1
+    make_test
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
     execution_time
@@ -192,9 +189,9 @@ case "$command" in
     ;;
   deploy)
     echo -ne '######                    (33%)\r'
-    stop >> "${log_path}" 2>&1
-    make_test >> "${log_path}" 2>&1
-    start >> "${log_path}" 2>&1
+    stop
+    make_test
+    start
     sudo docker-compose up --no-deps -d whale
     echo -ne '########################  (100%)\r'
     debug "[SCRIPT FINISHED SUCCESSFULLY]\n"
@@ -207,10 +204,10 @@ case "$command" in
     ;;
   restart)
     echo -ne '########                  (33%)\r'
-    stop >> "${log_path}" 2>&1
+    stop
     echo -ne '##############            (66%)\r'
     # shellcheck disable=SC2086
-    start >> ${log_path} 2>&1
+    start
     sudo docker-compose up --no-deps -d whale
     execution_time
     echo -ne '########################  (100%)\r'
