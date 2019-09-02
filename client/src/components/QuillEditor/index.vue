@@ -7,38 +7,7 @@
 			<el-button type="" plain class="el-icon-caret-bottom" v-on:click='' circle size='mini'></el-button>
 		</div>
 		<div class='box' style='z-index=1000;'>
-		<div v-bind:id="idToolBar"  style='z-index=1000;'>
-			<span class="ql-formats">
-				<button class="ql-bold"></button>
-				<button class="ql-italic"></button>
-				<button class="ql-underline"></button>
-				<button class="ql-strike"></button>
-			</span>
-				<span class="ql-formats">
-				<button class="ql-blockquote"></button>
-			</span>
-			<span class="ql-formats">
-				<button class="ql-list" value="bullet"></button>
-				<button class="ql-indent" value="-1"></button>
-				<button class="ql-indent" value="+1"></button>
-			</span>
-				<span class="ql-formats">
-				<select class="ql-align"></select>
-			</span>
-			<span class="ql-formats">
-				<button class="ql-link"></button>
-				<button class="ql-formula"></button>
-				<button v-bind:id="idButtonZotero" style='transform:translate(0, -6px)'>
-					<img src='/static/img/zotero-small-icon.png'/>
-					<!--<i class="ai ai-zotero ai-1x"></i>-->
-				</button>
-				<button v-bind:id="idButtonComment" style='margin-left:10px; transform:translate(5px, 0)'>
-					<svg-icon icon-class='comment-black'/>
-					<!--<i class="ai ai-zotero ai-1x"></i>-->
-				</button>
-				<!--<input  class="ql-input" name="title" type="text"></input>-->
-			</span>
-		</div>
+
 <!--
 			<div style='position: absolute; right:0px; bottom:0px;z-index:1;'>
 				<el-button type='danger' size="mini" icon="el-icon-delete" v-on:click='' circle></el-button>
@@ -48,12 +17,46 @@
 				<span class='p-span' v-html="content"></span>
 			</div>
 		</div>
+
+
+	</div>
+	<div v-bind:id="idToolBar"  style='z-index=1000;'>
+		<span class="ql-formats">
+			<button class="ql-bold"></button>
+			<button class="ql-italic"></button>
+			<button class="ql-underline"></button>
+			<button class="ql-strike"></button>
+		</span>
+			<span class="ql-formats">
+			<button class="ql-blockquote"></button>
+		</span>
+		<span class="ql-formats">
+			<button class="ql-list" value="bullet"></button>
+			<button class="ql-indent" value="-1"></button>
+			<button class="ql-indent" value="+1"></button>
+		</span>
+			<span class="ql-formats">
+			<select class="ql-align"></select>
+		</span>
+		<span class="ql-formats">
+			<button class="ql-link"></button>
+			<button class="ql-formula"></button>
+			<button v-bind:id="idButtonZotero" style='transform:translate(0, -6px)'>
+				<img src='/static/img/zotero-small-icon.png'/>
+				<!--<i class="ai ai-zotero ai-1x"></i>-->
+			</button>
+			<button v-bind:id="idButtonComment" style='margin-left:10px; transform:translate(5px, 0)'>
+				<svg-icon icon-class='comment-black'/>
+				<!--<i class="ai ai-zotero ai-1x"></i>-->
+			</button>
+			<!--<input  class="ql-input" name="title" type="text"></input>-->
+		</span>
 	</div>
 		<!--<div class='bottom-right'/>-->
 		<div class='questions' v-bind:id="idZotero">
 			<!--<div class="close-toto"><i class="fa fa-times"></i>
 			</div>-->
-			<div class="question">
+			<div class="question" style='z-index=2000;'>
 				<div v-bind:id="idInputZotero"  style="display:none;">
 					<el-row>
 						<el-col :span='2'>
@@ -79,6 +82,8 @@
 	import ItemTemplate from './ItemTemplate.vue'
 	import 'quill'
 	import 'quill/dist/quill.core.css'
+
+	import 'quill/dist/quill.snow.css'
 	import 'quill/dist/quill.bubble.css'
 	import 'v-autocomplete/dist/v-autocomplete.css'
 	import QuillCursors from 'quill-cursors'
@@ -99,11 +104,11 @@ Quill.register('modules/cursors', QuillCursors);
 
 const debug = require('debug')('frontend');
 
-const Embed = Quill.import('blots/embed');
-var sharedbWSAddress = ''
+const InlineBlot = Quill.import('blots/inline');
+
 
 /*Zotero, highlight button in quill toolbar*/
-class ProcLink extends Embed {
+class ProcLink extends InlineBlot {
 		static create(value) {
 				let node = super.create(value);
 				// give it some margin
@@ -114,7 +119,6 @@ class ProcLink extends Embed {
 		}
 
 		static value(node) {
-			debug(node  )
 			return {
 				value: node.getAttribute('datareview'),
 				text: node.innerHTML
@@ -126,22 +130,17 @@ ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
 
-class ProcRef extends Embed {
+
+
+
+class ProcRef extends InlineBlot {
     static create(value) {
         let node = super.create(value);
         // give it some margin
-        node.setAttribute('style', "background-color : Transparent; border: none;");
-        node.setAttribute('href', 'https://www.nasa.gov/');
+				node.setAttribute('href', value);
+				node.setAttribute('target', '_blank');
         node.innerHTML = value.text;
         return node;
-    }
-
-    static value(node) {
-      console.log(node  )
-      return {
-        value: node.getAttribute('ref'),
-        text: node.innerHTML
-      };
     }
 }
 
@@ -150,6 +149,7 @@ ProcRef.className = 'ref';
 ProcRef.tagName = 'a';
 
 /*Link the new button in quill*/
+
 Quill.register(ProcLink, true);
 Quill.register(ProcRef, true);
 
@@ -263,7 +263,7 @@ export default {
 	        	userOnly: true
 	        },
 	        placeholder: this.content,
-	        theme: 'bubble',  // or 'bubble',
+	        theme: 'snow',  // or 'bubble',
 					bounds: '#' + this.idEditor
 	    });
 
@@ -338,23 +338,27 @@ export default {
 
 	    $(document).ready(() => {
 	        $("#"+this.idButton).toggle();
+					$("#"+this.idToolBar).toggle();
 	        this.editor.on('selection-change', (range, oldRange, source) => {
 	        if (range === null && oldRange !== null) {
-	          // debug('blur');
 	          $("#"+this.idButton).toggle()
-	        } else if (range !== null && oldRange === null)
-	          // debug('focus');
-	          $("#"+this.idButton).toggle()
+						$("#"+this.idToolBar).toggle()
+	        } else if (range !== null && oldRange === null){
+	          	$("#"+this.idButton).toggle()
+							$("#"+this.idToolBar).toggle()
+						}
 	        });
 	    });
 
-	    $(document).on('contextmenu', '#'+this.idEditor , (e) => {
+	    /*
+			$(document).on('contextmenu', '#'+this.idEditor , (e) => {
 	      e.preventDefault();
 	      this.editor.theme.tooltip.edit();
 	      this.editor.theme.tooltip.show();
 	      this.mouse_pos = e
 	      return false;
 	    });
+			*/
   },
 	watch: {
 		content (newContent) {
@@ -521,6 +525,9 @@ export default {
 		},
 		setIdButton () {
 			return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdTooltip () {
+			return 'toolbar-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
 		},
 		setIdZotero () {
 			return 'zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
@@ -731,5 +738,9 @@ button-ref{
     cursor:pointer;
     overflow: hidden;
     outline:none;
+}
+
+.ql-container.ql-snow{
+	border: none;
 }
 </style>
