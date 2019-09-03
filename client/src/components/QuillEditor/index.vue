@@ -742,5 +742,6 @@ button-ref{
 
 .ql-container.ql-snow{
 	border: none;
+	display: hidden;
 }
 </style>
