@@ -7,8 +7,8 @@ RUN npm run build
 
 FROM nginx:1.17.2-alpine
 # Create container's directory
-RUN mkdir -p /etc/ssl/certs
-RUN mkdir -p /etc/ssl/private
+RUN mkdir -p /etc/ssl/certs/
+RUN mkdir -p /etc/ssl/private/
 RUN mkdir -p /etc/nginx/snippets/
 
 # Remove old conf.d
