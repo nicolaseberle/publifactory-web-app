@@ -111,7 +111,7 @@ module.exports.findArticleById = async function (req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
+  module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
   try {
     /*req.check(ArticleValidator.checkArticleData);
     const validationResult = await req.getValidationResult();
@@ -156,7 +156,7 @@ module.exports.findArticlebyIdAndUpdate = async function  (req, res, next) {
  */
 module.exports.findArticlebyIdAndUpdateReferences = async function  (req, res, next) {
   try {
-    if (req.body.title === undefined )
+    if (req.body.references === undefined)
       throw { code: 422, message: 'Missing parameters.'}
     const references = req.body.references;
     const article = await Article

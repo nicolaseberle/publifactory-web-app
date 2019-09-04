@@ -116,7 +116,7 @@ module.exports.scripts = async (req, res, next) => {
   try {
     if (req.body.content === undefined || (req.params.script === 'python' && req.body.version === undefined))
       throw { code: 422, message: "Missing parameters." };
-    req.params.script === 'r' ? rExec(req, res, next) : pythonExec(req, res, next);
+    req.params.script === 'r' ? await rExec(req, res, next) : await pythonExec(req, res, next);
   } catch (e) {
     next(e);
   }
