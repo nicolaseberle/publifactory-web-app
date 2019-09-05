@@ -6,8 +6,8 @@
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
         </div>
         <div class='action-button'>
-            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
-            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
+            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle></el-button>
+            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle></el-button>
         </div>
       <div class="font-dnltp-medium">
         <p><b style="font-family: DNLTPro-bold;">Legends</b>: {{infos.legend}}</p>
