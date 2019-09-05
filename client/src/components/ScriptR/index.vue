@@ -111,29 +111,8 @@
 
       await this.fetchData();
       await this.fetchFigure(this.idfigure);
-      this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-        value: '',
-        lineNumbers: true,
-        styleActiveLine: true,
-        matchBrackets: true,
-        indentUnit: 4,
-        smartIndentationFix: true,
-        theme: 'one-dark',
-        mode: "text/x-python",
-        lineWrapping: true
-      })
-      this.editor.on('change', instance => {
-        this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
-        if (!this.timer) {
-          this.$emit('loading', true)
-          this.timer = setTimeout(async () => {
-            await this.execCode()
-            this.timer = null
-            this.$emit('loading', true)
-          }, 3000)
-        }
-      })
-      this.execCode();
+
+      /*
       let y0 = []
       let y1 = []
       let y2 = []
@@ -191,7 +170,7 @@
           color: 'rgb(9,56,125)'
         }
       }
-      this.currentData = [trace0, trace1, trace2, trace3]
+      this.currentData = [trace0, trace1, trace2, trace3]*/
     },
     watch: {
       currentData () {
@@ -278,6 +257,8 @@
               this.codemirrorOptions(response.data.script.content[i].name)
           if (response.data.infos !== null)
             this.postForm = this.response.data.infos
+        } else {
+          this.codemirrorOptions (1)
         }
       },
       async fetchData () {
@@ -305,30 +286,39 @@
           }
         }
       },
-      codemirrorOptions (elementId) {
-        this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-          value: '',
-          lineNumbers: true,
-          styleActiveLine: true,
-          matchBrackets: true,
-          indentUnit: 4,
-          smartIndentationFix: true,
-          theme: 'one-dark',
-          lineWrapping: true,
-          mime: "text/x-rsrc"
-        })
-        this.editor.on('change', instance => {
-          this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
-          if (!this.timer) {
-            this.$emit('loading', true)
-            this.timer = setTimeout(async () => {
-              await this.execCode()
-              this.timer = null
+      async codemirrorOptions (elementId) {
+        if (this.editor[elementId] instanceof CodeMirror) {
+          this.editor[elementId].refresh();
+          this.editor[elementId].focus();
+          this.editor[elementId].setCursor(0, 0);
+        }
+        else {
+          this.editor[elementId] = await CodeMirror.fromTextArea(document.getElementById(this.editableTabs[parseInt(elementId) - 1].name), {
+            value: '',
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            smartIndentationFix: true,
+            theme: "mdn-like",
+            mime: "text/x-rsrc",
+            lineWrapping: false
+          })
+          this.editor[elementId].on('change', instance => {
+            this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
+            if (!this.timer) {
               this.$emit('loading', true)
-            }, 3000)
-          }
-        })
-        this.editor.refresh();
+              this.timer = setTimeout(async () => {
+                await this.execCode()
+                this.timer = null
+                this.$emit('loading', true)
+              }, 3000)
+            }
+          })
+          this.execCode();
+          this.editor[elementId].focus();
+          this.editor[elementId].setCursor(0, 0);
+        }
       },
       async execCode () {
         try {
@@ -363,6 +353,7 @@
         }
       },
       setCodeMirror (tabClicked) {
+        this.codemirrorOptions(tabClicked.name)
         this.editableTabsValue = tabClicked.name;
       },
       handleFormUpdate () {
