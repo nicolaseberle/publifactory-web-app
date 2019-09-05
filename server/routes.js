@@ -11,6 +11,10 @@ const swaggerDocument = YAML.load(path.join(__dirname, './config/swagger.yaml'))
 
 const jwtCheck = require('./auth/jwt');
 
+/**
+ * This function is used to make the route management.
+ * @param app
+ */
 module.exports = function (app) {
   // Create documentation route
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

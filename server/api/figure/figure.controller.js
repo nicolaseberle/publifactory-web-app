@@ -22,21 +22,20 @@ const DEFAULT_PAGE_OFFSET = 1;
 const DEFAULT_LIMIT = 10;
 
 /**
- * getArticles - Returns an array of articles requested with a page offset and limit,
- * so that results are paginated
- *
  * @function getData
+ * @description This function is used to retrieve the figure information to load
+ * the figure (to make edit or print the figure in the article).
  * @memberof module:controllers/data
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
-
 exports.getFigure = async (req, res, next) => {
   try {
     let figure = await Figure.findOne({ _id: req.params.id });
     if (figure === undefined || figure.length === 0)
-      figure = []
+      figure = [];
     res.json(figure);
   } catch (err) {
     next(err);
@@ -45,6 +44,11 @@ exports.getFigure = async (req, res, next) => {
 
 /**
  * @function createFigure
+ * @description This function is used to create the figure in the database.
+ * This function take several parameters in the body field :
+ *  - data, the source code of the figure
+ *  - layout, the title of the figure
+ *  - option, the PlotlyJs options
  * @memberof module:controllers/figure
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -72,6 +76,14 @@ module.exports.createFigure = async (req, res, next) => {
 
 /**
  * @function upDateFigure
+ * @description This function is used to update the figure in the database when
+ * you modify the source code of the Python / R script.
+ * This function take several parameters in the body field :
+ *  - data, the source code of the figure
+ *  - layout, the title of the figure
+ *  - option, the PlotlyJs options
+ *  - script, the script type (R or Python)
+ *  - infos, the version of the language (only for Python script)
  * @memberof module:controllers/figure
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -104,7 +116,8 @@ module.exports.updateFigure = async (req, res, next) => {
 };
 
 /**
- * This function is used to redirect the parameters to the right function
+ * @function scripts
+ * @description This function is used to redirect the parameters to the right function
  * It depends on the script used (Python / R)
  * @param req
  * @param res
@@ -120,10 +133,11 @@ module.exports.scripts = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-}
+};
 
 /**
- * This function is used to execute python code and do the translation in JSON
+ * @function pythonExec
+ * @description This function is used to execute python code and do the translation in JSON
  * This JSON output is used to communicate with PlotlyJs
  * @param req
  * @param res
@@ -134,7 +148,7 @@ module.exports.scripts = async (req, res, next) => {
 async function pythonExec(req, res, next) {
   try {
     const path = (process.env.DOCKER === 'true' ? '/tmp/' : './');
-    const version = `python${req.body.version}`
+    const version = `python${req.body.version}`;
     const options = {
       mode: 'text',
       pythonPath: `/usr/bin/${version}`,
@@ -154,7 +168,7 @@ async function pythonExec(req, res, next) {
     for (let i = 0, len = req.body.content.length; i < len; ++i)
       if (await fs.existsSync(path + req.body.content[i].title))
         await fs.unlinkSync(path + req.body.content[i].title);
-    const jsonRawData = fs.readFileSync(path + 'example.json')
+    const jsonRawData = fs.readFileSync(path + 'example.json');
     const json = JSON.parse(jsonRawData);
     await fs.unlinkSync(path + 'example.json');
     res.json({ success: true, values: json });
@@ -164,7 +178,8 @@ async function pythonExec(req, res, next) {
 }
 
 /**
- * This function is used to execute R code and do the translation in JSON
+ * @function rExec
+ * @description This function is used to execute R code and do the translation in JSON
  * This JSON output is used to communicate with PlotlyJs
  * @param req
  * @param res
@@ -185,7 +200,6 @@ async function rExec(req, res, next) {
         await fs.unlinkSync(path + req.body.content[i].title);
     res.json({ success: true, values: json });
   } catch (e) {
-    console.log(e)
     res.status(500).json({ success: false, message: "Your script isn't correct. Please check your syntax." })
   }
 }

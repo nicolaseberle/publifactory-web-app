@@ -8,6 +8,11 @@ const renameObjectProperty = require('../../../helpers/renameObjectProperty');
 const DEFAULT_PAGE_OFFSET = 1;
 const DEFAULT_LIMIT = 10;
 
+/**
+ * This ENUM is used to know if an instruction if incorrect and, if she is correct,
+ * we already have the comment to put in the database to make it human readable
+ * @type {{NEW_ASSOCIATE_EDITOR: string, NEW_ONE_BLOCK: string, REMOVE_ROW: string, UPDATE_STATUS: string, REMOVE_DATA: string, EXEC_PDF: string, NEW_REVIEWER: string, NEW_COLLABORATOR: string, ABSTRACT_EDIT: string, EXEC_CODE_PYTHON: string, NEW_ROW: string, NEW_TAG: string, NEW_BLOCK_TEXT: string, UPDATE_COLLABORATOR: string, REMOVE_COLLABORATOR: string, SECTION_EDIT: string, UPDATE_BLOCK_PICTURE: string, REMOVE_BLOCK: string, UPDATE_TITLE: string, NEW_BLOCK_CHART: string, NEW_TWO_BLOCK: string, EXEC_CODE_R: string, NEW_DATA: string, UPDATE_VERSION: string, NEW_VERSION: string, NEW_BLOCK_PICTURE: string, NEW_COMMENT: string}}
+ */
 const ENUM_INSTRUCTION = {
   SECTION_EDIT: 'has modified a text block.',
   ABSTRACT_EDIT: 'has modified the abstract.',
@@ -38,6 +43,14 @@ const ENUM_INSTRUCTION = {
   EXEC_PDF: 'has downloaded the article as a PDF.'
 };
 
+/**
+ * @function addInstruction
+ * @description This function is used to add an instruction to the database
+ * This function takes the User class in parameter and the instruction to add in
+ * the database
+ * @param User
+ * @param instruction
+ */
 function addInstruction (User, instruction) {
   if (!Object.keys(ENUM_INSTRUCTION).includes(instruction))
     return;
@@ -65,6 +78,17 @@ function addInstruction (User, instruction) {
     })
 }
 
+/**
+ * @function getHistory
+ * @description This function is used to retrieve the history of an article
+ * This function takes two parameters in the url parameters field :
+ *  - id_article, which is the targeted article's id
+ *  - id_user, which is the targeted user's id (optional)
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function getHistory(req, res, next) {
   const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
   const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
@@ -85,6 +109,17 @@ async function getHistory(req, res, next) {
   }
 }
 
+/**
+ * @function insertInstruction
+ * @description This function is used to insert an instruction manually
+ * (normally all the instructions are set from socket.io).
+ * This function take an article's id in url parameter and the instruction in
+ * the body field parameter.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function insertInstruction (req, res, next) {
   try {
     if (req.body.instruction === undefined)
@@ -100,6 +135,9 @@ async function insertInstruction (req, res, next) {
   }
 }
 
+/**
+ * @type {{insertInstruction: *, addInstruction: *, getHistory: *}}
+ */
 module.exports = {
   addInstruction: addInstruction,
   insertInstruction: insertInstruction,
