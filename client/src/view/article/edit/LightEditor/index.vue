@@ -199,7 +199,7 @@
           </el-dropdown>
           <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
+          <el-button type="primary" @click="insertPythonFigure" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
       <scriptPython :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigurePythonVisible" ref="pythonChild"
@@ -545,9 +545,10 @@ export default {
     }
   },
   methods: {
-    /*signalUpdateUserList (newCursors) {
-      this.updateUserList (editor)
-    },*/
+    insertPythonFigure (){
+      this.diagInsertFigurePythonVisible=false
+      // this.$refs.pythonChild.destroy()
+    },
     closeActivityTab () {
       $('aside.content-activity').css('display', 'none')
       console.log('echo')
@@ -808,7 +809,7 @@ export default {
         })
       this.save(ev)
     },
-    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {Activity
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       const response = await axios.get('/api/figure/' + this.editidfigure, {
@@ -933,6 +934,7 @@ export default {
     async execPythonCode () {
       this.renderLoading = true
       await this.$refs.pythonChild.execCode()
+      // await this.$refs.pythonChild.$forceUpdate();
       this.renderLoading = false
     },
     async execRCode () {
