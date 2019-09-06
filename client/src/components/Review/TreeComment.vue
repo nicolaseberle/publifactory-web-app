@@ -141,6 +141,7 @@ var uuidv4 = require('uuid/v4');
 
 export default {
   props: {
+    socket: {},
     uuidComment: {type: String},
     label: {type: String},
     nodes: {type: Array,

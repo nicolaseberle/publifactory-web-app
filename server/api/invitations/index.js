@@ -13,7 +13,7 @@ router.get('/invite/:id', controller.checkInvitation)
 
 router.use(function(req, res, next) {
   jwtCheck(req, res, next);
-})
+});
 
 router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async function (req, res, next) {
   try {
@@ -31,6 +31,6 @@ router.use('/invite/:role(reviewer|collaborator|associate_editor|editor)', async
   }
 })
 
-router.post('/invite/:role(reviewer|collaborator|associate_editor|editor)', controller.createInvitation)
+router.post('/invite/:role(reviewer|collaborator|associate_editor|editor)', jwtCheck, controller.createInvitation)
 
 module.exports = router

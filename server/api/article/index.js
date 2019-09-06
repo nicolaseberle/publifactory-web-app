@@ -56,7 +56,7 @@ router.use('/:id', async function (req, res, next) {
 });
 
 router.post('/:id/version', articlesController.createVersion);
-router.put('/:id', articlesController.findArticlebyIdAndUpdate);
+router.put('/:id', articlesController.findArticleByIdAndUpdate);
 router.put('/:id/updateReferences', articlesController.findArticlebyIdAndUpdateReferences);
 router.put('/:id/addAuthors', articlesController.addAuthorOfArticle);
 router.put('/:id/removeAuthor', articlesController.removeAuthorOfArticle);

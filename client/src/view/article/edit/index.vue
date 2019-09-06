@@ -178,7 +178,6 @@
 
     const socketOptions = {
       transports: [ 'polling' ],
-      secure: true,
       reconnect: true,
       rejectUnauthorized: false,
       query: {
@@ -186,8 +185,8 @@
         id_user: this.userId
       }
     };
-    this.socket = io('http://api:4001/', socketOptions)
-
+    this.socket = io('/', socketOptions)
+    
   },
   async mounted() {
     this.journalList = await this.getJournalList()

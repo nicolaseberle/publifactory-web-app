@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(app.publifactory.co)
+domains=($1)
 rsa_key_size=4096
 data_path="./certbot"
 email="leo.riberon-piatyszek@epitech.eu" # Adding a valid address is strongly recommended

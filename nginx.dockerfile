@@ -1,4 +1,4 @@
-FROM node:latest as build-stage
+FROM node:latest as build-front-stage
 COPY ./ /src
 WORKDIR /src
 ADD ./package.json /src/package.json
@@ -15,8 +15,8 @@ RUN mkdir -p /etc/nginx/snippets/
 RUN rm -rf /etc/nginx/conf.d/*
 
 # Copy all the files necessary to dump nginx server
-COPY ./nginx/publifactory-nginx-prod.conf /etc/nginx/conf.d/publifactory-nginx-prod.conf
-COPY --from=build-stage /src/dist /usr/share/nginx/html
+COPY ./nginx/publifactory-nginx-prod.conf /etc/nginx/conf.d/publifactory-nginx-frontend.conf
+COPY --from=build-front-stage /src/dist /usr/share/nginx/html
 
 # Expose the port 80 for HTTP and port 443 for HTTPS
 # The HTTP's port will redirect automatically on HTTPS from NGiNX
