@@ -4,47 +4,49 @@
     <el-row type="flex" class="row-bg" justify="space-between" style="margin-bottom:20px;background-color:white" :gutter="40">
       <el-col :span="10">
         <el-button-group>
-          <el-button v-if="valueTypeEditor==1" type="primary" round  @click="changeEditor('LightEditor')">Light Editor</el-button>
-          <el-button v-if="valueTypeEditor!=1" type="" round @click="changeEditor('LightEditor')">Light Editor</el-button>
+          <el-button v-if="valueTypeEditor==1" type="primary" round size="medium"  @click="changeEditor('LightEditor')">Light Editor</el-button>
+          <el-button v-if="valueTypeEditor!=1" type="" round size="medium" @click="changeEditor('LightEditor')">Light Editor</el-button>
           <!--<el-button v-if="valueTypeEditor==2" type="primary" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>
           <el-button v-if="valueTypeEditor!=2" type="" round @click="changeEditor('MarkdownEditor')">Markdown</el-button>-->
-          <el-button v-if="valueTypeEditor==3" type="primary" round @click="changeEditor('LatexEditor')">Latefamilx</el-button>
-          <el-button v-if="valueTypeEditor!=3" type="" round @click="changeEditor('LatexEditor')">Latex</el-button>
+          <el-button v-if="valueTypeEditor==3" type="primary" round size="medium" @click="changeEditor('LatexEditor')">Latex</el-button>
+          <el-button v-if="valueTypeEditor!=3" type="" round size="medium" @click="changeEditor('LatexEditor')">Latex</el-button>
         </el-button-group>
-        <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
+        <el-dropdown trigger="click" class="international" size="medium" @command="actionHandleCommand">
           <div>
-            <el-button class="el-button-action" round>Version<i class="el-icon-arrow-down" style='margin-left:10px'/></el-button>
+            <el-button class="el-button-action" size="medium" round>Version<i class="el-icon-arrow-down" style='margin-left:10px'/></el-button>
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="item in articleInfo.version" :command="item" v-bind:key="item.name">{{item.name}} - {{item.date}}</el-dropdown-item>
             <el-dropdown-item command="new"><i class="el-icon-plus"><span style="font-family: 'DNLTPro-medium'">  Create version</span></i></el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button class="el-button-action" @click="importDialogVisible=true" round>Import data</el-button>
+      </el-col>
+      <el-col :span="4">
+        <el-button class="el-button-action" size="medium" @click="importDialogVisible=true" round>Import data</el-button>
       </el-col>
       <el-col :span='6'>
         <el-button-group >
 
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved !== 0" alt='Number of comments' type="info" @click='showCOmmentReviewPanel'  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved == 0" alt='Number of resolved reviews' type="success" icon='el-icon-success' @click='showCOmmentReviewPanel'  round>{{commentStateVector.nbResolved}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning !== 0" alt='Number of minor reviews' type="warning" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning == 0" alt='Number of minor reviews' type="" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved !== 0" alt='Number of comments' type="info" size="medium" @click='showCOmmentReviewPanel'  round><svg-icon icon-class='black-bubble-speech'/> {{commentStateVector.nbComment}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved == 0" alt='Number of resolved reviews' type="success" size="medium" icon='el-icon-success' @click='showCOmmentReviewPanel'  round>{{commentStateVector.nbResolved}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning !== 0" alt='Number of minor reviews' type="warning" size="medium" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning == 0" alt='Number of minor reviews' type="" size="medium" icon='el-icon-warning' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbWarning}}</el-button>
 
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger !== 0" alt='Number of major reviews' type="danger" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
-          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger == 0" alt='Number of major reviews' type="" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger !== 0" alt='Number of major reviews' type="danger" size="medium" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
+          <el-button v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger == 0" alt='Number of major reviews' type="" size="medium" icon='el-icon-remove' @click='showCOmmentReviewPanel' round>{{commentStateVector.nbDanger}}</el-button>
         </el-button-group>
 
       </el-col>
-      <el-col :span="8">
+      <el-col :span="10">
         <div style='text-align:right'>
           <el-button-group>
             <!--<el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==0" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>
             <el-button v-if="(valueTypeEditor==2 || valueTypeEditor==3) && flagHidePDF==1" type="" @click="handleHidePDF()"  round>Hide PDF</el-button>-->
             <!--<el-button type="" v-on:click="handleDownload()" round icon='el-icon-download' ></el-button>-->
-            <el-button type="" v-on:click="handleDownload()" round >Download</el-button>
-            <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" round >Submit your article</el-button>
-            <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round disabled>Submitted</el-button>
-            <el-button v-if="  this.articleInfo.status === 'Reviewing' " type="" @click="changeStatus()" round >Validate the article</el-button>
+            <el-button type="" v-on:click="handleDownload()" size="medium" round >Download</el-button>
+            <el-button v-if="  this.articleInfo.status === 'Draft' " type="" @click="visibleDialogSubmProcess=true" size="medium" round >Submit your article</el-button>
+            <el-button v-if="  this.articleInfo.status === 'Submited' " type="" @click="changeStatus()" round size="medium" disabled>Submitted</el-button>
+            <el-button v-if="  this.articleInfo.status === 'Reviewing' " type="" @click="changeStatus()" round size="medium" >Validate the article</el-button>
           </el-button-group>
         </div>
       </el-col>
