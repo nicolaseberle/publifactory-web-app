@@ -23,6 +23,7 @@ const fs = require('fs');
  * We verify certbot's certificate and private keys.
  * If doesn't exist, we take an unsecured certificate.
  */
+/*
 const credentials = {
   key: (fs.existsSync('/etc/letsencrypt/live/api.publifactory.co/privkey.pem') === true
       ? fs.readFileSync('/etc/letsencrypt/live/api.publifactory.co/privkey.pem')
@@ -31,6 +32,7 @@ const credentials = {
       ? fs.readFileSync('/etc/letsencrypt/live/api.publifactory.co/fullchain.pem')
       : fs.readFileSync(path.join(__dirname, '../ssl/server.crt')))
 };
+*/
 
 // Setup server
 const app = express();

@@ -176,7 +176,6 @@
 
     const socketOptions = {
       transports: [ 'polling' ],
-      secure: true,
       reconnect: true,
       rejectUnauthorized: false,
       query: {
@@ -184,7 +183,7 @@
         id_user: this.userId
       }
     };
-    this.socket = io('http://localhost:4000/', socketOptions)
+    this.socket = io('/', socketOptions)
     
   },
   async mounted() {
