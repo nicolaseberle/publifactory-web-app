@@ -38,6 +38,7 @@ const ENUM_INSTRUCTION = {
   UPDATE_COLLABORATOR: 'has modified collaborators rights.',
   UPDATE_STATUS: 'has modified the article status.',
   UPDATE_VERSION: 'has modified the file version.',
+  UPDATE_BLOCK_TITLE: 'has modified a block\'s title.',
   EXEC_CODE_R: 'has executed the R chart\'s code.',
   EXEC_CODE_PYTHON: 'has executed the Python chart\'s code.',
   EXEC_PDF: 'has downloaded the article as a PDF.'

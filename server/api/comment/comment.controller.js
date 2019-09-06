@@ -109,7 +109,7 @@ async function getComments (req, res, next) {
  * @param {Function} next - Express next middleware function
  * @returns {Object}
  */
-async function createArticleComment(req, res, next) {
+async function  createArticleComment(req, res, next) {
   try {
     if (req.body.uuidComment === undefined || req.body.anonymousFlag === undefined ||
       req.body.commentFlag === undefined || req.body.reviewRequest === undefined ||

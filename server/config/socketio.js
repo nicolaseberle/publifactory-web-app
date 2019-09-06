@@ -90,6 +90,7 @@ module.exports = function (io) {
       UPDATE_COLLABORATOR: data => socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_COLLABORATOR`, data),
       UPDATE_STATUS: data => socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_STATUS`, data),
       UPDATE_VERSION: data => io.in(mapUser[socket.id].idArticle).emit(`MODIFY_VERSION`, data),
+      UPDATE_BLOCK_TITLE: data => socket.to(mapUser[socket.id].idArticle).emit('MODIFY_BLOCK_TITLE', data),
       EXEC_CODE_R: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_R`, data),
       EXEC_CODE_PYTHON: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
       QUILL_NEW_TEXT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data),
