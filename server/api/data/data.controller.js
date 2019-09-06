@@ -23,14 +23,13 @@ const DEFAULT_PAGE_OFFSET = 1;
 const DEFAULT_LIMIT = 10;
 
 /**
- * getArticles - Returns an array of articles requested with a page offset and limit,
- * so that results are paginated
- *
  * @function getData
+ * @description This function is used to get the datas of an article from its id
  * @memberof module:controllers/data
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
+ * @return {Promise<*>}
  */
 exports.getData = async (req, res, next) => {
   try {
@@ -43,13 +42,23 @@ exports.getData = async (req, res, next) => {
 
 /**
  * @function createData
+ * @description This function is used to create a new data set.
+ * This function take several parameters in the body field:
+ *  - name, the name of the data to  set
+ *  - header, the headers of the CSV values
+ *  - content, the values of the CSV
+ *  - id, the targeted article's id
  * @memberof module:controllers/data
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
+ * @return {Promise<*>}
  */
 module.exports.createData = async (req, res, next) => {
   try {
+    if (req.body.id === undefined || req.body.name === undefined
+      || req.body.header === undefined || req.body.content === undefined)
+      throw { code: 422, message: "Missing parameters." };
     const newData = new Data({
       name: req.body.name,
       header: req.body.header,
@@ -71,6 +80,21 @@ module.exports.createData = async (req, res, next) => {
   }
 };
 
+/**
+ * @function tryConnection
+ * @description This function is used to test if the values in the body field
+ * are correct to connect to a database.
+ * This function take several parameters in the body field :
+ *  - host, the hostname of the database
+ *  - port, the port of the database
+ *  - type, the database type (PostGreSQL, MySQL, MongoDB)
+ *  - database, the name of the database to connect (optional)
+ *  - user, the username to login the database (optional)
+ *  - password, the password to login the database (optional)
+ * @param req
+ * @return {Promise<MongoClient|Connection|PG.Pg>}
+ * @author Léo Riberon-Piatyszek
+ */
 async function tryConnection(req) {
   try {
     if (!req.body.host || !req.body.port)
@@ -113,6 +137,21 @@ async function tryConnection(req) {
   }
 }
 
+/**
+ * @function tryConnection
+ * @description This function is used to query on a database.
+ * This function take several parameters in the body field :
+ *  - host, the hostname of the database
+ *  - port, the port of the database
+ *  - type, the database type (PostGreSQL, MySQL, MongoDB)
+ *  - query, the query to send to the database
+ *  - database, the name of the database to connect (optional)
+ *  - user, the username to login the database (optional)
+ *  - password, the password to login the database (optional)
+ * @param req
+ * @return {Promise<MongoClient|Connection|PG.Pg>}
+ * @author Léo Riberon-Piatyszek
+ */
 async function execQuery (req, connection) {
   try {
     if (!req.body.query)
@@ -144,6 +183,16 @@ async function execQuery (req, connection) {
   }
 }
 
+/**
+ * @function sqlConnect
+ * @description This function is used to try the connection to a database.
+ * If the connection doesn't succeed, an error will be thrown with the
+ * HTML code 100
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 module.exports.sqlConnect = async (req, res, next) => {
   try {
     await tryConnection(req);
@@ -153,6 +202,17 @@ module.exports.sqlConnect = async (req, res, next) => {
   }
 };
 
+/**
+ * @function sqlQuery
+ * @description This function is uses to query to the database you tried your
+ * connections on.
+ * This functions will return the response of the query or, in case of failure,
+ * will throw the SQL error
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 module.exports.sqlQuery = async (req, res, next) => {
   try {
     const connection = await tryConnection(req);

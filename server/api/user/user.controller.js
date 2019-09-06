@@ -1,20 +1,24 @@
-'use strict'
+'use strict';
 
-var User = require('./user.model')
+var User = require('./user.model');
 // var passport = require('passport')
-var config = require('../../../config').backend
-var jwt = require('jsonwebtoken')
-var paging = require('../paging')
+var config = require('../../../config').backend;
+var jwt = require('jsonwebtoken');
+var paging = require('../paging');
 const shortid = require('shortid');
 const bcrypt = require('bcrypt');
 
-const configEmail = require('../../../config.js').email
+const configEmail = require('../../../config.js').email;
 var Invitation = require('../invitations/invitations.model');
 const Email = require('../email/email.controller');
 
 /**
- * Get list of users
- * restriction: 'admin'
+ * @function index
+ * @description This function returns the list of every user in the database
+ * Only the admin can execute this route.
+ * @param req
+ * @param res
+ * @param next
  */
 function index(req, res, next) {
   try {
@@ -29,16 +33,22 @@ function index(req, res, next) {
   }
 }
 
+/**
+ * @function createVerificationEmailInvitation
+ * @description This function is used to create an email invitation
+ * @param user
+ * @return {Promise<void>}
+ */
 async function createVerificationEmailInvitation(user) {
   try {
-    let email = String(user.email)
-    let senderMsg = 'verification'
-    let newLink = shortid.generate()
+    let email = String(user.email);
+    let senderMsg = 'verification';
+    let newLink = shortid.generate();
     while (newLink.indexOf('-') >= 0) {
       newLink = shortid.generate()
     }
-    let senderName = user._id
-    let current = new Date().toISOString()
+    let senderName = user._id;
+    let current = new Date().toISOString();
     const newInvitation = new Invitation({
       "created_at": current,
       "updated_at": current,
@@ -63,6 +73,17 @@ async function createVerificationEmailInvitation(user) {
   }
 }
 
+/**
+ * @function orcidCreation
+ * @description This function is used to create a new User from the ORCID's connexion
+ * this function takes two parameters in the body field :
+ *  - email, which is the ORCID's email specified on the ORCID website
+ *  - provider, which is by default 'orcid'
+ * @param req
+ * @param res
+ * @param next
+ * @return {*}
+ */
 function orcidCreation(req, res, next) {
   try {
     /*
@@ -70,54 +91,22 @@ function orcidCreation(req, res, next) {
     */
     User.findOne({email: req.body.email}, async function (err, user) {
       if (user === null) {
-        var newUser = new User(req.body)
-        newUser.provider = req.body.provider
-        newUser.role = 'user'
-        newUser.roles = ['user']
+        var newUser = new User(req.body);
+        newUser.provider = req.body.provider;
+        newUser.role = 'user';
+        newUser.roles = ['user'];
         const newToken = await new Promise((resolve, reject) => {
           newUser.save(async function (err, user) {
             //if (err) return validationError(res, err)
-            if (err) reject(err)
+            if (err) reject(err);
             const token = jwt.sign({
               _id: user._id,
               name: user.name,
               role: user.role
-            }, config.secrets.session, {expiresIn: '7d'})
+            }, config.secrets.session, {expiresIn: '7d'});
             resolve(token)
           })
-        })
-        res.json({success: true, token: newToken})
-      } else
-        res.json({success: true})
-    })
-  } catch (err) {
-    return next(err)
-  }
-}
-
-function googleCreation(req, res, next) {
-  try {
-    /*
-    * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
-    */
-    User.findOne({email: req.body.email}, async function (err, user) {
-      if (user === null) {
-        var newUser = new User(req.body)
-        newUser.provider = req.body.provider
-        newUser.role = 'user'
-        newUser.roles = ['user']
-        const newToken = await new Promise((resolve, reject) => {
-          newUser.save(async function (err, user) {
-            //if (err) return validationError(res, err)
-            if (err) reject(err)
-            const token = jwt.sign({
-              _id: user._id,
-              name: user.name,
-              role: user.role
-            }, config.secrets.session, {expiresIn: '7d'})
-            resolve(token)
-          })
-        })
+        });
         res.json({success: true, token: newToken})
       } else
         res.json({success: true})
@@ -128,7 +117,56 @@ function googleCreation(req, res, next) {
 }
 
 /**
- * Creates a new user
+ * @function googleCreation
+ * @description This function is used to create an User from the Google connexion
+ * This functions takes two parameters in the body field :
+ *  - email, which is the google's email
+ *  - provider, which is by default 'google'
+ * @param req
+ * @param res
+ * @param next
+ * @return {*}
+ */
+function googleCreation(req, res, next) {
+  try {
+    /*
+    * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
+    */
+    User.findOne({email: req.body.email}, async function (err, user) {
+      if (user === null) {
+        var newUser = new User(req.body);
+        newUser.provider = req.body.provider;
+        newUser.role = 'user';
+        newUser.roles = ['user'];
+        const newToken = await new Promise((resolve, reject) => {
+          newUser.save(async function (err, user) {
+            //if (err) return validationError(res, err)
+            if (err) reject(err);
+            const token = jwt.sign({
+              _id: user._id,
+              name: user.name,
+              role: user.role
+            }, config.secrets.session, {expiresIn: '7d'});
+            resolve(token)
+          })
+        });
+        res.json({success: true, token: newToken})
+      } else
+        res.json({success: true})
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+/**
+ * @function create
+ * @description This function is used to create a new User from the local connexion
+ * An email confirmation must be done to connect on the webapp
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function create(req, res, next) {
   try {
@@ -139,23 +177,23 @@ async function create(req, res, next) {
       throw {code: 422, message: 'Missing parameters.'};
     const user = await User.findOne({email: req.body.email});
     if (user === null) {
-      var newUser = new User(req.body)
-      newUser.provider = req.body.provider
-      newUser.role = 'user'
-      newUser.roles = ['user']
+      var newUser = new User(req.body);
+      newUser.provider = req.body.provider;
+      newUser.role = 'user';
+      newUser.roles = ['user'];
       const newToken = await new Promise((resolve, reject) => {
         newUser.save(async function (err, user) {
           //if (err) return validationError(res, err)
-          if (err) reject(err)
+          if (err) reject(err);
           const token = jwt.sign({
             _id: user._id,
             name: user.name,
             role: user.role
-          }, config.secrets.session, {expiresIn: '7d'})
-          await createVerificationEmailInvitation(user)
+          }, config.secrets.session, {expiresIn: '7d'});
+          await createVerificationEmailInvitation(user);
           resolve(token)
         })
-      })
+      });
       res.status(201).json({token: newToken})
     } else {
       throw {code: 403, message: 'This email exists already'}
@@ -166,18 +204,29 @@ async function create(req, res, next) {
 }
 
 /**
- * Create a guest account - a guest have to reset his password during the first connection
+ * @function createGuest
+ * @description This function is used to create a Guest account.
+ * The new guest must change his password after clicking on the link in the email.
+ * The creation take several parameters in the body field :
+ *  - email
+ *  - password
+ *  - firstname
+ *  - lastname
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function createGuest(req, res, next) {
   try {
     if (!(req.body.email && req.body.password && req.body.firstname && req.body.lastname))
       throw { code: 422, message: 'Missing parameters.'};
     req.body.isVerified = true;
-    var newUser = new User(req.body)
-    newUser.provider = 'local'
-    newUser.role = 'guest'
-    newUser.roles = ['guest']
-    const user = await newUser.save()
+    var newUser = new User(req.body);
+    newUser.provider = 'local';
+    newUser.role = 'guest';
+    newUser.roles = ['guest'];
+    const user = await newUser.save();
     jwt.sign({_id: user._id, name: user.name, role: user.role}, config.secrets.session, {expiresIn: '7d'});
     res.json({user: newUser})
   } catch (e) {
@@ -186,11 +235,16 @@ async function createGuest(req, res, next) {
 }
 
 /**
- * Get a single user
+ * @function show
+ * @description This function is used to returns User's information from its id.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function show(req, res, next) {
   try {
-    var userId = req.params.id
+    var userId = req.params.id;
     const user = await User.findById(userId);
     if (!user)
       throw { code: 404, message: 'User not found.' };
@@ -201,8 +255,14 @@ async function show(req, res, next) {
 }
 
 /**
- * Deletes a user
- * restriction: 'admin'
+ * @function destroy
+ * @description This function is used to delete an user from the platform.
+ * This call is irrevocable.
+ * This call must be used only by admins.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function destroy(req, res, next) {
   try {
@@ -214,7 +274,17 @@ async function destroy(req, res, next) {
 }
 
 /**
- * Change a users password
+ * @function changePassword
+ * @description This function is used to be called on the profile section.
+ * This functions require two parameters in the body fields :
+ *  - oldPassword, which is the common password the user used to be connected
+ *  - newPassword, which is the new password to set
+ * Caution: The oldPassword and the newPassword can't be the same
+ * or it will result a HTTP 409 code for duplicate entry
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function changePassword(req, res, next) {
   try {
@@ -242,19 +312,22 @@ async function changePassword(req, res, next) {
 }
 
 /**
- * Change a guest password and convert it in user // we check that the guest is on the list
+ * @function changeGuestPassword
+ * @description This function is used to change the guests password after he connected from
+ * the email's link.
+ * It only takes a password parameter in the body field.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function changeGuestPassword(req, res, next) {
   try {
-    var userId = req.params.id
-    var newPass = String(req.body.password)
-    console.log("changeGuestPassword :: beginning ", userId)
-    let user = await User.findById(userId)
-    console.log("changeGuestPassword :: ", user)
-    const invite = await Invitation.findById(user.invitationId)
-    console.log("changeGuestPassword :: ", invite)
+    var userId = req.params.id;
+    var newPass = String(req.body.password);
+    let user = await User.findById(userId);
+    const invite = await Invitation.findById(user.invitationId);
     if (user.authenticate(invite.senderId)) {
-      console.log("user.authenticate :: ")
       const query = {
         _id: userId
       };
@@ -267,12 +340,11 @@ async function changeGuestPassword(req, res, next) {
         }
       };
       const updatedUser = await User.findOneAndUpdate(query, toSet);
-      console.log("changeGuestPassword ::  ", updateUser)
       const token = await jwt.sign({
         _id: updatedUser._id,
         name: updatedUser.name,
         role: updatedUser.role
-      }, config.secrets.session, {expiresIn: '7d'})
+      }, config.secrets.session, {expiresIn: '7d'});
       res.json({token: token})
     }
   } catch (err) {
@@ -281,27 +353,35 @@ async function changeGuestPassword(req, res, next) {
 }
 
 /**
- * Reset the password and convert it in user // we check that the guest is on the list
+ * @function resetPassword
+ * @description This function is used to reset the password if the user has forgotten it.
+ * It only takes email parameter in the body field.
+ * This function doesn't return the new password but send an email to the user
+ * with a link to recover his password.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<*>}
  */
 async function resetPassword(req, res, next) {
   try {
     if (req.body.email === undefined)
       throw {code: 422, message: 'Missing parameters.'};
-    let email = String(req.body.email)
-    let senderMsg = 'reset'
-    let newLink = shortid.generate()
+    let email = String(req.body.email);
+    let senderMsg = 'reset';
+    let newLink = shortid.generate();
     while (newLink.indexOf('-') >= 0) {
       newLink = shortid.generate()
     }
-    let senderId = shortid.generate()
+    let senderId = shortid.generate();
     while (senderId.indexOf('-') >= 0) {
       senderId = shortid.generate()
     }
     const user = await User.findOne({"email": email});
     if (!user)
       throw { code: 403, message: 'User not found.' };
-    let senderName = user._id
-    let current = new Date().toISOString()
+    let senderName = user._id;
+    let current = new Date().toISOString();
     const newInvitation = new Invitation({
       "created_at": current,
       "updated_at": current,
@@ -321,21 +401,21 @@ async function resetPassword(req, res, next) {
         gmail.sendRecuperationPassword(clientUrl);
         //sendResetEmail(email, newLink, newLink);
       }
-    })
+    });
     // temporary password is newLink - a random key
-    user.password = senderId
-    user.role = 'guest'
-    user.roles = ['guest']
+    user.password = senderId;
+    user.role = 'guest';
+    user.roles = ['guest'];
     await user.save(function (err) {
-      if (err) return validationError(res, err)
+      if (err) return validationError(res, err);
       var token = jwt.sign({
           _id: user._id,
           name: user.name,
           role: user.role
         },
-        config.secrets.session, {expiresIn: '7d'})
+        config.secrets.session, {expiresIn: '7d'});
       res.json({token: token})
-    })
+    });
     console.log(invitation)
   } catch (err) {
     return next(err)
@@ -343,35 +423,49 @@ async function resetPassword(req, res, next) {
 }
 
 /**
- * update user settings - firstname, lastname, field... (no password)
+ * @function updateUser
+ * @description This function is used to update the user's information on his profile section.
+ * This function takes 3 parameters in the body field :
+ *  - firstname
+ *  - lastname
+ *  - field, which is a short biography on the user's profile
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<*>}
  */
 async function updateUser(req, res, next) {
   try {
     if (!(req.body.firstname && req.body.lastname && req.body.field))
       throw { code: 422, message: 'Missing parameters.' };
-    var userId = req.decoded._id
-    var firstname = String(req.body.firstname)
-    var lastname = String(req.body.lastname)
-    var field = String(req.body.field)
-    console.log(firstname)
+    var userId = req.decoded._id;
+    var firstname = String(req.body.firstname);
+    var lastname = String(req.body.lastname);
+    var field = String(req.body.field);
+    console.log(firstname);
     const user = await User.findOneAndUpdate(
       {_id: userId},
       {$set: {firstname, lastname, field}},
       {new: true});
     if (!user)
-      throw { code: 404, message: 'User not found.'}
+      throw { code: 404, message: 'User not found.'};
     return res.json(user);
   } catch (err) {
     return next(err)
   }
-};
-
+}
 /**
- * Get my info
+ * @function me
+ * @description This function is used to get the user's information
+ * It doesn't take any parameters and just recover the user's id from the decoded JWT
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function me(req, res, next) {
   try {
-    var userId = req.decoded._id
+    var userId = req.decoded._id;
     const user = await User.findOne({
       _id: userId
     }, '-salt -hashedPassword');
@@ -384,23 +478,34 @@ async function me(req, res, next) {
 }
 
 /**
- * This method will be use to check if a user has verified his email !
+ * @function emailConfirmation
+ * @description This function is used to confirm the user email from the link which has been sent.
+ * This function takes an userId in the body field and we try to match a RegExp to
+ * confirm the email.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
  */
 async function emailConfirmation(req, res, next) {
   try {
     if (!req.body.userId)
       throw { code: 422, message: "Missing parameter." };
-    const regExp = /(.*?)-(.*?)$/g
+    const regExp = /(.*?)-(.*?)$/g;
     const match = regExp.exec(req.body.userId);
     const query = {_id: match[1]};
     const toReplace = {$set: {isVerified: true}};
-    await User.updateOne(query, toReplace)
+    await User.updateOne(query, toReplace);
     res.json({ success: true });
   } catch (e) {
     next(e);
   }
 }
 
+/**
+ *
+ * @type {{resetPassword: *, changeGuestPassword: *, show: *, updateUser: *, index: *, destroy: *, orcidCreation: *, changePassword: *, createVerificationEmailInvitation: *, googleCreation: *, me: *, create: *, emailConfirmation: *, createGuest: *}}
+ */
 module.exports = {
   createVerificationEmailInvitation: createVerificationEmailInvitation,
   emailConfirmation: emailConfirmation,
@@ -416,4 +521,4 @@ module.exports = {
   destroy: destroy,
   orcidCreation: orcidCreation,
   googleCreation: googleCreation
-}
+};

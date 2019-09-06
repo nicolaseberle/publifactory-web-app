@@ -2,6 +2,15 @@
 
 const Picture = require("./picture.model"); // register your schema
 
+/**
+ * @function addPicture
+ * @description This function is used to add a new picture to an article.
+ * This function takes the picture's name in the body field and a file from multer
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function addPicture (req, res, next) {
   try {
     if (!req.file)
@@ -29,9 +38,20 @@ async function addPicture (req, res, next) {
   }
 }
 
+/**
+ * @function getPictureById
+ * @description This function retrieve the information about pictures.
+ * If the id parameter is specified in the url, it will return the information
+ * about a specific picture.
+ * If nothing is specified, it will returns every pictures and their information
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function getPictureById (req, res, next) {
   try {
-    let response
+    let response;
     if (req.params.id){
       response = await Picture.findOne({ _id: req.params.id })
     }
@@ -43,9 +63,18 @@ async function getPictureById (req, res, next) {
   }
 }
 
+/**
+ * @function removePicture
+ * @description This function is used to remove a picture from the database.
+ * It takes only the id of the picture in the url parameter.
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function removePicture (req, res, next) {
   try {
-    const query = { _id: req.params.id }
+    const query = { _id: req.params.id };
     await Picture.findOneAndDelete(query).exec();
     res.status(204).json({success: true})
   } catch (e) {
@@ -53,10 +82,23 @@ async function removePicture (req, res, next) {
   }
 }
 
+/**
+ * @function updatePicture
+ * @description This function is used to update the picture's information
+ * This function takes two parameters :
+ *  - name, which is the name to set on the picture
+ *  - legend, which is the legend to set on the picture
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<void>}
+ */
 async function updatePicture (req, res, next) {
   try {
-    const query = { _id: req.params.id }
-    const toReplace = { $set: { name: req.body.name, legend: req.body.legend } }
+    if (req.body.name === undefined || req.body.legend === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
+    const query = { _id: req.params.id };
+    const toReplace = { $set: { name: req.body.name, legend: req.body.legend } };
     await Picture.findOneAndUpdate(query, toReplace);
     res.json({ success: true })
   } catch (e) {
@@ -64,9 +106,13 @@ async function updatePicture (req, res, next) {
   }
 }
 
+/**
+ *
+ * @type {{addPicture: *, updatePicture: *, removePicture: *, getPictureById: *}}
+ */
 module.exports = {
   addPicture: addPicture,
   getPictureById: getPictureById,
   removePicture: removePicture,
   updatePicture: updatePicture
-}
+};
