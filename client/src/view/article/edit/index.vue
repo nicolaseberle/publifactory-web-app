@@ -184,7 +184,7 @@
         id_user: this.userId
       }
     };
-    this.socket = io('https://localhost:4000/', socketOptions)
+    this.socket = io('http://localhost:4000/', socketOptions)
     
   },
   async mounted() {

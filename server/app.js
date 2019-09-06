@@ -34,7 +34,7 @@ const credentials = {
 
 // Setup server
 const app = express();
-const serverApi = require('https').createServer(credentials, app);
+const serverApi = require('http').createServer(app);
 const socketIo = require('socket.io')(serverApi);
 require('./config/database')();
 require('./config/socketio')(socketIo);
