@@ -1,8 +1,13 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <h2>Insert some info</h2>
+
+      <h1>Reviewer Matcher</h1>
+      <p>The service allows to match an article with the best reviewers</p>
+      <div>
+      <h2>Load the article</h2>
       <p>Enter Title, Abstract or keywords & launch the request</p>
+
       <p>You can also upload the pdf to extract the different fields </p>
       <el-row :gutter='30' style='margin-top=80px'>
       <el-col :span='12'>
@@ -64,6 +69,7 @@
         </el-upload>
         </el-col>
       </el-row>
+      </div>
       <el-row style='margin-top:80px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
         <el-table
@@ -167,7 +173,7 @@ export default {
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
-      axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+      axios.post('http://35.187.84.23:5000/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
       .then((res)=>{
         console.log(res.data[0])
         this.formPost.abstract = res.data[0].abstract
@@ -177,7 +183,7 @@ export default {
       //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
     },
     onSubmit () {
-      axios.get('http://35.241.170.253:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+      axios.get('http://35.187.84.23:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
       .then((res)=>{
         console.log("onSubmit :: " , res)
         this.tableData = res.data
@@ -193,6 +199,9 @@ export default {
 }
 </script>
 <style>
+h1{
+  font-family: 'DNLTPro-bold';
+}
 h2{
   font-family: 'DNLTPro-bold';
 }
