@@ -258,8 +258,6 @@
 
 </template>
 <script>
-
-  import editor from 'vue2-medium-editor'
   import { mapActions, mapGetters } from 'vuex'
   import MarkdownEditor from '../../../../components/MarkdownEditor'
   import axios from 'axios'
@@ -348,7 +346,6 @@ export default {
     figureFactory,
     scriptPython,
     MarkdownEditor,
-    'medium-editor': editor ,
     reviewComponent,
     'quill-editor' : quilleditor,
     scriptR,
@@ -710,7 +707,7 @@ export default {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },200);
+      },1000);
     },
     createUuid () {
       const uuidv4 = require('uuid/v4');
@@ -729,8 +726,7 @@ export default {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },200);
-      //this.updateUserList(editor)
+      },1000);
     },
     addNewRow (ev,key, socket = false) {
       var uuid_ = String(uuidv4())

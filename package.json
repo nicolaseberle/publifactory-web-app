@@ -140,7 +140,6 @@
     "vue-split-panel": "^1.0.4",
     "vue-status-indicator": "^1.1.1",
     "vue-textarea-autosize": "^1.0.4",
-    "vue2-medium-editor": "^1.1.6",
     "vuex": "^2.5.0",
     "vuex-router-sync": "^4.1.2",
     "websocket-json-stream": "0.0.3",

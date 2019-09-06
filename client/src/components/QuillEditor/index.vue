@@ -266,6 +266,7 @@ export default {
 	        theme: 'snow',  // or 'bubble',
 					bounds: '#' + this.idEditor
 	    });
+			this.editor = quill
 
 	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
 	      var range = this.editor.getSelection(focus = true);
@@ -290,9 +291,6 @@ export default {
 	      this.highlightSelection()
 	    });
 
-
-      this.editor = quill
-
       this.cursorModule = this.editor.getModule('cursors');
       this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
@@ -303,14 +301,14 @@ export default {
           if (this.timeoutId) clearTimeout(this.timeoutId);
           this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-              this.socket.emit('QUILL_NEW_TEXT', {
+              /*this.socket.emit('QUILL_NEW_TEXT', {
                   editor: this.editor,
                   delta: delta,
                   oldDelta: oldDelta,
                   numBlock: this.numBlock,
                   numSubBlock: this.numSubBlock,
                   numSubSubBlock: this.numSubSubBlock
-              })
+              })*/
           }, 500);
       });
       this.editor.on('selection-change', range => {

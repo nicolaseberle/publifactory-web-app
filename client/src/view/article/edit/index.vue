@@ -129,7 +129,7 @@
             :visible.sync="importDialogVisible"
             width="80%"
             top="0">
-      <ImportData :socket="this.socket" ref="importDataDialog"></ImportData>
+      <ImportData :socket="socket" ref="importDataDialog"></ImportData>
     </el-dialog>
   </div>
 
@@ -185,7 +185,7 @@
       }
     };
     this.socket = io('http://api:4001/', socketOptions)
-    
+
   },
   async mounted() {
     this.journalList = await this.getJournalList()
