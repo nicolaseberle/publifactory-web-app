@@ -281,6 +281,10 @@ var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 // var Zotero = require('libzotero');
 
+var Zotero = require('libzotero');
+var zotero_client = require('../../../../utils/js/zotero/client.js')
+// var zotero_api = require ( '../../../../utils/js/zotero/api.js')
+
 const defaultForm = {
   status: 'draft',
   title: '',

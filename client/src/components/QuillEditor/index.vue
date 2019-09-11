@@ -236,7 +236,7 @@ export default {
           if (this.sameBlock(data))
               this.cursorModule.moveCursor(this.cursor.id, data.range);
       });
-      /*
+
 			this.socket.on('QUILL_EXEC_USER', data => {
 				if (this.sameBlock(data)) {
 						for (let i = 0, len = this.mapCursor.length; i < len; ++i)
@@ -248,7 +248,7 @@ export default {
 						});
 				}
 			});
-			*/
+			
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
