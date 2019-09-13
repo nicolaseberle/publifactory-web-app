@@ -95,6 +95,16 @@ module.exports = function (io) {
       EXEC_CODE_PYTHON: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
       QUILL_NEW_TEXT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data),
       QUILL_NEW_SELECT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data),
+      QUILL_NEW_USER: data => {
+        try {
+          // YAUNTRUCAFAIRE ICI TODO ON ATTEND UN DATA.CURSOR EN SORTIE
+          // data.cursor = data
+          socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_USER`, data)
+        } catch (e) {
+          console.error(e);
+        }
+
+      },
       GET_USERS: data => {
         try {
           const userList = [];

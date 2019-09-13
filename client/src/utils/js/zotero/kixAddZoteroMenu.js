@@ -36,7 +36,7 @@ if (!isTopWindow) return;
  * hovering and clicking events when it initializes
  */
 await Zotero.initDeferred.promise;
-if (!await Zotero.Prefs.getAsync('integration.googleDocs.enabled')) return;
+//if (!await Zotero.Prefs.getAsync('integration.googleDocs.enabled')) return;
 
 var menuAdded = false;
 var buttonAdded = false;

@@ -353,7 +353,7 @@ export default {
   data() {
     return {
       flagActivity: true,
-      listConnectedUsers: Array,
+      listConnectedUsers: [],
       references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
       inputTagsVisible : false,
@@ -483,17 +483,20 @@ export default {
     });
     this.socket.on('RESULT_USERS', data => {
       this.listConnectedUsers = data;
+      //console.log("RESULT_USERS :: ",this.listConnectedUsers)
       this.isUserConnected()
     });
     this.socket.on('MODIFY_BLOCK_TITLE', data => {
         this.postForm.arr_content[data.key].title = data.title
     });
 
+    this.startCheckingConnectedUser()
+
     asideRightActivity();
     asideRightAnimation();
 
 
-    window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
+
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
@@ -545,6 +548,10 @@ export default {
     }
   },
   methods: {
+    startCheckingConnectedUser () {
+      setInterval(()=>{
+        this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
+    },
     insertPythonFigure (){
       this.diagInsertFigurePythonVisible=false
       // this.$refs.pythonChild.destroy()
@@ -555,7 +562,6 @@ export default {
     },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
-        console.log(this.listConnectedUsers);
         for(let user in this.listConnectedUsers){
           if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
             this.postForm.authors[i].isActive = true;

@@ -166,6 +166,9 @@ export default {
 			type: String,
 			default: 'abstract'
 		},
+		idUser: {
+			type: String
+		},
 		numBlock: {
 			type: Number,
 			default: 0
@@ -220,6 +223,7 @@ export default {
 				color: '',
 				range: {}
 			},
+			mapCursor: [],
 			cursorModule: {}
 		}
 	},
@@ -230,25 +234,29 @@ export default {
 	async mounted() {
       this.socket.on('QUILL_EXEC_TEXT', data => {
           if (this.sameBlock(data))
+					{
               this.editor.updateContents(data.delta);
+					}
       });
       this.socket.on('QUILL_EXEC_SELECT', data => {
           if (this.sameBlock(data))
               this.cursorModule.moveCursor(this.cursor.id, data.range);
       });
-      /*
+
 			this.socket.on('QUILL_EXEC_USER', data => {
 				if (this.sameBlock(data)) {
 						for (let i = 0, len = this.mapCursor.length; i < len; ++i)
 								if (data.cursor.id === this.mapCursor[i].id)
 										return;
 						this.mapCursor.push(data.cursor);
+						console.log('QUILL_EXEC_USER',this.mapCursor)
 						this.socket.emit('QUILL_NEW_USER', {
 								cursor: this.cursor
 						});
 				}
 			});
-			*/
+
+			// this.editor.enable(false)
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
@@ -292,10 +300,12 @@ export default {
 	    });
 
       this.cursorModule = this.editor.getModule('cursors');
-      this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+      this.cursor = await this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+
+
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
-      });
+      })
 
       this.editor.on('text-change', (delta, oldDelta, source) => {
           if (this.timeoutId) clearTimeout(this.timeoutId);
