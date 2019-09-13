@@ -62,6 +62,15 @@ export const constantRouterMap = [{
   }
 },
 {
+  path: '/front',
+  component: (resolve) => {
+    import('../view/frontoffice/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '/',
   component: Layout,
   redirect: 'dashboard',
