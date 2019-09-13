@@ -60,7 +60,7 @@ export const constantRouterMap = [{
   meta: {
     skipAuth: true
   }
-},
+},/*
 {
   path: '/front',
   component: (resolve) => {
@@ -69,7 +69,7 @@ export const constantRouterMap = [{
   meta: {
     skipAuth: true
   }
-},
+},*/
 {
   path: '/',
   component: Layout,
