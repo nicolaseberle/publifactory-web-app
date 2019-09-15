@@ -1,5 +1,13 @@
 <template>
 	<div>
+  <div>
+      <span v-bind:id="idSharedbSocketIndicator" class='socket-indicator' style='display:none;'></span>
+      <span v-bind:id="idSharedbSocketState" class='socket-state' style='display:none;'></span>
+      <!--<span v-bind:id="idCursorsSocketIndicator" class='socket-indicator'></span>
+      <span v-bind:id="idCursorsSocketState" class='socket-state'></span>
+      <div v-bind:id="idUsersList" style='display:none;'></div>-->
+  </div>
+
 	<div>
 		<div class='insert-button-box' v-bind:id="idButton">
 			<el-button type="" plain class="el-icon-caret-top" v-on:click='' circle size='mini'></el-button>
@@ -92,8 +100,8 @@
 
 	Vue.use(Autocomplete)
 
-	//var ShareDB = require('sharedb/lib/client')// cursor
-// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
+var ShareDB = require('sharedb/lib/client')// cursor
+var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
 // var utils = require('../../utils/js/collaboration/utils')// cursor
 
 var Quill = require('quill');
@@ -104,7 +112,18 @@ Quill.register('modules/cursors', QuillCursors);
 
 const debug = require('debug')('frontend');
 
+var sharedbWSAddress = ''
+
+if (process.env.NODE_ENV === 'production'){
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
+} else {
+  sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4002/mevn-dev'
+}
+
 const InlineBlot = Quill.import('blots/inline');
+
+var shareDBSocket = new ReconnectingWebSocket(sharedbWSAddress);
+var shareDBConnection = new ShareDB.Connection(shareDBSocket);
 
 
 /*Zotero, highlight button in quill toolbar*/
@@ -332,6 +351,139 @@ export default {
 
     	this.editor.root.innerHTML = this.content
 
+/*
+    doc.subscribe(function(err) {
+
+      if (err) throw err;
+
+      if (!doc.type) {
+        doc.create([{
+          insert: '\n'
+        }], 'rich-text')
+        doc.data = self.content
+      }
+
+      // update editor contents
+      self.editor.setContents(doc.data);
+
+      // local -> server
+      self.editor.on('text-change', function(delta, oldDelta, source) {
+        if (source == 'user') {
+          // self.$emit('edit', self.editor, delta, source,self.numBlock,self.numSubBlock,self.numSubSubBlock)
+          // Check if it's a formatting-only delta
+          var formattingDelta = delta.reduce(function (check, op) {
+            return (op.insert || op.delete) ? false : check;
+          }, true);
+
+          // If it's not a formatting-only delta, collapse local selection
+          if (
+            !formattingDelta &&
+            self.cursors.getLocalConnectionRange() &&
+            self.cursors.getLocalConnectionRangeLength()
+          ) {
+            var _index = self.cursors.getLocalConnectionRangeLength() + 1
+            self.cursors.setLocalConnectionRangeIndex(_index)
+            self.cursors.setLocalConnectionRangeLength(0)
+            self.cursors.update()
+          }
+
+          doc.submitOp(delta, {
+            source: self.editor
+          }, function(err) {
+            if (err)
+              console.error('Submit OP returned an error:', err);
+          });
+
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
+        }
+      });
+
+      cursorsModule.registerTextChangeListener();
+
+      // server -> local
+      doc.on('op', function(op, source) {
+        if (source !== self.editor) {
+          self.editor.updateContents(op);
+          //setInterval(function() {
+          //  self.$emit('signalUpdateUserList', self.cursors)
+          //},5000)
+
+        }
+      });
+
+      //
+      function sendCursorData(range) {
+        self.cursors.setLocalConnectionRange(range);
+        self.cursors.update();
+      }
+
+      //
+      var debouncedSendCursorData = utils.debounce(function() {
+        var range = self.editor.getSelection();
+        if (range) {
+          debug('[cursors] Stopped typing, sending a cursor update/refresh.');
+          sendCursorData(range);
+        }
+      }, 3000);
+
+      doc.on('nothing pending', debouncedSendCursorData);
+
+      function updateCursors(source) {
+        var activeConnections = {},
+          updateAll = Object.keys(cursorsModule.cursors).length == 0;
+
+        self.cursors.connections.forEach(function(connection) {
+          if (connection.id != self.cursors.localConnection.id) {
+
+            // Update cursor that sent the update, source (or update all if we're initting)
+            if ((connection.id == source.id || updateAll) && connection.range) {
+              cursorsModule.setCursor(
+                connection.id,
+                connection.range,
+                connection.name,
+                connection.color
+              );
+            }
+
+            // Add to active connections hashtable
+            activeConnections[connection.id] = connection;
+          }
+        });
+
+        // Clear 'disconnected' cursors
+        Object.keys(cursorsModule.cursors).forEach(function(cursorId) {
+          if (!activeConnections[cursorId]) {
+            cursorsModule.removeCursor(cursorId);
+          }
+        });
+      }
+
+      self.editor.on('selection-change', function(range, oldRange, source) {
+        sendCursorData(range);
+      });
+
+      document.addEventListener('cursors-update', function(e) {
+        // Handle Removed Connections
+        e.detail.removedConnections.forEach(function(connection) {
+          if (cursorsModule.cursors[connection.id])
+            cursorsModule.removeCursor(connection.id);
+        });
+
+        updateCursors(e.detail.source);
+        //setInterval(function() {
+        //  self.$emit('signalUpdateUserList', self.cursors)
+        //},5000)
+      })
+
+      updateCursors(self.cursors.localConnection)
+      //setInterval(function() {
+      //  self.$emit('signalUpdateUserList', self.cursors)
+      //},5000)
+    })
+*/
+
     	window.cursors = this.cursors
 
 	    $('#'+this.idButtonZotero).click( () => {
@@ -367,6 +519,35 @@ export default {
 	      return false;
 	    });
 			*/
+
+ //var sharedbSocketStateEl = document.getElementById('sharedb-socket-state');
+    //var sharedbSocketIndicatorEl = document.getElementById('sharedb-socket-indicator');
+    /*
+    shareDBConnection.on('state', function(state, reason) {
+      var indicatorColor;
+
+      debug('[sharedb] New connection state: ' + state + ' Reason: ' + reason);
+
+      sharedbSocketStateEl.innerHTML = state.toString();
+
+      switch (state.toString()) {
+        case 'connecting':
+          indicatorColor = 'silver';
+          break;
+        case 'connected':
+          indicatorColor = 'lime';
+          break;
+        case 'disconnected':
+        case 'closed':
+        case 'stopped':
+          indicatorColor = 'red';
+          break;
+      }
+
+      sharedbSocketIndicatorEl.style.backgroundColor = indicatorColor;
+    });
+    */
+
   },
 	watch: {
 		content (newContent) {

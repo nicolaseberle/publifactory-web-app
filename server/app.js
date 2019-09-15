@@ -37,6 +37,8 @@ const credentials = {
 // Setup server
 const app = express();
 const serverApi = require('http').createServer(app);
+const serverWS = require('http').createServer(app);
+
 const socketIo = require('socket.io')(serverApi);
 require('./config/database')();
 require('./config/socketio')(socketIo);
@@ -52,6 +54,30 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 serverApi.listen(config.port, config.ip,  function () {
+  console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
+});
+
+// init websockets servers
+var wssShareDB = require('./helpers/wss-sharedb')(serverWS);
+var wssCursors = require('./helpers/wss-cursors')(serverWS);
+
+serverWS.on('upgrade', (request, socket, head) => {
+  const pathname = url.parse(request.url).pathname;
+
+  if (pathname === '/sharedb') {
+    wssShareDB.handleUpgrade(request, socket, head, (ws) => {
+      wssShareDB.emit('connection', ws);
+    });
+  } else if (pathname === '/cursors') {
+    wssCursors.handleUpgrade(request, socket, head, (ws) => {
+      wssCursors.emit('connection', ws);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
+serverWS.listen(4002, config.ip,  function () {
   console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
 });
 
