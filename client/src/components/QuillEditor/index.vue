@@ -256,7 +256,7 @@ export default {
 			});
 			*/
 			const ydoc = new Y.Doc()
-		  const provider = new WebsocketProvider(`${location.protocol === 'http:' ? 'ws:' : 'wss:'}${location.host}/mevn-dev`, 'quill', ydoc)
+		  const provider = new WebsocketProvider(`${location.protocol === 'http:' ? 'ws:' : 'wss:'}${location.host}`, 'quill', ydoc)
 		  const type = ydoc.getText('quill')
 
 			var quill = new Quill('#' + this.idEditor, {

@@ -52,14 +52,11 @@ if (process.env.NODE_ENV === 'production') {
   console.log("listen port :"+ config.port)
 }
 
-
-
-
 serverApi.listen(config.port, config.ip,  function () {
   console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
 });
 
-const wss = new WebSocket.Server({ serverApi })
+const wss = new WebSocket.Server({ noServer: true })
 const setupWSConnection = require('y-websocket/bin/utils.js').setupWSConnection
 wss.on('connection', setupWSConnection)
 
