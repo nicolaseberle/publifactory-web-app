@@ -37,9 +37,9 @@ const credentials = {
 // Setup server
 const app = express();
 const serverApi = require('http').createServer(app);
-const serverWS = require('http').createServer(app);
 
 const socketIo = require('socket.io')(serverApi);
+
 require('./config/database')();
 require('./config/socketio')(socketIo);
 require('./config/express')(app);
@@ -58,13 +58,13 @@ serverApi.listen(config.port, config.ip,  function () {
 });
 
 // init websockets servers
-var wssShareDB = require('./helpers/wss-sharedb')(serverWS);
-var wssCursors = require('./helpers/wss-cursors')(serverWS);
+var wssShareDB = require('./helpers/wss-sharedb')(serverApi);
+var wssCursors = require('./helpers/wss-cursors')(serverApi);
 
-serverWS.on('upgrade', (request, socket, head) => {
+serverApi.on('upgrade', (request, socket, head) => {
   const pathname = url.parse(request.url).pathname;
 
-  if (pathname === '/sharedb') {
+  if (pathname === '/mevn-dev') {
     wssShareDB.handleUpgrade(request, socket, head, (ws) => {
       wssShareDB.emit('connection', ws);
     });
@@ -77,9 +77,8 @@ serverWS.on('upgrade', (request, socket, head) => {
   }
 });
 
-serverWS.listen(4002, config.ip,  function () {
-  console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
-});
+
+
 
 // Expose app
 exports = module.exports = app;
