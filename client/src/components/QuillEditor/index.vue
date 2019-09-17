@@ -91,7 +91,7 @@
 
 	Vue.use(Autocomplete)
 
-	import * as Y from 'yjs'
+	import * as Y from 'yjs/dist/yjs.js'
 	import { WebsocketProvider } from 'y-websocket'
 	import { QuillBinding } from 'y-quill'
 	import QuillCursors from 'quill-cursors'
@@ -261,6 +261,7 @@ export default {
 			} else {
 				sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
 			}*/
+
 			const ydoc = new Y.Doc()
 		  const provider = new WebsocketProvider(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' , 'quill', ydoc)
 		  const type = ydoc.getText('quill')
@@ -278,6 +279,7 @@ export default {
 	        theme: 'snow',  // or 'bubble',
 					bounds: '#' + this.idEditor
 	    });
+
 			this.editor = quill
 
 		  const binding = new QuillBinding(type, quill, provider.awareness)
@@ -290,10 +292,6 @@ export default {
 		    color: 'blue'
 		  })
 		  */
-
-
-		  window.example = { provider, ydoc, type, binding }
-
 
 
 	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
@@ -328,7 +326,7 @@ export default {
       this.editor.on('text-change', (delta, oldDelta, source) => {
           if (this.timeoutId) clearTimeout(this.timeoutId);
           this.timeoutId = setTimeout(async () => {
-              await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
+              //await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
               /*this.socket.emit('QUILL_NEW_TEXT', {
                   editor: this.editor,
                   delta: delta,

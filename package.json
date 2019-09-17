@@ -157,7 +157,7 @@
     "y-prosemirror": "^0.1.0",
     "y-quill": "0.0.2",
     "y-websocket": "^1.0.0",
-    "yjs": "^13.0.0-13",
+    "yjs": "^13.0.0-67",
     "lib0": "^0.1.0"
   },
   "devDependencies": {
