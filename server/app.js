@@ -14,6 +14,7 @@ const serveStatic = require('serve-static');
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const WebSocket = require('ws')
 
 // insure DB with admin user data
 // require('./config/seed')
@@ -51,9 +52,16 @@ if (process.env.NODE_ENV === 'production') {
   console.log("listen port :"+ config.port)
 }
 
+
+
+
 serverApi.listen(config.port, config.ip,  function () {
   console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
 });
+
+const wss = new WebSocket.Server({ serverApi })
+const setupWSConnection = require('y-websocket/bin/utils.js').setupWSConnection
+wss.on('connection', setupWSConnection)
 
 // Expose app
 exports = module.exports = app;

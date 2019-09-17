@@ -86,72 +86,76 @@
 	import 'quill/dist/quill.snow.css'
 	import 'quill/dist/quill.bubble.css'
 	import 'v-autocomplete/dist/v-autocomplete.css'
-	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
 	const io = require('socket.io-client');
 
 	Vue.use(Autocomplete)
 
+	import * as Y from 'yjs'
+	import { WebsocketProvider } from 'y-websocket'
+	import { QuillBinding } from 'y-quill'
+	import QuillCursors from 'quill-cursors'
+
 	//var ShareDB = require('sharedb/lib/client')// cursor
-// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
-// var utils = require('../../utils/js/collaboration/utils')// cursor
+	// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
+	// var utils = require('../../utils/js/collaboration/utils')// cursor
 
-var Quill = require('quill');
-var uuidv4 = require('uuid/v4');
-Quill.register('modules/cursors', QuillCursors);
+	var Quill = require('quill');
+	var uuidv4 = require('uuid/v4');
+	Quill.register('modules/cursors', QuillCursors);
 
-//ShareDB.types.register(require('rich-text').type);
+	//ShareDB.types.register(require('rich-text').type);
 
-const debug = require('debug')('frontend');
+	const debug = require('debug')('frontend');
 
-const InlineBlot = Quill.import('blots/inline');
-
-
-/*Zotero, highlight button in quill toolbar*/
-class ProcLink extends InlineBlot {
-		static create(value) {
-				let node = super.create(value);
-				// give it some margin
-				node.setAttribute('style', "background-color : #FFDCA6;");
-				node.setAttribute('datareview', value.value);
-				node.innerHTML = value.text;
-				return node;
-		}
-
-		static value(node) {
-			return {
-				value: node.getAttribute('datareview'),
-				text: node.innerHTML
-			};
-		}
-}
-
-ProcLink.blotName = 'datareview';
-ProcLink.className = 'datareview';
-ProcLink.tagName = 'span';
+	const InlineBlot = Quill.import('blots/inline');
 
 
+	/*Zotero, highlight button in quill toolbar*/
+	class ProcLink extends InlineBlot {
+			static create(value) {
+					let node = super.create(value);
+					// give it some margin
+					node.setAttribute('style', "background-color : #FFDCA6;");
+					node.setAttribute('datareview', value.value);
+					node.innerHTML = value.text;
+					return node;
+			}
+
+			static value(node) {
+				return {
+					value: node.getAttribute('datareview'),
+					text: node.innerHTML
+				};
+			}
+	}
+
+	ProcLink.blotName = 'datareview';
+	ProcLink.className = 'datareview';
+	ProcLink.tagName = 'span';
 
 
-class ProcRef extends InlineBlot {
-    static create(value) {
-        let node = super.create(value);
-        // give it some margin
-				node.setAttribute('href', value);
-				node.setAttribute('target', '_blank');
-        node.innerHTML = value.text;
-        return node;
-    }
-}
 
-ProcRef.blotName = 'ref';
-ProcRef.className = 'ref';
-ProcRef.tagName = 'a';
 
-/*Link the new button in quill*/
+	class ProcRef extends InlineBlot {
+	    static create(value) {
+	        let node = super.create(value);
+	        // give it some margin
+					node.setAttribute('href', value);
+					node.setAttribute('target', '_blank');
+	        node.innerHTML = value.text;
+	        return node;
+	    }
+	}
 
-Quill.register(ProcLink, true);
-Quill.register(ProcRef, true);
+	ProcRef.blotName = 'ref';
+	ProcRef.className = 'ref';
+	ProcRef.tagName = 'a';
+
+	/*Link the new button in quill*/
+
+	Quill.register(ProcLink, true);
+	Quill.register(ProcRef, true);
 
 
 
@@ -228,6 +232,7 @@ export default {
 
 	},
 	async mounted() {
+		/*
       this.socket.on('QUILL_EXEC_TEXT', data => {
           if (this.sameBlock(data))
               this.editor.updateContents(data.delta);
@@ -236,6 +241,7 @@ export default {
           if (this.sameBlock(data))
               this.cursorModule.moveCursor(this.cursor.id, data.range);
       });
+			*/
       /*
 			this.socket.on('QUILL_EXEC_USER', data => {
 				if (this.sameBlock(data)) {
@@ -249,14 +255,14 @@ export default {
 				}
 			});
 			*/
+			const ydoc = new Y.Doc()
+		  const provider = new WebsocketProvider(`${location.protocol === 'http:' ? 'ws:' : 'wss:'}${location.host}/mevn-dev`, 'quill', ydoc)
+		  const type = ydoc.getText('quill')
 
-	    var quill = new Quill('#' + this.idEditor, {
+			var quill = new Quill('#' + this.idEditor, {
 	        modules: {
 						formula: true,
-            cursors: {
-                hideDelayMs: 5000,
-                hideSpeedMs: 0
-            },
+            cursors: true,
             toolbar: '#' + this.idToolBar
 	        },
 	        history: {
@@ -267,6 +273,22 @@ export default {
 					bounds: '#' + this.idEditor
 	    });
 			this.editor = quill
+
+		  const binding = new QuillBinding(type, quill, provider.awareness)
+
+		  /*
+		  // Define user name and user name
+		  // Check the quill-cursors package on how to change the way cursors are rendered
+		  provider.awareness.setLocalStateField('user', {
+		    name: 'Typing Jimmy',
+		    color: 'blue'
+		  })
+		  */
+
+
+		  window.example = { provider, ydoc, type, binding }
+
+
 
 	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
 	      var range = this.editor.getSelection(focus = true);
