@@ -255,8 +255,14 @@ export default {
 				}
 			});
 			*/
+			/*
+			if (process.env.NODE_ENV === 'production'){
+				sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + '/mevn-dev'
+			} else {
+				sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
+			}*/
 			const ydoc = new Y.Doc()
-		  const provider = new WebsocketProvider(`${location.protocol === 'http:' ? 'ws:' : 'wss:'}${location.host}`, 'quill', ydoc)
+		  const provider = new WebsocketProvider(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' , 'quill', ydoc)
 		  const type = ydoc.getText('quill')
 
 			var quill = new Quill('#' + this.idEditor, {
