@@ -70,7 +70,7 @@ const webpackConfig = merge(commonConfig, {
           '/public': { target: 'http://localhost:9001',  pathRewrite: {'^/public' : '/client/public'}},
           '/socket.io': { target: `http://${process.env.BASE_API}:${backendBase.port}`, changeOrigin: true, ws: true },
           '/cursors': { target: `http://${process.env.BASE_API}:${backendBase.port}/cursors`, changeOrigin: true, ws: true },
-          '/quill': {  target: `http://${process.env.BASE_API}:${backendBase.port}/quill`, changeOrigin: true, ws: true }
+          '/quill': {  target: `http://${process.env.BASE_API}:4000/quill`, changeOrigin: true, ws: true }
         },
         stats: {normale:true}
     }

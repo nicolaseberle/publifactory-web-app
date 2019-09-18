@@ -266,7 +266,7 @@ export default {
 		  const provider = new WebsocketProvider(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' , 'quill', ydoc)
 		  const type = ydoc.getText('quill')
 
-			var quill = new Quill('#' + this.idEditor, {
+			this.editor = new Quill('#' + this.idEditor, {
 	        modules: {
 						formula: true,
             cursors: true,
@@ -280,9 +280,10 @@ export default {
 					bounds: '#' + this.idEditor
 	    });
 
-			this.editor = quill
 
-		  const binding = new QuillBinding(type, quill, provider.awareness)
+		  const binding = new QuillBinding(type, this.editor, provider.awareness)
+
+			window.example = { provider, ydoc, type, binding }
 
 		  /*
 		  // Define user name and user name
