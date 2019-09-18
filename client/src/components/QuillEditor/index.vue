@@ -224,7 +224,12 @@ export default {
 				color: '',
 				range: {}
 			},
-			cursorModule: {}
+			cursorModule: {},
+			binding : {},
+			ydoc: {},
+			provider : {},
+			type: {}
+
 		}
 	},
 	created() {
@@ -262,9 +267,9 @@ export default {
 				sharedbWSAddress = ((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000/mevn-dev'
 			}*/
 
-			const ydoc = new Y.Doc()
-		  const provider = new WebsocketProvider(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000' , 'quill', ydoc)
-		  const type = ydoc.getText('quill')
+			this.ydoc = new Y.Doc()
+		  this.provider = new WebsocketProvider(((window.location.protocol === 'https:') ? 'wss' : 'ws') + '://' + window.location.hostname + ':4000', 'quill', this.ydoc)
+		  this.type = this.ydoc.getText('quill')
 
 			this.editor = new Quill('#' + this.idEditor, {
 	        modules: {
@@ -279,11 +284,6 @@ export default {
 	        theme: 'snow',  // or 'bubble',
 					bounds: '#' + this.idEditor
 	    });
-
-
-		  const binding = new QuillBinding(type, this.editor, provider.awareness)
-
-			window.example = { provider, ydoc, type, binding }
 
 		  /*
 		  // Define user name and user name
@@ -327,7 +327,7 @@ export default {
       this.editor.on('text-change', (delta, oldDelta, source) => {
           if (this.timeoutId) clearTimeout(this.timeoutId);
           this.timeoutId = setTimeout(async () => {
-              //await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
+              await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
               /*this.socket.emit('QUILL_NEW_TEXT', {
                   editor: this.editor,
                   delta: delta,
@@ -349,7 +349,9 @@ export default {
 
     	this.editor.root.innerHTML = this.content
 
-    	window.cursors = this.cursors
+			this.binding = new QuillBinding(this.type, this.editor, this.provider.awareness)
+
+			window.cursors = this.cursors
 
 	    $('#'+this.idButtonZotero).click( () => {
 	      this.showZoteroMenu(

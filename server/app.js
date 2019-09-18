@@ -15,7 +15,6 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const WebSocket = require('ws')
-const setupWSConnection = require('y-websocket/bin/utils.js').setupWSConnection
 
 
 // insure DB with admin user data
@@ -54,9 +53,6 @@ if (process.env.NODE_ENV === 'production') {
   console.log("listen port :"+ config.port)
 }
 
-
-const wss = new WebSocket.Server({ server: serverApi })
-wss.on('connection', setupWSConnection)
 /*
 serverApi.on('upgrade', (request, socket, head) => {
   if(request != null)
@@ -69,6 +65,12 @@ serverApi.listen(config.port, config.ip,  function () {
   console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
 });
 
+const http = require('http')
+const StaticServer = require('node-static').Server
+const setupWSConnection = require('y-websocket/bin/utils.js').setupWSConnection
+
+const wss = new WebSocket.Server({ noServer: true })
+wss.on('connection', setupWSConnection)
 
 // Expose app
 exports = module.exports = app;
