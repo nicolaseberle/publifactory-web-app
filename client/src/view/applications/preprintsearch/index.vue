@@ -70,7 +70,7 @@ export default {
     this.socket = io('/', socketOptions)
   },
   mounted () {
-    const alice = new Conspirator("Alice")
+    const current_user = new Conspirator("Alice")
     //const bob = new Conspirator("Bob")
     this.socket.on('RESULT_USERS', data => {
       this.listConnectedUsers = data;
@@ -79,7 +79,7 @@ export default {
     //alice.follow(bob)
     //bob.follow(alice)
 
-    window.alice = alice
+    window.current_user = current_user
     //window.bob = bob
 
     alice.init(document.querySelector("#user"))
