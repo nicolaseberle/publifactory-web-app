@@ -88,7 +88,7 @@
 	import 'v-autocomplete/dist/v-autocomplete.css'
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
-	const io = require('socket.io-client');
+	const io = require('socket.io-client')
 
 	Vue.use(Autocomplete)
 
@@ -213,7 +213,7 @@ export default {
 			hostname: '',
 			timeoutId : '',
 
-
+			doc: {},
 			cursor: {
 				id: '',
 				name: '',
@@ -225,12 +225,12 @@ export default {
 	},
 	created() {
 		this.id = this.$route.params && this.$route.params.id
-
 	},
 	async mounted() {
       this.socket.on('QUILL_EXEC_TEXT', data => {
+
           if (this.sameBlock(data))
-              this.editor.updateContents(data.delta);
+              this.editor.setContents(this.doc.content[0]);
       });
       this.socket.on('QUILL_EXEC_SELECT', data => {
           if (this.sameBlock(data))
@@ -267,7 +267,6 @@ export default {
 					bounds: '#' + this.idEditor
 	    });
 			this.editor = quill
-
 	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
 	      var range = this.editor.getSelection(focus = true);
 	      $("#"+this.idInputZotero).toggle()
@@ -298,18 +297,18 @@ export default {
       });
 
       this.editor.on('text-change', (delta, oldDelta, source) => {
+				this.socket.emit('QUILL_NEW_TEXT', {
+						editor: this.editor,
+						delta: delta,
+						oldDelta: oldDelta,
+						numBlock: this.numBlock,
+						numSubBlock: this.numSubBlock,
+						numSubSubBlock: this.numSubSubBlock
+				})
           if (this.timeoutId) clearTimeout(this.timeoutId);
           this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-              /*this.socket.emit('QUILL_NEW_TEXT', {
-                  editor: this.editor,
-                  delta: delta,
-                  oldDelta: oldDelta,
-                  numBlock: this.numBlock,
-                  numSubBlock: this.numSubBlock,
-                  numSubSubBlock: this.numSubSubBlock
-              })*/
-          }, 500);
+          }, 50000);
       });
       this.editor.on('selection-change', range => {
           this.socket.emit('QUILL_NEW_SELECT', {
