@@ -297,6 +297,7 @@ export default {
       });
 
       this.editor.on('text-change', (delta, oldDelta, source) => {
+				// this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
 				this.socket.emit('QUILL_NEW_TEXT', {
 						editor: this.editor,
 						delta: delta,
@@ -308,7 +309,7 @@ export default {
           if (this.timeoutId) clearTimeout(this.timeoutId);
           this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-          }, 50000);
+          }, 1000);
       });
       this.editor.on('selection-change', range => {
           this.socket.emit('QUILL_NEW_SELECT', {
