@@ -1,6 +1,6 @@
 <template>
   <div >
-    <section id="user">
+    <section id="alice">
       <article class="editor input"></article>
       <details>
         <summary>Alice CRDT State</summary>
@@ -15,7 +15,7 @@
         <article class="messages"></article>
       </details>
     </section>
-    <!--
+
     <section id="bob">
       <article class="editor input"></article>
       <details>
@@ -31,7 +31,6 @@
           <article class="messages"></article>
         </details>
     </section>
-  -->
   </div>
 </template>
 
@@ -70,21 +69,39 @@ export default {
     this.socket = io('/', socketOptions)
   },
   mounted () {
-    const current_user = new Conspirator("Alice")
-    //const bob = new Conspirator("Bob")
+    const alice = new Conspirator("Alice")
+    const bob = new Conspirator("Bob")
+    /*
     this.socket.on('RESULT_USERS', data => {
       this.listConnectedUsers = data;
       console.log("RESULT_USERS :: ",this.listConnectedUsers)
     });
-    //alice.follow(bob)
-    //bob.follow(alice)
+    */
+    /*
+    this.editor.on('selection-change', range => {
+        this.socket.emit('QUILL_NEW_SELECT', {
+            range: range,
+            numBlock: this.numBlock,
+            numSubBlock: this.numSubBlock,
+            numSubSubBlock: this.numSubSubBlock
+        })
+    });
+    */
+    /*
+    this.socket.on('QUILL_EXEC_TEXT', data => {
 
-    window.current_user = current_user
-    //window.bob = bob
+        if (this.sameBlock(data))
+            this.editor.setContents(this.doc.content[0]);
+    });*/
+    alice.follow(bob)
+    bob.follow(alice)
 
-    alice.init(document.querySelector("#user"))
-    window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
-    //bob.init(document.querySelector("#bob"))
+    window.alice = alice
+    window.bob = bob
+
+    alice.init(document.querySelector("#alice"))
+    //window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
+    bob.init(document.querySelector("#bob"))
   },
   method :{
   }
