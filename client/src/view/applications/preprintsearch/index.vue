@@ -1,6 +1,6 @@
 <template>
   <div >
-    <section id="alice">
+    <section v-bind:id="idEditor">
       <article class="editor input"></article>
       <details>
         <summary>Alice CRDT State</summary>
@@ -40,6 +40,7 @@ import axios from 'axios'
 import io from 'socket.io-client'
 
 import Conspirator from  '../../../utils/js/q-automerge/main.js'
+var uuidv4 = require('uuid/v4');
 
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -50,11 +51,12 @@ export default {
     return {
       id: 'mlksqdksdmksdfnml',
       socket: '',
-      listConnectedUsers: []
+      listConnectedUsers: [],
+      idEditor: this.setIdEditor()
     }
   },
   computed: {
-    ...mapGetters(['userId'])
+    ...mapGetters(['userId','accessToken'])
   },
   created () {
     const socketOptions = {
@@ -63,14 +65,15 @@ export default {
       rejectUnauthorized: false,
       query: {
         id_article: this.id,
-        id_user: this.userId
+        id_user: 'toto'
       }
     };
     this.socket = io('/', socketOptions)
   },
-  mounted () {
-    const alice = new Conspirator("Alice")
-    const bob = new Conspirator("Bob")
+  async mounted () {
+    const name = await this.getUserName()
+    const current_user =  new Conspirator(name,this.socket)
+    
     /*
     this.socket.on('RESULT_USERS', data => {
       this.listConnectedUsers = data;
@@ -93,17 +96,31 @@ export default {
         if (this.sameBlock(data))
             this.editor.setContents(this.doc.content[0]);
     });*/
-    alice.follow(bob)
-    bob.follow(alice)
 
-    window.alice = alice
-    window.bob = bob
+    window.current_user = current_user
 
-    alice.init(document.querySelector("#alice"))
+    current_user.init(document.querySelector("#"+this.idEditor))
     //window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
-    bob.init(document.querySelector("#bob"))
+    //bob.init(document.querySelector("#bob"))
   },
-  method :{
+  destroyed() {
+    this.socket.on('close', () => {
+      console.log(`[${HOST}:${PORT}] connection closed`)
+    })
+  },
+  methods:{
+    setIdEditor () {
+      return 'editor-container-' + String(uuidv4());
+    },
+	  async getUserName () {
+	    return new Promise(resolve => {
+          axios.get('/api/users/me',
+            {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
+              const user = response.data;
+              resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`);
+					});
+			});
+		}
   }
 }
 </script>

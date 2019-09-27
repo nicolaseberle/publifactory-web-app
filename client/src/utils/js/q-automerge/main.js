@@ -53,11 +53,12 @@ class Conspirator {
   /**::
   root:HTMLElement
   */
-  constructor(name) {
+  constructor(name, socket) {
     this.id = `${name}@${Date.now().toString(32)}`
+    this.socket = socket
     this.feed = new FeedWriter(name)
-    this.thread = new Thread(this.feed)
-    this.repo = new Collaboration(this.thread, Automerge.init())
+    this.thread = new Thread(this.feed,socket)
+    this.repo = new Collaboration(this.thread, Automerge.init(),socket)
   }
   get document() {
     return this.repo.document
@@ -96,14 +97,17 @@ class Conspirator {
   async watch() {
     for await (const { member, message } of this.thread.messages) {
       if (member !== this.feed) {
+        console.log("watch await",member,message)
         this.receive(message)
       }
     }
   }
   receive(message) {
+    console.log('receive message')
     const cursors = this.document.cursors || {}
     this.repo.applyChanges(message)
     const text = new QuillRichText(new Tokens(this.document.content))
+    console.log(text)
     const delta = text.toContent()
     this.editor.setContents(delta)
     for (const name in this.document.cursors) {
@@ -142,7 +146,11 @@ class Conspirator {
       theme: "snow",
       placeholder: "Start writing.\n\nSelect the text for formatting options."
     })
-    this.watch()
+    //this.watch()
+    this.socket.on('QUILL_SEND_MESSAGE', message => {
+      console.log('QUILL_SEND_MESSAGE',message)
+      this.receive(message)
+    });
     return this
   }
 
@@ -160,7 +168,6 @@ class Conspirator {
     this.root.querySelector(".crdt.state").textContent = JSON.stringify(
       new QuillRichText(new Tokens(this.document.content)).toJSON()
     )
-
     this.root.querySelector(".editor.state").textContent = JSON.stringify(
       this.editor.getContents(),
       null,

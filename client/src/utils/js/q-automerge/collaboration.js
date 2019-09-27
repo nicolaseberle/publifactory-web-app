@@ -22,13 +22,28 @@ export class Collaboration /*::<a>*/ {
   }
   constructor(
     thread /*:Thread<Automerge.Change<a>>*/,
-    document /*:Automerge.Document<a>*/
+    document /*:Automerge.Document<a>*/,
+    socket
   ) {
-    this.document = document
+    const docSet = new Automerge.DocSet()
+    console.log(docSet)
+    //connection = new Connection(docSet, socket)
+    this.automerge = new Automerge.Connection(docSet, msg => this.sendMsg(msg))
+    this.automerge.open()
+    this.document = document //docSet.getDoc('example')// docSet.getDoc('example')
     this.thread = thread
+    this.socket = socket
+    this.socket.on('QUILL_NEW_MESSAGE', data => {
+      this.automerge.receiveMsg(data)
+    })
+  }
+  sendMsg (data) {
+    this.socket.emit('QUILL_NEW_MESSAGE', data)
   }
   change(mutate /*:Automerge.Mutate<a>*/, comment /*::?:string*/) {
     const document = Automerge.change(this.document, comment, mutate)
+
+    console.log(document)
     const changes = Automerge.getChanges(this.document, document)
     for (const change of changes) {
       this.thread.write(change)

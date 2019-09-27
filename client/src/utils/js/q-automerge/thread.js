@@ -15,12 +15,14 @@ export class Thread /*::<a>*/ {
 
   constructor(
     ownFeed /*:FeedWriter<a>*/,
+    socket,
     peerFeeds /*:Map<string, FeedReader<a>>*/ = new Map()
   ) {
     this.ownFeed = ownFeed
     this.peerFeeds = peerFeeds
     this.channel = new Channel()
     this.joins = new Map()
+    this.socket = socket
 
     // this.join(ownFeed)
     for (const feed of peerFeeds.values()) {
@@ -28,6 +30,7 @@ export class Thread /*::<a>*/ {
     }
   }
   write(message /*:a*/) {
+    this.socket.emit('QUILL_NEW_MESSAGE', message)
     return this.ownFeed.write(message)
   }
   get messages() {

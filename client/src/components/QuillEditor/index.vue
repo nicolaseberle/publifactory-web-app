@@ -125,7 +125,7 @@ class ProcLink extends InlineBlot {
 			};
 		}
 }
-
+ 
 ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';

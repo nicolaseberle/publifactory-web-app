@@ -3,6 +3,7 @@
 const middleware = require('socketio-wildcard')();
 const history = require('../api/article/history/history.controller');
 const User = require('../api/user/user.model');
+const Automerge = require('automerge')
 
 /**
  * @class SocketUser
@@ -19,6 +20,9 @@ class SocketUser {
       this.name =`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`;
       resolve(this.name);
     });
+    this.doc = new Automerge.DocSet()
+    const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi!')
+    this.doc.setDoc('example', initDoc)
   }
 }
 
@@ -94,6 +98,28 @@ module.exports = function (io) {
       EXEC_CODE_R: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_R`, data),
       EXEC_CODE_PYTHON: data => socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
       QUILL_NEW_TEXT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data),
+      QUILL_NEW_MESSAGE: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_SEND_MESSAGE`, data),
+      QUILL_NEW_CONNECTION: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_UPDATE_CONNECTION`, data),
+
+      QUILL_NEW_DOC: data => {
+        try{
+
+          if(mapUser[socket.id].doc) {
+            console.log('QUILL_NEW_DOC :: existing document')
+            socket.to(mapUser[socket.id].idArticle).emit(`QUILL_SEND_DOC`, mapUser[socket.id].doc)
+          }
+          else {
+            console.log('QUILL_NEW_DOC :: non existing document - WARNING')
+            mapUser[socket.id].doc = new Automerge.DocSet()
+            const initDoc = Automerge.init()
+            mapUser[socket.id].doc.setDoc('example', initDoc)
+            socket.to(mapUser[socket.id].idArticle).emit(`QUILL_SEND_DOC`, mapUser[socket.id].doc)
+          }
+        } catch(e)
+        {
+          console.error(e);
+        }
+      },
       QUILL_NEW_SELECT: data => socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data),
       GET_USERS: data => {
         try {
