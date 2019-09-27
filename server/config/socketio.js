@@ -4,6 +4,19 @@ const middleware = require('socketio-wildcard')();
 const history = require('../api/article/history/history.controller');
 const User = require('../api/user/user.model');
 
+
+const Automerge = require('automerge')
+const Connection = require('./connection')
+
+
+// Initialise an example document
+const docSet = new Automerge.DocSet()
+const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi!')
+docSet.setDoc('example', initDoc)
+
+
+
+
 /**
  * @class SocketUser
  * @description this class is used to stock with generic parameters a list of users.
@@ -54,6 +67,7 @@ module.exports = function (io) {
     mapUser[socket.id] = new SocketUser(socket.id, queryParameters.id_user, queryParameters.id_article);
     socket.join(queryParameters.id_article);
 
+
     /**
      * Enumeration of every events to add in history
      * NEW_ instruction => emit ADD_ instruction
@@ -66,6 +80,11 @@ module.exports = function (io) {
      * @author Léo Riberon-Piatyszek
      */
     const ENUM_INSTRUCTION = {
+      NEW_AUTO_DATA: data => {
+        const connection = new Connection(docSet, socket.to(mapUser[socket.id].idArticle))
+        connection.receiveData(data)
+        socket.to(mapUser[socket.id].idArticle).emit(`EMIT_DATA`, data)
+      },
       SECTION_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, data),
       ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
       NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
