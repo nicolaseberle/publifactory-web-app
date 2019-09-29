@@ -38,36 +38,56 @@ export default {
       }
     };
     this.socket = io('/', socketOptions)
-    this.docSet = new Automerge.DocSet()
-    this.connection = new Connection(this.docSet, this.socket)
-  },
-  async mounted () {
+    // Receiving data from the server
 
+    this.socket.on('EMIT_DATA', (data) => {
+      console.log('Client :: EMIT_DATA')
+      this.connection.receiveData(data)
+    })
+
+    this.socket.on('SEND_DATA_TO_CLIENT',(data) => {
+      console.log("INDEX.vue listen on NEW_AUTO_DATA", data)
+      this.connection.receiveData(data)
+      this.socket.emit('NEW_AUTO_DATA', data)
+    })
+
+    //we create a unique automerge doc on the server
+    // it is indexed on the socket room
+    this.socket.emit('NEW_CONNECTION')
     /*this.docSet.registerHandler((docId, doc) => {
       console.log(`[${docId}] ${JSON.stringify(doc)}`)
     })*/
 
     //const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi!')
     //this.docSet.setDoc('example', initDoc)
-    this.doc = Automerge.init()
-    
-    console.log(this.docSet)
+    // this.doc = Automerge.init()
+
+    //console.log(this.docSet)
 
     // Make a change to the document every 3 seconds
+    this.docSet = new Automerge.DocSet()
+    this.connection = new Connection(this.docSet, this.socket)
+
+  },
+  async mounted () {
+    //
+
+
     setInterval(() => {
       this.doc = this.docSet.getDoc('example')
       if (this.doc) {
-        this.doc = Automerge.change(this.doc, doc => {
-          this.doc.hello = this.doc.hello + ' ' + randomWords()
+        let doc
+        doc = Automerge.change(this.doc, doc => {
+          doc.hello = doc.hello + ' ' + randomWords()
+        this.doc = doc
         })
-        this.docSet.setDoc('example', this.doc)
+        this.docSet.setDoc('example', doc)
       }
-    }, 1000)
+    }, 5000)
 
-    // Receiving data from the server
-    this.socket.on('EMIT_DATA', (data) => {
-      this.connection.receiveData(data)
-    })
+
+
+
   }
 }
 </script>

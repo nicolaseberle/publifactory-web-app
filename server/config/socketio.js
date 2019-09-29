@@ -7,15 +7,7 @@ const User = require('../api/user/user.model');
 
 const Automerge = require('automerge')
 const Connection = require('./connection')
-
-
-// Initialise an example document
-const docSet = new Automerge.DocSet()
-const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi!')
-docSet.setDoc('example', initDoc)
-
-
-
+let connection = ''
 
 /**
  * @class SocketUser
@@ -32,6 +24,7 @@ class SocketUser {
       this.name =`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`;
       resolve(this.name);
     });
+    this.connection = null
   }
 }
 
@@ -67,7 +60,9 @@ module.exports = function (io) {
     mapUser[socket.id] = new SocketUser(socket.id, queryParameters.id_user, queryParameters.id_article);
     socket.join(queryParameters.id_article);
 
+    const docSet = new Automerge.DocSet()
 
+    console.log("Connection created")
     /**
      * Enumeration of every events to add in history
      * NEW_ instruction => emit ADD_ instruction
@@ -80,10 +75,34 @@ module.exports = function (io) {
      * @author Léo Riberon-Piatyszek
      */
     const ENUM_INSTRUCTION = {
-      NEW_AUTO_DATA: data => {
-        const connection = new Connection(docSet, socket.to(mapUser[socket.id].idArticle))
-        connection.receiveData(data)
-        socket.to(mapUser[socket.id].idArticle).emit(`EMIT_DATA`, data)
+      SEND_DATA_TO_SERVER: data => {
+        try {
+          console.log("SOCKET :: NEW_AUTO_DATA")
+          mapUser[socket.id].connection.receiveData(data)
+          socket.to(mapUser[socket.id].idArticle).emit('SEND_DATA_TO_CLIENT',data)
+          //socket.to(mapUser[socket.id].idArticle).emit(`EMIT_DATA`, data)
+          console.log(docSet.getDoc('example'))
+        } catch (e) {
+          console.error(e);
+        }
+      },
+      NEW_CONNECTION: data => {
+        try {
+          console.log("SOCKET :: NEW_CONNECTION")
+          if(mapUser[socket.id].connection == null) {
+            console.log('CREATION OF CONNECTION  ')
+
+            const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi! je récupère bien le doc')
+            docSet.setDoc('example', initDoc)
+            mapUser[socket.id].connection = new Connection(docSet, socket.to(mapUser[socket.id].idArticle))
+          }
+          else {
+            console.log('THE CONNECTION EXISTS ')
+            console.log(mapUser[socket.id].connection)
+          }
+        } catch (e) {
+          console.error(e);
+        }
       },
       SECTION_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, data),
       ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
