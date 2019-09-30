@@ -21,6 +21,16 @@ export const constantRouterMap = [{
   props: (route) => ({ userId: route.query.userId })
 },
 {
+  path: '/services',
+  component: (resolve) => {
+    import('../view/applications/reviewermatcher/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
   path: '/register',
   component: (resolve) => {
     import('../view/register/index.vue').then(resolve)
@@ -114,8 +124,8 @@ export const constantRouterMap = [{
 },//
 {
   path: '/applications',
-  component: Layout,
   redirect: 'applications',
+  component: Layout,
   // hidden: true,
   meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true , skipAuth: true},
   children: [

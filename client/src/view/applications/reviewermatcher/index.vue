@@ -82,12 +82,12 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="Id"
-            prop="id">
-          </el-table-column>
-          <el-table-column
             label="Name"
             prop="name">
+            <template slot-scope="props">
+                <p>{{ props.row.name}}</p>
+                <p>{{ props.row.id}}</p>
+            </template>
           </el-table-column>
           <el-table-column
             label="Affiliation"
