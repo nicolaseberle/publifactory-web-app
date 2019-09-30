@@ -35,6 +35,16 @@ export const constantRouterMap = [{
   hidden: true
 },
 {
+  path: '/services',
+  component: (resolve) => {
+    import('../view/applications/reviewermatcher/index.vue').then(resolve)
+  },
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
   path: '/invite/:id',
   component: (resolve) => {
     import('../view/invite/index.vue').then(resolve)
