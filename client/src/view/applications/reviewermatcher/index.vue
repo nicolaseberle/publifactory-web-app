@@ -50,6 +50,7 @@
           </el-input>
         </el-form-item>
         <el-form-item style='text-align:right'>
+          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" style='margin-bottom:20px'></el-progress>
           <el-button type="primary" @click="onSubmit">Search reviewer</el-button>
           <el-button>Cancel</el-button>
         </el-form-item>
@@ -75,18 +76,37 @@
         <el-table
           :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
           style="width: 100%">
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <p><strong>Most pertinent article :</strong> {{ props.row.article[0] }}</p>
+            </template>
+          </el-table-column>
           <el-table-column
             label="Name"
             prop="name">
+            <template slot-scope="props">
+                <p>{{ props.row.name}}</p>
+                <p>{{ props.row.id}}</p>
+            </template>
           </el-table-column>
           <el-table-column
             label="Affiliation"
             prop="affiliation">
           </el-table-column>
+          <!--
           <el-table-column
+            label="Verification"
+            prop="verification">
+          </el-table-column>-->
+          <el-table-column
+            label="Score"
+            prop="score">
+          </el-table-column>
+          <!-- article -  name - id(orcid ou semantic scholar) - conflit of interest - score - 2nd score Pound -->
+          <!--<el-table-column
             label="Email"
             prop="email">
-          </el-table-column>
+          </el-table-column>-->
           <el-table-column
             align="right">
             <template slot="header" slot-scope="scope">
@@ -95,15 +115,15 @@
                 size="mini"
                 placeholder="Type to search"/>
             </template>
-            <template slot-scope="scope">
+            <template slot-scope="scope" >
               <el-button
                 size="mini"
                 type="primary"
-                @click="handleEdit(scope.$index, scope.row)">Send an email</el-button>
+                @click="handleEdit(scope.$index, scope.row)" style='margin:0 auto;display:block;margin-bottom:10px;text-align:center'>Send an email</el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">Remove from the list</el-button>
+                @click="handleDelete(scope.$index, scope.row)" style='margin:0 auto;display:block;text-align:center'>Remove from the list</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -117,33 +137,14 @@ import axios from 'axios'
 export default {
   data () {
     return {
+    progress_status: 0,
     formPost: {abstract: '' , title: '', keywords: []},
     rules: {
           abstract: [
             { required: true, message: 'Please input enter abstract of the article', trigger: 'blur' }
           ]
         },
-    tableData: [{
-      name: 'Tom Martins',
-      affiliation: 'University of Cambridge',
-      email: "tom.martins@gmail.com",
-      orcid : 'yes',
-    }, {
-      name: 'Pierre Dupont',
-      affiliation: 'UPMC',
-      email: "pierre.dupont@gmail.com",
-      orcid : 'yes',
-    }, {
-      name: 'Jack Smith',
-      affiliation: 'MIT',
-      email: "jack.smith@gmail.com",
-      orcid : 'yes',
-    }, {
-      name: 'Emily Jones',
-      affiliation: 'University of Oxford',
-      email: "e.jones@gmail.com",
-      orcid : 'yes',
-    }],
+    tableData: [{}],
     search: '',
     inputVisible: false,
     inputValue: ''
@@ -173,7 +174,7 @@ export default {
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
-      axios.post('http://35.187.84.23:5000/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+      axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
       .then((res)=>{
         console.log(res.data[0])
         this.formPost.abstract = res.data[0].abstract
@@ -183,9 +184,15 @@ export default {
       //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
     },
     onSubmit () {
-      axios.get('http://35.187.84.23:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+      this.progress_status = 0
+      window.setInterval(()=>{
+        if (this.progress_status<100)
+          this.progress_status = this.progress_status +1
+      }, 250);
+      axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract )//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
       .then((res)=>{
         console.log("onSubmit :: " , res)
+        this.progress_status = 100
         this.tableData = res.data
       })
     },
