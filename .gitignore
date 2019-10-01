@@ -205,4 +205,4 @@ modules.xml
 # End of https://www.gitignore.io/api/node,vuejs,webstorm+all
 
 # VSCode
-.vscode
+.vscode/
