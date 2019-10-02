@@ -1,6 +1,5 @@
 'use strict';
 
-const { QuillDeltaToHtmlConverter } = require('quill-delta-to-html');
 const middleware = require('socketio-wildcard')();
 const history = require('../api/article/history/history.controller');
 const User = require('../api/user/user.model');
