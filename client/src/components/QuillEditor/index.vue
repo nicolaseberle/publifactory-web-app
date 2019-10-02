@@ -1,78 +1,86 @@
 <template>
-	<div>
-	<div>
-		<div class='insert-button-box' v-bind:id="idButton">
-			<el-button type="" plain class="el-icon-caret-top" v-on:click='' circle size='mini'></el-button>
-			<el-button type="warning" plain  icon="el-icon-delete" v-on:click='deleteBlock' circle size='mini'></el-button>
-			<el-button type="" plain class="el-icon-caret-bottom" v-on:click='' circle size='mini'></el-button>
-		</div>
-		<div class='box' style='z-index=1000;'>
-
-<!--
+  <div>
+    <div>
+      <div class="insert-button-box" v-bind:id="idButton">
+        <el-button type plain class="el-icon-caret-top" v-on:click circle size="mini"></el-button>
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-delete"
+          v-on:click="deleteBlock"
+          circle
+          size="mini"
+        ></el-button>
+        <el-button type plain class="el-icon-caret-bottom" v-on:click circle size="mini"></el-button>
+      </div>
+      <div class="box" style="z-index=1000;">
+        <!--
 			<div style='position: absolute; right:0px; bottom:0px;z-index:1;'>
 				<el-button type='danger' size="mini" icon="el-icon-delete" v-on:click='' circle></el-button>
-			</div>-->
-		<div class='pre' lang='en'>
-			<div v-bind:id="idEditor">
-				<span class='p-span' v-html="content"></span>
-			</div>
-		</div>
-
-
-	</div>
-	<div v-bind:id="idToolBar"  style='z-index=1000;'>
-		<span class="ql-formats">
-			<button class="ql-bold"></button>
-			<button class="ql-italic"></button>
-			<button class="ql-underline"></button>
-			<button class="ql-strike"></button>
-		</span>
-			<span class="ql-formats">
-			<button class="ql-blockquote"></button>
-		</span>
-		<span class="ql-formats">
-			<button class="ql-list" value="bullet"></button>
-			<button class="ql-indent" value="-1"></button>
-			<button class="ql-indent" value="+1"></button>
-		</span>
-			<span class="ql-formats">
-			<select class="ql-align"></select>
-		</span>
-		<span class="ql-formats">
-			<button class="ql-link"></button>
-			<button class="ql-formula"></button>
-			<button v-bind:id="idButtonZotero" style='transform:translate(0, -6px)'>
-				<img src='/static/img/zotero-small-icon.png'/>
-				<!--<i class="ai ai-zotero ai-1x"></i>-->
-			</button>
-			<button v-bind:id="idButtonComment" style='margin-left:10px; transform:translate(5px, 0)'>
-				<svg-icon icon-class='comment-black'/>
-				<!--<i class="ai ai-zotero ai-1x"></i>-->
-			</button>
-			<!--<input  class="ql-input" name="title" type="text"></input>-->
-		</span>
-	</div>
-		<!--<div class='bottom-right'/>-->
-		<div class='questions' v-bind:id="idZotero">
-			<!--<div class="close-toto"><i class="fa fa-times"></i>
-			</div>-->
-			<div class="question" style='z-index=2000;'>
-				<div v-bind:id="idInputZotero"  style="display:none;">
-					<el-row>
-						<el-col :span='2'>
-							<img src='/static/img/zotero-small-icon.png'/>
-						</el-col>
-						<el-col :span='22'>
-							<v-autocomplete :items="items" v-model="item" :get-label="getLabel" :component-item="template" @update-items="updateItems">
-							</v-autocomplete>
-						</el-col>
-					</el-row>
-				</div>
-			</div>
-		</div>
-</div>
-</div>
-
+        </div>-->
+        <div class="pre" lang="en">
+          <div v-bind:id="idEditor">
+            <span class="p-span" v-html="content"></span>
+          </div>
+        </div>
+      </div>
+      <div v-bind:id="idToolBar" style="z-index=1000;">
+        <span class="ql-formats">
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-underline"></button>
+          <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-blockquote"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-list" value="bullet"></button>
+          <button class="ql-indent" value="-1"></button>
+          <button class="ql-indent" value="+1"></button>
+        </span>
+        <span class="ql-formats">
+          <select class="ql-align"></select>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link"></button>
+          <button class="ql-formula"></button>
+          <button v-bind:id="idButtonZotero" style="transform:translate(0, -6px)">
+            <img src="/static/img/zotero-small-icon.png" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
+          </button>
+          <button v-bind:id="idButtonComment" style="margin-left:10px; transform:translate(5px, 0)">
+            <svg-icon icon-class="comment-black" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
+          </button>
+          <!--<input  class="ql-input" name="title" type="text"></input>-->
+        </span>
+      </div>
+      <!--<div class='bottom-right'/>-->
+      <div class="questions" v-bind:id="idZotero">
+        <!--<div class="close-toto"><i class="fa fa-times"></i>
+        </div>-->
+        <div class="question" style="z-index=2000;">
+          <div v-bind:id="idInputZotero" style="display:none;">
+            <el-row>
+              <el-col :span="2">
+                <img src="/static/img/zotero-small-icon.png" />
+              </el-col>
+              <el-col :span="22">
+                <v-autocomplete
+                  :items="items"
+                  v-model="item"
+                  :get-label="getLabel"
+                  :component-item="template"
+                  @update-items="updateItems"
+                ></v-autocomplete>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -160,7 +168,7 @@ export default {
 	props: {
 	  socket: Object,
 		content: {
-			type: String
+			type: String | Array | Object
 		},
 		uuid: {
 			type: String,
@@ -297,9 +305,15 @@ export default {
           cursor: this.cursor
       });
 
-      this.editor.on('text-change', (delta, oldDelta, source) => {
-          if (this.timeoutId) clearTimeout(this.timeoutId);
-          this.timeoutId = setTimeout(async () => {
+      this.editor.on('text-change', async (delta, oldDelta, source) => {
+				if (source === 'api') {
+          console.log("GETTING FROM API", delta, JSON.stringify(this.content))
+          console.log(this.editor.root.innerHTML)
+					return
+        }
+        console.log("from user", delta)
+					// if (this.timeoutId) clearTimeout(this.timeoutId);
+          // this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
               /*this.socket.emit('QUILL_NEW_TEXT', {
                   editor: this.editor,
@@ -309,7 +323,7 @@ export default {
                   numSubBlock: this.numSubBlock,
                   numSubSubBlock: this.numSubSubBlock
               })*/
-          }, 500);
+          // }, 500);
       });
       this.editor.on('selection-change', range => {
           this.socket.emit('QUILL_NEW_SELECT', {
@@ -360,9 +374,17 @@ export default {
   },
 	watch: {
 		content (newContent) {
-			if (this.content !== this.editor.root.innerHTML) {
+			const type = typeof newContent
+			if (typeof newContent === "string") {
+				if (this.content !== this.editor.root.innerHTML) {
 				this.editor.root.innerHTML = newContent
-			}
+				}
+			} else if (typeof newContent === "object") {
+        console.log("setting contents as delta", JSON.stringify(newContent))
+				this.editor.setContents(newContent.delta, newContent.source);
+			} else {
+        console.log("NO CONTENT")
+      }
 		}
 	},
   computed: {
@@ -566,10 +588,9 @@ export default {
 }
 </script>
 <style>
-
-.ql-input{
-	color:black;
-	background-color:transparent;
+.ql-input {
+  color: black;
+  background-color: transparent;
 }
 /*
 .ql-cursor-flag {
@@ -577,169 +598,169 @@ export default {
 }
 */
 .pre {
-	margin: 0 auto;
-	width: 100%;
+  margin: 0 auto;
+  width: 100%;
 }
 
 p {
-	text-align: justify;
+  text-align: justify;
 
-	/*white-space: pre-line;*/
-	-webkit-hyphens: auto;
-		-moz-hyphens: auto;
-		-ms-hyphens: auto;
-		hyphens: auto;
-
+  /*white-space: pre-line;*/
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
 }
 
-.insert-button-box{
-	width: 0px;
-	height: 0px;
-	padding: 0px 0px 0px 0px;
-	display: block;
-	text-align: center;
-	z-index:1;
-	float: right;
+.insert-button-box {
+  width: 0px;
+  height: 0px;
+  padding: 0px 0px 0px 0px;
+  display: block;
+  text-align: center;
+  z-index: 1;
+  float: right;
 
-	margin: 0px 0px 0px 0px;
-	-webkit-transform: translate(10px,0);
-	-ms-transform: translate(10px,0px);
-	transform: translate(10px,0px);
-
+  margin: 0px 0px 0px 0px;
+  -webkit-transform: translate(10px, 0);
+  -ms-transform: translate(10px, 0px);
+  transform: translate(10px, 0px);
 }
-.insert-button-box .el-button{
-
+.insert-button-box .el-button {
 }
-.insert-button-box .el-button+.el-button {margin-left: 0px}
+.insert-button-box .el-button + .el-button {
+  margin-left: 0px;
+}
 
-.bottom-right{
-	width: 0px;
-	height: 0px;
-	border-style: solid;
-	border-width: 0 0 20px 20px;
-	border-color: transparent transparent #909993 transparent;
-
+.bottom-right {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0 0 20px 20px;
+  border-color: transparent transparent #909993 transparent;
 }
 .box {
-	width: 100%;
-	height: auto;
-	/*margin: 15px auto;*/
-	background: transparent;
-	position: relative;
-	z-index:1000;
+  width: 100%;
+  height: auto;
+  /*margin: 15px auto;*/
+  background: transparent;
+  position: relative;
+  z-index: 1000;
 }
 .box:before {
-	position: absolute;
-	content: "";
-	width: 20px;
-	height: 20px;
-	top: -1px;
-	left: -1px;
-	z-index:1000;
-	border-left: 1px solid #d9e2dc;
-	border-top: 1px solid #d9e2dc;
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 20px;
+  top: -1px;
+  left: -1px;
+  z-index: 1000;
+  border-left: 1px solid #d9e2dc;
+  border-top: 1px solid #d9e2dc;
 }
 .box:after {
-	position: absolute;
-	content: "";
-	width: 20px;
-	height: 20px;
-	right: -1px;
-	bottom: -1px;
-	z-index:1;
-	border-right: 1px solid #d9e2dc;
-	border-bottom: 1px solid #d9e2dc;
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 20px;
+  right: -1px;
+  bottom: -1px;
+  z-index: 1;
+  border-right: 1px solid #d9e2dc;
+  border-bottom: 1px solid #d9e2dc;
 }
 .v-autocomplete .v-autocomplete-input-group .v-autocomplete-input {
-	font-size: 1.1em;
-	color: black;
-	padding: 10px 10px;
-	box-shadow: none;
-	border: 1px solid #222 ;
-	width: calc(100% - 32px);
-	outline: none;
-	background-color: #eee;
+  font-size: 1.1em;
+  color: black;
+  padding: 10px 10px;
+  box-shadow: none;
+  border: 1px solid #222;
+  width: calc(100% - 32px);
+  outline: none;
+  background-color: #eee;
 }
-.v-autocomplete .v-autocomplete-input-group.v-autocomplete-selected .v-autocomplete-input {
-	color: black;
-	background-color: #eee;
+.v-autocomplete
+  .v-autocomplete-input-group.v-autocomplete-selected
+  .v-autocomplete-input {
+  color: black;
+  background-color: #eee;
 }
 .v-autocomplete .v-autocomplete-list {
-	width: 100%;
-	text-align: left;
-	border: none;
-	border-top: none;
-	max-height: 200px;
-	overflow-y: auto;
-	border-bottom: 1px solid #157977;
-	color: black;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  border-bottom: 1px solid #157977;
+  color: black;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item {
-	cursor: pointer;
-	background-color: #fff;
-	padding: 10px;
-	border-bottom: 1px solid #157977;
-	border-left: 1px solid #157977;
-	border-right: 1px solid #157977;
+  cursor: pointer;
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #157977;
+  border-left: 1px solid #157977;
+  border-right: 1px solid #157977;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:last-child {
-	border-bottom: none;
+  border-bottom: none;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:hover {
-	background-color: #eee;
+  background-color: #eee;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item abbr {
-	opacity: 0.8;
-	font-size: 0.8em;
-	display: block;
-	font-family: sans-serif;
+  opacity: 0.8;
+  font-size: 0.8em;
+  display: block;
+  font-family: sans-serif;
 }
 .questions {
-		display: none;
-		background: #222;
-		position: absolute;
-		z-index: 1000;
-		color: #EEE;
-		border-radius: 6px;
+  display: none;
+  background: #222;
+  position: absolute;
+  z-index: 1000;
+  color: #eee;
+  border-radius: 6px;
 
-		width: 600px;
-		min-height: 54px;
-		height:auto;
+  width: 600px;
+  min-height: 54px;
+  height: auto;
 }
 .question {
-		position: absolute;
-		width: 100%;
-		padding: 5px 2px 5px 5px;
-		font-size: 16px;
-		text-align: center;
+  position: absolute;
+  width: 100%;
+  padding: 5px 2px 5px 5px;
+  font-size: 16px;
+  text-align: center;
 }
-.question img{
-	margin-top: 7px;
+.question img {
+  margin-top: 7px;
 }
 .question p {
-		margin: 0;
-		padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .close-toto {
-		font-size:22px;
-		cursor: pointer;
-		position: absolute;
-		right:10px;
-		top:5px;
+  font-size: 22px;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 5px;
 }
-button-ref{
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: 1px solid black;
-    margin-left:5px;
-    margin-right: 5px;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
+button-ref {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: 1px solid black;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
 }
 
-.ql-container.ql-snow{
-	border: none;
-	display: hidden;
+.ql-container.ql-snow {
+  border: none;
+  display: hidden;
 }
 </style>

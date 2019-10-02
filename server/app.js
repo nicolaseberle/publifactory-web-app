@@ -38,21 +38,24 @@ const credentials = {
 const app = express();
 const serverApi = require('http').createServer(app);
 const socketIo = require('socket.io')(serverApi);
+
+const shareDB = require('./config/sharedb/sharedb');
+
 require('./config/database')();
 require('./config/socketio')(socketIo);
 require('./config/express')(app);
 require('./routes')(app);
 
 if (process.env.NODE_ENV === 'production') {
-  //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
-  //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
-  app.use(serveStatic(__dirname + "/../client/dist"));
-  console.log(__dirname + "/../client/dist")
-  console.log("listen port :"+ config.port)
+	//app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
+	//app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
+	app.use(serveStatic(__dirname + '/../client/dist'));
+	console.log(__dirname + '/../client/dist');
+	console.log('listen port :' + config.port);
 }
 
-serverApi.listen(config.port, config.ip,  function () {
-  console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
+serverApi.listen(config.port, config.ip, function() {
+	console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
 // Expose app
