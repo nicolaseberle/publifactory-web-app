@@ -122,14 +122,9 @@ module.exports = function(io) {
 			},
 			SECTION_EDIT: data => {
 				console.log(JSON.stringify(data));
-				console.log('sendingTo', socket.id, mapUser[socket.id].idArticle);
 				const doc = shareDB.getDoc(data.blockId);
-				console.log('doc=>', data.blockId, doc);
-				if (!doc) {
-					console.log('######### NO DOC ######""');
-				}
+				console.log('State :', '\ndoc=>', doc, '\ndata=>', data);
 				shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
-				// doc.submitOp(delta, { source: true }, err => (err ? console.log('WS:DOC:ERR', err) : ''));
 				const { ops } = doc.data;
 				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
 					...data,
@@ -140,19 +135,16 @@ module.exports = function(io) {
 			NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
 			NEW_TAG: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_TAG`, data),
 			NEW_ONE_BLOCK: data => {
-				console.log('NEW_ONE_BLOCK:', JSON.stringify(data));
 				shareDB.getDoc(data.blockId[0]);
 				shareDB.getDoc(data.blockId[1]);
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_ONE_BLOCK`, data);
 			},
 			NEW_TWO_BLOCK: data => {
-				console.log('NEW_TWO_BLOCK:', data);
 				shareDB.getDoc(data.blockId);
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_TWO_BLOCK`, data);
 			},
 			NEW_BLOCK_TEXT: data => {
-				console.log('NEW_BLOCK_TEXT:', data),
-					socket.to(mapUser[socket.id].idArticle).emit(`ADD_BLOCK_TEXT`, data);
+				socket.to(mapUser[socket.id].idArticle).emit(`ADD_BLOCK_TEXT`, data);
 			},
 			NEW_BLOCK_CHART: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_BLOCK_CHART`, data),
@@ -167,7 +159,6 @@ module.exports = function(io) {
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_ASSOCIATE_EDITOR`, data),
 			NEW_VERSION: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_VERSION`, data),
 			REMOVE_BLOCK: data => {
-				console.log('REMOVE_BLOCK:', data);
 				const doc = shareDB.getDoc(data.blockId);
 				shareDB.destroyDoc(doc);
 				shareDB.deleteDoc(doc, err => (err ? console.log('WS:DOC:ERR', err) : ''));

@@ -745,7 +745,6 @@ export default {
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
-        console.log("save1")
         this.save(this.$event)
       },1000);
     },
@@ -768,7 +767,6 @@ export default {
           key: key,
           ev: ev
         });
-        console.log("save2")
       this.save(ev)
     },
     addTextBlock (ev,key,subkey,subsubkey, socket = false) {
@@ -782,7 +780,6 @@ export default {
           subkey: subkey,
           subsubkey: subsubkey
         });
-        console.log("save3")
       this.save(ev)
     },
     async addChartBlock (ev, key, subkey, subsubkey, socket = false) {
@@ -828,7 +825,6 @@ export default {
           subsubkey: subsubkey,
           blockId: block[0].uuid
         });
-        console.log("save3")
       this.save(ev)
     },
     async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
@@ -855,7 +851,6 @@ export default {
           subsubkey: subsubkey,
           idPicture: idPicture
         });
-        console.log("save4")
       this.save(this.$event)
     },
     editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
@@ -872,7 +867,6 @@ export default {
           key: key,
           blockId: uuid_block
         });
-        console.log("save5")
       this.save(ev)
     },
     addTwoBlocks (ev,key, socket = false) {
@@ -914,7 +908,6 @@ export default {
     updateTitle () {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
-        console.log("save6")
         this.save(this.$event);
         this.socket.emit('UPDATE_TITLE', {
           title: this.postForm.title
