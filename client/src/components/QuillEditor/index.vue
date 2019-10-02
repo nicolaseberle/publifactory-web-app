@@ -221,7 +221,7 @@ export default {
 			hostname: '',
 			timeoutId : '',
 
-
+			
 			cursor: {
 				id: '',
 				name: '',
@@ -235,15 +235,42 @@ export default {
 		this.id = this.$route.params && this.$route.params.id
 
 	},
+	async destroyed() {
+		this.socket.emit('REMOVE_QUILL_SELECT', {
+			cursorId: await this.getUserName(),
+		});
+	},
 	async mounted() {
       this.socket.on('QUILL_EXEC_TEXT', data => {
-          if (this.sameBlock(data))
-              this.editor.updateContents(data.delta);
-      });
-      this.socket.on('QUILL_EXEC_SELECT', data => {
-          if (this.sameBlock(data))
-              this.cursorModule.moveCursor(this.cursor.id, data.range);
-      });
+				if (this.sameBlock(data))
+						this.editor.updateContents(data.delta);
+			});
+			
+      this.socket.on('QUILL_EXEC_SELECT', async data => {
+				const cursordId = await this.getUserName()
+				const sameBlock = this.sameBlock(data)
+				if (this.sameBlock(data)) {
+					if (cursordId !== data.cursordId) {
+						const cursor = this.cursorModule.cursors().find(cursor => {
+							return cursor.id === data.cursordId;
+						});
+						if (!cursor) {
+							this.cursorModule.createCursor(`${data.cursordId}`, data.cursordId, this.chooseColors())
+							this.cursorModule.moveCursor(data.cursordId, data.range)
+						}
+						else {
+							this.cursorModule.moveCursor(cursor.id, data.range)
+						}
+					}
+				}
+			});
+			
+			this.socket.on('REMOVE_QUILL_SELECT', data => {
+				console.warn("DESTROY FOREIGN CURSOR")
+				if (!this.sameBlock(data)) return
+				this.cursorModule.removeCursor(data.cursordId);
+			});
+
       /*
 			this.socket.on('QUILL_EXEC_USER', data => {
 				if (this.sameBlock(data)) {
@@ -299,19 +326,17 @@ export default {
 	      this.highlightSelection()
 	    });
 
-      this.cursorModule = this.editor.getModule('cursors');
+			this.cursorModule = this.editor.getModule('cursors');
       this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
 
       this.editor.on('text-change', async (delta, oldDelta, source) => {
+				console.log('TEXTCHANGE SOURCE:', source)
 				if (source === 'api') {
-          console.log("GETTING FROM API", delta, JSON.stringify(this.content))
-          console.log(this.editor.root.innerHTML)
 					return
         }
-        console.log("from user", delta)
 					// if (this.timeoutId) clearTimeout(this.timeoutId);
           // this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
@@ -325,12 +350,15 @@ export default {
               })*/
           // }, 500);
       });
-      this.editor.on('selection-change', range => {
+      this.editor.on('selection-change', async (range, oldRange, source) => {
+				console.log('SELECTION CHANGE:', source)
+				if (source === 'api') return
           this.socket.emit('QUILL_NEW_SELECT', {
               range: range,
               numBlock: this.numBlock,
               numSubBlock: this.numSubBlock,
-              numSubSubBlock: this.numSubSubBlock
+							numSubSubBlock: this.numSubSubBlock,
+							cursordId: await this.getUserName(),
           })
       });
 
@@ -380,11 +408,8 @@ export default {
 				this.editor.root.innerHTML = newContent
 				}
 			} else if (typeof newContent === "object") {
-        console.log("setting contents as delta", JSON.stringify(newContent))
 				this.editor.setContents(newContent.delta, newContent.source);
-			} else {
-        console.log("NO CONTENT")
-      }
+			}
 		}
 	},
   computed: {

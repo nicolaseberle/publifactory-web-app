@@ -167,6 +167,9 @@ module.exports = function(io) {
 			REMOVE_DATA: data => socket.to(mapUser[socket.id].idArticle).emit(`DELETE_DATA`, data),
 			REMOVE_COLLABORATOR: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_COLLABORATOR`, data),
+			REMOVE_QUILL_SELECT: data => {
+				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_COLLABORATOR`, data);
+			},
 			UPDATE_BLOCK_PICTURE: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_BLOCK_PICTURE`, data),
 			UPDATE_TITLE: data => socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_TITLE`, data),
@@ -180,11 +183,11 @@ module.exports = function(io) {
 			EXEC_CODE_PYTHON: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
 			QUILL_NEW_TEXT: data => {
-				console.log('WATCH::~~~~~~~~~~~~~~~~~');
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data);
 			},
-			QUILL_NEW_SELECT: data =>
-				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data),
+			QUILL_NEW_SELECT: data => {
+				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data);
+			},
 			GET_USERS: data => {
 				try {
 					const userList = [];
