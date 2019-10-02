@@ -444,7 +444,11 @@ export default {
      */
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
-      this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content);
+      {
+        console.log("RECEIVED=>", data.content)
+        // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
+        this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, source: 'api' }
+      });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -673,6 +677,7 @@ export default {
         this.save(ev)
     },
     save (ev) {
+      console.log(ev)
       axios.put('/api/articles/'  + this.id, {
         "title": this.postForm.title,
         "abstract": this.postForm.abstract,
@@ -724,17 +729,23 @@ export default {
       return uuidv4();
 		},
 		applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
-      // this.postForm.arr_content[key].content =   editor.root.innerHTML
-      this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML;
+      const block = this.postForm.arr_content[key].block[subkey][subsubkey]
+      console.log("pushing delta", delta)
+      block.content = editor.root.innerHTML;
+      
+      console.log("SECION_EDIT METHOD:", JSON.stringify(block))
       this.socket.emit('SECTION_EDIT', {
-        content: this.postForm.arr_content[key].block[subkey][subsubkey].content,
+        delta,
+        content: block.content,
         key: key,
         subkey: subkey,
-        subsubkey: subsubkey
+        subsubkey: subsubkey,
+        blockId: block.uuid
       });
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
+        console.log("save1")
         this.save(this.$event)
       },1000);
     },
@@ -757,6 +768,7 @@ export default {
           key: key,
           ev: ev
         });
+        console.log("save2")
       this.save(ev)
     },
     addTextBlock (ev,key,subkey,subsubkey, socket = false) {
@@ -770,6 +782,7 @@ export default {
           subkey: subkey,
           subsubkey: subsubkey
         });
+        console.log("save3")
       this.save(ev)
     },
     async addChartBlock (ev, key, subkey, subsubkey, socket = false) {
@@ -805,14 +818,17 @@ export default {
       }
     },
     removeBlock (ev,key,subkey,subsubkey, socket = false) {
-      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      const block = this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      console.log("REMOVEBLOCK METHOD:", JSON.stringify(block[0]))
       if (!socket)
         this.socket.emit('REMOVE_BLOCK', {
           ev: ev,
           key: key,
           subkey: subkey,
-          subsubkey: subsubkey
+          subsubkey: subsubkey,
+          blockId: block[0].uuid
         });
+        console.log("save3")
       this.save(ev)
     },
     async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
@@ -839,6 +855,7 @@ export default {
           subsubkey: subsubkey,
           idPicture: idPicture
         });
+        console.log("save4")
       this.save(this.$event)
     },
     editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
@@ -852,8 +869,10 @@ export default {
       if (!socket)
         this.socket.emit('NEW_ONE_BLOCK', {
           ev: ev,
-          key: key
+          key: key,
+          blockId: uuid_block
         });
+        console.log("save5")
       this.save(ev)
     },
     addTwoBlocks (ev,key, socket = false) {
@@ -864,7 +883,8 @@ export default {
       if (!socket)
         this.socket.emit('NEW_TWO_BLOCK', {
           ev: ev,
-          key: key
+          key: key,
+          blockIds: [uuid_block_1, uuid_block_2]
         });
       this.save(ev)
     },
@@ -894,6 +914,7 @@ export default {
     updateTitle () {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
+        console.log("save6")
         this.save(this.$event);
         this.socket.emit('UPDATE_TITLE', {
           title: this.postForm.title
