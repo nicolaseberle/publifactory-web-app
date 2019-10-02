@@ -151,8 +151,12 @@
                 <div v-if="props.row.verification == 1" class="circle c_orange"></div>
                 <div v-if="props.row.verification == 0" class="circle c_red"></div>
                 <p class="align">{{ props.row.name}}</p>
-                <p v-if="props.row.id.length > 10">({{ props.row.id }})</p>
-                <p v-else>(ID SemSco : {{ props.row.id }})</p>
+                <p v-if="props.row.id.length > 10">
+                  <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
+                </p>
+                <p v-else>
+                  <img src="../../../assets/images/logo-semscho.png" alt="logo semantic scholar" class="little_icon">{{ props.row.id }}
+                </p>
             </template>
           </el-table-column>
 
@@ -494,6 +498,14 @@ p{
 
 .el-progress-bar__inner {
   background-color: #909399;
+}
+
+.little_icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
 }
 
 </style>
