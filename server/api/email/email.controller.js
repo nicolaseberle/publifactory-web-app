@@ -6,7 +6,17 @@ const fs = require('fs');
 const path = require('path');
 const User = require('../user/user.model');
 
+/**
+ * @class Email
+ * @description This class is used to create transport to send SMTP message
+ * through gmail's SMTP endpoint.
+ * @type {Email}
+ */
 module.exports = class Email {
+  /**
+   * This is the constructor of the Email class
+   * @param email
+   */
   constructor(email) {
     this.email = email;
     this.transporter = nodemailer.createTransport({
@@ -21,6 +31,16 @@ module.exports = class Email {
     this.template = fs.readFileSync(path.join(__dirname, '../../views/template_mail.html')).toString();
   }
 
+  /**
+   * @method modifyTemplate
+   * @description This function is used to modify the HTML template and replace
+   * the prepared emplacement by the rights values
+   * @param subject
+   * @param content
+   * @param link
+   * @param contentLink
+   * @return {{subject: *, from: string, html: string, to: *}}
+   */
   modifyTemplate(subject, content, link, contentLink) {
     this.template = this.template.replace(/%%INSERT_TITLE%%/gm, "Publifactory");
     this.template = this.template.replace(/%%HEADER%%/gm, subject);
@@ -37,6 +57,11 @@ module.exports = class Email {
     };
   }
 
+  /**
+   * @method sendMail
+   * @description This function is only used to send the prepared email
+   * @param options
+   */
   sendMail(options) {
     this.transporter.sendMail(options, (error, info) => {
       if (error) return console.log(error);
@@ -44,6 +69,11 @@ module.exports = class Email {
     })
   }
 
+  /**
+   * @method sendRecuperationPassword
+   * @description This method is used for the password recovering
+   * @param link
+   */
   sendRecuperationPassword(link) {
     const subject = "PubliFactory | Password recovering";
     const content = `Hi ${this.email}!\n
@@ -55,6 +85,11 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendEmailConfirmation
+   * @description This method is used to confirm the user's email
+   * @param link
+   */
   sendEmailConfirmation(link) {
     const subject = "PubliFactory | e-mail confirmation";
     const content = `Hi ${this.email}!\n
@@ -67,6 +102,13 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendInvitationCoAuthor
+   * @description This method is used invite an author to collaborate on an article
+   * @param authorId
+   * @param link
+   * @return {Promise<void>}
+   */
   async sendInvitationCoAuthor (authorId, link) {
     const author = await User.findOne({ _id: authorId });
     const subject = `PubliFactory | ${author.firstname} ${author.lastname} want to share an article with you!`;
@@ -79,6 +121,13 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendInvitationReviewer
+   * @description This method is used to invite reviewer on an article
+   * @param authorId
+   * @param link
+   * @return {Promise<void>}
+   */
   async sendInvitationReviewer (authorId, link) {
     const author = await User.findOne({ _id: authorId });
     const subject = `PubliFactory | ${author.firstname} ${author.lastname} needs your review!`;
@@ -92,6 +141,13 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendInvitationJournalUser
+   * @description This method is used to invite an user to this Journal
+   * @param authorId
+   * @param link
+   * @return {Promise<void>}
+   */
   async sendInvitationJournalUser (authorId, link) {
     const author = await User.findOne({ _id: authorId });
     const subject = `PubliFactory | ${author.firstname} ${author.lastname} shared a journal with you!`;
@@ -105,6 +161,14 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendInvitationCoEditor
+   * @description This function is used to invite an user to be a CoEditor of a
+   * journal
+   * @param authorId
+   * @param link
+   * @return {Promise<void>}
+   */
   async sendInvitationCoEditor (authorId, link) {
     const author = await User.findOne({ _id: authorId });
     const subject = `PubliFactory | ${author.firstname} ${author.lastname} define you as co-editor!`;
@@ -118,6 +182,14 @@ module.exports = class Email {
     this.sendMail(options);
   }
 
+  /**
+   * @method sendInvitationJournalAssociateEditor
+   * @description This function is used to invite an user to be an
+   * associate_editor of a journal
+   * @param authorId
+   * @param link
+   * @return {Promise<void>}
+   */
   async sendInvitationJournalAssociateEditor (authorId, link) {
     const author = await User.findOne({ _id: authorId });
     const subject = `PubliFactory | ${author.firstname} ${author.lastname} define you as associate editor!`;

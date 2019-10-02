@@ -49,6 +49,7 @@
   import CodeMirror from 'codemirror'
   import 'codemirror/mode/python/python.js'
   import 'codemirror/lib/codemirror.css'
+  import '../../styles/mdn-like.css'
   import '../../styles/one-dark.css'
   import { mapGetters } from 'vuex'
   import axios from 'axios'
@@ -81,7 +82,7 @@
       }],
       tabIndex: 1,
       tmpIndex: 1,
-      editor: {},
+      editor: Array,
       html: '',
       id: '',
       currentData: [{
@@ -115,8 +116,13 @@
       await this.execCode();
     });
 
-    await this.fetchData();
+
     await this.fetchFigure(this.idfigure)
+    await this.fetchData();
+
+    console.log("mounted :: ", this.tabIndex)
+    console.log( this.editableTabs)
+    /*
     this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
       value: '',
       lineNumbers: true,
@@ -124,10 +130,10 @@
       matchBrackets: true,
       indentUnit: 4,
       smartIndentationFix: true,
-      theme: 'one-dark',
       mode: "text/x-python",
       lineWrapping: true
     })
+
     this.editor.on('change', instance => {
       this.editableTabs[parseInt(this.editableTabsValue) - 1].content = instance.getDoc().getValue()
       if (!this.timer) {
@@ -139,8 +145,11 @@
         }, 3000)
       }
     });
+
     this.editor.refresh();
-    this.execCode();
+    */
+    /*this.execCode();*/
+    /*
     var y0 = [];
     var y1 = [];
     var y2 = [];
@@ -190,6 +199,7 @@
     var data = [trace0, trace1, trace2, trace3];
     this.currentData = data
     this.loading = false;
+    */
   },
   watch: {
     currentData (newVal) {
@@ -207,10 +217,7 @@
   },
   methods: {
     destroy() {
-      this.$destroy()
-    },
-    beforeDestroy() {
-      this.$destroy()
+      this.$destroy(true)
     },
     handleTabsEdit (targetName, action) {
       if (action === 'add') {
@@ -275,30 +282,40 @@
         });
       }
     },
-    codemirrorOptions (elementId) {
-      this.editor = CodeMirror.fromTextArea(document.getElementById(this.editableTabs[this.tabIndex - 1].name), {
-        value: '',
-        lineNumbers: true,
-        styleActiveLine: true,
-        matchBrackets: true,
-        indentUnit: 4,
-        smartIndentationFix: true,
-        theme: 'one-dark',
-        mode: "text/x-python",
-        lineWrapping: true
-      })
-      this.editor.on('change', instance => {
-        this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
-        if (!this.timer) {
-          this.$emit('loading', true)
-          this.timer = setTimeout(async () => {
-            await this.execCode()
-            this.timer = null
+    async codemirrorOptions (elementId) {
+      if (this.editor[elementId] instanceof CodeMirror) {
+        this.editor[elementId].refresh();
+        this.editor[elementId].focus();
+        this.editor[elementId].setCursor(0, 0);
+      }
+      else {
+        this.editor[elementId] = await CodeMirror.fromTextArea(document.getElementById(this.editableTabs[parseInt(elementId) - 1].name), {
+          value: '',
+          lineNumbers: true,
+          styleActiveLine: true,
+          matchBrackets: true,
+          indentUnit: 4,
+          smartIndentationFix: true,
+          theme: "mdn-like",
+          mode: "text/x-python",
+          lineWrapping: false
+        })
+        this.editor[elementId].on('change', instance => {
+          this.editableTabs[parseInt(elementId) - 1].content = instance.getDoc().getValue()
+          if (!this.timer) {
             this.$emit('loading', true)
-          }, 3000)
-        }
-      })
-      this.editor.refresh();
+            this.timer = setTimeout(async () => {
+              await this.execCode()
+              this.timer = null
+              this.$emit('loading', true)
+            }, 3000)
+          }
+        })
+        this.execCode();
+        this.editor[elementId].focus();
+        this.editor[elementId].setCursor(0, 0);
+      }
+
     },
     async fetchFigure (id) {
       const response = await axios.get('/api/figure/' + id, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
@@ -309,11 +326,18 @@
         this.editableTabs = response.data.script.content
         this.editableTabsValue = '1'
         this.tabIndex = response.data.script.content.length
+        console.log("fetchFigure :: ", this.tabIndex)
         for (let i = 0, len = this.tabIndex; i < len; ++i)
+        {
+          console.log("fetchFigure :: ",response.data.script.content[i].name)
           this.codemirrorOptions(response.data.script.content[i].name)
+        }
         if (response.data.infos !== null)
           this.postForm = this.response.data.infos
+      } else {
+        this.codemirrorOptions (1)
       }
+
     },
     async fetchData () {
       const datas = await axios.get('/api/data/' + this.id,
@@ -360,7 +384,6 @@
           title: 'Script ran well !',
           type: 'success',
           message: this.$t('message.scriptSuccess'),
-          offset: 100,
           showClose: false
         })
         this.socket.emit('EXEC_CODE_PYTHON', {
@@ -380,6 +403,7 @@
       this.pythonVersion = version
     },
     setCodeMirror (tabClicked) {
+      this.codemirrorOptions(tabClicked.name)
       this.editableTabsValue = tabClicked.name;
     },
     handleFormUpdate () {
@@ -420,6 +444,7 @@
     height: auto;
     margin-bottom: 1em;
   }
+  * {box-sizing: border-box}
 
   dt { text-indent: -2em; padding-left: 2em; margin-top: 1em; }
   dd { margin-left: 1.5em; margin-bottom: 1em; }

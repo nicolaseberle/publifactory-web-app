@@ -67,7 +67,7 @@
               <section id="item.title">
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
-                    <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="save($event)" ><br>
+                    <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="applyTitleEdit($event, key)" ><br>
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
@@ -199,7 +199,7 @@
           </el-dropdown>
           <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
+          <el-button type="primary" @click="insertPythonFigure" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
       <scriptPython :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigurePythonVisible" ref="pythonChild"
@@ -258,8 +258,6 @@
 
 </template>
 <script>
-
-  import editor from 'vue2-medium-editor'
   import { mapActions, mapGetters } from 'vuex'
   import MarkdownEditor from '../../../../components/MarkdownEditor'
   import axios from 'axios'
@@ -318,7 +316,7 @@ const defaultForm = {
   platforms: ['a-platform'],
   comment_disabled: false,
   importance: 0
-}
+};
 
 const options = {
   toolbar: {
@@ -331,7 +329,7 @@ const options = {
       'image'
     ]
   }
-}
+};
 
 export default {
   name: 'LightEditor',
@@ -348,7 +346,6 @@ export default {
     figureFactory,
     scriptPython,
     MarkdownEditor,
-    'medium-editor': editor ,
     reviewComponent,
     'quill-editor' : quilleditor,
     scriptR,
@@ -440,19 +437,23 @@ export default {
 
   },
   mounted() {
-    this.fetchData(this.id)
+    this.fetchData(this.id);
 
     /**
      * Socket instructions from API
      */
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
-      this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content);
+      {
+        console.log("RECEIVED=>", data.content)
+        // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
+        this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, source: 'api' }
+      });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
       this.addNewTag(data.ev, true)
-    })
+    });
     this.socket.on('ADD_ONE_BLOCK', data => this.addOneBlock(data.ev, data.key, true));
     this.socket.on('ADD_TWO_BLOCK', data => this.addTwoBlocks(data.ev, data.key, true));
     this.socket.on('ADD_BLOCK_TEXT',
@@ -485,12 +486,15 @@ export default {
 
     });
     this.socket.on('RESULT_USERS', data => {
-      this.listConnectedUsers = data
+      this.listConnectedUsers = data;
       this.isUserConnected()
     });
+    this.socket.on('MODIFY_BLOCK_TITLE', data => {
+        this.postForm.arr_content[data.key].title = data.title
+    });
 
-    asideRightActivity()
-    asideRightAnimation()
+    asideRightActivity();
+    asideRightAnimation();
 
 
     window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
@@ -498,27 +502,27 @@ export default {
   watch: {
     diagInsertFigurePlotlyVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogLightStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogLightStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
     },
     diagInsertFigurePythonVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogPythonStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogPythonStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
     },
     diagInsertFigureRVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogRStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogRStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
@@ -537,7 +541,7 @@ export default {
     dialogPictureVisible (val) {
       if(val==false) {
         //this.$ref.dialogPicture.reset()
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'dialogPictureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
 
@@ -545,16 +549,17 @@ export default {
     }
   },
   methods: {
-    /*signalUpdateUserList (newCursors) {
-      this.updateUserList (editor)
-    },*/
+    insertPythonFigure (){
+      this.diagInsertFigurePythonVisible=false
+      // this.$refs.pythonChild.destroy()
+    },
     closeActivityTab () {
-      $('aside.content-activity').css('display', 'none')
+      $('aside.content-activity').css('display', 'none');
       console.log('echo')
     },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
-        console.log(this.listConnectedUsers)
+        console.log(this.listConnectedUsers);
         for(let user in this.listConnectedUsers){
           if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
             this.postForm.authors[i].isActive = true;
@@ -576,10 +581,10 @@ export default {
         //var userItemEl = document.createElement('li');
         var userNameEl = document.createElement('div');
         var userParagraphEl = document.createElement('p');
-        userNameEl.className = 'circle'
+        userNameEl.className = 'circle';
         //var userDataEl = document.createElement('div');
 
-        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
+        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A';
         //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
         //userNameEl.classList.add('user-name');
 
@@ -608,20 +613,20 @@ export default {
     },
     createComment (uuid_comment){
       // console.log('signal creation comment :',uuid_comment)
-      $('aside.content-comments-reviews').css('display', 'block')
-      this.uuid_comment = uuid_comment
+      $('aside.content-comments-reviews').css('display', 'block');
+      this.uuid_comment = uuid_comment;
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
     addNewTag (ev, socket = false) {
-      this.inputTagsVisible = false
+      this.inputTagsVisible = false;
       if (this.newTag !== '') {
-        this.postForm.tags.push(this.newTag)
+        this.postForm.tags.push(this.newTag);
         if (!socket)
           this.socket.emit('NEW_TAG', {
             ev: ev,
             newTag: this.newTag
-          })
+          });
         this.save(ev)
       }
       this.newTag = ''
@@ -637,7 +642,7 @@ export default {
       axios.get('/api/articles/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        this.postForm = response.data
+        this.postForm = response.data;
         for(let i = 0; i < this.postForm.authors.length; i++) {
           this.postForm.authors[i].isActive = false;
           if(this.postForm.authors[i].author._id === this.userId)
@@ -664,7 +669,15 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
+    applyTitleEdit (ev, key) {
+        this.socket.emit('UPDATE_BLOCK_TITLE', {
+            title: this.postForm.arr_content[key].title,
+            key: key
+        });
+        this.save(ev)
+    },
     save (ev) {
+      console.log(ev)
       axios.put('/api/articles/'  + this.id, {
         "title": this.postForm.title,
         "abstract": this.postForm.abstract,
@@ -686,7 +699,7 @@ export default {
       })
     },
     updateReferences () {
-      console.log(this.references)
+      console.log(this.references);
       axios.put('/api/articles/'  + this.id + '/updateReferences', {
         "references": this.references,
       }, {
@@ -702,38 +715,42 @@ export default {
       })
     },
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
-      this.postForm.abstract = editor.root.innerHTML
+      this.postForm.abstract = editor.root.innerHTML;
       this.socket.emit('ABSTRACT_EDIT', {
         content: this.postForm.abstract
-      })
+      });
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },200);
+      },1000);
     },
     createUuid () {
       const uuidv4 = require('uuid/v4');
       return uuidv4();
 		},
 		applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
-      // this.postForm.arr_content[key].content =   editor.root.innerHTML
-      this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+      const block = this.postForm.arr_content[key].block[subkey][subsubkey]
+      console.log("pushing delta", delta)
+      block.content = editor.root.innerHTML;
+      
+      console.log("SECION_EDIT METHOD:", JSON.stringify(block))
       this.socket.emit('SECTION_EDIT', {
-        content: this.postForm.arr_content[key].block[subkey][subsubkey].content,
+        delta,
+        content: block.content,
         key: key,
         subkey: subkey,
-        subsubkey: subsubkey
-      })
+        subsubkey: subsubkey,
+        blockId: block.uuid
+      });
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },200);
-      //this.updateUserList(editor)
+      },1000);
     },
     addNewRow (ev,key, socket = false) {
-      var uuid_ = String(uuidv4())
-      var uuid_block = String(uuidv4())
+      var uuid_ = String(uuidv4());
+      var uuid_block = String(uuidv4());
       var new_content = {
         name:"titre_1",
         uuid: uuid_,
@@ -743,18 +760,18 @@ export default {
         block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
         path_figure: "",
         display:true
-      }
+      };
       this.postForm.arr_content.splice(key+1,0, new_content);
       if (!socket)
         this.socket.emit('NEW_ROW', {
           key: key,
           ev: ev
-        })
+        });
       this.save(ev)
     },
     addTextBlock (ev,key,subkey,subsubkey, socket = false) {
-      var uuid_block = String(uuidv4())
-      var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'}
+      var uuid_block = String(uuidv4());
+      var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'};
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       if (!socket)
         this.socket.emit('NEW_BLOCK_TEXT', {
@@ -762,18 +779,18 @@ export default {
           key: key,
           subkey: subkey,
           subsubkey: subsubkey
-        })
+        });
       this.save(ev)
     },
     async addChartBlock (ev, key, subkey, subsubkey, socket = false) {
-      const idFigure = await this.createFigure()
-      console.log("addChartBlock::idFigure: " + idFigure)
-      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
-      this.editidfigure = idFigure
-      this.poseditfigure = [key, subkey, subsubkey]
+      const idFigure = await this.createFigure();
+      console.log("addChartBlock::idFigure: " + idFigure);
+      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 };
+      this.editidfigure = idFigure;
+      this.poseditfigure = [key, subkey, subsubkey];
       this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
       if (!socket) {
-        this.openEditFigure()
+        this.openEditFigure();
         this.socket.emit('NEW_BLOCK_CHART', {
           ev: ev,
           key: key,
@@ -783,12 +800,12 @@ export default {
       }
     },
     addPictureBlock (ev,key,subkey,subsubkey, socket = false) {
-      var uuid_block = String(uuidv4())
-      var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0}
-      this.poseditfigure = [key, subkey, subsubkey]
+      var uuid_block = String(uuidv4());
+      var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0};
+      this.poseditfigure = [key, subkey, subsubkey];
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
       if (!socket) {
-        this.openEditPicture()
+        this.openEditPicture();
         this.socket.emit('NEW_BLOCK_PICTURE', {
           ev: ev,
           key: key,
@@ -798,22 +815,24 @@ export default {
       }
     },
     removeBlock (ev,key,subkey,subsubkey, socket = false) {
-      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      const block = this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      console.log("REMOVEBLOCK METHOD:", JSON.stringify(block[0]))
       if (!socket)
         this.socket.emit('REMOVE_BLOCK', {
           ev: ev,
           key: key,
           subkey: subkey,
-          subsubkey: subsubkey
-        })
+          subsubkey: subsubkey,
+          blockId: block[0].uuid
+        });
       this.save(ev)
     },
-    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {Activity
+    async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
       this.editidfigure = idFigure
       this.poseditfigure = [key, subkey, subsubkey]
       const response = await axios.get('/api/figure/' + this.editidfigure, {
         headers: { 'Authorization': `Bearer ${this.accessToken}` }
-      })
+      });
       if (response.data.script.language === 'Python') {
         this.diagInsertFigurePythonVisible = true
       } else if (response.data.script.language === 'R') {
@@ -823,42 +842,44 @@ export default {
       }
     },
     updatePictureBlock(key, subkey, subsubkey, idPicture, socket = false) {
-      this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture
-      this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++
+      this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture;
+      this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++;
       if (!socket)
         this.socket.emit('UPDATE_BLOCK_PICTURE', {
           key: key,
           subkey: subkey,
           subsubkey: subsubkey,
           idPicture: idPicture
-        })
+        });
       this.save(this.$event)
     },
     editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
-      this.editidfigure = idPicture
+      this.editidfigure = idPicture;
       this.openEditPicture ()
     },
     addOneBlock (ev,key, socket = false) {
-      var uuid_block = String(uuidv4())
-      var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}]
+      var uuid_block = String(uuidv4());
+      var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}];
       this.postForm.arr_content[key].block.push(new_block);
       if (!socket)
         this.socket.emit('NEW_ONE_BLOCK', {
           ev: ev,
-          key: key
-        })
+          key: key,
+          blockId: uuid_block
+        });
       this.save(ev)
     },
     addTwoBlocks (ev,key, socket = false) {
-      var uuid_block_1 = String(uuidv4())
-      var uuid_block_2 = String(uuidv4())
-      var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}]
+      var uuid_block_1 = String(uuidv4());
+      var uuid_block_2 = String(uuidv4());
+      var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}];
       this.postForm.arr_content[key].block.push(new_block);
       if (!socket)
         this.socket.emit('NEW_TWO_BLOCK', {
           ev: ev,
-          key: key
-        })
+          key: key,
+          blockIds: [uuid_block_1, uuid_block_2]
+        });
       this.save(ev)
     },
     removeRow (ev,key, socket = false) {
@@ -867,10 +888,10 @@ export default {
         this.socket.emit('REMOVE_ROW', {
           ev: ev,
           key: key
-        })
-      this.save(ev)
+        });
+      this.save(ev);
       if(this.postForm.arr_content == ''){
-        var uuid_block_1 = String(uuidv4())
+        var uuid_block_1 = String(uuidv4());
         var new_content = {
           name:"titre_1",
           title:"Titre 1",
@@ -879,7 +900,7 @@ export default {
           content:"Type the text",
           path_figure: "",
           display:true
-        }
+        };
         this.postForm.arr_content.splice(key+1,0, new_content);
         this.save(ev)
       }
@@ -887,7 +908,7 @@ export default {
     updateTitle () {
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
-        this.save(this.$event)
+        this.save(this.$event);
         this.socket.emit('UPDATE_TITLE', {
           title: this.postForm.title
         });
@@ -913,38 +934,38 @@ export default {
           showlegend: false
         }
       };
-      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
       let _idFigure = response.data;
-      console.log("createFigure::idFigure: " + _idFigure)
+      console.log("createFigure::idFigure: " + _idFigure);
       return _idFigure
     },
     markdown2Html() {
       import('showdown').then(showdown => {
-        const converter = new showdown.Converter()
+        const converter = new showdown.Converter();
         this.html = converter.makeHtml(this.postForm.content)
       })
     },
     getRemoteUserList(query) {
       userSearch(query).then(response => {
-        if (!response.data.items) return
+        if (!response.data.items) return;
         this.userListOptions = response.data.items.map(v => v.name)
       })
     },
     async execPythonCode () {
-      this.renderLoading = true
-      await this.$refs.pythonChild.execCode()
+      this.renderLoading = true;
+      await this.$refs.pythonChild.execCode();
       this.renderLoading = false
     },
     async execRCode () {
-      this.renderLoading = true
-      await this.$refs.rChild.execCode()
+      this.renderLoading = true;
+      await this.$refs.rChild.execCode();
       this.renderLoading = false
     },
     changePythonVersion (newValue) {
       this.$refs.pythonChild.setVersion(newValue)
     },
     handleCollaboratorInvitations() {
-      this.dialogTableVisible = true
+      this.dialogTableVisible = true;
       this.diagAuthorVisible=true
     }
   }

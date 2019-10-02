@@ -18,31 +18,44 @@ const fs = require('fs');
 // insure DB with admin user data
 // require('./config/seed')
 
+/**
+ * Initiate SSL/TLS
+ * We verify certbot's certificate and private keys.
+ * If doesn't exist, we take an unsecured certificate.
+ */
+/*
+const credentials = {
+  key: (fs.existsSync('/etc/letsencrypt/live/api.publifactory.co/privkey.pem') === true
+      ? fs.readFileSync('/etc/letsencrypt/live/api.publifactory.co/privkey.pem')
+      : fs.readFileSync(path.join(__dirname, '../ssl/key.pem'))),
+  cert: (fs.existsSync('/etc/letsencrypt/live/api.publifactory.co/fullchain.pem') === true
+      ? fs.readFileSync('/etc/letsencrypt/live/api.publifactory.co/fullchain.pem')
+      : fs.readFileSync(path.join(__dirname, '../ssl/server.crt')))
+};
+*/
 
 // Setup server
 const app = express();
 const serverApi = require('http').createServer(app);
-const serverSocket = require('http').createServer(app);
-const socketIo = require('socket.io')(serverSocket);
+const socketIo = require('socket.io')(serverApi);
+
+const shareDB = require('./config/sharedb/sharedb');
+
 require('./config/database')();
 require('./config/socketio')(socketIo);
 require('./config/express')(app);
 require('./routes')(app);
 
 if (process.env.NODE_ENV === 'production') {
-  //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
-  //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
-  app.use(serveStatic(__dirname + "/../client/dist"));
-  console.log(__dirname + "/../client/dist")
-  console.log("listen port :"+ config.port)
+	//app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
+	//app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
+	app.use(serveStatic(__dirname + '/../client/dist'));
+	console.log(__dirname + '/../client/dist');
+	console.log('listen port :' + config.port);
 }
 
-serverApi.listen(config.port, config.ip,  function () {
-  console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
-});
-
-serverSocket.listen(config.socketPort, config.ip, function () {
-  console.log('Socket side server is listening on %d, in %s mode', config.socketPort, app.get('env'))
+serverApi.listen(config.port, config.ip, function() {
+	console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
 // Expose app

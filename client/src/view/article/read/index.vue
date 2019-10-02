@@ -149,7 +149,7 @@ const defaultForm = {
 
 
 export default {
-  name: 'ArticleDetail',
+  name: 'ArticleRead',
   components: { figureComponent, VuePlotly,MarkdownEditor,reviewComponent },
   props: {
     isEdit: {
