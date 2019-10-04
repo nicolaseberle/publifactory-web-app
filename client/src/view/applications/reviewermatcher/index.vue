@@ -122,7 +122,7 @@
                        <li>Year : {{ article.year }}</li>
                        <li>Score : {{ article.score }}</li>
                        <li>{{ article.co_auth }}</li>
-                       <li v-if='article.doi' >Doi : {{ article.doi }}</li>
+                       <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
                        <li v-else > Doi : Unknown</li>
                      </ul>
                    </li>
