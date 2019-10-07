@@ -447,7 +447,7 @@ export default {
       {
         console.log("RECEIVED=>", data.content)
         // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
-        this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, source: 'api' }
+        this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
       });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
@@ -728,7 +728,7 @@ export default {
       const uuidv4 = require('uuid/v4');
       return uuidv4();
 		},
-		applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
+		applyTextEdit (editor, delta, cursor, source,key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
       console.log("pushing delta", delta)
       block.content = editor.root.innerHTML;
@@ -737,6 +737,7 @@ export default {
       this.socket.emit('SECTION_EDIT', {
         delta,
         content: block.content,
+        cursor,
         key: key,
         subkey: subkey,
         subsubkey: subsubkey,

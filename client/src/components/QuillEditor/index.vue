@@ -88,7 +88,7 @@
 	import { mapGetters } from 'vuex'
 	import Autocomplete from 'v-autocomplete'
 	import ItemTemplate from './ItemTemplate.vue'
-	import 'quill'
+	// import 'quill'
 	import 'quill/dist/quill.core.css'
 
 	import 'quill/dist/quill.snow.css'
@@ -100,19 +100,14 @@
 
 	Vue.use(Autocomplete)
 
-	//var ShareDB = require('sharedb/lib/client')// cursor
-// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
-// var utils = require('../../utils/js/collaboration/utils')// cursor
+	var Quill = require('quill');
+	var uuidv4 = require('uuid/v4');
+	Quill.register('modules/cursors', QuillCursors);
 
-var Quill = require('quill');
-var uuidv4 = require('uuid/v4');
-Quill.register('modules/cursors', QuillCursors);
 
-//ShareDB.types.register(require('rich-text').type);
+	const debug = require('debug')('frontend');
 
-const debug = require('debug')('frontend');
-
-const InlineBlot = Quill.import('blots/inline');
+	const InlineBlot = Quill.import('blots/inline');
 
 
 /*Zotero, highlight button in quill toolbar*/
@@ -221,7 +216,7 @@ export default {
 			hostname: '',
 			timeoutId : '',
 
-
+			cursorLastEvent: '',
 			cursor: {
 				id: '',
 				name: '',
@@ -235,15 +230,43 @@ export default {
 		this.id = this.$route.params && this.$route.params.id
 
 	},
+	async destroyed() {
+		this.socket.emit('REMOVE_QUILL_SELECT', {
+			cursorId: await this.getUserName(),
+		});
+	},
 	async mounted() {
       this.socket.on('QUILL_EXEC_TEXT', data => {
-          if (this.sameBlock(data))
-              this.editor.updateContents(data.delta);
-      });
-      this.socket.on('QUILL_EXEC_SELECT', data => {
-          if (this.sameBlock(data))
-              this.cursorModule.moveCursor(this.cursor.id, data.range);
-      });
+				if (this.sameBlock(data))
+						this.editor.updateContents(data.delta, 'api');
+			});
+			
+      this.socket.on('QUILL_EXEC_SELECT', async data => {
+				const cursorId = await this.getUserName()
+				const sameBlock = this.sameBlock(data)
+				if (this.sameBlock(data)) {
+					if (cursorId !== data.cursorId) {
+						const cursor = this.cursorModule.cursors().find(cursor => {
+							return cursor.id === data.cursorId;
+						});
+						if (!cursor) {
+							this.cursorLastEvent = 'ws-change'
+							this.cursorModule.createCursor(`${data.cursorId}`, data.cursorId, this.chooseColors())
+							this.cursorModule.moveCursor(data.cursorId, data.range)
+						}
+						else {
+							this.cursorLastEvent = 'ws-change'
+							this.cursorModule.moveCursor(cursor.id, data.range)
+						}
+					}
+				}
+			});
+			
+			this.socket.on('REMOVE_QUILL_SELECT', data => {
+				if (!this.sameBlock(data)) return
+				this.cursorModule.removeCursor(data.cursorId);
+			});
+
       /*
 			this.socket.on('QUILL_EXEC_USER', data => {
 				if (this.sameBlock(data)) {
@@ -263,7 +286,8 @@ export default {
 						formula: true,
             cursors: {
                 hideDelayMs: 5000,
-                hideSpeedMs: 0
+								hideSpeedMs: 0,
+								selectionChangeSource: null
             },
             toolbar: '#' + this.idToolBar
 	        },
@@ -299,44 +323,47 @@ export default {
 	      this.highlightSelection()
 	    });
 
-      this.cursorModule = this.editor.getModule('cursors');
-      this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+			this.cursorModule = this.editor.getModule('cursors');
+			this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
 
       this.editor.on('text-change', async (delta, oldDelta, source) => {
+				// console.log('TEXTCHANGE SOURCE:', source)
+
+				const cursor = { range: this.editor.getSelection(), cursorId: await this.getUserName() }
+				// console.log("CURSOR=>", cursor.range)
 				if (source === 'api') {
-          console.log("GETTING FROM API", delta, JSON.stringify(this.content))
-          console.log(this.editor.root.innerHTML)
-					return
-        }
-        console.log("from user", delta)
-					// if (this.timeoutId) clearTimeout(this.timeoutId);
-          // this.timeoutId = setTimeout(async () => {
-              await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-              /*this.socket.emit('QUILL_NEW_TEXT', {
-                  editor: this.editor,
-                  delta: delta,
-                  oldDelta: oldDelta,
-                  numBlock: this.numBlock,
-                  numSubBlock: this.numSubBlock,
-                  numSubSubBlock: this.numSubSubBlock
-              })*/
+					return;
+				}
+				this.cursorLastEvent = "text-change"
+				// if (this.timeoutId) clearTimeout(this.timeoutId);
+				// this.timeoutId = setTimeout(async () => {
+				// console.log("EMiting text change");
+				await this.$emit('edit', this.editor, delta, cursor, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
           // }, 500);
       });
-      this.editor.on('selection-change', range => {
-          this.socket.emit('QUILL_NEW_SELECT', {
-              range: range,
-              numBlock: this.numBlock,
-              numSubBlock: this.numSubBlock,
-              numSubSubBlock: this.numSubSubBlock
-          })
+      this.editor.on('selection-change', async (range, oldRange, source) => {
+				// console.log('EMITING CHANGE:', range, oldRange, source);
+				if (source === 'api') { // event from ws-change || text-change (see quill https://github.com/reedsy/quill-cursors/)
+					return 
+				}
+				this.socket.emit('QUILL_NEW_SELECT', {
+						range: range,
+						numBlock: this.numBlock,
+						numSubBlock: this.numSubBlock,
+						numSubSubBlock: this.numSubSubBlock,
+						cursorId: await this.getUserName(),
+				})
       });
 
     	this.editor.root.innerHTML = this.content
 
-    	window.cursors = this.cursors
+			window.cursors = this.cursors
+			
+			// this.cursorModule.registerTextChangeListener();
+
 
 	    $('#'+this.idButtonZotero).click( () => {
 	      this.showZoteroMenu(
@@ -380,11 +407,9 @@ export default {
 				this.editor.root.innerHTML = newContent
 				}
 			} else if (typeof newContent === "object") {
-        console.log("setting contents as delta", JSON.stringify(newContent))
-				this.editor.setContents(newContent.delta, newContent.source);
-			} else {
-        console.log("NO CONTENT")
-      }
+				this.editor.updateContents(newContent.delta, newContent.source);
+				this.cursorModule.moveCursor(newContent.cursor.cursorId, newContent.cursor.range)
+			}
 		}
 	},
   computed: {
@@ -443,8 +468,8 @@ export default {
 
       // $("#" + this.idEditor).html(tmpOut);
 
-      this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
-      this.editor.setSelection(cursorPosition + 2);
+			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
+      // this.editor.setSelection(cursorPosition + 2);
     },
     sendUpdates () {
       this.socket.emit('UPDATE_SECTION', {
@@ -462,7 +487,6 @@ export default {
 				this.highlightRange();
 		},
 		highlightRange () {
-
 				var uuid_review = String(uuidv4())
 
 				var range = this.editor.getSelection();
