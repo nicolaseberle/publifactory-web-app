@@ -221,7 +221,7 @@ export default {
 			hostname: '',
 			timeoutId : '',
 
-			
+			cursorLastEvent: '',
 			cursor: {
 				id: '',
 				name: '',
@@ -243,22 +243,24 @@ export default {
 	async mounted() {
       this.socket.on('QUILL_EXEC_TEXT', data => {
 				if (this.sameBlock(data))
-						this.editor.updateContents(data.delta);
+						this.editor.updateContents(data.delta, 'api');
 			});
 			
       this.socket.on('QUILL_EXEC_SELECT', async data => {
-				const cursordId = await this.getUserName()
+				const cursorId = await this.getUserName()
 				const sameBlock = this.sameBlock(data)
 				if (this.sameBlock(data)) {
-					if (cursordId !== data.cursordId) {
+					if (cursorId !== data.cursorId) {
 						const cursor = this.cursorModule.cursors().find(cursor => {
-							return cursor.id === data.cursordId;
+							return cursor.id === data.cursorId;
 						});
 						if (!cursor) {
-							this.cursorModule.createCursor(`${data.cursordId}`, data.cursordId, this.chooseColors())
-							this.cursorModule.moveCursor(data.cursordId, data.range)
+							this.cursorLastEvent = 'ws-change'
+							this.cursorModule.createCursor(`${data.cursorId}`, data.cursorId, this.chooseColors())
+							this.cursorModule.moveCursor(data.cursorId, data.range)
 						}
 						else {
+							this.cursorLastEvent = 'ws-change'
 							this.cursorModule.moveCursor(cursor.id, data.range)
 						}
 					}
@@ -268,7 +270,7 @@ export default {
 			this.socket.on('REMOVE_QUILL_SELECT', data => {
 				console.warn("DESTROY FOREIGN CURSOR")
 				if (!this.sameBlock(data)) return
-				this.cursorModule.removeCursor(data.cursordId);
+				this.cursorModule.removeCursor(data.cursorId);
 			});
 
       /*
@@ -327,7 +329,7 @@ export default {
 	    });
 
 			this.cursorModule = this.editor.getModule('cursors');
-      this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+			this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
@@ -335,6 +337,7 @@ export default {
       this.editor.on('text-change', async (delta, oldDelta, source) => {
 				console.log('TEXTCHANGE SOURCE:', source)
 				if (source === 'api') return
+				this.cursorLastEvent = "text-change"
 					// if (this.timeoutId) clearTimeout(this.timeoutId);
           // this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
@@ -349,14 +352,29 @@ export default {
           // }, 500);
       });
       this.editor.on('selection-change', async (range, oldRange, source) => {
-				console.log('SELECTION CHANGE:', source)
-				// if (source === 'api') return
+				console.log('EMITING CHANGE:', range, oldRange, source);
+				if (source === 'api') { // event from ws-change || text-change (see quill https://github.com/reedsy/quill-cursors/)
+					if (this.cursorLastEvent === "ws-change") { // reset local user selection to actual position
+						this.editor.setSelection(oldRange, "user")
+						return;
+					}
+					if (this.cursorLastEvent === "text-change") {
+						this.socket.emit('QUILL_NEW_SELECT', {
+              range: range,
+              numBlock: this.numBlock,
+              numSubBlock: this.numSubBlock,
+							numSubSubBlock: this.numSubSubBlock,
+							cursorId: await this.getUserName(),
+          })
+					}
+					return 
+				}
           this.socket.emit('QUILL_NEW_SELECT', {
               range: range,
               numBlock: this.numBlock,
               numSubBlock: this.numSubBlock,
 							numSubSubBlock: this.numSubSubBlock,
-							cursordId: await this.getUserName(),
+							cursorId: await this.getUserName(),
           })
       });
 
@@ -377,7 +395,7 @@ export default {
 	    $(document).ready(() => {
 	        $("#"+this.idButton).toggle();
 					$("#"+this.idToolBar).toggle();
-	        this.editor.on('selection-change', (range, oldRange, source) => {
+	        this.editor.one('selection-change', (range, oldRange, source) => {
 	        if (range === null && oldRange !== null) {
 	          $("#"+this.idButton).toggle()
 						$("#"+this.idToolBar).toggle()
@@ -466,7 +484,7 @@ export default {
 
       // $("#" + this.idEditor).html(tmpOut);
 
-      this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
+			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
       this.editor.setSelection(cursorPosition + 2);
     },
     sendUpdates () {

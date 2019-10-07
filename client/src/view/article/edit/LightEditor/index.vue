@@ -558,7 +558,7 @@ export default {
     },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
-        console.log(this.listConnectedUsers);
+        // console.log(this.listConnectedUsers);
         for(let user in this.listConnectedUsers){
           if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
             this.postForm.authors[i].isActive = true;

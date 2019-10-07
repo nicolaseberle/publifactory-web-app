@@ -185,6 +185,7 @@ module.exports = function(io) {
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data);
 			},
 			QUILL_NEW_SELECT: data => {
+				console.log(JSON.stringify(data));
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data);
 			},
 			GET_USERS: data => {
