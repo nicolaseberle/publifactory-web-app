@@ -334,9 +334,7 @@ export default {
 
       this.editor.on('text-change', async (delta, oldDelta, source) => {
 				console.log('TEXTCHANGE SOURCE:', source)
-				if (source === 'api') {
-					return
-        }
+				if (source === 'api') return
 					// if (this.timeoutId) clearTimeout(this.timeoutId);
           // this.timeoutId = setTimeout(async () => {
               await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
@@ -352,7 +350,7 @@ export default {
       });
       this.editor.on('selection-change', async (range, oldRange, source) => {
 				console.log('SELECTION CHANGE:', source)
-				if (source === 'api') return
+				// if (source === 'api') return
           this.socket.emit('QUILL_NEW_SELECT', {
               range: range,
               numBlock: this.numBlock,

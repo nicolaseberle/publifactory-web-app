@@ -122,7 +122,6 @@ module.exports = function(io) {
 			SECTION_EDIT: data => {
 				console.log(JSON.stringify(data));
 				const doc = shareDB.getDoc(data.blockId);
-				console.log('State :', '\ndoc=>', doc, '\ndata=>', data);
 				shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
 				const { ops } = doc.data;
 				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
