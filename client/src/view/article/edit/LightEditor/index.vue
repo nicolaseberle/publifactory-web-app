@@ -445,7 +445,6 @@ export default {
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
       {
-        console.log("RECEIVED=>", data.content)
         // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
         this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
       });
@@ -559,7 +558,7 @@ export default {
     },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
-        console.log(this.listConnectedUsers);
+        // console.log(this.listConnectedUsers);
         for(let user in this.listConnectedUsers){
           if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
             this.postForm.authors[i].isActive = true;
@@ -730,10 +729,8 @@ export default {
 		},
 		applyTextEdit (editor, delta, cursor, source,key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
-      console.log("pushing delta", delta)
       block.content = editor.root.innerHTML;
       
-      console.log("SECION_EDIT METHOD:", JSON.stringify(block))
       this.socket.emit('SECTION_EDIT', {
         delta,
         content: block.content,
@@ -817,7 +814,6 @@ export default {
     },
     removeBlock (ev,key,subkey,subsubkey, socket = false) {
       const block = this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
-      console.log("REMOVEBLOCK METHOD:", JSON.stringify(block[0]))
       if (!socket)
         this.socket.emit('REMOVE_BLOCK', {
           ev: ev,

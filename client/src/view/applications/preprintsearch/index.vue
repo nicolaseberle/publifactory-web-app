@@ -5,6 +5,7 @@
 </template>
 
 <script>
+/*
 import { mapGetters } from 'vuex'
 
 const Automerge = require('automerge')
@@ -54,9 +55,9 @@ export default {
     //we create a unique automerge doc on the server
     // it is indexed on the socket room
     this.socket.emit('NEW_CONNECTION')
-    /*this.docSet.registerHandler((docId, doc) => {
-      console.log(`[${docId}] ${JSON.stringify(doc)}`)
-    })*/
+    //this.docSet.registerHandler((docId, doc) => {
+    //  console.log(`[${docId}] ${JSON.stringify(doc)}`)
+    //})
 
     //const initDoc = Automerge.change(Automerge.init(), doc => doc.hello = 'Hi!')
     //this.docSet.setDoc('example', initDoc)
@@ -70,7 +71,7 @@ export default {
 
   },
   async mounted () {
-    //
+
 
 
     setInterval(() => {
@@ -89,5 +90,5 @@ export default {
 
 
   }
-}
+}*/
 </script>

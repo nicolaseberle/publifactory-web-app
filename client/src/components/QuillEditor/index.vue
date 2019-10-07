@@ -378,7 +378,7 @@ export default {
 	    $(document).ready(() => {
 	        $("#"+this.idButton).toggle();
 					$("#"+this.idToolBar).toggle();
-	        this.editor.on('selection-change', (range, oldRange, source) => {
+	        this.editor.one('selection-change', (range, oldRange, source) => {
 	        if (range === null && oldRange !== null) {
 	          $("#"+this.idButton).toggle()
 						$("#"+this.idToolBar).toggle()

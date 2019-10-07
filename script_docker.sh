@@ -7,7 +7,7 @@ NC='\033[0m' # No Color
 # Constants
 DATE_BEGIN=$(date +%s)
 USER=$(whoami)
-CWD='/home/leoriberon-piatyszek/web-app'
+CWD='/home/nicolas/web-app'
 
 # Variable
 command=$1

@@ -17,7 +17,6 @@ const options = {
 
 ShareDB.types.register(richText.type);
 
-// const shareDB = new ShareDB(options);
 
 class shareDB {
 	constructor(options) {
