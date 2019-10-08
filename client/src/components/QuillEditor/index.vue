@@ -589,11 +589,11 @@ export default {
   color: black;
   background-color: transparent;
 }
-/*
+
 .ql-cursor-flag {
-	display: none;
+	margin-top: 4px;
 }
-*/
+
 .pre {
   margin: 0 auto;
   width: 100%;
