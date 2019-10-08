@@ -446,6 +446,7 @@ export default {
     this.socket.on('SECTION_UPDATE', data =>
       {
         // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
+        console.log(JSON.stringify(data))
         this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
       });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
@@ -676,7 +677,8 @@ export default {
         this.save(ev)
     },
     save (ev) {
-      console.log(ev)
+      console.log(JSON.stringify(this.postForm.content), "\ntypeof:",typeof this.postForm.content)
+      // console.warn("NOT SAVING")
       axios.put('/api/articles/'  + this.id, {
         "title": this.postForm.title,
         "abstract": this.postForm.abstract,
@@ -727,9 +729,12 @@ export default {
       const uuidv4 = require('uuid/v4');
       return uuidv4();
 		},
-		applyTextEdit (editor, delta, cursor, source,key,subkey,subsubkey) {
+		applyTextEdit (editor, delta, cursor, key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
+      // TODO
       block.content = editor.root.innerHTML;
+      // this.editor.updateContents(delta, source);
+      // block.content = { delta, cursor };
       
       this.socket.emit('SECTION_EDIT', {
         delta,

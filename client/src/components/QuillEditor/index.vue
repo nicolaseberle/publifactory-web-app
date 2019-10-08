@@ -88,14 +88,15 @@
 	import { mapGetters } from 'vuex'
 	import Autocomplete from 'v-autocomplete'
 	import ItemTemplate from './ItemTemplate.vue'
-	// import 'quill'
+	import 'quill'
 	import 'quill/dist/quill.core.css'
-
 	import 'quill/dist/quill.snow.css'
 	import 'quill/dist/quill.bubble.css'
 	import 'v-autocomplete/dist/v-autocomplete.css'
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
+	import collaboration from './collaboration'
+
 	const io = require('socket.io-client');
 
 	Vue.use(Autocomplete)
@@ -132,9 +133,6 @@ class ProcLink extends InlineBlot {
 ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
-
-
-
 
 class ProcRef extends InlineBlot {
     static create(value) {
@@ -214,21 +212,31 @@ export default {
 			actionValidate: 0,
 			mouse_pos : '',
 			hostname: '',
-			timeoutId : '',
-
-			cursorLastEvent: '',
+			timeout : 600,
 			cursor: {
 				id: '',
 				name: '',
 				color: '',
 				range: {}
 			},
-			cursorModule: {}
+			cursorModule: {},
+			updateLocalCursorIntervalId: null
 		}
+	},
+	beforeDestroy() {
+		clearInterval(this.updateLocalCursorIntervalId)
 	},
 	created() {
 		this.id = this.$route.params && this.$route.params.id
-
+		this.updateLocalCursorIntervalId = setInterval(async () => {
+			this.socket.emit('QUILL_NEW_SELECT', {
+				range: this.editor.getSelection(),
+				numBlock: this.numBlock,
+				numSubBlock: this.numSubBlock,
+				numSubSubBlock: this.numSubSubBlock,
+				cursorId: await this.getUserName(),
+		});
+		}, 2000)
 	},
 	async destroyed() {
 		this.socket.emit('REMOVE_QUILL_SELECT', {
@@ -242,24 +250,7 @@ export default {
 			});
 			
       this.socket.on('QUILL_EXEC_SELECT', async data => {
-				const cursorId = await this.getUserName()
-				const sameBlock = this.sameBlock(data)
-				if (this.sameBlock(data)) {
-					if (cursorId !== data.cursorId) {
-						const cursor = this.cursorModule.cursors().find(cursor => {
-							return cursor.id === data.cursorId;
-						});
-						if (!cursor) {
-							this.cursorLastEvent = 'ws-change'
-							this.cursorModule.createCursor(`${data.cursorId}`, data.cursorId, this.chooseColors())
-							this.cursorModule.moveCursor(data.cursorId, data.range)
-						}
-						else {
-							this.cursorLastEvent = 'ws-change'
-							this.cursorModule.moveCursor(cursor.id, data.range)
-						}
-					}
-				}
+				await collaboration.selectionUpdate(this, data)
 			});
 			
 			this.socket.on('REMOVE_QUILL_SELECT', data => {
@@ -330,32 +321,13 @@ export default {
       });
 
       this.editor.on('text-change', async (delta, oldDelta, source) => {
-				// console.log('TEXTCHANGE SOURCE:', source)
+				if (source === 'api')	return;
+				await collaboration.textCommit(this, delta)
+			});
 
-				const cursor = { range: this.editor.getSelection(), cursorId: await this.getUserName() }
-				// console.log("CURSOR=>", cursor.range)
-				if (source === 'api') {
-					return;
-				}
-				this.cursorLastEvent = "text-change"
-				// if (this.timeoutId) clearTimeout(this.timeoutId);
-				// this.timeoutId = setTimeout(async () => {
-				// console.log("EMiting text change");
-				await this.$emit('edit', this.editor, delta, cursor, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-          // }, 500);
-      });
       this.editor.on('selection-change', async (range, oldRange, source) => {
-				// console.log('EMITING CHANGE:', range, oldRange, source);
-				if (source === 'api') { // event from ws-change || text-change (see quill https://github.com/reedsy/quill-cursors/)
-					return 
-				}
-				this.socket.emit('QUILL_NEW_SELECT', {
-						range: range,
-						numBlock: this.numBlock,
-						numSubBlock: this.numSubBlock,
-						numSubSubBlock: this.numSubSubBlock,
-						cursorId: await this.getUserName(),
-				})
+				if (source === 'api') return;
+				collaboration.selectionCommit(this, range)
       });
 
     	this.editor.root.innerHTML = this.content
@@ -378,7 +350,7 @@ export default {
 	    $(document).ready(() => {
 	        $("#"+this.idButton).toggle();
 					$("#"+this.idToolBar).toggle();
-	        this.editor.one('selection-change', (range, oldRange, source) => {
+	        this.editor.on('selection-change', (range, oldRange, source) => {
 	        if (range === null && oldRange !== null) {
 	          $("#"+this.idButton).toggle()
 						$("#"+this.idToolBar).toggle()
@@ -403,6 +375,7 @@ export default {
 		content (newContent) {
 			const type = typeof newContent
 			if (typeof newContent === "string") {
+				console.warn("string", newContent)
 				if (this.content !== this.editor.root.innerHTML) {
 				this.editor.root.innerHTML = newContent
 				}
@@ -425,7 +398,7 @@ export default {
 					});
 			});
 		},
-	  sameBlock (json) {
+	  sameBlock(json) {
 	    return json.numBlock === this.numBlock && json.numSubBlock === this.numSubBlock &&
 				json.numSubSubBlock === this.numSubSubBlock;
 		},

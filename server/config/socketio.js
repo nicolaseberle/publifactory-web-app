@@ -123,11 +123,16 @@ module.exports = function(io) {
 				console.log(JSON.stringify(data));
 				const doc = shareDB.getDoc(data.blockId);
 				shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
-				const { ops } = doc.data;
+				doc.on('op', function(op, source) {
+					console.log('sending');
+					console.log(mapUser[socket.id].idArticle);
+				});
+				console.log(JSON.stringify(data.delta));
 				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
 					...data,
-					content: ops
+					content: data.delta
 				});
+				// const { ops } = doc.data;
 			},
 			ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
 			NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),

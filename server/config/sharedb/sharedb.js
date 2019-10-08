@@ -17,7 +17,6 @@ const options = {
 
 ShareDB.types.register(richText.type);
 
-
 class shareDB {
 	constructor(options) {
 		this.shareInstance = new ShareDB(options);
@@ -38,7 +37,6 @@ class shareDB {
 	getDoc(docId) {
 		const doc = this.connection.get('quilleditor', docId);
 		if (doc.type === null) {
-			console.log('############# DOC WAS CREATED ############', docId);
 			doc.create({}, this.type, err => (err ? console.log('CREATE ERRROR', err) : null));
 		}
 		return doc;
@@ -46,7 +44,6 @@ class shareDB {
 
 	insert(doc, insert, cbErr) {
 		if (!typeof instert === 'object' || Array.isArray(insert)) {
-			console.log('Errrrrrrrr=>', insert);
 			cbErr('insert must be an object');
 			return;
 		}
