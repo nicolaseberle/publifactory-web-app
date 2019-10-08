@@ -312,19 +312,25 @@ export default {
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
-      axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
-      .then((res)=>{
-        console.log(res.data[0])
-        this.formPost.abstract = res.data[0].abstract
-        this.formPost.title = res.data[0].title
-        this.formPost.keywords = res.data[0].keywords
-        this.formPost.authors = res.data[0].authors
-        this.progress_status_pdf = 100
-      })
+      let res = ''
+      new Promise ((resolve,reject) => {
+        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+        .then( async (id) => {
+            console.log(id);
+            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
+            console.log(res.data[0])
+            this.formPost.abstract = res.data[0].abstract
+            this.formPost.title = res.data[0].title
+            this.formPost.keywords = res.data[0].keywords
+            this.formPost.authors = res.data[0].authors
+            this.progress_status_pdf = 100
+        })
       //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
+      })
     },
 
-    onSubmit () {
+    async onSubmit () {
+      console.log("onSubmit :: start");
       this.isData = false
       this.progress_status = 0
       window.setInterval(()=>{
@@ -332,20 +338,27 @@ export default {
           this.progress_status = this.progress_status +1
       }, 250);
       this.formPost.abstract = this.formPost.abstract.replace('&',' ');
-      axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-      .then((res)=>{
-        console.log("onSubmit :: " , res)
-        this.progress_status = 100
-        this.tableData = res.data
-        this.isData = true
-        var anchor = document.querySelector("#scroll_anchor");
-        //var anchor = this.$refs.refTable;
-        const sleep = (milliseconds) => {
-          return new Promise(resolve => setTimeout(resolve, milliseconds))
-        };
-        sleep(100).then(() => {
-          anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
-        });
+      let res = ''
+      new Promise ((resolve,reject) => {
+        axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+        .then( async (id) => {
+            console.log(id);
+
+            resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+            console.log("onSubmit :: " , res)
+            this.progress_status = 100
+            this.tableData = res.data
+            this.isData = true
+            var anchor = document.querySelector("#scroll_anchor");
+            //var anchor = this.$refs.refTable;
+            const sleep = (milliseconds) => {
+              return new Promise(resolve => setTimeout(resolve, milliseconds))
+            };
+            sleep(100).then(() => {
+              anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
+            })
+          }
+        )
       })
     },
 
