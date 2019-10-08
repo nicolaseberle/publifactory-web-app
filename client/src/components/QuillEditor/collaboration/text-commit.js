@@ -1,6 +1,6 @@
-export default async function textCommit(vm, delta) {
-	const cursor = { range: vm.editor.getSelection(), cursorId: await vm.getUserName() };
+export default function textCommit(vm, delta) {
 	setTimeout(async () => {
+		const cursor = { range: vm.editor.getSelection(), cursorId: await vm.getUserName() };
 		await vm.$emit(
 			'edit',
 			vm.editor,

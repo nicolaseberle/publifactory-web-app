@@ -446,7 +446,7 @@ export default {
     this.socket.on('SECTION_UPDATE', data =>
       {
         // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
       });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
@@ -677,27 +677,32 @@ export default {
         this.save(ev)
     },
     save (ev) {
-      console.log(JSON.stringify(this.postForm.content), "\ntypeof:",typeof this.postForm.content)
+      // console.log(JSON.stringify(this.postForm.content), "\ntypeof:",typeof this.postForm.content)
+      // console.log(this.postForm.content)
       // console.warn("NOT SAVING")
-      axios.put('/api/articles/'  + this.id, {
-        "title": this.postForm.title,
-        "abstract": this.postForm.abstract,
-        "content": this.postForm.content,
-        "arr_content": this.postForm.arr_content,
-        "status": this.postForm.status,
-        "tags": this.postForm.tags,
-        "published": true
-      }, {
-        headers: {
-          'Authorization': `Bearer ${this.accessToken}`
-        }
-      })
-      .then(response => {
-        console.log("saved")
-      })
-      .catch(e => {
-        console.log(e)
-      })
+      // const t = this.postForm.arr_content.map(content => {
+      //   console.log(content)
+      // })
+      // console.log(JSON.stringify(this.postForm))
+      // axios.put('/api/articles/'  + this.id, {
+      //   "title": this.postForm.title,
+      //   "abstract": this.postForm.abstract,
+      //   "content": this.postForm.content,
+      //   "arr_content": this.postForm.arr_content,
+      //   "status": this.postForm.status,
+      //   "tags": this.postForm.tags,
+      //   "published": true
+      // }, {
+      //   headers: {
+      //     'Authorization': `Bearer ${this.accessToken}`
+      //   }
+      // })
+      // .then(response => {
+      //   console.log("saved")
+      // })
+      // .catch(e => {
+      //   console.log(e)
+      // })
     },
     updateReferences () {
       console.log(this.references);

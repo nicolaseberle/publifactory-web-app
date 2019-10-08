@@ -229,6 +229,8 @@ export default {
 	created() {
 		this.id = this.$route.params && this.$route.params.id
 		this.updateLocalCursorIntervalId = setInterval(async () => {
+			const selection = this.editor.getSelection()
+			if (!selection) return;
 			this.socket.emit('QUILL_NEW_SELECT', {
 				range: this.editor.getSelection(),
 				numBlock: this.numBlock,
@@ -320,12 +322,12 @@ export default {
           cursor: this.cursor
       });
 
-      this.editor.on('text-change', async (delta, oldDelta, source) => {
+      this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
-				await collaboration.textCommit(this, delta)
+				collaboration.textCommit(this, delta)
 			});
 
-      this.editor.on('selection-change', async (range, oldRange, source) => {
+      this.editor.on('selection-change', (range, oldRange, source) => {
 				if (source === 'api') return;
 				collaboration.selectionCommit(this, range)
       });
@@ -333,8 +335,6 @@ export default {
     	this.editor.root.innerHTML = this.content
 
 			window.cursors = this.cursors
-			
-			// this.cursorModule.registerTextChangeListener();
 
 
 	    $('#'+this.idButtonZotero).click( () => {

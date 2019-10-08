@@ -1,4 +1,4 @@
-import selectionCommit from './selection-update';
+import selectionCommit from './selection-commit';
 import selectionUpdate from './selection-update';
 import textCommit from './text-commit';
 
