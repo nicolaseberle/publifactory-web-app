@@ -75,9 +75,9 @@
         </el-form-item>
 
         <el-form-item class="flex_items">
-          <el-button type="info" @click="onSubmit('formPost')" :loading="load_var">Search</el-button>
+          <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')">Reset</el-button>
+          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
         </el-form-item>
 
       </el-form>
@@ -103,14 +103,8 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: flex-end;">
-          <div style="display:flex; flex-direction:column;">
-            <el-tag type="danger">Warning : You can have multiple authors with the same affiliation</el-tag>
-            <!-- <p style="display:block;">Caption :</p>
-            <el-tag type="success" style="margin-bottom:6px">Green : The author is referenced in ORCID</el-tag>
-            <el-tag type="warning" style="margin-bottom:6px">Orange : The author is referenced in ORCID but can have namesake problem</el-tag>
-            <el-tag type="info">Grey : The author isn't referenced in ORCID</el-tag> -->
-          </div>
+        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+          <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
             <el-button @click="exportListJson()">Export list (json)</el-button>
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
@@ -155,8 +149,10 @@
           </el-table-column>
 
           <el-table-column
-            :label="authLabel"
-            width="280">
+            label="Authors"
+            :render-header="info_caption"
+            width="280"
+            fixed>
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -174,7 +170,11 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="280">
+            width="220">
+            <template slot-scope="props">
+              <p v-if="props.row.affiliation.length == 0">Unknown</p>
+              <p v-else>{{ props.row.affiliation }}</p>
+            </template>
           </el-table-column>
 
           <el-table-column
@@ -195,45 +195,35 @@
             </template>
           </el-table-column>
 
-          <!-- <el-table-column
-            label="Works"
-            prop="works">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="displayInfosA(scope.$index, scope.row)"
-                style='margin:auto;display:block;text-align:center'>Watch his works</el-button>
-            </template>
-          </el-table-column>
-
-          <el-table-column
-            label="Contacts"
-            prop="contacts">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="displayInfosB(scope.$index, scope.row)"
-                style='margin:auto;display:block;text-align:center'>Watch his contacts</el-button>
-            </template>
-          </el-table-column> -->
-
           <el-table-column
             label="Actions"
-            width="180">
+            width="200">
             <template slot-scope="scope">
+              <el-popover
+                ref="popdoc"
+                placement="top"
+                trigger="hover"
+                content="Watch his works">
+              </el-popover>
               <el-button
                 type="primary"
                 icon="el-icon-document"
                 circle
-                @click="displayInfosA(scope.$index, scope.row)">
+                @click="displayInfosA(scope.$index, scope.row)"
+                v-popover:popdoc>
               </el-button>
+              <el-popover
+                ref="popcon"
+                placement="top"
+                trigger="hover"
+                content="Watch his contacts">
+              </el-popover>
               <el-button v-if="scope.row.contact.length > 0"
                 type="success"
                 icon="el-icon-message"
                 circle
-                @click="displayInfosB(scope.$index, scope.row)">
+                @click="displayInfosB(scope.$index, scope.row)"
+                v-popover:popcon>
               </el-button>
               <el-button v-else
                 type="success"
@@ -241,12 +231,19 @@
                 circle
                 disabled>
               </el-button>
+              <el-popover
+                ref="popdel"
+                placement="top"
+                trigger="hover"
+                content="The author does not match">
+              </el-popover>
               <el-button
                 type="info"
                 plain
                 icon="el-icon-close"
                 circle
-                @click.native.prevent="deleteRow(scope.$index, tableData)">
+                @click.native.prevent="deleteRow(scope.$index, tableData)"
+                v-popover:popdel>
               </el-button>
             </template>
           </el-table-column>
@@ -270,11 +267,10 @@ export default {
       rules: {
         abstract: [
           {required: true, message: 'Please input enter abstract of the article', trigger: 'blur'}
+        ],
+        authors: [
+          {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
         ]
-        // ,
-        // authors: [
-        //   {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
-        // ]
       },
       tableData: [{}],
       isData: false,
@@ -284,11 +280,50 @@ export default {
       inputValue: '',
       inputValueAut: '',
       load_var: false,
-      id: '',
-      authLabel: 'Authors'
+      id: ''
     }
   },
   methods: {
+    info_caption(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              placement: "top",
+              title: "Caption",
+              // width: "200",
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", [
+                h("span", {style: "color:#30B08F;"}, "Green"),
+                " : The author is referenced in ORCID"
+              ]),
+              h("p", [
+                h("span", {style: "color:orange;"}, "Orange"),
+                " : The author is referenced in ORCID but can have namesake problem"
+              ]),
+              h("p", [
+                h("span", {style: "color:#A5A9AD;"}, "Grey"),
+                " : The author isn't referenced in ORCID"
+              ]),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
     exportListJson() {
       let dataStr = JSON.stringify(this.tableData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -414,11 +449,11 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('http://localhost:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
             .then( async (id) => {
                 console.log(id);
 
-                resolve(res = await axios.get('http://localhost:5000/api/results_rev/' + id.data))
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
                 this.tableData = res.data
@@ -652,5 +687,25 @@ hgroup {
     padding-left: 30px;
     border-left: 1px solid lightgrey;
   }
+
+.el-progress-bar__outer, .el-progress-bar__inner {
+  border-radius: 4px;
+}
+
+@media (max-width: 1280px) {
+  .app-container {
+    max-width: 1020px;
+  }
+
+  .el-col-1 {
+    padding: 0!important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .button_tab {
+    padding: 5px 7px;
+  }
+}
 
 </style>
