@@ -163,6 +163,9 @@ export default {
 		content: {
 			type: String | Array | Object
 		},
+		collaborationPayload: { 
+			type: Object
+		},
 		uuid: {
 			type: String,
 			default: 'abstract'
@@ -186,7 +189,7 @@ export default {
 				default() {
 						return {}
 				},
-		}
+		},
 	},
 	data() {
 		return {
@@ -220,7 +223,7 @@ export default {
 				range: {}
 			},
 			cursorModule: {},
-			updateLocalCursorIntervalId: null
+			updateLocalCursorIntervalId: null,
 		}
 	},
 	beforeDestroy() {
@@ -245,34 +248,15 @@ export default {
 			cursorId: await this.getUserName(),
 		});
 	},
-	async mounted() {
-      this.socket.on('QUILL_EXEC_TEXT', data => {
-				if (this.sameBlock(data))
-						this.editor.updateContents(data.delta, 'api');
-			});
-			
+	async mounted() {			
       this.socket.on('QUILL_EXEC_SELECT', async data => {
 				await collaboration.selectionUpdate(this, data)
 			});
 			
-			this.socket.on('REMOVE_QUILL_SELECT', data => {
-				if (!this.sameBlock(data)) return
+			this.socket.on('DELETE_CURSOR', data => {
+				if (!this.sameBlock(data)) return;
 				this.cursorModule.removeCursor(data.cursorId);
 			});
-
-      /*
-			this.socket.on('QUILL_EXEC_USER', data => {
-				if (this.sameBlock(data)) {
-						for (let i = 0, len = this.mapCursor.length; i < len; ++i)
-								if (data.cursor.id === this.mapCursor[i].id)
-										return;
-						this.mapCursor.push(data.cursor);
-						this.socket.emit('QUILL_NEW_USER', {
-								cursor: this.cursor
-						});
-				}
-			});
-			*/
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
@@ -309,7 +293,7 @@ export default {
 	      this.editor.insertEmbed(range.index,"ref",cObj)
 
 	      //this.insertStar()
-	      //this.pasteHtmlAtCaret(html_)
+				//this.pasteHtmlAtCaret(html_)
 	    });
 
 	    document.querySelector('#' + this.idButtonComment).addEventListener('click', () => {
@@ -329,6 +313,10 @@ export default {
 
       this.editor.on('selection-change', (range, oldRange, source) => {
 				if (source === 'api') return;
+				if (source === 'user' && range === null) {
+					collaboration.cursorRemove(this);
+					return;
+				}
 				collaboration.selectionCommit(this, range)
       });
 
@@ -372,16 +360,12 @@ export default {
 			*/
   },
 	watch: {
-		content (newContent) {
-			const type = typeof newContent
-			if (typeof newContent === "string") {
-				console.warn("string", newContent)
-				if (this.content !== this.editor.root.innerHTML) {
-				this.editor.root.innerHTML = newContent
-				}
-			} else if (typeof newContent === "object") {
-				this.editor.updateContents(newContent.delta, newContent.source);
-				this.cursorModule.moveCursor(newContent.cursor.cursorId, newContent.cursor.range)
+		collaborationPayload: {
+			deep: true,
+			handler(payload) {
+				if (!payload) return;
+				this.editor.updateContents(payload.delta, payload.source);
+				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
 			}
 		}
 	},
@@ -423,14 +407,6 @@ export default {
 			];
 			return allColors[Math.floor(Math.random() * Math.floor(16))];
 		},
-		sendUpdates () {
-			this.socket.emit('UPDATE_SECTION', {
-				content: this.content,
-				numBlock: this.numBlock,
-				numSubBlock: this.numSubBlock,
-				numSubSubBlock: this.numSubSubBlock
-			})
-		},
     insertStar() {
       const cursorPosition = this.editor.getSelection().index;
       // this.editor.insertText(cursorPosition, "★");
@@ -443,14 +419,6 @@ export default {
 
 			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
       // this.editor.setSelection(cursorPosition + 2);
-    },
-    sendUpdates () {
-      this.socket.emit('UPDATE_SECTION', {
-        content: this.content,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock
-      })
     },
 
 
@@ -591,7 +559,7 @@ export default {
 }
 
 .ql-cursor-flag {
-	margin-top: 4px;
+  margin-top: 4px;
 }
 
 .pre {

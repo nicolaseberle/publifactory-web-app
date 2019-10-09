@@ -123,16 +123,13 @@ module.exports = function(io) {
 				console.log(JSON.stringify(data));
 				const doc = shareDB.getDoc(data.blockId);
 				shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
-				doc.on('op', function(op, source) {
-					console.log('sending');
-					console.log(mapUser[socket.id].idArticle);
-				});
+				// doc.on('op', function(op, source) {
+				// });
 				console.log(JSON.stringify(data.delta));
 				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
 					...data,
 					content: data.delta
 				});
-				// const { ops } = doc.data;
 			},
 			ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
 			NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
@@ -172,7 +169,7 @@ module.exports = function(io) {
 			REMOVE_COLLABORATOR: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_COLLABORATOR`, data),
 			REMOVE_QUILL_SELECT: data => {
-				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_COLLABORATOR`, data);
+				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_CURSOR`, data);
 			},
 			UPDATE_BLOCK_PICTURE: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_BLOCK_PICTURE`, data),
