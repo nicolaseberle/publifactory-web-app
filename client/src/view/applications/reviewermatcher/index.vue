@@ -292,7 +292,6 @@ export default {
           "el-popover",
           {
             props: {
-              placement: "top",
               title: "Caption",
               // width: "200",
               trigger: "hover"
@@ -690,6 +689,10 @@ hgroup {
 
 .el-progress-bar__outer, .el-progress-bar__inner {
   border-radius: 4px;
+}
+
+.el-table .cell {
+  padding: 0 20px!important;
 }
 
 @media (max-width: 1280px) {
