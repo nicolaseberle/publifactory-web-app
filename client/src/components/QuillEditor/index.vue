@@ -224,6 +224,7 @@ export default {
 			},
 			cursorModule: {},
 			updateLocalCursorIntervalId: null,
+			lastRange: {}
 		}
 	},
 	beforeDestroy() {
@@ -250,7 +251,7 @@ export default {
 	},
 	async mounted() {			
       this.socket.on('QUILL_EXEC_SELECT', async data => {
-				await collaboration.selectionUpdate(this, data)
+					collaboration.selectionUpdate(this, data)
 			});
 			
 			this.socket.on('DELETE_CURSOR', data => {
@@ -291,7 +292,6 @@ export default {
 	      var cObj = {text : "[R1]", value : uuid_ref};
 	      //this.editor.deleteText(range.index  , range.length);
 	      this.editor.insertEmbed(range.index,"ref",cObj)
-
 	      //this.insertStar()
 				//this.pasteHtmlAtCaret(html_)
 	    });
@@ -309,6 +309,8 @@ export default {
       this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
 				collaboration.textCommit(this, delta)
+
+				collaboration.updateForeignCursors(this, delta)
 			});
 
       this.editor.on('selection-change', (range, oldRange, source) => {
@@ -363,6 +365,7 @@ export default {
 		collaborationPayload: {
 			deep: true,
 			handler(payload) {
+				// console.log("DELTA", JSON.stringify(payload));
 				if (!payload) return;
 				this.editor.updateContents(payload.delta, payload.source);
 				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
