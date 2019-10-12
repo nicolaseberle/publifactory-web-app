@@ -224,7 +224,6 @@ export default {
 			},
 			cursorModule: {},
 			updateLocalCursorIntervalId: null,
-			lastRange: {}
 		}
 	},
 	beforeDestroy() {
@@ -232,17 +231,17 @@ export default {
 	},
 	created() {
 		this.id = this.$route.params && this.$route.params.id
-		this.updateLocalCursorIntervalId = setInterval(async () => {
-			const selection = this.editor.getSelection()
-			if (!selection) return;
-			this.socket.emit('QUILL_NEW_SELECT', {
-				range: this.editor.getSelection(),
-				numBlock: this.numBlock,
-				numSubBlock: this.numSubBlock,
-				numSubSubBlock: this.numSubSubBlock,
-				cursorId: await this.getUserName(),
-		});
-		}, 2000)
+		// this.updateLocalCursorIntervalId = setInterval(async () => {
+		// 	const selection = this.editor.getSelection()
+		// 	if (!selection) return;
+		// 	this.socket.emit('QUILL_NEW_SELECT', {
+		// 		range: selection,
+		// 		numBlock: this.numBlock,
+		// 		numSubBlock: this.numSubBlock,
+		// 		numSubSubBlock: this.numSubSubBlock,
+		// 		cursorId: await this.getUserName(),
+		// });
+		// }, 2000)
 	},
 	async destroyed() {
 		this.socket.emit('REMOVE_QUILL_SELECT', {
@@ -301,7 +300,7 @@ export default {
 	    });
 
 			this.cursorModule = this.editor.getModule('cursors');
-			this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+			// this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
