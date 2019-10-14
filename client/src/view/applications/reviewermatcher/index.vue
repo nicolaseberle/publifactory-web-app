@@ -4,7 +4,9 @@
 
       <hgroup>
         <h1>Reviewer Matcher</h1>
-        <p>The service allows to match an article with the best reviewers</p>
+        <p>Do you have difficulty finding experts to review your manuscripts or do you want to discover who is working on a subject close to yours ?</p>
+        <p>The service allows to match a manuscrit with the best reviewers whatever the discipline. Suggested reviewers can be contacted directly or through us </p>
+        <p> How does it work?  <el-link type="primary">Discover there</el-link></p>
       </hgroup>
       <div>
       <h2>Load the article</h2>
