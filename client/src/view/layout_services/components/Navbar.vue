@@ -1,5 +1,8 @@
 <template>
   <div class="navbar">
+    <div class="m-left-menu">
+      <div class='logo'>PubliFactory</div>
+    </div>
     <div class="m-right-menu">
       <div class='right-menu-item'>
         <a><span>Product</span></a>
@@ -70,3 +73,7 @@ export default {
   }
 }
 </script>
+<style>
+.m-navbar{
+}
+</style>
