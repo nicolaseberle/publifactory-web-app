@@ -4,10 +4,10 @@ export default function selectionCommit(vm, range) {
 		if (!selection) return;
 		vm.socket.emit('QUILL_NEW_SELECT', {
 			range: range,
+			cursorId: await vm.getUserName(),
 			numBlock: vm.numBlock,
 			numSubBlock: vm.numSubBlock,
-			numSubSubBlock: vm.numSubSubBlock,
-			cursorId: await vm.getUserName()
+			numSubSubBlock: vm.numSubSubBlock
 		});
 	}, vm.timeout);
 }
