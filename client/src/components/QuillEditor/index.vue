@@ -223,6 +223,7 @@ export default {
 				range: {}
 			},
 			cursorModule: {},
+			lastRange: {},
 			updateLocalCursorIntervalId: null,
 		}
 	},
@@ -318,6 +319,7 @@ export default {
 					collaboration.cursorRemove(this);
 					return;
 				}
+				this.lastRange = range;
 				collaboration.selectionCommit(this, range)
       });
 
@@ -561,7 +563,7 @@ export default {
 }
 
 .ql-cursor-flag {
-  margin-top: 4px;
+  /* margin-top: 4px; */
 }
 
 .pre {
