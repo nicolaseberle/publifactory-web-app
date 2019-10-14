@@ -1,7 +1,7 @@
 export default function updateForeignCursors(vm, delta) {
 	const range = vm.editor.getSelection();
 
-	updateRange(vm, vm.lastRange, range, getForwardCursors(vm, vm.lastRange), getIndexShif(delta));
+	updateRange(vm, vm.lastRange, range, getForwardCursors(vm, vm.lastRange), getIndexShift(delta));
 	vm.lastRange = range;
 }
 
@@ -54,7 +54,6 @@ function updateRange(vm, lastRange, localRange, forwardCursors, indexShift) {
 				index: cursor.range.index + indexShift
 			});
 		}
-		// console.log('After', JSON.stringify(cursor.range));
 	});
 	vm.cursorModule.update();
 }
@@ -62,7 +61,7 @@ function updateRange(vm, lastRange, localRange, forwardCursors, indexShift) {
 /**
  * Reducing the number of deletion or addition in the Delta
  */
-function getIndexShif(delta) {
+function getIndexShift(delta) {
 	const reducedDelta = delta.reduce((acc, currOp) => {
 		if (!currOp.insert && !currOp.delete) {
 			return acc;
