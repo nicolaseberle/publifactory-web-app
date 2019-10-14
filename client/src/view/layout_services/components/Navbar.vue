@@ -1,20 +1,35 @@
 <template>
+  <div>
   <div class="navbar">
     <div class="m-left-menu">
-      <div class='logo'>PubliFactory</div>
+      <div class='logo'><a href='/'>PubliFactory</a></div>
     </div>
     <div class="m-right-menu">
       <div class='right-menu-item'>
-        <a><span>Product</span></a>
+         <el-link :underline="false" style='font-size:16px' href='http://publifactory.co/'><span>Product</span></el-link>
       </div>
       <div class='right-menu-item'>
-        <a><span>Contact</span></a>
+         <el-link :underline="false"  style='font-size:16px' @click='centerDialogVisible = true'><span>Contact</span></el-link>
       </div>
       <div class='right-menu-item'>
-        <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain>Sign up</el-button>
+        <router-link :to="{name: '/login'}">
+          <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain >Sign up</el-button>
+        </router-link>
       </div>
     </div>
   </div>
+  <el-dialog
+    title="Contact"
+    :visible.sync="centerDialogVisible"
+    width="30%"
+    center>
+    <span>You can contact us: contact@publifactory.co</span>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="centerDialogVisible = false">Annuler</el-button>
+      <el-button type="primary" @click="centerDialogVisible = false">Ok</el-button>
+    </span>
+  </el-dialog>
+</div>
 </template>
 
 <script>
@@ -43,7 +58,8 @@ export default {
   },
   data () {
     return {
-      flag_user: false
+      flag_user: false,
+      centerDialogVisible: false
     }
   },
   computed: {
