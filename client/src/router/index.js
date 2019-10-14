@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
+import Layout_services from '../view/layout_services/Layout'
 // import componentsRouter from './modules/components'
 // import otherModuleRoutes from './module'
 
@@ -36,9 +37,16 @@ export const constantRouterMap = [{
 },
 {
   path: '/services',
-  component: (resolve) => {
-    import('../view/applications/reviewermatcher/index.vue').then(resolve)
-  },
+  component: Layout_services,
+  redirect: 'services',
+  children: [
+    {
+      path: '/services',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/reviewermatcher/index.vue').then(resolve)}
+    }],
   meta: {
     skipAuth: true
   },

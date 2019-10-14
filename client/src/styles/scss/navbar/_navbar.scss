@@ -15,6 +15,16 @@
     display: inline-block;
     vertical-align: top;
   }
+  .m-right-menu{
+    float: right;
+    height: 100%;
+    font-size: 16px;
+    .right-menu-item {
+      display: inline-block;
+      font-size: 16px;
+      margin: 0 8px;
+    }
+  }
   .right-menu {
     float: right;
     height: 100%;
