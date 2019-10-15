@@ -77,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- Quill editor when double text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:rws="rws" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -95,7 +95,7 @@
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- quill editor when single text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:rws="rws" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -444,16 +444,6 @@ export default {
     /**
      * Socket instructions from API
      */
-
-    // this.rws.on('SECTION_UPDATE', data => {
-    //   console.warn("GET=>", data)
-    // });
-
-    // this.rws.addEventListener("message", (packet) => {
-    //   console.warn("receiving =>", packet.data);
-      
-    // });
-
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
     {

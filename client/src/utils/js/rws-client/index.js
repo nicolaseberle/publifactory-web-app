@@ -23,9 +23,7 @@ class rwsClient {
 		this.rws = new ReconnectingWebScoket(url);
 		this.type = richText.type.name;
 		this.rws.addEventListener('open', () => console.log('connected'));
-
-		// this.rws.addEventListener('error', err => console.warn('ERROR', err));
-
+		this.rws.addEventListener('error', err => console.warn('ERROR', err));
 		this.rws.addEventListener('message', packet => {
 			console.log('MESSAGE', JSON.parse(packet.data));
 			// const { event, ...rest } = JSON.parse(packet.data);
@@ -34,6 +32,7 @@ class rwsClient {
 		});
 
 		this.connection = new ShareDB.Connection(this.rws);
+		// Disable connect & message :
 		// this.connection.bindToSocket(this.rws);
 	}
 
@@ -48,5 +47,4 @@ class rwsClient {
 	}
 }
 
-// util.inherits(rwsClient, EventEmitter);
 export default rwsClient;
