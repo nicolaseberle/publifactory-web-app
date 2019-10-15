@@ -123,13 +123,15 @@
     <el-col :span='18'>
       <div class='container'>
       <div class='journal-list-articles'>
-          <div class='entry' v-for='(article,index) in articles' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
+          <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
             <div class='visual'>
 
             </div>
             <div class='content'>
               <div class='title'>
-                <a :href="'/article/' + article._id "><span>{{article.title}}</span></a>
+                <router-link :to="'/articles/' + item.reference._id">
+                  <span>{{item.reference.title}}</span>
+                </router-link>
               </div>
               <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" >
                 <button v-show='flag==index' class='hide' alt='Mark as read an hide'><i class="el-icon-close"></i></button>
@@ -144,10 +146,10 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{article.authors}}
+                {{item.reference.authors[0]._id}}
               </div>
               <div class='summary'>
-                {{article.abstract}}
+                {{item.reference.abstract}}
               </div>
             </div>
           </div>
@@ -249,6 +251,10 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         this.journal = res.data
+        this.journal.content.forEach((index,item)=>{
+          let strInputCode = this.journal.content[index].reference.abstract
+          this.journal.content[index].reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+        })
       }).catch(err => {
         console.error(err)
       })
@@ -297,8 +303,6 @@
           .catch(err=>{console.error(err)})
 
       }).catch(() => {})
-
-
     }
   }
 }

@@ -49,7 +49,7 @@ exports.getJournals = async (req, res, next) => {
       journals = await Journal.paginate({ deleted: false, published: true }, {
         page,
         limit,
-        populate: 'users',
+        populate: 'users content.reference',
         lean: true
       });
       console.log(JSON.stringify(journals, null, "\t"));
@@ -58,12 +58,13 @@ exports.getJournals = async (req, res, next) => {
       //console.log(JSON.stringify("findJournalById", null, "\t"))
       journals = await Journal.findById(req.params.id)
         .populate('users')
-        .populate('article')
+        .populate('content.reference')
         .lean();
       console.log(JSON.stringify(journals, null, "\t"));
       if (!journals)
         throw { code: 404, message: 'Journals not found.' };
     }
+    console.log(journals)
     return res.status(200).json(journals);
   } catch (err) {
     return next(err);
