@@ -1,6 +1,7 @@
 const ShareDB = require('sharedb');
 const richText = require('rich-text');
-const DuplexStream = require('./duplex-stream');
+// const DuplexStream = require('./duplex-stream');
+const WebSocketJSONStream = require('@teamwork/websocket-json-stream');
 
 if (process.env.NODE_ENV === 'development') {
 	ShareDB.logger.setMethods({
@@ -18,20 +19,27 @@ const options = {
 ShareDB.types.register(richText.type);
 
 class shareDB {
-	constructor(options) {
+	constructor() {
 		this.shareInstance = new ShareDB(options);
 		this.connection = this.shareInstance.connect();
 		this.type = richText.type.name;
-		this.duplex = new DuplexStream();
-		this.shareInstance.listen(this.duplex);
+		// this.duplex = new DuplexStream();
+		// this.shareInstance.listen(this.duplex);
+		// this.stream = new WebSocketJSONStream(ws);
+		// this.shareInstance.listen(this.stream);
 	}
 
 	connect() {
 		this.shareInstance.connect();
 	}
 
-	listen() {
-		this.shareInstance.listen(this.duplex);
+	listen(socket) {
+		console.log('#####START LISTENING ON SOCKET');
+		const stream = new WebSocketJSONStream(socket);
+		this.shareInstance.listen(stream);
+		this.shareInstance.use('connect', (context, err) => console.log('###connect', err, context));
+		this.shareInstance.use('op', (e, r) => console.log('###op', e, r));
+		this.shareInstance.use('submit', (e, r) => console.log('"##sub', e, r));
 	}
 
 	getDoc(docId) {
@@ -59,4 +67,5 @@ class shareDB {
 	}
 }
 
-module.exports = new shareDB(options);
+// module.exports = new shareDB(options);
+module.exports = shareDB;

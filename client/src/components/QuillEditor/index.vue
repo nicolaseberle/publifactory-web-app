@@ -159,7 +159,8 @@ Quill.register(ProcRef, true);
 export default {
 	name: 'QuillEditor',
 	props: {
-	  socket: Object,
+		socket: Object,
+		rws: Object,
 		content: {
 			type: String | Array | Object
 		},
@@ -225,6 +226,7 @@ export default {
 			cursorModule: {},
 			lastRange: {},
 			updateLocalCursorIntervalId: null,
+			shareDoc: null
 		}
 	},
 	beforeDestroy() {
@@ -249,7 +251,7 @@ export default {
 			cursorId: await this.getUserName(),
 		});
 	},
-	async mounted() {			
+	async mounted() {	
       this.socket.on('QUILL_EXEC_SELECT', async data => {
 					collaboration.selectionUpdate(this, data)
 			});
@@ -258,6 +260,19 @@ export default {
 				if (!this.sameBlock(data)) return;
 				this.cursorModule.removeCursor(data.cursorId);
 			});
+
+
+			// this.shareDoc = this.rws.getDoc('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+			// console.log(this.shareDoc);
+
+			// this.shareDoc.subscribe((err) => {
+			// 	console.log("TRIGERED")
+			// 	if (err) console.warn("SHAREDB::", err)
+			// 	if (this.shareDoc.type === null) {
+			// 		console.log("getting created")
+			// 		this.shareDoc.create([{insert: ''}], this.rws.type)
+			// 	}
+			// })
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
@@ -308,9 +323,10 @@ export default {
 
       this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
-				collaboration.textCommit(this, delta)
-
-				collaboration.updateForeignCursors(this, delta)
+				// collaboration.textCommit(this, delta)
+				// console.log(this.shareDoc.id)
+				// this.shareDoc.submitOp(delta, err => console.warn('SHARED::DB', err))
+				// collaboration.updateForeignCursors(this, delta)
 			});
 
       this.editor.on('selection-change', (range, oldRange, source) => {

@@ -335,7 +335,7 @@ const options = {
 export default {
   name: 'LightEditor',
   props: [
-    "socket"
+    "socket", "rws"
   ],
   components: {
     InsertFigure,
@@ -444,6 +444,16 @@ export default {
     /**
      * Socket instructions from API
      */
+
+    // this.rws.on('SECTION_UPDATE', data => {
+    //   console.warn("GET=>", data)
+    // });
+
+    // this.rws.addEventListener("message", (packet) => {
+    //   console.warn("receiving =>", packet.data);
+      
+    // });
+
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
     {

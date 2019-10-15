@@ -35,6 +35,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "@handsontable/vue": "^3.1.0",
     "@statnett/vue-plotly": "^0.3.2",
+    "@teamwork/websocket-json-stream": "^2.0.0",
     "acorn": "^6.1.1",
     "automerge": "^0.12.1",
     "axios": "^0.18.0",
