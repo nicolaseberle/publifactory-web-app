@@ -453,7 +453,15 @@ module.exports.updateTags = async (req, res, next) => {
  */
 module.exports.userFollowedJournals = async (req, res, next) => {
   try {
-    const result = await RolesJournal.find({ id_user: req.decoded._id }).exec();
+    let journals;
+    const result = await RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal').exec();
+    console.log(result)
+    /*var arr2 = []
+    await result.forEach(async (item)=>{
+      var journals =  Journal.findById(item.id_journal)
+      console.log(journals)
+      await arr2.push(journals)
+    })*/
     res.json({success: true, journals: result});
   } catch (e) {
     console.log('userFollowedJournals :: error :: ',e);
