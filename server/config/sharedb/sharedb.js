@@ -22,15 +22,6 @@ class shareDB {
 		this.shareInstance = new ShareDB();
 		this.connection = this.shareInstance.connect();
 		this.type = richText.type.name;
-
-		var doc = this.connection.get('toto', 'test');
-		doc.fetch(function(err) {
-			if (err) throw err;
-			if (doc.type === null) {
-				doc.create([{ insert: 'Hi!' }], 'rich-text', err => console.log(err));
-				return;
-			}
-		});
 	}
 
 	connect() {

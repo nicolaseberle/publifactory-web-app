@@ -459,7 +459,6 @@ export default {
         console.log(connection)
         this.shareDoc = connection.get('toto', "test")
       }
-      // console.log(Object.assign({}, this.shareDoc))
       if (this.shareDoc.type === null) {
         console.log("CREATE DOC")
         this.shareDoc.create([{ insert: '' }], richText.type.name);
@@ -467,12 +466,12 @@ export default {
       this.shareDoc.subscribe(err => {
         if (err) console.warn('SHAREDB', err);
         if (this.shareDoc.type === null) {
-          console.warn("Doc is null")
+          console.warn("DOC NOT CREATED")
         }
       });
 
       this.shareDoc.on('op', (op, source) => {
-        if (source !== false)
+        console.log(source)
         console.log("ON OP =>", op);
       });
 
