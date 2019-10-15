@@ -22,13 +22,10 @@ class rwsClient {
 		this.articleId = articleId;
 		this.rws = new ReconnectingWebScoket(url);
 		this.type = richText.type.name;
-		this.rws.addEventListener('open', () => console.log('connected'));
+		this.rws.addEventListener('open', () => console.log('CONNECTION CREATED'));
 		this.rws.addEventListener('error', err => console.warn('ERROR', err));
 		this.rws.addEventListener('message', packet => {
 			console.log('MESSAGE', JSON.parse(packet.data));
-			// const { event, ...rest } = JSON.parse(packet.data);
-			// if (!event || !actions[event]) return;
-			// this.emit([actions[event]], rest);
 		});
 
 		this.connection = new ShareDB.Connection(this.rws);

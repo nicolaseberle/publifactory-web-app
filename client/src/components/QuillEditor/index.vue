@@ -262,8 +262,8 @@ export default {
 			});
 
 
-			this.shareDoc = this.rws.getDoc('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
-			console.log(this.shareDoc);
+			// this.shareDoc = this.rws.getDoc('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+			// console.log(this.shareDoc);
 
 			// this.shareDoc.subscribe((err) => {
 			// 	console.log("TRIGERED")

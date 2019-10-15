@@ -37,28 +37,18 @@ const credentials = {
 
 // Setup server
 const app = express();
-const WebSocket = require('ws');
-
 const server = http.createServer(app);
-
-const ws = new WebSocket.Server({ noServer: true });
-
-// TODO Move and + build class
-ws.on('connection', socket => {
-	console.log(socket);
-	socket.on('message', msg => {});
-});
+const wsShareDB = require('./config/sharedb/ws');
 
 server.on('upgrade', (request, socket, head) => {
-	console.log('########### UPGRADE########');
 	const pathname = url.parse(request.url).pathname;
-
 	if (pathname === '/collaboration') {
-		ws.handleUpgrade(request, socket, head, function done(ws, socket) {
-			ws.emit('connection', ws, request);
+		wsShareDB.handleUpgrade(request, socket, head, function done(socket) {
+			console.log('###HANDLING UPGRADE###');
+			wsShareDB.emit('connection', socket, request);
 			setInterval(() => {
-				ws.send(JSON.stringify({ event: 'SECTION_UPDATE', msg: 'toto' }));
-			}, 6000);
+				socket.send(JSON.stringify({ event: 'SECTION_UPDATE', msg: 'toto' }));
+			}, 5000);
 		});
 	}
 });
