@@ -254,7 +254,7 @@
       })
     },
     fetchEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchEditor :: ', res.data)
@@ -264,7 +264,7 @@
       })
     },
     fetchAssociateEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchAssociateEditor :: ', res.data)
