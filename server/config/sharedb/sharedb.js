@@ -34,12 +34,12 @@ class shareDB {
 	}
 
 	listen(socket) {
-		console.log('#####START LISTENING ON SOCKET');
+		console.log('SHARE::DB::LISTEN::SOCKET');
 		const stream = new WebSocketJSONStream(socket);
 		this.shareInstance.listen(stream);
-		this.shareInstance.use('connect', (context, err) => console.log('###connect', err, context));
-		this.shareInstance.use('op', (e, r) => console.log('###op', e, r));
-		this.shareInstance.use('submit', (e, r) => console.log('"##sub', e, r));
+		this.shareInstance.use('connect', (context, err) => console.log('###connect', err));
+		this.shareInstance.use('op', (ctx, r) => console.log('###op', r));
+		this.shareInstance.use('submit', (ctx, r) => console.log('"##sub', r));
 	}
 
 	getDoc(docId) {

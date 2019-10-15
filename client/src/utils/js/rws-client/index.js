@@ -17,12 +17,11 @@ const actions = {
  */
 class rwsClient {
 	constructor(userId, articleId) {
-		// super()
 		this.userId = userId;
 		this.articleId = articleId;
 		this.rws = new ReconnectingWebScoket(url);
 		this.type = richText.type.name;
-		this.rws.addEventListener('open', () => console.log('CONNECTION CREATED'));
+		this.rws.addEventListener('open', () => this.sendUserPayload());
 		this.rws.addEventListener('error', err => console.warn('ERROR', err));
 		this.rws.addEventListener('message', packet => {
 			console.log('MESSAGE', JSON.parse(packet.data));
@@ -41,6 +40,12 @@ class rwsClient {
 			doc.create([{ insert: '' }], this.rws.type);
 		}
 		return doc;
+	}
+
+	sendUserPayload() {
+		this.rws.send(
+			JSON.stringify({ event: 'CONNECT', data: { userId: this.userId, articleId: this.articleId } })
+		);
 	}
 }
 
