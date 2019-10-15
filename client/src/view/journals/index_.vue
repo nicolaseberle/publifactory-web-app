@@ -146,7 +146,7 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{item.reference.authors[0]._id}}
+                {{item.reference.authors[0].author}}
               </div>
               <div class='summary'>
                 {{item.reference.abstract}}
@@ -251,10 +251,11 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         this.journal = res.data
-        this.journal.content.forEach((index,item)=>{
-          let strInputCode = this.journal.content[index].reference.abstract
-          this.journal.content[index].reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+        this.journal.content.forEach((item)=>{
+          let strInputCode = item.reference.abstract
+          item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
         })
+
       }).catch(err => {
         console.error(err)
       })
