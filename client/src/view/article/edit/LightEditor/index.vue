@@ -450,11 +450,7 @@ export default {
      * Socket instructions from API
      */
 
-
-
-    console.log("BEFORE ALL=>", this.rws, this.shareDoc)
     if (this.shareDoc === null) {
-        console.log("equal null")
         const connection = this.rws.getCo()
         console.log(connection)
         this.shareDoc = connection.get('toto', "test")
@@ -777,27 +773,11 @@ export default {
         blockId: block.uuid
       });
 
-
-
-
-
-      console.log("socket=>", this.rws)
-      console.log(this.shareDoc)
-      
-      console.log("doc=>", this.shareDoc)
       this.shareDoc.submitOp(delta, {source: cursor.cursorId}, err => {
         if (err && err.code === 4015) {
-				console.log('DONT WORK');
-				// doc = doc.create([{ insert: '' }], this.rws.type);
-			  } else {
-          console.log(err);
+				  console.warn(err)
         }
       })
-
-
-
-
-
 
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
