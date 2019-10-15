@@ -1,35 +1,23 @@
 const WebSocket = require('ws');
-const shareDB = require('./sharedb');
+const ShareDB = require('sharedb');
+const WebSocketJSONStream = require('@teamwork/websocket-json-stream');
+const richText = require('rich-text');
 
 const wsShareDB = new WebSocket.Server({
 	noServer: true
 });
 
-const wrapperShareDB = new shareDB();
+// const wrapperShareDB = new shareDB();
+ShareDB.types.register(richText.type);
+
+var backend = new ShareDB();
+var connection = backend.connect();
 
 wsShareDB.on('connection', (socket, req) => {
-	console.log('RWS::CONNECT');
-	wrapperShareDB.listen(socket);
-	socket.on('message', _ => {
-		try {
-			const packet = JSON.parse(_);
-			if (!packet.event || !packet.data || packet.event !== 'CONNECT') return;
-			console.log('RWS::CLIENT::MSG', packet);
-		} catch (error) {
-			return;
-		}
-	});
+	console.log('##RWS::CONNECT');
+	// wrapperShareDB.listen(socket);
+	var stream = new WebSocketJSONStream(socket);
+	backend.listen(stream);
 });
-
-(function cleanClosedConnections() {
-	setInterval(() => {
-		wsShareDB.clients.forEach(socket => {
-			if (socket.readyState === 3) {
-				socket.removeAllListeners();
-				socket.terminate();
-			}
-		});
-	}, 50000);
-})();
 
 module.exports = wsShareDB;

@@ -59,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket"></quill-editor>
+                  <!-- <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:collaborationPayload='collaborationPayload[`-100`]' ></quill-editor> -->
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -77,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- Quill editor when double text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:rws="rws" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]' ></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -95,7 +95,7 @@
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- quill editor when single text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:rws="rws" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]' v-bind:rws='rws'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -277,6 +277,7 @@
   import figureFactory from '../../../../components/Charts'
   import addCollaborator from '../../../../components/Collaborator'
   import InsertFigure from '../../../../components/InsertFigure/index'
+  import richText from 'rich-text'
   //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
@@ -350,9 +351,11 @@ export default {
     reviewComponent,
     'quill-editor' : quilleditor,
     scriptR,
-    activityComponent},
+    activityComponent
+  },
   data() {
     return {
+      shareDoc: null,
       flagActivity: true,
       listConnectedUsers: Array,
       references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
@@ -434,9 +437,11 @@ export default {
   },
   created() {
     this.id = this.$route.params && this.$route.params.id
-    //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
-    //this.cursors.update()
 
+    
+
+
+    
   },
   mounted() {
     this.fetchData(this.id);
@@ -444,11 +449,41 @@ export default {
     /**
      * Socket instructions from API
      */
+
+
+
+    console.log("BEFORE ALL=>", this.rws, this.shareDoc)
+    if (this.shareDoc === null) {
+        console.log("equal null")
+        const connection = this.rws.getCo()
+        console.log(connection)
+        this.shareDoc = connection.get('toto', "test")
+      }
+      // console.log(Object.assign({}, this.shareDoc))
+      if (this.shareDoc.type === null) {
+        console.log("CREATE DOC")
+        this.shareDoc.create([{ insert: '' }], richText.type.name);
+      }
+      this.shareDoc.subscribe(err => {
+        if (err) console.warn('SHAREDB', err);
+        if (this.shareDoc.type === null) {
+          console.warn("Doc is null")
+        }
+      });
+
+      this.shareDoc.on('op', (op, source) => {
+        if (source !== false)
+        console.log("ON OP =>", op);
+      });
+
+
+    
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
     {
       const payload = { delta: data.content, cursor: data.cursor, source: 'api' }
       const index = `${data.key}${data.subkey}${data.subsubkey}`
+
       //original this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
       this.$set(this.collaborationPayload, index, payload)
     });
@@ -742,6 +777,29 @@ export default {
         subsubkey: subsubkey,
         blockId: block.uuid
       });
+
+
+
+
+
+      console.log("socket=>", this.rws)
+      console.log(this.shareDoc)
+      
+      console.log("doc=>", this.shareDoc)
+      this.shareDoc.submitOp(delta, {source: cursor.cursorId}, err => {
+        if (err && err.code === 4015) {
+				console.log('DONT WORK');
+				// doc = doc.create([{ insert: '' }], this.rws.type);
+			  } else {
+          console.log(err);
+        }
+      })
+
+
+
+
+
+
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {

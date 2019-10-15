@@ -44,17 +44,13 @@ server.on('upgrade', (request, socket, head) => {
 	const pathname = url.parse(request.url).pathname;
 	if (pathname === '/collaboration') {
 		wsShareDB.handleUpgrade(request, socket, head, function done(socket) {
-			console.log('RWS::HANDLING::UPGRADE');
+			console.log('##RWS::HANDLING::UPGRADE');
 			wsShareDB.emit('connection', socket, request);
-			setInterval(() => {
-				socket.send(JSON.stringify({ event: 'SECTION_UPDATE', msg: 'toto' }));
-			}, 20000);
 		});
 	}
 });
 
 const socketIo = require('socket.io')(server);
-const shareDB = require('./config/sharedb/sharedb');
 
 require('./config/database')();
 require('./config/socketio')(socketIo);

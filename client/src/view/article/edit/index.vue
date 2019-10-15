@@ -277,7 +277,6 @@ import markdownEditorComponent from "./MarkdownEditorComponent";
 import latexEditorComponent from "./LatexEditorComponent";
 import ImportData from "../../../components/ImportData/index";
 import axios from "axios";
-// import ReconnectingWebSocket from "reconnecting-websocket";
 import rwsClient from "../../../utils/js/rws-client/";
 import io from "socket.io-client";
 
@@ -316,7 +315,7 @@ export default {
       },
       journalList: [], //[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
       socket: "",
-      rws: {}
+      rws: ""
     };
   },
   computed: {
@@ -337,7 +336,6 @@ export default {
       }
     };
     this.socket = io("/", socketOptions);
-
     this.rws = new rwsClient(this.userId, this.id);
   },
   async mounted() {

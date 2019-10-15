@@ -6,7 +6,6 @@ const User = require('../api/user/user.model');
 
 const Automerge = require('automerge');
 const Connection = require('./connection');
-// const shareDB = require('./sharedb/sharedb');
 
 let connection = '';
 
@@ -135,12 +134,9 @@ module.exports = function(io) {
 			NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
 			NEW_TAG: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_TAG`, data),
 			NEW_ONE_BLOCK: data => {
-				// shareDB.getDoc(data.blockId[0]);
-				// shareDB.getDoc(data.blockId[1]);
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_ONE_BLOCK`, data);
 			},
 			NEW_TWO_BLOCK: data => {
-				// shareDB.getDoc(data.blockId);
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_TWO_BLOCK`, data);
 			},
 			NEW_BLOCK_TEXT: data => {
@@ -159,9 +155,6 @@ module.exports = function(io) {
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_ASSOCIATE_EDITOR`, data),
 			NEW_VERSION: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_VERSION`, data),
 			REMOVE_BLOCK: data => {
-				const doc = shareDB.getDoc(data.blockId);
-				// shareDB.destroyDoc(doc);
-				// shareDB.deleteDoc(doc, err => (err ? console.log('WS:DOC:ERR', err) : ''));
 				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_BLOCK`, data);
 			},
 			REMOVE_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`DELETE_ROW`, data),
