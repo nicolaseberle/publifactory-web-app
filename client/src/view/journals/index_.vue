@@ -83,11 +83,14 @@
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
+        </div>
+        <div class='details'>
           <social-sharing
                   title="PubliFactory's journal | Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   v-bind:hashtags="this.journal.title + ', publifactory'" inline-template>
             <div>
+              <!--
               <li>
               <network network="facebook">
                 <h3><img src="../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
@@ -105,7 +108,7 @@
                 <h3><img src="../../../static/img/reddit-button-sharing.png"
                      alt="Reddit"/> Reddit</h3>
               </network>
-              </li>
+            </li>-->
               <li>
               <network network="twitter">
                 <h3><img src="../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
@@ -400,6 +403,14 @@
       display: flex;
       -ms-flex-align: baseline;
       align-items: baseline;
+      text-align:center;
+      h3 {
+          display: block;
+          font-size: 1.17em;
+          margin: 5px 0 0 0;
+          font-weight: bold;
+          font-family: 'DNLTPro-bold';
+      }
     }
   }
 }
