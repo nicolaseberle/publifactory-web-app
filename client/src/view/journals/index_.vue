@@ -149,7 +149,7 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{item.reference.authors.list}}
+                <span v-for='el in item.reference.authors.list'>{{el}},</span>
               </div>
               <div class='summary'>
                 {{item.reference.abstract}}
