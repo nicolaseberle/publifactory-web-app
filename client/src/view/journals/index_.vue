@@ -149,7 +149,7 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{item.reference.authors[0].author}}
+                {{item.reference.authors.list}}
               </div>
               <div class='summary'>
                 {{item.reference.abstract}}
@@ -257,6 +257,18 @@
         this.journal.content.forEach((item)=>{
           let strInputCode = item.reference.abstract
           item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+          item.reference.authors.list = []
+          item.reference.authors.forEach( (el)=>{
+            // var x = setTimeout(()=>{item.reference.authors.list.push("Einstein")}, 100)
+            console.log(el.author)
+            axios.get('/api/users/' + el.author, {
+              headers: {'Authorization': `Bearer ${this.accessToken}`}
+            }).then(respond => {
+              console.log(respond.data.name)
+              item.reference.authors.list.push(respond.data.name)
+            })
+          })
+
         })
 
       }).catch(err => {
