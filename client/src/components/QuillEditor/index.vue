@@ -352,7 +352,7 @@ export default {
 				
 			this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
-				collaboration.textCommit(this, delta)
+				// collaboration.textCommit(this, delta)
 				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
 					if (err && err.code === 4015) {
 						console.warn(err)
