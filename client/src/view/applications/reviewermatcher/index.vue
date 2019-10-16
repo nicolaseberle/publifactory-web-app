@@ -448,11 +448,11 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifatory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
             .then( async (id) => {
                 console.log(id);
 
-                resolve(res = await axios.get('https://service.publifatory.co/api/results_rev/' + id.data))
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
                 this.tableData = res.data
