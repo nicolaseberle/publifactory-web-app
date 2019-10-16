@@ -127,7 +127,7 @@
       <div class='container'>
       <div class='journal-list-articles'>
           <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
-            <div class='visual'>
+            <div :id='item.reference._id' class='visual'>
 
             </div>
             <div class='content'>
@@ -179,6 +179,8 @@
   import addAssociateEditor from '../../components/AssociateEditor'
   import SocialSharing from 'vue-social-sharing'
   import Vue from 'vue'
+  var Trianglify = require('trianglify'); // only needed in node.js
+
 
   Vue.use(SocialSharing)
   export default {
@@ -259,20 +261,21 @@
           item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
           item.reference.authors.list = []
           item.reference.authors.forEach( (el)=>{
-            // var x = setTimeout(()=>{item.reference.authors.list.push("Einstein")}, 100)
-            console.log(el.author)
-            axios.get('/api/users/' + el.author, {
-              headers: {'Authorization': `Bearer ${this.accessToken}`}
-            }).then(respond => {
-              let _user = respond.data
-              let str_user = `${_user.firstname[0].toUpperCase()}. ${_user.lastname.charAt(0).toUpperCase()}${_user.lastname.slice(1)}`
-              item.reference.authors.list.push(str_user)
-              this.$forceUpdate();
-            })
+
+          axios.get('/api/users/' + el.author, {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then(respond => {
+            let _user = respond.data
+            let str_user = `${_user.firstname[0].toUpperCase()}. ${_user.lastname.charAt(0).toUpperCase()}${_user.lastname.slice(1)}`
+            item.reference.authors.list.push(str_user)
+            this.$forceUpdate();
+            // var pattern = Trianglify({seed: 10,width: 130, height: 78, cell_size: 15,x_colors:'Blues'})
+            // $("#" + item.reference._id).append(pattern.canvas())
+
           })
 
+          })
         })
-
       }).catch(err => {
         console.error(err)
       })
@@ -486,9 +489,12 @@
     margin-right: 20px;
     height: 78px;
     width: 130px;
-    background : #a8a8a8;
+    background : #eeeeee;
     //background-image: url('https://lh3.googleusercontent.com/9zWQqBt6i8tdr44hL5O-GK6Ye1wwhHAkJvOx24BF7w4EWIfQHm4RRaODPmvIJ7DH6yhWS6y-Y4Q2pqadWDc9hGYT_Q=s260');
     background-repeat: no-repeat;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#b8c6df+0,6d88b7+100;Grey+Blue+3D+%231 */
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+
 
 }
 
@@ -497,11 +503,13 @@
   opacity: 1;
   border-radius: 3px;
   display: flex;
-  border: 1px solid #DFDFDF;
   background-position: 50% 20%;
   transition-delay: 0.2s;
   -webkit-transition: opacity 0.35s;
   background-size: cover;
+
+
+
 
 }
 .el-card .el-card__body{
