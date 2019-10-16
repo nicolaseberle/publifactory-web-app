@@ -473,6 +473,8 @@ export default {
                 this.progress_status = 100
                 this.tableData = res.data
                 this.isData = true
+                this.state_click = []
+                this.isExpanded = []
                 var anchor = document.querySelector("#scroll_anchor");
                 //var anchor = this.$refs.refTable;
                 const sleep = (milliseconds) => {
