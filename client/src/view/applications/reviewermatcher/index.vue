@@ -1,256 +1,271 @@
 <template>
-  <div class="dashboard-container">
-    <div class="app-container">
+  <div>
+    <div class="dashboard-container">
+      <div class="app-container">
 
-      <hgroup>
-        <h1>Reviewer Matcher</h1>
-        <p>The service allows to match an article with the best reviewers</p>
-      </hgroup>
-      <div>
-      <h2>Load the article</h2>
-      <p>Insert your publication informations (title, abstract or keywords)</p>
-      <p>You can also upload the pdf to extract the different fields </p>
+        <hgroup>
+          <h1>Reviewer Matcher</h1>
+          <p>Do you have difficulty finding experts to review your manuscripts or do you want to discover who is working on a subject close to yours ?</p>
+          <p>The service allows to match a manuscrit with the best reviewers whatever the discipline. Suggested reviewers can be contacted directly or through us </p>
+          <p> How does it work?  <el-link type="primary" @click='centerDialogVisible=true'>Discover there</el-link></p>
+        </hgroup>
+        <div>
+        <h2>Load the article</h2>
+        <p>Insert your publication informations (title, abstract or keywords)</p>
+        <p>You can also upload the pdf to extract the different fields </p>
 
-      <el-row :gutter='30' style='margin-top=80px;'>
-      <el-col :span='12'>
-      <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+        <el-row :gutter='30' style='margin-top=80px;'>
+        <el-col :span='12'>
+        <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
-        <el-form-item label="Title">
-          <el-input v-model="formPost.title"></el-input>
-        </el-form-item>
+          <el-form-item label="Title">
+            <el-input v-model="formPost.title"></el-input>
+          </el-form-item>
 
-        <el-form-item label="Keywords">
-          <el-tag
-            :key="tag"
-            v-for="tag in formPost.keywords"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)">
-            {{tag}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisible"
-            v-model="inputValue"
-            ref="saveTagInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
-        </el-form-item>
+          <el-form-item label="Keywords">
+            <el-tag
+              :key="tag"
+              v-for="tag in formPost.keywords"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)">
+              {{tag}}
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="inputVisible"
+              v-model="inputValue"
+              ref="saveTagInput"
+              size="mini"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
+          </el-form-item>
 
-        <!-- Ajout authors -->
-        <el-form-item label="Authors" prop="authors">
-          <el-tag
-            :key="aut"
-            v-for="aut in formPost.authors"
-            closable
-            :disable-transitions="false"
-            @close="handleCloseAut(aut)">
-            {{aut}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisibleAut"
-            v-model="inputValueAut"
-            ref="saveAutInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirmAut"
-            @blur="handleInputConfirmAut"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
-        </el-form-item>
+          <!-- Ajout authors -->
+          <el-form-item label="Authors" prop="authors">
+            <el-tag
+              :key="aut"
+              v-for="aut in formPost.authors"
+              closable
+              :disable-transitions="false"
+              @close="handleCloseAut(aut)">
+              {{aut}}
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="inputVisibleAut"
+              v-model="inputValueAut"
+              ref="saveAutInput"
+              size="mini"
+              @keyup.enter.native="handleInputConfirmAut"
+              @blur="handleInputConfirmAut"
+            >
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
+          </el-form-item>
 
 
-        <el-form-item label="Abstract" prop="abstract">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 10, maxRows: 30}"
-            placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
-          </el-input>
-        </el-form-item>
+          <el-form-item label="Abstract" prop="abstract">
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 10, maxRows: 30}"
+              placeholder="You have to input enter only english abstract"
+              v-model="formPost.abstract">
+            </el-input>
+          </el-form-item>
 
-        <el-form-item class="flex_items">
-          <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
-        </el-form-item>
+          <el-form-item class="flex_items">
+            <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
+            <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
+            <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
+          </el-form-item>
 
-      </el-form>
-      </el-col>
-
-        <el-col :span='1'>
-          <div style='text-align:center; vertical-align:middle; height:100px;'><p>or</p></div>
+        </el-form>
         </el-col>
-        <el-col :span='11'>
-          <el-upload
-          class="upload-demo"
-          drag
-          action=""
-          :http-request="uploadSectionFile">
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
-          <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
-        </el-upload>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="progress_status_pdf" style="width:100%;margin-top:22px;"></el-progress>
-        </el-col>
-      </el-row>
-      </div>
-      <div id="scroll_anchor">
-      <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
-        <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
-          <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
-          <div>
-            <el-button @click="exportListJson()">Export list (json)</el-button>
-            <el-button @click="exportListCsv()">Export list (csv)</el-button>
-          </div>
+
+          <el-col :span='1'>
+            <div style='text-align:center; vertical-align:middle; height:100px;'><p>or</p></div>
+          </el-col>
+          <el-col :span='11'>
+            <el-upload
+            class="upload-demo"
+            drag
+            action=""
+            :http-request="uploadSectionFile">
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
+            <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
+          </el-upload>
+          <el-progress :text-inside="true" :stroke-width="20" :percentage="progress_status_pdf" style="width:100%;margin-top:22px;"></el-progress>
+          </el-col>
+        </el-row>
         </div>
-        <el-table
-          ref="refTable"
-          row-key="id"
-          highlight-current-row
-          :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-          @cell-click="displayInfos"
-          style="width: 100%">
-          <el-table-column type="expand" width="1">
-             <template slot-scope="props">
-               <article v-if="state_click[props.$index] == 1">
-                 <strong>Most pertinents works :</strong>
-                 <ul>
-                   <li v-for="article in props.row.article">
-                     {{ article.title }}
-                     <ul>
-                       <li>Year : {{ article.year }}</li>
-                       <li>Score : {{ article.score }}</li>
-                       <li>{{ article.co_auth }}</li>
-                       <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
-                       <li v-else > Doi : Unknown</li>
-                     </ul>
-                   </li>
-                 </ul>
-               </article>
-               <article v-if="state_click[props.$index] == 2">
-                 <strong>Contacts :</strong>
-                 <ul>
-                   <li v-if="props.row.contact.length == 0">Unknown</li>
-                   <li v-else v-for="contact in props.row.contact">
-                     <span v-for="(v,i,count) in contact">{{i}} : {{v}}
-                       <span v-show="count<(Object.keys(contact).length-1)">, </span>
-                     </span>
-                   </li>
-                 </ul>
-               </article>
-             </template>
-          </el-table-column>
+        <div id="scroll_anchor">
+        <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
+          <h2>Suggestion of Reviewers</h2>
+          <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+            <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
+            <div>
+              <el-button @click="exportListJson()">Export list (json)</el-button>
+              <el-button @click="exportListCsv()">Export list (csv)</el-button>
+            </div>
+          </div>
+          <el-table
+            ref="refTable"
+            row-key="id"
+            highlight-current-row
+            :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+            @cell-click="displayInfos"
+            style="width: 100%">
+            <el-table-column type="expand" width="1">
+               <template slot-scope="props">
+                 <article v-if="state_click[props.$index] == 1">
+                   <strong>Most pertinents works :</strong>
+                   <ul>
+                     <li v-for="article in props.row.article">
+                       {{ article.title }}
+                       <ul>
+                         <li>Year : {{ article.year }}</li>
+                         <li>Score : {{ article.score }}</li>
+                         <li>{{ article.co_auth }}</li>
+                         <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
+                         <li v-else > Doi : Unknown</li>
+                       </ul>
+                     </li>
+                   </ul>
+                 </article>
+                 <article v-if="state_click[props.$index] == 2">
+                   <strong>Contacts :</strong>
+                   <ul>
+                     <li v-if="props.row.contact.length == 0">Unknown</li>
+                     <li v-else v-for="contact in props.row.contact">
+                       <span v-for="(v,i,count) in contact">{{i}} : {{v}}
+                         <span v-show="count<(Object.keys(contact).length-1)">, </span>
+                       </span>
+                     </li>
+                   </ul>
+                 </article>
+               </template>
+            </el-table-column>
 
-          <el-table-column
-            label="Authors"
-            :render-header="info_caption"
-            width="280"
-            fixed>
-            <template slot-scope="props">
-                <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
-                <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
-                <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
-                <p class="align">{{ props.row.name}}</p>
-                <p v-if="props.row.id.length > 10">
-                  <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
-                </p>
-                <p v-else>
-                  <img src="../../../assets/images/logo-semscho.png" alt="logo semantic scholar" class="little_icon">{{ props.row.id }}
-                </p>
-            </template>
-          </el-table-column>
+            <el-table-column
+              label="Authors"
+              :render-header="info_caption"
+              width="280"
+              fixed>
+              <template slot-scope="props">
+                  <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
+                  <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
+                  <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
+                  <p class="align">{{ props.row.name}}</p>
+                  <p v-if="props.row.id.length > 10">
+                    <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
+                  </p>
+                  <p v-else>
+                    <img src="../../../assets/images/logo-semscho.png" alt="logo semantic scholar" class="little_icon">{{ props.row.id }}
+                  </p>
+              </template>
+            </el-table-column>
 
-          <el-table-column
-            label="Affiliation"
-            prop="affiliation"
-            width="220">
-            <template slot-scope="props">
-              <p v-if="props.row.affiliation.length == 0">Unknown</p>
-              <p v-else>{{ props.row.affiliation }}</p>
-            </template>
-          </el-table-column>
+            <el-table-column
+              label="Affiliation"
+              prop="affiliation"
+              width="220">
+              <template slot-scope="props">
+                <p v-if="props.row.affiliation.length == 0">Unknown</p>
+                <p v-else>{{ props.row.affiliation }}</p>
+              </template>
+            </el-table-column>
 
-          <el-table-column
-            label="Score"
-            prop="score"
-            width="100">
-            <template slot-scope="props">
-              <p>{{ props.row.score }}</p>
-              <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
-            </template>
-          </el-table-column>
+            <el-table-column
+              label="Score"
+              prop="score"
+              width="100">
+              <template slot-scope="props">
+                <p>{{ props.row.score }}</p>
+                <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
+              </template>
+            </el-table-column>
 
-          <el-table-column
-            label="Conflict of interest"
-            prop="conflit">
-            <template slot-scope="props">
-                <p>{{ props.row.conflit }}</p>
-            </template>
-          </el-table-column>
+            <el-table-column
+              label="Conflict of interest"
+              prop="conflit">
+              <template slot-scope="props">
+                  <p>{{ props.row.conflit }}</p>
+              </template>
+            </el-table-column>
 
-          <el-table-column
-            label="Actions"
-            width="200">
-            <template slot-scope="scope">
-              <el-popover
-                ref="popdoc"
-                placement="top"
-                trigger="hover"
-                content="Watch his works">
-              </el-popover>
-              <el-button
-                type="primary"
-                icon="el-icon-document"
-                circle
-                @click="displayInfosA(scope.$index, scope.row)"
-                v-popover:popdoc>
-              </el-button>
-              <el-popover
-                ref="popcon"
-                placement="top"
-                trigger="hover"
-                content="Watch his contacts">
-              </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
-                type="success"
-                icon="el-icon-message"
-                circle
-                @click="displayInfosB(scope.$index, scope.row)"
-                v-popover:popcon>
-              </el-button>
-              <el-button v-else
-                type="success"
-                icon="el-icon-message"
-                circle
-                disabled>
-              </el-button>
-              <el-popover
-                ref="popdel"
-                placement="top"
-                trigger="hover"
-                content="The author does not match">
-              </el-popover>
-              <el-button
-                type="info"
-                plain
-                icon="el-icon-close"
-                circle
-                @click.native.prevent="deleteRow(scope.$index, tableData)"
-                v-popover:popdel>
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-row>
+            <el-table-column
+              label="Actions"
+              width="200">
+              <template slot-scope="scope">
+                <el-popover
+                  ref="popdoc"
+                  placement="top"
+                  trigger="hover"
+                  content="Watch his works">
+                </el-popover>
+                <el-button
+                  type="primary"
+                  icon="el-icon-document"
+                  circle
+                  @click="displayInfosA(scope.$index, scope.row)"
+                  v-popover:popdoc>
+                </el-button>
+                <el-popover
+                  ref="popcon"
+                  placement="top"
+                  trigger="hover"
+                  content="Watch his contacts">
+                </el-popover>
+                <el-button v-if="scope.row.contact.length > 0"
+                  type="success"
+                  icon="el-icon-message"
+                  circle
+                  @click="displayInfosB(scope.$index, scope.row)"
+                  v-popover:popcon>
+                </el-button>
+                <el-button v-else
+                  type="success"
+                  icon="el-icon-message"
+                  circle
+                  disabled>
+                </el-button>
+                <el-popover
+                  ref="popdel"
+                  placement="top"
+                  trigger="hover"
+                  content="The author does not match">
+                </el-popover>
+                <el-button
+                  type="info"
+                  plain
+                  icon="el-icon-close"
+                  circle
+                  @click.native.prevent="deleteRow(scope.$index, tableData)"
+                  v-popover:popdel>
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-row>
+      </div>
+      </div>
     </div>
-    </div>
+    <el-dialog
+      title="How does it work ?"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center>
+      <span>Soon</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">Annuler</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">Ok</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -280,7 +295,8 @@ export default {
       inputValue: '',
       inputValueAut: '',
       load_var: false,
-      id: ''
+      id: '',
+      centerDialogVisible : false
     }
   },
   methods: {

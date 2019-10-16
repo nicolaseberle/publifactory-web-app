@@ -90,29 +90,25 @@
 	import ItemTemplate from './ItemTemplate.vue'
 	import 'quill'
 	import 'quill/dist/quill.core.css'
-
 	import 'quill/dist/quill.snow.css'
 	import 'quill/dist/quill.bubble.css'
 	import 'v-autocomplete/dist/v-autocomplete.css'
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
+	import collaboration from './collaboration'
+
 	const io = require('socket.io-client');
 
 	Vue.use(Autocomplete)
 
-	//var ShareDB = require('sharedb/lib/client')// cursor
-// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
-// var utils = require('../../utils/js/collaboration/utils')// cursor
+	var Quill = require('quill');
+	var uuidv4 = require('uuid/v4');
+	Quill.register('modules/cursors', QuillCursors);
 
-var Quill = require('quill');
-var uuidv4 = require('uuid/v4');
-Quill.register('modules/cursors', QuillCursors);
 
-//ShareDB.types.register(require('rich-text').type);
+	const debug = require('debug')('frontend');
 
-const debug = require('debug')('frontend');
-
-const InlineBlot = Quill.import('blots/inline');
+	const InlineBlot = Quill.import('blots/inline');
 
 
 /*Zotero, highlight button in quill toolbar*/
@@ -137,9 +133,6 @@ class ProcLink extends InlineBlot {
 ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
-
-
-
 
 class ProcRef extends InlineBlot {
     static create(value) {
@@ -170,6 +163,9 @@ export default {
 		content: {
 			type: String | Array | Object
 		},
+		collaborationPayload: { 
+			type: Object
+		},
 		uuid: {
 			type: String,
 			default: 'abstract'
@@ -193,7 +189,7 @@ export default {
 				default() {
 						return {}
 				},
-		}
+		},
 	},
 	data() {
 		return {
@@ -219,51 +215,57 @@ export default {
 			actionValidate: 0,
 			mouse_pos : '',
 			hostname: '',
-			timeoutId : '',
-
-
+			timeout : 600,
 			cursor: {
 				id: '',
 				name: '',
 				color: '',
 				range: {}
 			},
-			cursorModule: {}
+			cursorModule: {},
+			lastRange: {},
+			updateLocalCursorIntervalId: null,
 		}
+	},
+	beforeDestroy() {
+		clearInterval(this.updateLocalCursorIntervalId)
 	},
 	created() {
 		this.id = this.$route.params && this.$route.params.id
-
+		// this.updateLocalCursorIntervalId = setInterval(async () => {
+		// 	const selection = this.editor.getSelection()
+		// 	if (!selection) return;
+		// 	this.socket.emit('QUILL_NEW_SELECT', {
+		// 		range: selection,
+		// 		numBlock: this.numBlock,
+		// 		numSubBlock: this.numSubBlock,
+		// 		numSubSubBlock: this.numSubSubBlock,
+		// 		cursorId: await this.getUserName(),
+		// });
+		// }, 2000)
 	},
-	async mounted() {
-      this.socket.on('QUILL_EXEC_TEXT', data => {
-          if (this.sameBlock(data))
-              this.editor.updateContents(data.delta);
-      });
-      this.socket.on('QUILL_EXEC_SELECT', data => {
-          if (this.sameBlock(data))
-              this.cursorModule.moveCursor(this.cursor.id, data.range);
-      });
-      /*
-			this.socket.on('QUILL_EXEC_USER', data => {
-				if (this.sameBlock(data)) {
-						for (let i = 0, len = this.mapCursor.length; i < len; ++i)
-								if (data.cursor.id === this.mapCursor[i].id)
-										return;
-						this.mapCursor.push(data.cursor);
-						this.socket.emit('QUILL_NEW_USER', {
-								cursor: this.cursor
-						});
-				}
+	async destroyed() {
+		this.socket.emit('REMOVE_QUILL_SELECT', {
+			cursorId: await this.getUserName(),
+		});
+	},
+	async mounted() {			
+      this.socket.on('QUILL_EXEC_SELECT', async data => {
+					collaboration.selectionUpdate(this, data)
 			});
-			*/
+			
+			this.socket.on('DELETE_CURSOR', data => {
+				if (!this.sameBlock(data)) return;
+				this.cursorModule.removeCursor(data.cursorId);
+			});
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
 						formula: true,
             cursors: {
                 hideDelayMs: 5000,
-                hideSpeedMs: 0
+								hideSpeedMs: 0,
+								selectionChangeSource: null
             },
             toolbar: '#' + this.idToolBar
 	        },
@@ -290,53 +292,41 @@ export default {
 	      var cObj = {text : "[R1]", value : uuid_ref};
 	      //this.editor.deleteText(range.index  , range.length);
 	      this.editor.insertEmbed(range.index,"ref",cObj)
-
 	      //this.insertStar()
-	      //this.pasteHtmlAtCaret(html_)
+				//this.pasteHtmlAtCaret(html_)
 	    });
 
 	    document.querySelector('#' + this.idButtonComment).addEventListener('click', () => {
 	      this.highlightSelection()
 	    });
 
-      this.cursorModule = this.editor.getModule('cursors');
-      this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+			this.cursorModule = this.editor.getModule('cursors');
+			// this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
 
-      this.editor.on('text-change', async (delta, oldDelta, source) => {
-				if (source === 'api') {
-          console.log("GETTING FROM API", delta, JSON.stringify(this.content))
-          console.log(this.editor.root.innerHTML)
-					return
-        }
-        console.log("from user", delta)
-					// if (this.timeoutId) clearTimeout(this.timeoutId);
-          // this.timeoutId = setTimeout(async () => {
-              await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-              /*this.socket.emit('QUILL_NEW_TEXT', {
-                  editor: this.editor,
-                  delta: delta,
-                  oldDelta: oldDelta,
-                  numBlock: this.numBlock,
-                  numSubBlock: this.numSubBlock,
-                  numSubSubBlock: this.numSubSubBlock
-              })*/
-          // }, 500);
-      });
-      this.editor.on('selection-change', range => {
-          this.socket.emit('QUILL_NEW_SELECT', {
-              range: range,
-              numBlock: this.numBlock,
-              numSubBlock: this.numSubBlock,
-              numSubSubBlock: this.numSubSubBlock
-          })
+      this.editor.on('text-change', (delta, oldDelta, source) => {
+				if (source === 'api')	return;
+				collaboration.textCommit(this, delta)
+
+				collaboration.updateForeignCursors(this, delta)
+			});
+
+      this.editor.on('selection-change', (range, oldRange, source) => {
+				if (source === 'api') return;
+				if (source === 'user' && range === null) {
+					collaboration.cursorRemove(this);
+					return;
+				}
+				this.lastRange = range;
+				collaboration.selectionCommit(this, range)
       });
 
     	this.editor.root.innerHTML = this.content
 
-    	window.cursors = this.cursors
+			window.cursors = this.cursors
+
 
 	    $('#'+this.idButtonZotero).click( () => {
 	      this.showZoteroMenu(
@@ -373,18 +363,14 @@ export default {
 			*/
   },
 	watch: {
-		content (newContent) {
-			const type = typeof newContent
-			if (typeof newContent === "string") {
-				if (this.content !== this.editor.root.innerHTML) {
-				this.editor.root.innerHTML = newContent
-				}
-			} else if (typeof newContent === "object") {
-        console.log("setting contents as delta", JSON.stringify(newContent))
-				this.editor.setContents(newContent.delta, newContent.source);
-			} else {
-        console.log("NO CONTENT")
-      }
+		collaborationPayload: {
+			deep: true,
+			handler(payload) {
+				// console.log("DELTA", JSON.stringify(payload));
+				if (!payload) return;
+				this.editor.updateContents(payload.delta, payload.source);
+				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
+			}
 		}
 	},
   computed: {
@@ -400,7 +386,7 @@ export default {
 					});
 			});
 		},
-	  sameBlock (json) {
+	  sameBlock(json) {
 	    return json.numBlock === this.numBlock && json.numSubBlock === this.numSubBlock &&
 				json.numSubSubBlock === this.numSubSubBlock;
 		},
@@ -425,14 +411,6 @@ export default {
 			];
 			return allColors[Math.floor(Math.random() * Math.floor(16))];
 		},
-		sendUpdates () {
-			this.socket.emit('UPDATE_SECTION', {
-				content: this.content,
-				numBlock: this.numBlock,
-				numSubBlock: this.numSubBlock,
-				numSubSubBlock: this.numSubSubBlock
-			})
-		},
     insertStar() {
       const cursorPosition = this.editor.getSelection().index;
       // this.editor.insertText(cursorPosition, "★");
@@ -443,16 +421,8 @@ export default {
 
       // $("#" + this.idEditor).html(tmpOut);
 
-      this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
-      this.editor.setSelection(cursorPosition + 2);
-    },
-    sendUpdates () {
-      this.socket.emit('UPDATE_SECTION', {
-        content: this.content,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock
-      })
+			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
+      // this.editor.setSelection(cursorPosition + 2);
     },
 
 
@@ -462,7 +432,6 @@ export default {
 				this.highlightRange();
 		},
 		highlightRange () {
-
 				var uuid_review = String(uuidv4())
 
 				var range = this.editor.getSelection();
@@ -592,11 +561,11 @@ export default {
   color: black;
   background-color: transparent;
 }
-/*
+
 .ql-cursor-flag {
-	display: none;
+  /* margin-top: 4px; */
 }
-*/
+
 .pre {
   margin: 0 auto;
   width: 100%;

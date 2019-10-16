@@ -83,11 +83,14 @@
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
+        </div>
+        <div class='details'>
           <social-sharing
                   title="PubliFactory's journal | Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   v-bind:hashtags="this.journal.title + ', publifactory'" inline-template>
             <div>
+              <!--
               <li>
               <network network="facebook">
                 <h3><img src="../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
@@ -105,7 +108,7 @@
                 <h3><img src="../../../static/img/reddit-button-sharing.png"
                      alt="Reddit"/> Reddit</h3>
               </network>
-              </li>
+            </li>-->
               <li>
               <network network="twitter">
                 <h3><img src="../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
@@ -123,13 +126,15 @@
     <el-col :span='18'>
       <div class='container'>
       <div class='journal-list-articles'>
-          <div class='entry' v-for='(article,index) in articles' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
+          <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
             <div class='visual'>
 
             </div>
             <div class='content'>
               <div class='title'>
-                <a :href="'/article/' + article._id "><span>{{article.title}}</span></a>
+                <router-link :to="'/articles/' + item.reference._id">
+                  <span>{{item.reference.title}}</span>
+                </router-link>
               </div>
               <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" >
                 <button v-show='flag==index' class='hide' alt='Mark as read an hide'><i class="el-icon-close"></i></button>
@@ -144,10 +149,10 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{article.authors}}
+                {{item.reference.authors[0].author}}
               </div>
               <div class='summary'>
-                {{article.abstract}}
+                {{item.reference.abstract}}
               </div>
             </div>
           </div>
@@ -249,12 +254,17 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         this.journal = res.data
+        this.journal.content.forEach((item)=>{
+          let strInputCode = item.reference.abstract
+          item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+        })
+
       }).catch(err => {
         console.error(err)
       })
     },
     fetchEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchEditor :: ', res.data)
@@ -264,7 +274,7 @@
       })
     },
     fetchAssociateEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchAssociateEditor :: ', res.data)
@@ -297,8 +307,6 @@
           .catch(err=>{console.error(err)})
 
       }).catch(() => {})
-
-
     }
   }
 }
@@ -395,6 +403,14 @@
       display: flex;
       -ms-flex-align: baseline;
       align-items: baseline;
+      text-align:center;
+      h3 {
+          display: block;
+          font-size: 1.17em;
+          margin: 5px 0 0 0;
+          font-weight: bold;
+          font-family: 'DNLTPro-bold';
+      }
     }
   }
 }

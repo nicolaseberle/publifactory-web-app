@@ -15,6 +15,28 @@
     display: inline-block;
     vertical-align: top;
   }
+  .m-left-menu{
+    font-family: DNLTPro-bold;
+    float: left;
+    height: 100%;
+    font-size: 16px;
+    .logo {
+      display: inline-block;
+      font-size: 2rem;
+      margin: 0 8px;
+    }
+  }
+  .m-right-menu{
+    float: right;
+    height: 100%;
+    font-size: 16px;
+    .right-menu-item {
+      display: inline-block;
+      font-size: 16px;
+      margin: 0 8px;
+    }
+
+  }
   .right-menu {
     float: right;
     height: 100%;

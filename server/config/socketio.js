@@ -122,12 +122,13 @@ module.exports = function(io) {
 			SECTION_EDIT: data => {
 				console.log(JSON.stringify(data));
 				const doc = shareDB.getDoc(data.blockId);
-				console.log('State :', '\ndoc=>', doc, '\ndata=>', data);
 				shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
-				const { ops } = doc.data;
+				// doc.on('op', function(op, source) {
+				// });
+				console.log(JSON.stringify(data.delta));
 				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
 					...data,
-					content: ops
+					content: data.delta
 				});
 			},
 			ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
@@ -167,6 +168,9 @@ module.exports = function(io) {
 			REMOVE_DATA: data => socket.to(mapUser[socket.id].idArticle).emit(`DELETE_DATA`, data),
 			REMOVE_COLLABORATOR: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_COLLABORATOR`, data),
+			REMOVE_QUILL_SELECT: data => {
+				socket.to(mapUser[socket.id].idArticle).emit(`DELETE_CURSOR`, data);
+			},
 			UPDATE_BLOCK_PICTURE: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_BLOCK_PICTURE`, data),
 			UPDATE_TITLE: data => socket.to(mapUser[socket.id].idArticle).emit(`MODIFY_TITLE`, data),
@@ -180,11 +184,12 @@ module.exports = function(io) {
 			EXEC_CODE_PYTHON: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
 			QUILL_NEW_TEXT: data => {
-				console.log('WATCH::~~~~~~~~~~~~~~~~~');
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data);
 			},
-			QUILL_NEW_SELECT: data =>
-				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data),
+			QUILL_NEW_SELECT: data => {
+				console.log(JSON.stringify(data));
+				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data);
+			},
 			GET_USERS: data => {
 				try {
 					const userList = [];

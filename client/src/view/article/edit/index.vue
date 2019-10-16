@@ -186,7 +186,7 @@
       }
     };
     this.socket = io('/', socketOptions)
-    
+
   },
   async mounted() {
     this.journalList = await this.getJournalList()
@@ -370,7 +370,8 @@
       {
         nextStatus = 'submit';
         console.log("changeStatus :: submit :: in :: ",this.formSubmArticle.journal)
-        await axios.post(`/api/journals/${this.formSubmArticle.journal}/article`, {},
+        await axios.post(`/api/journals/${this.formSubmArticle.journal}/article`,
+          {'id_article' : this.id},
           { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       }
       await axios.patch(`/api/articles/${this.id}/${nextStatus}`, {},

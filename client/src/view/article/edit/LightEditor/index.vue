@@ -76,8 +76,8 @@
                       <el-row :gutter='20' v-if='subblock.length==2' style='margin-bottom:10px'>
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
-
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <!-- Quill editor when double text block -->
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -93,8 +93,9 @@
                         </el-col>
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
-                        <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                        <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
+                          <!-- quill editor when single text block -->
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -306,7 +307,7 @@ const defaultForm = {
                   `},{ type: 'chart',uuid: '',content: ''}]],
                   content:`Type your text`,
                   path_figure: "",
-                  display:true
+                  display:true,
                 }],
   content_short: '',
   source_uri: '',
@@ -364,6 +365,7 @@ export default {
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
       postForm: {},
+      collaborationPayload: {},
       loading: false,
       diagAuthorVisible : false,
       dialogVisible: false,
@@ -444,11 +446,12 @@ export default {
      */
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
-      {
-        console.log("RECEIVED=>", data.content)
-        // this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = data.content
-        this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, source: 'api' }
-      });
+    {
+      const payload = { delta: data.content, cursor: data.cursor, source: 'api' }
+      const index = `${data.key}${data.subkey}${data.subsubkey}`
+      //original this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
+      this.$set(this.collaborationPayload, index, payload)
+    });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -559,7 +562,7 @@ export default {
     },
     isUserConnected () {
       for(let i = 0; i < this.postForm.authors.length; i++) {
-        console.log(this.listConnectedUsers);
+        // console.log(this.listConnectedUsers);
         for(let user in this.listConnectedUsers){
           if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
             this.postForm.authors[i].isActive = true;
@@ -676,8 +679,7 @@ export default {
         });
         this.save(ev)
     },
-    save (ev) {
-      console.log(ev)
+    save(ev) {
       axios.put('/api/articles/'  + this.id, {
         "title": this.postForm.title,
         "abstract": this.postForm.abstract,
@@ -728,14 +730,12 @@ export default {
       const uuidv4 = require('uuid/v4');
       return uuidv4();
 		},
-		applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
+		applyTextEdit (editor, delta, cursor, key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
-      console.log("pushing delta", delta)
       block.content = editor.root.innerHTML;
-      
-      console.log("SECION_EDIT METHOD:", JSON.stringify(block))
       this.socket.emit('SECTION_EDIT', {
         delta,
+        cursor,
         content: block.content,
         key: key,
         subkey: subkey,
@@ -816,7 +816,6 @@ export default {
     },
     removeBlock (ev,key,subkey,subsubkey, socket = false) {
       const block = this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
-      console.log("REMOVEBLOCK METHOD:", JSON.stringify(block[0]))
       if (!socket)
         this.socket.emit('REMOVE_BLOCK', {
           ev: ev,

@@ -13,7 +13,7 @@
   height: 100%;
   background-size: cover;
   background-position: 100%;
-  background-image: url("../assets/images/login-bg-3.jpg");
+  background-image: url("../assets/images/login-bg-"+ random(6) +".jpg");
 }
 
 .login-main .login-wrapper {
