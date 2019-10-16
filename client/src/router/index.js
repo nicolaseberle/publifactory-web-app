@@ -53,6 +53,23 @@ export const constantRouterMap = [{
   props: (route) => ({ userId: route.query.userId })
 },
 {
+  path: '/summarize',
+  component: Layout_services,
+  redirect: 'summarize',
+  children: [
+    {
+      path: '/summarize',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/summarize/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
   path: '/invite/:id',
   component: (resolve) => {
     import('../view/invite/index.vue').then(resolve)
@@ -143,6 +160,13 @@ export const constantRouterMap = [{
       meta: { title: 'reviewer_matcher', icon: 'network', noCache: true,skipAuth: true },
 
       component: () => import('../view/applications/reviewermatcher/index.vue')
+    },
+    {
+      path: 'summarize',
+      name: 'summarize_text',
+      meta: { title: 'summarize_text', icon: 'network', noCache: true,skipAuth: true },
+
+      component: () => import('../view/applications/summarize/index.vue')
     },
     {
       path: 'preprintsearch',
