@@ -264,8 +264,10 @@
             axios.get('/api/users/' + el.author, {
               headers: {'Authorization': `Bearer ${this.accessToken}`}
             }).then(respond => {
-              console.log(respond.data.name)
-              item.reference.authors.list.push(respond.data.name)
+              let _user = respond.data
+              let str_user = `${_user.firstname[0].toUpperCase()}. ${_user.lastname.charAt(0).toUpperCase()}${_user.lastname.slice(1)}`
+              item.reference.authors.list.push(str_user)
+              this.$forceUpdate();
             })
           })
 
