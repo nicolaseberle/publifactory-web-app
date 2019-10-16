@@ -3,8 +3,8 @@
     <div class="app-container">
       <hgroup>
         <h1>Sums Up</h1>
-        <p>This service will allow you to sums up any of your scientific text.</p>
-        <el-tag type="warning">Warning : If you ask for more sentences than the length of your base text, it can possibly fail</el-tag>
+        <p>This service allows you to summarize any english text.</p>
+        <el-tag type="warning">Warning : If you request too long summary, you have a great chance to see the input text. </el-tag>
       </hgroup>
 
       <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
