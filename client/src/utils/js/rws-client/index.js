@@ -1,12 +1,14 @@
-// import WebSocket from 'ws';
 import ShareDB from 'sharedb/lib/client';
 import richText from 'rich-text';
-import uuidv4 from 'uuid/v4';
 ShareDB.types.register(richText.type);
 
-// TODO real url
-const url = 'ws://localhost:4000/collaboration';
+const url =
+	location.protocol === 'https:'
+		? 'wss' + '://' + window.location.hostname + ':4000' + '/collaboration'
+		: 'ws' + '://' + window.location.hostname + ':4000' + '/collaboration';
 
+console.log('WEBSOCKET ON URL=>', url);
+// const url = 'ws://localhost:4000/collaboration';
 /**
  * Wrapper on Reconnecting-Websocket
  */
@@ -19,7 +21,7 @@ class rwsClient {
 		this.connection = new ShareDB.Connection(this.rws);
 	}
 
-	getCo() {
+	getConnection() {
 		return this.connection;
 	}
 }

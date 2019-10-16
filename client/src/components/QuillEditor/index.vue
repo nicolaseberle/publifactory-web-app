@@ -96,6 +96,8 @@
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
 	import collaboration from './collaboration'
+  import richText from 'rich-text'
+
 
 	const io = require('socket.io-client');
 
@@ -157,6 +159,7 @@ Quill.register(ProcRef, true);
 export default {
 	name: 'QuillEditor',
 	props: {
+		rws: Object,
 		socket: Object,
 		content: {
 			type: String | Array | Object
@@ -191,6 +194,7 @@ export default {
 	},
 	data() {
 		return {
+			shareDoc: null,
 			id: '',
 			inputRefVisible: false,
 			editor: {},
@@ -249,7 +253,30 @@ export default {
 		});
 	},
 
-	mounted() {	
+	mounted() {
+		if (this.shareDoc === null) {
+			const connection = this.rws.getConnection()
+			this.shareDoc = connection.get('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+		}
+		if (this.shareDoc.type === null) {
+			this.shareDoc.create([{ insert: '' }], richText.type.name);
+		}
+		this.shareDoc.subscribe(err => {
+			if (err) console.warn('SHAREDB', err);
+			if (this.shareDoc.type === null) {
+				console.warn("DOC NOT CREATED")
+			}
+		});
+
+		this.shareDoc.on('op', async (op, source) => {
+			// console.log(op, source, typeof source)
+			// console.log(source === false)
+			const cursorId = await this.getUserName()
+			if (source === cursorId) return
+			this.editor.updateContents(op, 'api');
+
+		});
+
       this.socket.on('QUILL_EXEC_SELECT', async data => {
 					collaboration.selectionUpdate(this, data)
 			});
@@ -307,10 +334,15 @@ export default {
 
 
 				
-			// })
-			this.editor.on('text-change', (delta, oldDelta, source) => {
+			this.editor.on('text-change', async (delta, oldDelta, source) => {
 				if (source === 'api')	return;
 				collaboration.textCommit(this, delta)
+				const cursorId = await this.getUserName()
+				this.shareDoc.submitOp(delta, {source: cursorId}, err => {
+					if (err && err.code === 4015) {
+						console.warn(err)
+					}
+      	})
 				collaboration.updateForeignCursors(this, delta)
 			});
 
@@ -367,9 +399,8 @@ export default {
 		collaborationPayload: {
 			deep: true,
 			handler(payload) {
-				// console.log("DELTA", JSON.stringify(payload));
 				if (!payload) return;
-				this.editor.updateContents(payload.delta, payload.source);
+				// this.editor.updateContents(payload.delta, payload.source);
 				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
 			}
 		}

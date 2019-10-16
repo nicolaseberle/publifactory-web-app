@@ -77,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- Quill editor when double text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]' ></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:collaborationPayload='collaborationPayload[`${key}${subkey}${subsubkey}`]' v-bind:rws='rws'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -355,7 +355,7 @@ export default {
   },
   data() {
     return {
-      shareDoc: null,
+      // shareDoc: null,
       flagActivity: true,
       listConnectedUsers: Array,
       references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
@@ -449,29 +449,6 @@ export default {
     /**
      * Socket instructions from API
      */
-
-    if (this.shareDoc === null) {
-        const connection = this.rws.getCo()
-        console.log(connection)
-        this.shareDoc = connection.get('toto', "test")
-      }
-      if (this.shareDoc.type === null) {
-        console.log("CREATE DOC")
-        this.shareDoc.create([{ insert: '' }], richText.type.name);
-      }
-      this.shareDoc.subscribe(err => {
-        if (err) console.warn('SHAREDB', err);
-        if (this.shareDoc.type === null) {
-          console.warn("DOC NOT CREATED")
-        }
-      });
-
-      this.shareDoc.on('op', (op, source) => {
-        console.log(source)
-        console.log("ON OP =>", op);
-      });
-
-
     
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('SECTION_UPDATE', data =>
@@ -763,6 +740,7 @@ export default {
 		applyTextEdit (editor, delta, cursor, key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
       block.content = editor.root.innerHTML;
+
       this.socket.emit('SECTION_EDIT', {
         delta,
         cursor,
@@ -772,12 +750,6 @@ export default {
         subsubkey: subsubkey,
         blockId: block.uuid
       });
-
-      this.shareDoc.submitOp(delta, {source: cursor.cursorId}, err => {
-        if (err && err.code === 4015) {
-				  console.warn(err)
-        }
-      })
 
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
