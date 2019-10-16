@@ -99,6 +99,8 @@ UserSchema
   .get(function () {
     return {
       'name': this.name,
+      'firstname': this.firstname,
+      'lastname': this.lastname,
       'role': this.role,
       'roles': this.roles
     }
