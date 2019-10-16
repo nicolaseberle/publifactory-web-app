@@ -259,14 +259,14 @@
           item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
           item.reference.authors.list = []
           item.reference.authors.forEach( (el)=>{
-            var x = setTimeout(()=>{item.reference.authors.list.push("moi et toi")}, 2000)
-
-            /*axios.get('/api/users/' + el.author, {
+            // var x = setTimeout(()=>{item.reference.authors.list.push("Einstein")}, 100)
+            console.log(el.author)
+            axios.get('/api/users/' + el.author, {
               headers: {'Authorization': `Bearer ${this.accessToken}`}
             }).then(respond => {
               console.log(respond.data.name)
               item.reference.authors.list.push(respond.data.name)
-            })*/
+            })
           })
 
         })
