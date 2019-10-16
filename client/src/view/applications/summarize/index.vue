@@ -33,9 +33,9 @@
       </el-form>
 
       <div id="v-for-object" class="demo">
-        <p v-for="line in text_sum">
-          {{ line }}
-        </p>
+        <span v-for="line in text_sum">
+          {{ line }}. 
+        </span>
       </div>
     </div>
   </div>
