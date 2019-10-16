@@ -38,13 +38,13 @@ const credentials = {
 // Setup server
 const app = express();
 const server = http.createServer(app);
-const wsShareDB = require('./config/sharedb/ws');
+const wsShareDB = require('./config/ws-sharedb/');
 
 server.on('upgrade', (request, socket, head) => {
 	const pathname = url.parse(request.url).pathname;
 	if (pathname === '/collaboration') {
 		wsShareDB.handleUpgrade(request, socket, head, function done(socket) {
-			console.log('##RWS::HANDLING::UPGRADE');
+			console.log('WSSHAREDB::UPGRADE');
 			wsShareDB.emit('connection', socket, request);
 		});
 	}

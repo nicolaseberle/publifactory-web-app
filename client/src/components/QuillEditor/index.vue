@@ -291,17 +291,18 @@ export default {
 			});
 
 			this.socket.on('QUILL_RESP_SELECT', (data) => {
+				collaboration.selectionUpdate(this, data)
 				const selection = this.editor.getSelection()
 				if (!selection) return;
 				console.log("QUILL RESP SELECT")
-				collaboration.selectionUpdate(this, data)
 				this.socket.emit('QUILL_NEW_SELECT', {
-				range: selection,
+					range: selection,
 				numBlock: this.numBlock,
 				numSubBlock: this.numSubBlock,
 				numSubSubBlock: this.numSubSubBlock,
 				cursorId: this.cursorId,
 				});
+
 			});
 
 	    var quill = new Quill('#' + this.idEditor, {
