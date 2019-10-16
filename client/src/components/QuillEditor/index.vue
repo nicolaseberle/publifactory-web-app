@@ -164,9 +164,6 @@ export default {
 		content: {
 			type: String | Array | Object
 		},
-		collaborationPayload: { 
-			type: Object
-		},
 		uuid: {
 			type: String,
 			default: 'abstract'
@@ -422,16 +419,6 @@ export default {
 	    });
 			*/
   },
-	watch: {
-		collaborationPayload: {
-			deep: true,
-			handler(payload) {
-				if (!payload) return;
-				// this.editor.updateContents(payload.delta, payload.source);
-				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
-			}
-		}
-	},
   computed: {
     ...mapGetters(['userId', 'accessToken'])
   },
