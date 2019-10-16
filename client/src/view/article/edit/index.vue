@@ -318,6 +318,7 @@ export default {
       rws: ""
     };
   },
+
   computed: {
     ...mapGetters(["accessToken", "userId"])
   },
@@ -337,6 +338,10 @@ export default {
     };
     this.socket = io("/", socketOptions);
     this.rws = new rwsClient(this.userId, this.id);
+  },
+  beforeDestroy() {
+    this.rws.close();
+    this.socket.close();
   },
   async mounted() {
     this.journalList = await this.getJournalList();

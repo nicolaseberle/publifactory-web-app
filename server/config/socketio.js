@@ -118,18 +118,18 @@ module.exports = function(io) {
 					console.error(e);
 				}
 			},
-			SECTION_EDIT: data => {
-				console.log(JSON.stringify(data));
-				// const doc = shareDB.getDoc(data.blockId);
-				// shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
-				// doc.on('op', function(op, source) {
-				// });
-				console.log(JSON.stringify(data.delta));
-				socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
-					...data,
-					content: data.delta
-				});
-			},
+			// SECTION_EDIT: data => {
+			// 	console.log(JSON.stringify(data));
+			// 	// const doc = shareDB.getDoc(data.blockId);
+			// 	// shareDB.insert(doc, data.delta, err => (err ? console.log('WS:DOC:ERR', err) : ''));
+			// 	// doc.on('op', function(op, source) {
+			// 	// });
+			// 	console.log(JSON.stringify(data.delta));
+			// 	socket.to(mapUser[socket.id].idArticle).emit(`SECTION_UPDATE`, {
+			// 		...data,
+			// 		content: data.delta
+			// 	});
+			// },
 			ABSTRACT_EDIT: data => socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
 			NEW_ROW: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
 			NEW_TAG: data => socket.to(mapUser[socket.id].idArticle).emit(`ADD_TAG`, data),
@@ -182,6 +182,9 @@ module.exports = function(io) {
 			QUILL_NEW_SELECT: data => {
 				console.log(JSON.stringify(data));
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_SELECT`, data);
+			},
+			QUILL_REQ_UPDATE: data => {
+				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_RESP_SELECT`, data);
 			},
 			GET_USERS: data => {
 				try {

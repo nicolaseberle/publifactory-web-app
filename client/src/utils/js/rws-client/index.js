@@ -9,7 +9,6 @@ const url =
 		: 'ws' + '://' + window.location.hostname + ':4000' + '/collaboration';
 
 console.log('WEBSOCKET ON URL=>', url);
-// const url = 'ws://localhost:4000/collaboration';
 
 /**
  * Wrapper on Reconnecting-Websocket

@@ -194,6 +194,7 @@ export default {
 	},
 	data() {
 		return {
+			cursorId: null, // === userName
 			shareDoc: null,
 			id: '',
 			inputRefVisible: false,
@@ -231,8 +232,13 @@ export default {
 	},
 	beforeDestroy() {
 		clearInterval(this.updateLocalCursorIntervalId)
+		if (!this.shareDoc) return
+		this.shareDoc.removeListener('op', () => {})
+		this.shareDoc.destroy();
+		this.shareDoc = null;
 	},
-	created() {
+	async created() {
+		this.cursorId = await this.getUserName();
 		this.id = this.$route.params && this.$route.params.id
 		// this.updateLocalCursorIntervalId = setInterval(async () => {
 		// 	const selection = this.editor.getSelection()
@@ -252,7 +258,7 @@ export default {
 			cursorId: await this.getUserName(),
 		});
 	},
-
+	
 	mounted() {
 		if (this.shareDoc === null) {
 			const connection = this.rws.getConnection()
@@ -269,19 +275,33 @@ export default {
 		});
 
 		this.shareDoc.on('op', (op, source) => {
-			console.log("=>Source:", source)
 			if (source === this.editor) return
 			this.editor.updateContents(op, 'api');
 
 		});
 
-      this.socket.on('QUILL_EXEC_SELECT', async data => {
+      this.socket.on('QUILL_EXEC_SELECT', data => {
+				console.log("EXEC=>")
 					collaboration.selectionUpdate(this, data)
 			});
 			
 			this.socket.on('DELETE_CURSOR', data => {
 				if (!this.sameBlock(data)) return;
 				this.cursorModule.removeCursor(data.cursorId);
+			});
+
+			this.socket.on('QUILL_RESP_SELECT', (data) => {
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				console.log("QUILL RESP SELECT")
+				collaboration.selectionUpdate(this, data)
+				this.socket.emit('QUILL_NEW_SELECT', {
+				range: selection,
+				numBlock: this.numBlock,
+				numSubBlock: this.numSubBlock,
+				numSubSubBlock: this.numSubSubBlock,
+				cursorId: this.cursorId,
+				});
 			});
 
 	    var quill = new Quill('#' + this.idEditor, {
@@ -332,16 +352,24 @@ export default {
 
 
 				
-			this.editor.on('text-change', async (delta, oldDelta, source) => {
+			this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
 				collaboration.textCommit(this, delta)
-				const cursorId = await this.getUserName()
 				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
 					if (err && err.code === 4015) {
 						console.warn(err)
 					}
-      	})
-				collaboration.updateForeignCursors(this, delta)
+				})
+				// const selection = this.editor.getSelection()
+				// if (!selection) return;
+				// this.socket.emit('QUILL_REQ_UPDATE', {
+				// 	range: selection,
+				// 	numBlock: this.numBlock,
+				// 	numSubBlock: this.numSubBlock,
+				// 	numSubSubBlock: this.numSubSubBlock,
+				// 	cursorId: this.cursorId,
+				// });
+				// collaboration.updateForeignCursors(this, delta)
 			});
 
       this.editor.on('selection-change', (range, oldRange, source) => {
