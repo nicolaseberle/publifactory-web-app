@@ -1,14 +1,16 @@
 import ShareDB from 'sharedb/lib/client';
 import richText from 'rich-text';
+
 ShareDB.types.register(richText.type);
 
 const url =
 	location.protocol === 'https:'
-		? 'wss' + '://' + window.location.hostname + ':4000' + '/collaboration'
+		? 'wss' + '://' + window.location.hostname + '/collaboration'
 		: 'ws' + '://' + window.location.hostname + ':4000' + '/collaboration';
 
 console.log('WEBSOCKET ON URL=>', url);
 // const url = 'ws://localhost:4000/collaboration';
+
 /**
  * Wrapper on Reconnecting-Websocket
  */

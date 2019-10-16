@@ -268,11 +268,9 @@ export default {
 			}
 		});
 
-		this.shareDoc.on('op', async (op, source) => {
-			// console.log(op, source, typeof source)
-			// console.log(source === false)
-			const cursorId = await this.getUserName()
-			if (source === cursorId) return
+		this.shareDoc.on('op', (op, source) => {
+			console.log("=>Source:", source)
+			if (source === this.editor) return
 			this.editor.updateContents(op, 'api');
 
 		});
@@ -338,7 +336,7 @@ export default {
 				if (source === 'api')	return;
 				collaboration.textCommit(this, delta)
 				const cursorId = await this.getUserName()
-				this.shareDoc.submitOp(delta, {source: cursorId}, err => {
+				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
 					if (err && err.code === 4015) {
 						console.warn(err)
 					}
