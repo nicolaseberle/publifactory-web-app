@@ -10,7 +10,7 @@
         <div style='vertical-align:middle' class="right-menu-item">
           <el-switch
             v-model="flag_user"
-            inactive-text="User view"
+            inactive-text="Researcher view"
             active-text="Editor view"
             >
           </el-switch>
