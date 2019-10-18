@@ -126,6 +126,7 @@
     <el-col :span='18'>
       <div class='container'>
       <div class='journal-list-articles'>
+          <div v-if='journal.content===null'>No article</div>
           <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
             <div :id='item.reference._id' class='visual'>
 
@@ -199,32 +200,7 @@
       editors: '',
       associate_editors: '',
       monitors: '',
-      articles: [
-        {_id: '#MLKSdmlqjsdnml',
-        title:'First report on the effective intraperitoneal therapy of insulin-dependent diabetes mellitus in pet dogs using “Neo-Islets”, aggregates of adipose stem and pancreatic islet cells',
-        authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-        abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Plasmodium Kinesin-8X associates with mitotic spindles and is essential for oocyst development during parasite proliferation and transmission',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'RanGTP induces an effector gradient of XCTK2 and importin α/β for spindle microtubule cross-linking',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'A Single Cell Transcriptomic Atlas Characterizes Aging Tissues in the Mouse',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'}
-      ]
+      articles: []
     }
   },
   computed: {
