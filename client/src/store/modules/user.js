@@ -11,18 +11,19 @@ import {
   updateUser
 } from './user.api'
 // eslint-disable-next-line camelcase
-import { access_token, email, refresh_token, username } from '../../stored'
+import { access_token, email, refresh_token, username, roles } from '../../stored'
 import {
   STORE_KEY_ACCESS_TOKEN,
   STORE_KEY_REFRESH_TOKEN,
   STORE_KEY_USEREMAIL,
-  STORE_KEY_USERNAME
+  STORE_KEY_USERNAME,
+  STORE_KEY_ROLES
 } from '../../constants'
 
 const state = {
   _id: '',
   role: 'guest',
-  roles: ['guest'],
+  roles: roles,
   avatar: '',
   email: email,
   username: username,
@@ -123,7 +124,8 @@ const actions = {
           const userInfo = Object.assign({}, user, {
             email: payload.email,
             access_token: data.token, // eslint-disable-line
-            refresh_token: '' // eslint-disable-line
+            refresh_token: '', // eslint-disable-line
+            roles: [ user.role ]
           })
           var arrRoles = []
           arrRoles.push(user.role)
@@ -139,6 +141,9 @@ const actions = {
           }, {
             key: STORE_KEY_REFRESH_TOKEN,
             value: userInfo.refresh_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_ROLES,
+            value: userInfo.roles // eslint-disable-line
           }])
           resolve()
         }).catch(() => {
@@ -175,6 +180,9 @@ const actions = {
           }, {
             key: STORE_KEY_REFRESH_TOKEN,
             value: userInfo.refresh_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_ROLES,
+            value: userInfo.roles // eslint-disable-line
           }])
           resolve(userInfo.access_token)
         }).catch(() => {
