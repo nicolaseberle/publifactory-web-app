@@ -16,22 +16,30 @@
       </el-table-column>
       <el-table-column class-name="author-col" width="120px"  label="Author">
         <template slot-scope="articles">
-          <div v-for="item_author in articles.row.authors">
-            {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
+          <div v-if='articles.row.authors.length'>
+            <div v-for="item_author in articles.row.authors">
+              <div v-if='item_author.author'>
+              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
+              </div>
+            </div>
           </div>
         </template>
       </el-table-column>
       <el-table-column class-name="author-col" width="120px"  label="Ass. Editor">
         <template slot-scope="articles">
           <div v-for="associate_editor in articles.row.associate_editor">
-            {{ associate_editor.firstname[0] }}. {{ associate_editor.lastname }}
+            <div v-if='associate_editor'>
+              {{ associate_editor.firstname[0] }}. {{ associate_editor.lastname }}
+            </div>
           </div>
         </template>
       </el-table-column>
       <el-table-column class-name="author-col" width="120px"  label="Reviewer">
         <template slot-scope="articles" >
-          <div v-for="reviewer in articles.row.reviewers" >
+          <div v-if='articles.row.reviewers.length>0' v-for="reviewer in articles.row.reviewers" >
+            <div v-if='reviewer'>
               <span style="white-space: pre;">{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
+            </div>
           </div>
         </template>
       </el-table-column>
@@ -162,6 +170,7 @@ export default {
         else
           this.articles = list.data.articles.filter(d => d.status === this.desiredstatus)
 
+          console.log(this.articles)
       }).catch(err => {
         console.error(err)
       })

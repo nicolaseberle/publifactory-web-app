@@ -52,6 +52,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  TOGGLE_ROLE:(state, role) => {
+    state.roles = [ role ]
   }
 }
 
@@ -231,10 +234,12 @@ const actions = {
     commit('LOGOUT')
     clearMulti([STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN])
   },
-
   checkEmail ({ commit }, payload) {
     checkEmail(payload.userId)
-  }
+  },
+  toggleRole ({ commit }, role) {
+    commit('TOGGLE_ROLE', role)
+  },
 }
 
 const getters = {

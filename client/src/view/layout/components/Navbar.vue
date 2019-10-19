@@ -94,8 +94,21 @@ export default {
       'device'
     ])
   },
+  watch: {
+    flag_user (new_role) {
+      console.log(new_role)
+      if(new_role == false) {
+        this.toggleRole('user')
+        this.$emit('input', new_role)
+      }
+      else {
+        this.toggleRole('editor')
+        this.$emit('input', new_role)
+      }
+    }
+  },
   methods: {
-    ...mapActions(['logout', 'updateGlobalConfig']),
+    ...mapActions(['logout', 'updateGlobalConfig','toggleRole']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')

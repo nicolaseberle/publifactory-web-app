@@ -39,6 +39,7 @@ export const constantRouterMap = [{
   path: '/services',
   component: Layout_services,
   redirect: 'services',
+  hidden: true,
   children: [
     {
       path: '/services',
@@ -56,6 +57,7 @@ export const constantRouterMap = [{
   path: '/summarize',
   component: Layout_services,
   redirect: 'summarize',
+  hidden: true,
   children: [
     {
       path: '/summarize',
