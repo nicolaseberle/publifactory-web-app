@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div :class="{'navbar': !flag_user, 'navbar_editor' : flag_user}">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
 
     <breadcrumb class="breadcrumb-container"/>
@@ -79,7 +79,8 @@ export default {
   },
   data () {
     return {
-      flag_user: false
+      flag_user: false,
+      navbar_user: false
     }
   },
   computed: {
