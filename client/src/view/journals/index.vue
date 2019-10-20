@@ -3,7 +3,7 @@
   <el-row :gutter="10" @page-change="fetch">
     <el-col :span="12">
       <div>
-        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; " icon='el-icon-plus'>Create Collection</el-button>
         <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
           <CreateJournal v-if="flagCreateJournal" v-on:close="flagCreateJournal=false"></CreateJournal>
         </el-dialog>
