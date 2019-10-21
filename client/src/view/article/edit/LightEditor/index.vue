@@ -59,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <!-- <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket"></quill-editor> -->
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:rws='rws'></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
