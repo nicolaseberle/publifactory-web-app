@@ -1,7 +1,8 @@
 /**
  * Project config file includes dev/prod and frontend/backend
  */
-var path = require('path')
+var path = require('path');
+/// const fs = require('fs');
 // var _ = require('lodash')
 
 var backendBase = {
@@ -10,6 +11,9 @@ var backendBase = {
 
   // Server port
   port: process.env.PORT || 4000,
+
+  // Socket port
+  socketPort: process.env.SOCKET_PORT || 4001,
 
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
@@ -31,14 +35,19 @@ var backendBase = {
 
 var development = {
   email : {
-    rootHTML: "http://localhost:9001",
+    rootHTML:  process.env.ROOT_APP, // || "http://localhost:9001",
     user: "publifactory.noreply@gmail.com",
-    pass: "09TLebxXoyLVjZlYVQqdgUniIE1vib9o"
+    pass: "cxuxhyudqehcujro"
   },
   orcid: {
     clientId: 'APP-HCKHJYQTALPVGUJ1',
     clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
-    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
+    callbackUrl: 'http://api:4000/api/auth/local/orcid/callback'
+  },
+  google: {
+    client_id	: "512110219820-jg8kgmn0keerqaq6iktdp6th80gqguvv.apps.googleusercontent.com",
+    client_secret: "bP63zGcgNyfv5jBDKYdsgpbE",
+    callbackUrl: 'http://localhost:9001'
   },
   frontend: {
     port: 9001,
@@ -62,22 +71,22 @@ var development = {
     resetDB: 'false',
     seedDB: 'true',
     mongo: {
-      uri: 'mongodb://localhost:27017/mevn-dev',
+      uri: `mongodb://${process.env.BASE_MONGO}:27017/`,
       useNewUrlParser: true
     }
   })
 }
 var production = {
-  /*email : {
-    host: process.env.EMAIL_HOST,
-    port : 587,
-    rootHTML: process.env.ROOT_HTML,
-    secure: false,
-    auth: {
-      'user' : process.env.EMAIL_ACCOUNT,
-      'pass' : process.env.EMAIL_PASS
-    }
-  },*/
+  email : {
+    rootHTML:  process.env.ROOT_APP || "http://localhost:9001",
+    user: "publifactory.noreply@gmail.com",
+    pass: "cxuxhyudqehcujro"
+  },
+  orcid: {
+    clientId: 'APP-HCKHJYQTALPVGUJ1',
+    clientSecret: '66671331-2305-4cd9-915e-fd65887fe14f',
+    callbackUrl: 'http://localhost:4000/api/auth/local/orcid/callback'
+  },
   frontend: {
     index: path.resolve(__dirname, './client/dist/index.html'),
     assetsRoot: path.resolve(__dirname, './client/dist'),
@@ -104,9 +113,14 @@ var production = {
 
     // Server port
     port: process.env.APP_PORT || process.env.PORT || 8080,
+
+    //Socket.io port
+    socketPort: process.env.SOCKET_PORT || 4001,
+
     // MongoDB connection options
     mongo: {
-      uri: process.env.MONGODB_URI
+      //uri: process.env.MONGODB_URI
+      uri: 'mongodb://localhost:27017/',
     },
 
     // frontend folder

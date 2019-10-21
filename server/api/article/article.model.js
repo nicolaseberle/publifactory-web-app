@@ -17,6 +17,10 @@ const ArticleSchema = new Schema({
     type: String,
     required: true
   },
+  journal: {
+    type: Schema.Types.ObjectId,
+    ref: 'Journal'
+  },
   content: {
     type: String
   },
@@ -47,6 +51,10 @@ const ArticleSchema = new Schema({
       }
     }]]
   }],
+  references: [{
+    title: String,
+    doi: String
+  }],
   published: {
     type: Boolean,
     required: true,
@@ -54,6 +62,7 @@ const ArticleSchema = new Schema({
   },//deprecated
   status: {
     type: String,
+    required: true,
     default: 'draft'
   },
   doi: {
@@ -81,6 +90,10 @@ const ArticleSchema = new Schema({
       ref: 'User'
     }}
   ],
+  associate_editor:[{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   invitation:[{
     type: Schema.Types.ObjectId,
     ref: 'Invitation'
@@ -97,13 +110,59 @@ const ArticleSchema = new Schema({
     type: String
   }],
   nbComments: {
-      type: Number,
-      default: 0
+    type: Number,
+    default: 0
   },
   nbReviews: {
-        type: Number,
-        default: 0
-  }
+    type: Number,
+    default: 0
+  },
+  version: [{
+    name: {
+      type: String,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    abstract: {
+      type: String,
+      required: true
+    },
+    arr_content:[{
+      title:String,
+      content:String,//deprecated
+      path_figure: String,//deprecated // migrate url path for shiny
+      display: {
+        type: Boolean,
+        default: true
+      },//deprecated
+      block:[[{
+        type:{
+          type: String,
+          default: 'text'
+        },
+        content:{
+          type: String,
+          default: 'Type your text'
+        },
+        uuid: {
+          type: String,
+          default: ''
+        },
+        nbEdit:{
+          type: Number,
+          default: 0//need it to refresh figures after editing
+        }
+      }]]
+    }],
+    date: {
+      type: String,
+      required: true,
+      default: new Date()
+    }
+  }]
 });
 
 ArticleSchema.plugin(mongooseDelete, { deletedAt: true });

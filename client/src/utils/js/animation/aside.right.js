@@ -1,10 +1,11 @@
 import $ from 'jquery'
+
 const debug = require('debug')('frontend');
 
 function asideRightAnimation () {
     // Selectors object
     // ----------------
-  var asideRight = {
+  const asideRight = {
     tags: $('.header-comments-reviews'),
     button: $('aside.comments-reviews'),
     pannel: {

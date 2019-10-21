@@ -11,16 +11,15 @@ router.use('/:id', async function (req, res, next) {
     req.route = 'comment';
     await rolesArticle.doYouHaveThisRight(req, res, next);
   } catch (e) {
-    return res.status(401).json({ success: false, message: e.message });
+    next(e);
   }
-})
+});
 
-router.get('/:id/comments', commentsController.getArticleComments);
-router.get('/:id/comment/:uuid', commentsController.getArticleComment);
-router.post('/:id/comment', commentsController.createArticleComment);
-router.post('/:id/comment/:uuid/answer', commentsController.answerComment);
-router.put('/:id/comments/:uuid', commentsController.updateComment);
-router.put('/:id/comments/:uuid/content', commentsController.updateCommentContent);
-router.delete('/:id/comments/:uuid', commentsController.findCommentAndDelete);
+router.get('/:id/:uuid?', commentsController.getComments);
+router.post('/:id', commentsController.createArticleComment);
+router.post('/:id/:uuid/answer', commentsController.answerComment);
+router.put('/:id/:uuid', commentsController.updateComment);
+router.put('/:id/:uuid/content', commentsController.updateCommentContent);
+router.delete('/:id/:uuid', commentsController.findCommentAndDelete);
 
 module.exports = router;

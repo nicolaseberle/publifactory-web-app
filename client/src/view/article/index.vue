@@ -3,12 +3,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import editComponent from './edit'
-import readComponent from './read'
-import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import editComponent from './edit'
+  import readComponent from './read'
+  import axios from 'axios'
 
-const debug = require('debug')('frontend')
+
+  const debug = require('debug')('frontend')
 
 const defaultForm = {
   status: 'draft',
@@ -38,7 +39,7 @@ export default {
   components: { editComponent, readComponent },
   data() {
     return {
-      currentRole: 'readComponent',
+      currentRole: 'editComponent',
       postForm: Object.assign({}, defaultForm),
     }
   },
@@ -49,18 +50,8 @@ export default {
     ])
   },
   created() {
-    if (1) {
       this.id = this.$route.params && this.$route.params.id
-
       debug("creation de la page")
-
-      this.fetchData(this.id)
-      //console.log(this.postForm.authors)
-
-      //}
-    } else {
-      this.postForm = Object.assign({}, defaultForm)
-    }
   },
   methods: {
     fetchData(id) {
@@ -68,13 +59,12 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
         this.postForm = response.data
-        var self = this;
         // we check if article author is the current user to give him the righ to edit the document
-        this.postForm.authors.forEach(function(item) {
-          if (item.author._id == self.userId) {
-            self.currentRole = 'editComponent'
+        /*this.postForm.authors.forEach((item) => {
+          if (item.author._id == this.userId) {
+            this.currentRole = 'editComponent'
           }
-        });
+        });*/
 
       }).catch(err => {
         console.log(err)

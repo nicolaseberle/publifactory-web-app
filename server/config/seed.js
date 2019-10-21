@@ -11,6 +11,9 @@ var Journals = require('../api/journal/journal.model');
 const Figure = require('../api/figure/figure.model');
 var RolesArticle = require('../api/roles/article/roles.article.model');
 var RolesJournal = require('../api/roles/journal/roles.journal.model');
+var Invitation = require('../api/invitations/invitations.model');
+var Picture = require('../api/picture/picture.model');
+const Historic = require('../api/article/history/history.model')
 var seedDB = require('../../config.js').backend.seedDB
 var resetDB = require('../../config.js').backend.resetDB
 
@@ -70,17 +73,20 @@ var populateUsers = new Promise(
       return users
     })
     resolve(users);
-
 })
 
 var populateBase = function () {
     populateUsers.then(function (users) {
-      Figure.find({}).remove().exec()
+      Figure.find({}).remove().exec();
+      Picture.find({}).remove().exec();
+      Historic.find({}).remove().exec();
       User.find({}, async function (err, users) {
         if (err) throw err
-        createComment(users)
-        await createArticles(users);
+        //createComment(users)
+        //await createArticles(users);
         createJournals(users);
+        createComment();
+        Invitation.find({}).remove().exec();
       })
       }).catch(function (error) {
           console.log(error.message);
@@ -96,21 +102,8 @@ if (seedDB === 'true') {
 
 function createComment(user_tmp) {
   Comments.find({}).remove()
-    .then(() => {
-      let comments = Comments.create(
-      {
-        userId: [user_tmp[0]._id],
-        content: 'ceci est un commentaire',
-        reviewRequest: 'Simple comment'
-      },
-      {
-        userId: [user_tmp[0]._id],
-        content: 'ceci est un autre commentaire',
-        reviewRequest: 'Simple comment'
-      });
-  })
-  .then(() => {console.log('finished populating comments');})
-  .catch(err => console.log('error populating comments', err));
+    .then(() => {console.log('finished populating comments');})
+    .catch(err => console.log('error populating comments', err));
 
 }
 
@@ -119,14 +112,14 @@ function createJournals(user_tmp) {
     .then(() => {
       let journals = Journals.create(
       {
-        title: 'Developmental Biology',
-        abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
-        tags:['Aging','death rates','curve fitting'],
+        title: 'BioRxiv',
+        abstract: "bioRxiv is an open access preprint repository for the biological sciences co-founded by John Inglis and Richard Sever in November 2013. It is hosted by the Cold Spring Harbor Laboratory. As preprints, papers hosted on bioRxiv are not peer-reviewed",
+        tags:['Biology'],
         color_1: '#B9DAAC',
         color_2: '#B9DA90',
         users: [user_tmp[2]._id],
         published: true
-      },
+      }/*,
       {
         title: 'Genetics',
         abstract: "Hae duae provinciae bello quondam piratico catervis mixtae praedonum a Servilio pro consule missae sub iugum factae sunt vectigales. et hae quidem regiones velut in prominenti terrarum lingua positae ob orbe eoo monte Amano disparantur.",
@@ -144,7 +137,7 @@ function createJournals(user_tmp) {
         color_2: "#FAD2BE",
         users: [user_tmp[1]._id],
         published: true
-      });
+      }*/);
       return journals
   })
   .then(() => {console.log('finished populating journals');})
@@ -167,6 +160,7 @@ async function createArticles (user_tmp, comment_tmp) {
             content: 'Need precision',
             reviewRequest: 'Minor revision'
           });
+
         let article = Article.create(
           {
             title: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila',
@@ -288,23 +282,25 @@ async function createArticles (user_tmp, comment_tmp) {
 
           });
         resolve(article);
+        //resolve()
       })
       .then(() => {
         console.log('finished populating articles')
       })
       .catch(err => console.log('error populating articles', err));
   });
-  createRole(user_tmp, resres);
+  createRole(/*user_tmp, resres*/);
 }
 
-function createRole(user, article) {
-  RolesArticle.find({}).remove().then(() => {
+function createRole(/*user, article*/) {
+  RolesArticle.find({}).remove().exec();//.then(() => {
+    /*
     RolesArticle.create({
       id_user: user[0]._id,
       id_article: article._id,
       right: 'author'
     });
-  });
+  });*/
   RolesJournal.find({}).remove().exec();
 }
 
@@ -427,8 +423,8 @@ function createUsers() {
       },
       {
         provider: 'local',
-        role: 'editor',
-        roles : ['editor'],
+        role: 'user',
+        roles : ['user'],
         name: 'leo',
         firstname: 'Leo',
         username: 'Leo',

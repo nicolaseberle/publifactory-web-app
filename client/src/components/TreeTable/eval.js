@@ -4,6 +4,7 @@
 */
 'use strict'
 import Vue from 'vue'
+
 export default function treeToArray(data, expandAll, parent = null, level = null) {
   let tmp = []
   Array.from(data).forEach(function(record) {

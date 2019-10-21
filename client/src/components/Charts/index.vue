@@ -73,17 +73,17 @@
   </div>
 </template>
 <script>
-import Vue from 'vue';
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import tracesMenu from '../../components/Charts/Menu/TracesMenu'
-import generalMenu from '../../components/Charts/Menu/GeneralMenu'
-import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
-import { HotTable } from '@handsontable/vue';
-import { mapGetters } from 'vuex'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import tracesMenu from '../../components/Charts/Menu/TracesMenu'
+  import generalMenu from '../../components/Charts/Menu/GeneralMenu'
+  import styletracesMenu from '../../components/Charts/Menu/StyleTracesMenu'
+  import { HotTable } from '@handsontable/vue'
+  import { mapGetters } from 'vuex'
 
-import axios from 'axios'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+
+  const debug = require('debug')('frontend');
 //var Handsontable = require('handsontable');
 
 export default {
@@ -114,7 +114,7 @@ export default {
       },
       settings3: {
           data: [
-            ["Ford", "Volvo", "Toyota", "Honda"],
+            ["Smaple A", "Sample B", "Sample C", "Sample CTRL"],
             [10, 11, 12, 13]
           ],
           colHeaders: true,
@@ -352,16 +352,26 @@ export default {
     }
   },
   methods: {
+
+
     saveFigure () {
+
+      let chartInfos = {
+        legend: '',
+        source: 'http://dx.doi.org/00.0000/e0000000',
+        name: this.layout.title,
+        uuid_figure: this.idfigure
+      }
       console.log("saveFigure ", this.currentData.y)
       axios.put('/api/figure/'  + this.idfigure, {
         data: this.currentData,
-        option:this.option,
+        option:this.options,
         layout: this.layout,
         script: {
           language: "Light",
           content: null
-        }
+        },
+        infos: chartInfos
       }, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })

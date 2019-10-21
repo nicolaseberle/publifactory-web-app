@@ -38,6 +38,24 @@ const FigureSchema = new Schema({
         default: null
       }
     }]
+  },
+  infos: {
+    legend: {
+      type: String,
+      default: null
+    },
+    source: {
+      type: String,
+      default: null
+    },
+    name: {
+      type: String,
+      default: null
+    },
+    uuid_figure: {
+      type: String,
+      default: null
+    }
   }
 });
 

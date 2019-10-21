@@ -15,15 +15,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import CodeMirror from 'codemirror'
-import 'codemirror/mode/stex/stex.js'
-import 'codemirror/lib/codemirror.css'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import CodeMirror from 'codemirror'
+  import 'codemirror/mode/stex/stex.js'
+  import 'codemirror/lib/codemirror.css'
 
-import compile from '../../../../utils/js/latex/latex2html.js'
-import VueSplit from 'vue-split-panel'
-const util = require('util');
+  import compile from '../../../../utils/js/latex/latex2html.js'
+  import VueSplit from 'vue-split-panel'
+
+  const util = require('util');
 const setTimeoutPromise = util.promisify(setTimeout);
 
 export default {
@@ -43,13 +44,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'accessToken']),
-    closeSidebar() {
-      this.sidebar.opened = false
-    }
+    ...mapGetters(['sidebar', 'accessToken'])
   },
   created () {
-    this.sidebar.opened = false
     this.id = this.$route.params && this.$route.params.id
     this.fetchData(this.id)
     this.convertLightEditor2Latex()
@@ -101,7 +98,7 @@ export default {
       })
     },
     save () {
-      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"tags": this.postForm.tags,"arr_content": this.postForm.arr_content,"tags" : '' ,"published": true
+      axios.put('/api/articles/'  + this.id, { "title": this.postForm.title,"abstract":this.postForm.abstract,"content": this.postForm.content,"tags": this.postForm.tags,"arr_content": this.postForm.arr_content,"tags" : '' ,"status": this.postForm.status,"published": true
       }, { headers: {'Authorization': `Bearer ${this.accessToken}`} })
       .then(response => {
         console.log("article saved")

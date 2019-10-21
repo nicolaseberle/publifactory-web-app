@@ -1,23 +1,29 @@
 // import { merge } from 'lodash'
-import { saveMulti, clearMulti } from '../../storage'
+import { clearMulti, saveMulti } from '../../storage'
 import {
-  login,
-  getUserInfo,
-  resetGuestPassword,
   changePassword,
-  resetPassword,
-  updateUser,
+  checkEmail,
+  getUserInfo,
+  login,
   loginOrcid,
-  checkEmail
+  resetGuestPassword,
+  resetPassword,
+  updateUser
 } from './user.api'
 // eslint-disable-next-line camelcase
-import { username, email, access_token, refresh_token } from '../../stored'
-import { STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN } from '../../constants'
+import { access_token, email, refresh_token, username, roles } from '../../stored'
+import {
+  STORE_KEY_ACCESS_TOKEN,
+  STORE_KEY_REFRESH_TOKEN,
+  STORE_KEY_USEREMAIL,
+  STORE_KEY_USERNAME,
+  STORE_KEY_ROLES
+} from '../../constants'
 
 const state = {
   _id: '',
   role: 'guest',
-  roles: ['guest'],
+  roles: roles,
   avatar: '',
   email: email,
   username: username,
@@ -47,6 +53,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  TOGGLE_ROLE:(state, role) => {
+    state.roles = [ role ]
   }
 }
 
@@ -115,6 +124,46 @@ const actions = {
           const userInfo = Object.assign({}, user, {
             email: payload.email,
             access_token: data.token, // eslint-disable-line
+            refresh_token: '', // eslint-disable-line
+            roles: [ user.role ]
+          })
+          var arrRoles = []
+          arrRoles.push(user.role)
+          commit('SET_ROLES', arrRoles)
+          commit('SET_AVATAR', user.avatar)
+          commit('SET_USER_INFO', userInfo)
+          saveMulti([{
+            key: STORE_KEY_USEREMAIL,
+            value: userInfo.email
+          }, {
+            key: STORE_KEY_ACCESS_TOKEN,
+            value: userInfo.access_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_REFRESH_TOKEN,
+            value: userInfo.refresh_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_ROLES,
+            value: userInfo.roles // eslint-disable-line
+          }])
+          resolve()
+        }).catch(() => {
+        })
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  // resetPassword action
+  resetGuestPassword ({ commit, dispatch }, payload) {
+    return new Promise(async (resolve, reject) => {
+      await resetGuestPassword(payload.id, payload.password, payload.token).then(data => {
+        if (!data) {
+          reject('error')
+        }
+        getUserInfo(data.token).then(user => {
+          const userInfo = Object.assign({}, user, {
+            email: payload.email,
+            access_token: data.token, // eslint-disable-line
             refresh_token: '' // eslint-disable-line
           })
           var arrRoles = []
@@ -131,30 +180,20 @@ const actions = {
           }, {
             key: STORE_KEY_REFRESH_TOKEN,
             value: userInfo.refresh_token // eslint-disable-line
+          }, {
+            key: STORE_KEY_ROLES,
+            value: userInfo.roles // eslint-disable-line
           }])
-          resolve()
+          resolve(userInfo.access_token)
         }).catch(() => {
         })
-      }).catch(err => {
-        reject(err)
-      })
-    })
-  },
-  // resetPassword action
-  resetGuestPassword ({ commit, dispatch }, payload) {
-    return new Promise((resolve, reject) => {
-      resetGuestPassword(payload.id, payload.password, payload.token).then(data => {
-        if (!data) {
-          reject('error')
-        }
-        resolve()
       }).catch(err => { reject(err) })
     })
   },
   // changePassword action
   changePassword ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      changePassword(payload.id, payload.oldPassword, payload.newPassword, payload.token).then(data => {
+      changePassword(payload.oldPassword, payload.newPassword, payload.token).then(data => {
         if (!data) {
           reject('error')
         }
@@ -176,8 +215,7 @@ const actions = {
   // updateUser action
   updateUser ({ commit, dispatch }, payload) {
     return new Promise((resolve, reject) => {
-      updateUser(payload.id,
-                  payload.firstname,
+      updateUser(payload.firstname,
                   payload.lastname,
                   payload.field,
                   payload.token).then(data => {
@@ -204,10 +242,12 @@ const actions = {
     commit('LOGOUT')
     clearMulti([STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN])
   },
-
   checkEmail ({ commit }, payload) {
     checkEmail(payload.userId)
-  }
+  },
+  toggleRole ({ commit }, role) {
+    commit('TOGGLE_ROLE', role)
+  },
 }
 
 const getters = {

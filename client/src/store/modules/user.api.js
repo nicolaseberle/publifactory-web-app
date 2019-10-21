@@ -24,18 +24,17 @@ export function loginOrcid (orcidId, password) {
   }).then(res => console.log(res.json()))
 }
 
-export function resetGuestPassword (id, password, token) {
-  return Vue.http.put('users/' + id + '/guestPassword', {
-    password,
-    headers: {
+export function changePassword (oldPassword, newPassword, token) {
+  return Vue.http.put('users/changePassword', {
+    oldPassword, newPassword, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())
 }
 
-export function changePassword (id, oldPassword, newPassword, token) {
-  return Vue.http.put('users/' + id + '/changePassword', {
-    oldPassword, newPassword, headers: {
+export function resetGuestPassword (id, newPassword, token) {
+  return Vue.http.put('users/' + id + '/guestPassword', {
+      newPassword, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())
@@ -47,8 +46,8 @@ export function resetPassword (email) {
   }).then(res => res.json())
 }
 
-export function updateUser (id, firstname, lastname, field, token) {
-  return Vue.http.put('users/' + id + '/updateUser', {
+export function updateUser (firstname, lastname, field, token) {
+  return Vue.http.put('users/updateUser', {
     firstname, lastname, field, headers: {
       'Authorization': `Bearer ${token}`
     }

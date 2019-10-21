@@ -43,7 +43,7 @@
       <el-radio v-model="dynamicForm.access" label="close_access">Close Access</el-radio>
       </el-form-item>
       <el-form-item style='text-align:right'>
-        <el-button type="primary" @click="submitForm()">Create</el-button>
+        <el-button type="primary" @click="submitForm('dynamicForm')">Create</el-button>
         <el-button @click="$emit('close')">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -52,9 +52,10 @@
 
 <script>
 
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+
+  const debug = require('debug')('frontend');
 
   export default {
     name: 'CreateJournal',
@@ -102,8 +103,8 @@ const debug = require('debug')('frontend');
 
     },
     methods: {
-      submitForm() {
-        this.$refs[this.dynamicForm].validate((valid) => {
+      submitForm(dynamicForm) {
+        this.$refs[dynamicForm].validate((valid) => {
           if (valid) {
             this.$confirm(`By clicking on Create, I acknowledge having read the Conditions Générales d'utilisation de Publifactory, as well as the General Conditions of Use of the Publifactory site and I accept them.`, this.$t('confirm.title'), {
                 type: 'warning'
@@ -128,7 +129,7 @@ const debug = require('debug')('frontend');
           tags: this.dynamicForm.tags,
           published: true
         };
-        axios.post('/api/journals/', newJournal, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+        axios.post('/api/journals/', newJournal,  { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
         .then(response => {
           let new_journal_id = response.data.journal._id
           debug(response.data)
@@ -145,7 +146,6 @@ const debug = require('debug')('frontend');
           this.$refs.saveTagInput.$refs.input.focus();
         });
       },
-
       handleInputConfirm() {
         let inputValue = this.inputValue;
         if (inputValue) {

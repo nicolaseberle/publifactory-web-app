@@ -2,10 +2,11 @@
 // Animation of the header
 // ----------------------------------------------------
 
-import ScrollMagic from 'scrollmagic/scrollmagic/uncompressed/ScrollMagic';
-import 'scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap';
-import 'scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators';
-import { TweenMax, TimelineMax } from 'gsap'
+import ScrollMagic from 'scrollmagic/scrollmagic/uncompressed/ScrollMagic'
+import 'scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap'
+import 'scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators'
+import { TweenMax } from 'gsap'
+
 //import $ from "jquery";
 
 function headerAnimation() {

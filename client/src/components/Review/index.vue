@@ -7,7 +7,7 @@
           <a href="#" title="Close this side bar" class="close"><img src="/static/icons/Close.svg" class="close svg" alt="Close this side bar"></a>
       </header>
       <section class="content reviews">
-          <tree-comment v-if='reports' :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0"></tree-comment>
+          <tree-comment v-if='reports' :uuidComment="reports.uuidComment" :creationDate="reports.creationDate" :label="reports.content" :anonymousFlag="reports.anonymousFlag" :reviewRequest="reports.reviewRequest" :user="reports.userId" :nodes="reports" v-on:post="reload" :depth="0" :socket="this.socket"></tree-comment>
           <el-card id="card-form-report">
 
           <el-row v-show='checkedAnonymous' type="flex" class="row-bg" style="margin: 0px 0 5px 0;align-items: center;">
@@ -40,7 +40,7 @@
       <section class="content comments">
         <el-collapse v-model="activeComments" accordion>
           <div v-for="t in Comments">
-            <article>
+            <article>this.list
               <section>
                 <el-collapse-item :title="t.name" :name="t.id">
 
@@ -105,21 +105,23 @@
 
 </template>
 <script>
-import locales from '../../locales/article'
-import { mapGetters } from 'vuex'
-import axios from 'axios'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCoffee,faReply } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-// import hightlightText from '../../utils/js/animation/highlight.js';
-import VuePlotly from '@statnett/vue-plotly'
-import asideRightAnimation from '../../utils/js/animation/aside.right.js';
-var uuidv4 = require('uuid/v4');
+  import locales from '../../locales/article'
+  import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faCoffee, faReply } from '@fortawesome/free-solid-svg-icons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  // import hightlightText from '../../utils/js/animation/highlight.js';
+  import VuePlotly from '@statnett/vue-plotly'
+  import TreeComment from './TreeComment.vue'
 
-import TreeComment from './TreeComment.vue'
-const debug = require('debug')('frontend');
+  import asideRightAnimation from '../../utils/js/animation/aside.right.js'
 
-library.add(faCoffee,faReply)
+  var uuidv4 = require('uuid/v4');
+
+  const debug = require('debug')('frontend');
+
+library.add(faCoffee,faReply);
 
 const layout_1 = {
   autosize: true,
@@ -136,7 +138,7 @@ const layout_1 = {
     }
   },
   showlegend: false
-}
+};
 const layout_2 = {
   autosize: true,
   width: 400,
@@ -152,13 +154,13 @@ const layout_2 = {
     }
   },
   showlegend: false
-}
+};
 
 export default {
   name: 'reportComponent',
   locales,
   components: {'tree-comment': TreeComment,'font-awesome-icon': FontAwesomeIcon, VuePlotly},
-  props: ['uuid'],
+  props: ['uuid', 'socket'],
   data () {
     return {
       qualitybiblioscore:0,
@@ -208,7 +210,7 @@ export default {
       activeComments: ['1'],
       checkedAnonymous: false,
       activeName: 'first',
-      reports : '',
+      reports : [],
       editReport: '',
       editAnswer: '',
       errors: {message: ''},
@@ -254,21 +256,22 @@ export default {
     }
 
   },
-  created() {
-    this.id = this.$route.params && this.$route.params.id
-    this.fetchReport(this.id)
-    this.fetchArticle(this.id)
+  async created() {
+      this.id = this.$route.params && this.$route.params.id;
+      this.fetchReport(this.id);
+      this.fetchArticle(this.id)
 
   },
   mounted () {
-    asideRightAnimation()
+    this.socket.on('ADD_COMMENT', data => this.reports = data.newReports);
+
     axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
     }).then(response => {
-      this.form.email = response.data.email
-      this.form.firstname = response.data.firstname
+      this.form.email = response.data.email;
+      this.form.firstname = response.data.firstname;
       this.form.lastname = response.data.lastname
-      })
+      });
 
     this.currentData = [{
       type: 'scatterpolar',
@@ -286,88 +289,88 @@ export default {
     }]
   },
   methods: {
-    fetchReport(id) {
-      axios.get('/api/comments/'  + id + '/comments', {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-        this.reports = response.data
+    async fetchReport(id) {
+        try {
+            const response = await axios.get('/api/comments/'  + id, {
+                headers: {'Authorization': `Bearer ${this.accessToken}`}
+            });
+            this.reports = response.data;
 
-        const _allReports = [];
-        let stateVector_ = {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0}
-        for (var i=0, _report; _report = this.reports[i]; i++){
-          _report.edit = false;
-          _report.flagToAnswer = false;
-          _report.flagShowingComment = false;
-          _allReports.push(_report);
-          stateVector_.nbComment = stateVector_.nbComment + 1
-          if(_report.reviewRequest === 'Minor revision')
-            stateVector_.nbWarning = stateVector_.nbWarning + 1
-          if(_report.reviewRequest === 'Major revision')
-            stateVector_.nbDanger = stateVector_.nbDanger + 1
-          if(_report.reviewRequest === 'Resolved')
-              stateVector_.nbResolved = stateVector_.nbResolved + 1
+            const _allReports = [];
+            let stateVector_ = {nbComment:0,nbWarning:0,nbDanger:0,nbSolved:0};
+            for (var i=0, _report; _report = this.reports[i]; i++){
+                _report.edit = false;
+                _report.flagToAnswer = false;
+                _report.flagShowingComment = false;
+                _allReports.push(_report);
+                stateVector_.nbComment = stateVector_.nbComment + 1;
+                if(_report.reviewRequest === 'Minor revision')
+                    stateVector_.nbWarning = stateVector_.nbWarning + 1;
+                if(_report.reviewRequest === 'Major revision')
+                    stateVector_.nbDanger = stateVector_.nbDanger + 1;
+                if(_report.reviewRequest === 'Resolved')
+                    stateVector_.nbResolved = stateVector_.nbResolved + 1
+            }
+
+            this.reports = _allReports;
+            this.$emit('changecomment',stateVector_)
+        } catch (e) {
+            console.log(e);
+            this.errors.message = 'fetchReport fails';
+        }
+    },
+    async fetchArticle(id) {
+      const response = await axios.get('/api/articles/' + id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      });
+      this.article = response.data
+    },
+    async reload() {
+        await this.fetchReport(this.id)
+    },
+    async createReport() {
+        let response__;
+        debug("createReport : ", this.uuid);
+        let now = new Date().getTime();
+        this.form.creationDate = now;
+        let uuid = '';
+        if (this.uuid === '') {
+            uuid = String(uuidv4())
+        } else {
+            uuid = this.uuid
         }
 
-        this.reports = _allReports
-        this.$emit('changecomment',stateVector_)
-      }).catch(err => {
-        console.log(err)
-        this.errors.message = 'fetchReport fails';
-      })
-    },
-    fetchArticle(id) {
-      axios.get('/api/articles/' + id , {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-        this.article = response.data
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-    reload () {
-      this.fetchReport(this.id)
-    },
-    createReport() {
-      let response__;
-      debug("createReport : " , this.uuid)
-      let now = new Date().getTime();
-      this.form.creationDate = now
-      let uuid = ''
-      if (this.uuid==''){
-        uuid = String(uuidv4())
-      } else {
-        uuid = this.uuid
-      }
+        const newComment = {
+            date: now,
+            userId: this.userId,
+            content: String(this.editReport),
+            uuidComment: String(uuid),
+            reviewRequest: String(this.reviewRequest),
+            commentFlag: false, //it's a review,
+            anonymousFlag: this.checkedAnonymous
+        };
+        this.uuid = '';
+        this.checkedAnonymous = false;
 
-      const newComment = {
-        date: now,
-        userId : this.userId,
-        content : String(this.editReport),
-        uuidComment: String(uuid),
-        reviewRequest : String(this.reviewRequest),
-        commentFlag : false, //it's a review,
-        anonymousFlag: this.checkedAnonymous
-      };
-      this.uuid = ''
-      this.checkedAnonymous = false
+        this.article.nbReviews = this.article.nbReviews + 1;
 
-      this.article.nbReviews = this.article.nbReviews + 1
-
-      if (this.editReport) {
-        this.editReport = ''
-        this.reviewRequest = ''
-      }
-      axios.post('/api/comments/'  + this.id + '/comment', newComment, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-      .then(response => {
-        response__ = response.data;
-        this.errors.message = 'createReport success ';
-        this.fetchReport(this.id)
-      })
-      .catch(err => {
-        this.errors.message = 'createReport fails';
-      });
+        if (this.editReport) {
+            this.editReport = '';
+            this.reviewRequest = ''
+        }
+        try {
+            const response = await axios.post('/api/comments/' + this.id, newComment, {
+                headers: {'Authorization': `Bearer ${this.accessToken}`}
+            });
+            this.reports.push(response.data);
+            response__ = response.data;
+            this.errors.message = 'createReport success ';
+            this.socket.emit('NEW_COMMENT', {
+                newReports: this.reports
+            });
+        } catch (e) {
+            this.errors.message = 'createReport fails';
+        }
     }
   }
 }

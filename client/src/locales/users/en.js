@@ -7,7 +7,8 @@ export default {
     model: {
       username: 'Username',
       role: 'Role',
-      password: 'Password'
+      password: 'Password',
+      validated: 'Validated'
     },
     create: {
       title: 'Create a user'

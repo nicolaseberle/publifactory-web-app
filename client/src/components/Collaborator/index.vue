@@ -88,19 +88,18 @@ debug
   </div>
 </template>
 <script>
-import axios from 'axios'
-import Sortable from 'sortablejs'
-import { mapGetters } from 'vuex'
-const debug = require('debug')('frontend');
+  import axios from 'axios'
+  import Sortable from 'sortablejs'
+  import { mapGetters } from 'vuex'
+
+  const debug = require('debug')('frontend');
 
 const shortid = require('shortid');
 
 export default {
   name: 'addCollaborator',
   components: {},
-  props: {
-    authors: {}
-  },
+  props: ["authors", "socket"],
   data() {
     return {
       list: null,
@@ -164,12 +163,32 @@ export default {
     this.total = 2
   },
   mounted() {
-      this.list = this.authors
-      this.oldList = this.list.map(v => Number(v.rank))
-      this.newList = this.oldList.slice()
-      this.$nextTick(() => {
-        this.setSort()
-      })
+    /**
+     * Socket instructions from API
+     */
+    this.socket.on('ADD_COLLABORATOR', data => {
+      this.list = data.list;
+      this.setSort();
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_COLLABORATOR', data => {
+      this.list = data.list;
+      this.setSort();
+      this.$forceUpdate();
+    });
+    this.socket.on('DELETE_COLLABORATOR', data => {
+      this.list = this.list.filter(function( el ) {
+        return el._id !== data.id;
+      });
+      this.newList = this.list.map(v => Number(v.rank))
+    });
+
+    this.list = this.authors
+    this.oldList = this.list.map(v => Number(v.rank))
+    this.newList = this.oldList.slice()
+    this.$nextTick(() => {
+      this.setSort()
+    })
   },
   methods: {
     setSort() {
@@ -192,14 +211,14 @@ export default {
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.addReviewer()
+            this.addCollaborator()
           } else {
             debug('error submit!!');
             return false;
           }
         });
     },
-    async addReviewer () {
+    async addCollaborator () {
       const nbAuthors = this.list.length + 1
       const newAuthor = {
         rank: nbAuthors,
@@ -218,6 +237,9 @@ export default {
       this.newList = this.list.map(v => Number(v.rank))
       this.$forceUpdate()
       this.cleanForm()
+      this.socket.emit('NEW_COLLABORATOR', {
+        list: this.newList
+      })
     },
     invite (email, firstname, lastname) {
       let sender = this.userId;
@@ -250,18 +272,14 @@ export default {
         })
       })
     },
-    addNewAuthor (email) {
+    async addNewAuthor (email) {
       var _newAuthor = {
                           'rank': this.list.length,
                           'role': 'Author',
                           'email': email
                        }
-      axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
+      return await axios.put('/api/articles/'+ this.idArticle +'/addAuthors',{ 'author' : _newAuthor}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-      .then(res => {
-        return res
-      }).catch((err) => {
       })
     },
     createTempAccount (_email,_password, _firstname,_lastname) {
@@ -296,13 +314,15 @@ export default {
             type: 'success',
             message: this.$t('message.removed')
           })
+          this.socket.emit('REMOVE_COLLABORATOR', {
+            id: _removedAuthorId
+          })
           this.fetchMyArticles()
         })
       }).catch(() => {})
     },
     onChange() {
-      const newAuthors = this.list
-      axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: newAuthors },
+      axios.patch(`/api/articles/${this.idArticle}/authorRights`, { newAuthors: this.list },
         { headers: {'Authorization': `Bearer ${this.accessToken}`} })
         .then(() => {
           this.$message({
@@ -314,7 +334,9 @@ export default {
             type: "error",
             message: this.$t('message.changeRoleFail')
           })
-      })
+      }).finally(() => this.socket.emit('UPDATE_COLLABORATOR', {
+        list: this.newList
+      }));
       this.$emit('close')
     }
   }

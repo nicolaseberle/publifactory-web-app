@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { lang, pageLimit } from '../../stored'
 import { save } from '../../storage'
-import { STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_SIDEBAR, STORE_KEY_CONFIG_PAGE_LIMIT } from '../../constants'
+import { STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_PAGE_LIMIT, STORE_KEY_CONFIG_SIDEBAR } from '../../constants'
 
 const state = {
   lang: lang,

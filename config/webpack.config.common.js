@@ -10,6 +10,7 @@ const helpers              = require('./helpers');
 // const utils = require('./utils')
 const isDev                = process.env.NODE_ENV === 'development';
 
+
 function resolve (dir) {
   return path.join(__dirname, '../client/', dir)
 }
@@ -54,7 +55,7 @@ const webpackConfig = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                include: [ helpers.root('client/src'), resolve('../node_modules/vue-awesome') ]
+                include: [ helpers.root('client/src'), resolve('../node_modules/vue-awesome'), resolve('../node_modules/vue-spinner/') ]
             },/*
             {
               test: /\.vue$/,
@@ -64,7 +65,8 @@ const webpackConfig = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                include: [ helpers.root('client/src') ]
+                include: [ helpers.root('client/src') ],
+                exclude:  /node_modules|vue\/src|vue-router\/|vue-loader\/|vue-spinner\//
             },
             {
               test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -77,23 +79,23 @@ const webpackConfig = {
             {
                 test: /\.css$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
                     { loader: 'css-loader', options: { sourceMap: isDev } },
                 ]
             },
             {
                 test: /\.scss$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    'css-loader',
                     { loader: 'sass-loader', options: { sourceMap: isDev } }
                 ]
             },
             {
                 test: /\.sass$/,
                 use: [
-                    isDev ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
-                    { loader: 'css-loader', options: { sourceMap: isDev } },
+                    process.env.NODE_ENV !== 'production' ? 'vue-style-loader' : MiniCSSExtractPlugin.loader,
+                    'css-loader',
                     { loader: 'sass-loader', options: { sourceMap: isDev } }
                 ]
             }
@@ -102,11 +104,11 @@ const webpackConfig = {
     plugins: [
         new VueLoaderPlugin(),
         //new HtmlPlugin({ template: 'index.html', chunksSortMode: 'dependency' })
-	new HtmlPlugin({
-	    filename: 'index.html',
-	    template: 'client/index.html',
-	    inject: true
-	})
+      	new HtmlPlugin({
+      	    filename: 'index.html',
+      	    template: 'client/index.html',
+      	    inject: true
+      	})
     ]
 };
 

@@ -35,114 +35,172 @@
             {{ tag }}
           </el-tag>
         </div>
+
         <div class='details'>
-          Editor:
+          <h2>Editor</h2>
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addEditor()' circle></el-button>
           </div>
           <li>
-            <div v-for='editor in editors'>{{editor.id_user.firstname}} {{editor.id_user.lastname}}</div>
+            <el-row>
+              <div v-for='editor in editors'>{{editor.id_user.firstname}} {{editor.id_user.lastname}}</div>
+            </el-row>
           </li>
         </div>
         <div class='details'>
-          Associate Editor:
+          <h2>Associate Editors</h2>
           <div style='float: right;margin-bottom:3px'>
-            <el-button  icon="el-icon-plus" size="mini" circle></el-button>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addAssociateEditor()' circle></el-button>
+            <!--  <el-button style='margin-top:30px;' v-on:click="applyToJournal(journal._id)" type="primary" plain round mini>Apply</el-button>-->
           </div>
           <li>
-            <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
-            <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
+            <el-row>
+              <div v-if='associate_editors.length==0' style='color:#e8e8e8'>None</div>
+              <div v-for='associate_editor in associate_editors'>{{associate_editor.id_user.firstname}} {{associate_editor.id_user.lastname}}</div>
+
+            </el-row>
+          </li>
+        </div>
+        <div class='details'>
+          <h2>Monitoring Committee</h2>
+          <div style='float: right;margin-bottom:3px'>
+            <el-button  icon="el-icon-plus" size="mini" v-on:click='addMonitor()' circle></el-button>
+            <!--  <el-button style='margin-top:30px;' v-on:click="applyToJournal(journal._id)" type="primary" plain round mini>Apply</el-button>-->
+          </div>
+          <li>
+            <el-row>
+              <div v-if='monitors.length==0' style='color:#e8e8e8'>None</div>
+              <div v-for='monitor in monitors'>{{monitor.id_user.firstname}} {{monitor.id_user.lastname}}</div>
+
+            </el-row>
           </li>
         </div>
         <div class='details'>
           <li>
-            Licence: CC
+            Licence: <a href='https://creativecommons.org/licenses/by-nd/4.0/'><u>CC BY-ND 4.0</u></a>
           </li>
           <li>
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
         </div>
-
+        <div class='details'>
+          <social-sharing
+                  title="PubliFactory's journal | Checkout the web application to view every article from this journal! More info on http://publifactory.co"
+                  description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
+                  v-bind:hashtags="this.journal.title + ', publifactory'" inline-template>
+            <div>
+              <!--
+              <li>
+              <network network="facebook">
+                <h3><img src="../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
+                 Facebook</h3>
+              </network>
+              </li>
+              <li>
+              <network network="linkedin">
+                <h3><img src="../../../static/img/linkedin-button-sharing.png"
+                     alt="linkedin"/> LinkedIn</h3>
+              </network>
+              </li>
+              <li>
+              <network network="reddit">
+                <h3><img src="../../../static/img/reddit-button-sharing.png"
+                     alt="Reddit"/> Reddit</h3>
+              </network>
+            </li>-->
+              <li>
+              <network network="twitter">
+                <h3><img src="../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
+              </network>
+              </li>
+            </div>
+          </social-sharing>
+        </div>
+        </div>
+        <div class='footer'>
+          <el-button v-on:click="removeJournal(journal._id)" type="danger" plain round>Remove journal</el-button>
       </div>
     </div>
     </el-col>
     <el-col :span='18'>
       <div class='container'>
       <div class='journal-list-articles'>
-          <div class='entry' v-for='(article,index) in articles' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
-            <div class='visual'>
+          <div v-if='journal.content===null'>No article</div>
+          <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
+            <div :id='item.reference._id' class='visual'>
 
             </div>
             <div class='content'>
               <div class='title'>
-                <a :href="'/article/' + article._id "><span>{{article.title}}</span></a>
+                <router-link :to="'/articles/' + item.reference._id">
+                  <span>{{item.reference.title}}</span>
+                </router-link>
               </div>
-              <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" >
                 <button v-show='flag==index' class='hide' alt='Mark as read an hide'><i class="el-icon-close"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Mark as read" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Mark as read" placement="top">
                 <button v-show='flag==index' class='mark-as-read' alt='Mark as read'><i class="el-icon-check"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Save to board" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Save to board" placement="top">
                 <button v-show='flag==index' class='save-to-board' alt='Save to board'><i class="el-icon-collection"></i></button>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="Read Later" placement="top" open-delay="300">
+              <el-tooltip class="item" effect="dark" content="Read Later" placement="top">
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{article.authors}}
+                <span v-for='el in item.reference.authors.list'>{{el}},</span>
               </div>
               <div class='summary'>
-                {{article.abstract}}
+                {{item.reference.abstract}}
               </div>
             </div>
           </div>
       </div>
       </div>
-    </el-col>
-
+    </el-col><!--
+    <el-dialog
+      title="Add Editors"
+      :visible.sync="diagEditorVisible"
+      width="70%">
+    <addCollaborator v-bind:authors='editor' v-on:close="diagEditorVisible=false"/>
+  </el-dialog>-->
+    <el-dialog
+      title="Add Associate Editors"
+      :visible.sync="diagAssociateEditorVisible"
+      width="70%">
+    <addAssociateEditor v-on:close="diagAssociateEditorVisible=false"/>
+  </el-dialog>
   </div>
 </template>
 <script>
-import axios from 'axios'
-import { mapGetters } from 'vuex'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import addAssociateEditor from '../../components/AssociateEditor'
+  import SocialSharing from 'vue-social-sharing'
+  import Vue from 'vue'
+  var Trianglify = require('trianglify'); // only needed in node.js
 
-export default {
+
+  Vue.use(SocialSharing)
+  export default {
+  components: {addAssociateEditor},
   data () {
     return {
+      editor: '',
+      isEditable: false,
+      associateEditor: '',
+      diagAssociateEditorVisible: false,
+      diagEditorVisible: false,
       flag : false,
       test : 'on est sur la page du journal',
       journalId: '',
       journal: '',
       editors: '',
       associate_editors: '',
-      articles: [
-        {_id: '#MLKSdmlqjsdnml',
-        title:'First report on the effective intraperitoneal therapy of insulin-dependent diabetes mellitus in pet dogs using “Neo-Islets”, aggregates of adipose stem and pancreatic islet cells',
-        authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-        abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Plasmodium Kinesin-8X associates with mitotic spindles and is essential for oocyst development during parasite proliferation and transmission',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'RanGTP induces an effector gradient of XCTK2 and importin α/β for spindle microtubule cross-linking',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'A Single Cell Transcriptomic Atlas Characterizes Aging Tissues in the Mouse',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'}
-      ]
+      monitors: '',
+      articles: []
     }
   },
   computed: {
@@ -150,11 +208,22 @@ export default {
   },
   created (){
     this.journalId = this.$route.params && this.$route.params.id
+
   },
   mounted () {
     this.fetch()
     this.fetchEditor()
     this.fetchAssociateEditor()
+  },
+  watch: {
+    diagAssociateEditorVisible () {
+      this.fetchAssociateEditor()
+      this.$forceUpdate();
+    },
+    addAssociateEditor () {
+      this.fetchEditor()
+      this.$forceUpdate();
+    }
   },
   methods:{
     fetch () {
@@ -163,27 +232,74 @@ export default {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         this.journal = res.data
+        this.journal.content.forEach((item)=>{
+          let strInputCode = item.reference.abstract
+          item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+          item.reference.authors.list = []
+          item.reference.authors.forEach( (el)=>{
+
+          axios.get('/api/users/' + el.author, {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then(respond => {
+            let _user = respond.data
+            let str_user = `${_user.firstname[0].toUpperCase()}. ${_user.lastname.charAt(0).toUpperCase()}${_user.lastname.slice(1)}`
+            item.reference.authors.list.push(str_user)
+            this.$forceUpdate();
+            // var pattern = Trianglify({seed: 10,width: 130, height: 78, cell_size: 15,x_colors:'Blues'})
+            // $("#" + item.reference._id).append(pattern.canvas())
+
+          })
+
+          })
+        })
       }).catch(err => {
         console.error(err)
       })
     },
     fetchEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
+        console.log('fetchEditor :: ', res.data)
         this.editors = res.data.users
       }).catch(err => {
         console.error(err)
       })
     },
     fetchAssociateEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
+        console.log('fetchAssociateEditor :: ', res.data)
         this.associate_editors = res.data.users
       }).catch(err => {
         console.error(err)
       })
+    },
+    addEditor () {
+      this.diagEditorVisible = true
+    },
+    addAssociateEditor () {
+      this.diagAssociateEditorVisible = true
+    },
+    addMonitor () {
+
+    },
+    removeJournal(journal_id) {
+      this.$confirm(`Are you sure to remove the journal and the collection of articles`, this.$t('confirm.title'), {
+          type: 'warning'
+        }).then(()=>{
+          axios.delete('/api/journals/' + this.journalId + '/removeJournal', {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then(res=>{
+            this.$message({
+              type: 'success',
+              message: this.$t('message.removed')
+            })
+          })
+          .catch(err=>{console.error(err)})
+
+      }).catch(() => {})
     }
   }
 }
@@ -255,7 +371,16 @@ export default {
     }
   }
   .details{
-    padding-bottom: 70px;
+    padding-bottom: 50px;
+    display: inline-block;
+    width: 100%;
+    h2{
+        font-size:1.3rem;
+        margin: 0;
+        padding: 0;
+        font-family: 'DNLTPro-bold';
+        display: inline-block;
+    }
 
      li:first-of-type {
        border-top: 1px solid #ddd;
@@ -271,6 +396,14 @@ export default {
       display: flex;
       -ms-flex-align: baseline;
       align-items: baseline;
+      text-align:center;
+      h3 {
+          display: block;
+          font-size: 1.17em;
+          margin: 5px 0 0 0;
+          font-weight: bold;
+          font-family: 'DNLTPro-bold';
+      }
     }
   }
 }
@@ -332,9 +465,12 @@ export default {
     margin-right: 20px;
     height: 78px;
     width: 130px;
-    background : #a8a8a8;
+    background : #eeeeee;
     //background-image: url('https://lh3.googleusercontent.com/9zWQqBt6i8tdr44hL5O-GK6Ye1wwhHAkJvOx24BF7w4EWIfQHm4RRaODPmvIJ7DH6yhWS6y-Y4Q2pqadWDc9hGYT_Q=s260');
     background-repeat: no-repeat;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#b8c6df+0,6d88b7+100;Grey+Blue+3D+%231 */
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+
 
 }
 
@@ -343,11 +479,13 @@ export default {
   opacity: 1;
   border-radius: 3px;
   display: flex;
-  border: 1px solid #DFDFDF;
   background-position: 50% 20%;
   transition-delay: 0.2s;
   -webkit-transition: opacity 0.35s;
   background-size: cover;
+
+
+
 
 }
 .el-card .el-card__body{
@@ -460,6 +598,18 @@ export default {
         word-break: break-word;
         color: #9e9e9e;
       }
+}
+.footer{
+  padding-bottom: 30px;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+img {
+  position: center;
+  width: 24px;
+  height: 24px;
 }
 
  button{

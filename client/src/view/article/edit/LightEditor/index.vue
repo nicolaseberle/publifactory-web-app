@@ -1,7 +1,7 @@
 <template>
   <div class="components-container-article">
   <el-card style='box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); padding-bottom:100px'>
-      <main class="article">
+      <main class="article" id="article-page">
         <article>
           <span id="triggerStartNav"></span>
             <header>
@@ -13,6 +13,7 @@
 
                   <h2>Research article <span class="category grey">{{postForm.status}}</span></h2>
                 </el-row>
+
                 <!--<div class="article-info">
                     <p class="font-style-normal">Original article in <a href="#" title="See the original article in PLoS ONE plateform" target="_blank">PLoS ONE</a></p>
                     <p class="green font-dnltp-bold font-style-normal"><time datetime="2017-11-03" pubdate="pubdate" >Published on 12/06/2018 </time></p>
@@ -31,14 +32,14 @@
                       :min-height="30"
                       :cols="35"
                       :max-height="350"
-                      @input="save($event)"
+                      @input="updateTitle"
                     ></textarea-autosize>
                     <br>
                   </form>
                </h1>
                 <div class="article-author">
-                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="dialogTableVisible = true" title="Invite another author" circle v-on:click="diagAuthorVisible=true"></el-button>
-                  <img  v-for="item in postForm.authors" :src="item.author.avatar"></img>
+                  <el-button icon="el-icon-plus" class="add-collaborator-buttons" type="success" @click="handleCollaboratorInvitations" title="Invite another author" circle></el-button>
+                  <img v-bind:class='{"active": item.isActive}'  v-for="item in postForm.authors" :src="item.author.avatar"></img>
                     <p>
                         <a v-for="item_author in postForm.authors" href="#" title="author">{{item_author.author.firstname}} {{item_author.author.lastname}}, </a>
                     </p>
@@ -57,7 +58,8 @@
             <section  class="abstract">
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
-                  <medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>
+                  <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -65,7 +67,7 @@
               <section id="item.title">
                   <h2>
                     <i v-bind:class="['el-icon-arrow-down', { 'el-icon-arrow-right' : item.display }]"  @click="openItem(item)"> </i>
-                    <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="save($event)" ><br>
+                    <input type="text" v-model="item.title" name="title" placeholder="Title 1" @input="applyTitleEdit($event, key)" ><br>
                   </h2>
                   <transition v-on:enter="enter" v-on:leave="leave">
                   <div class="accordion-panel" v-show="item.display">
@@ -74,10 +76,10 @@
                       <el-row :gutter='20' v-if='subblock.length==2' style='margin-bottom:10px'>
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
-
-                          <quill-editor v-if="subitem.type=='text'"  v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment'></quill-editor>
+                          <!-- Quill editor when double text block -->
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -91,10 +93,11 @@
                         </el-col>
                       </el-row>
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
-                        <el-col :span='24' v-for="(subitem,subsubkey) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
-                          <quill-editor v-if="subitem.type=='text'" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)'></quill-editor>
+                        <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
+                          <!-- quill editor when single text block -->
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
-                          <imageComponent v-if="subitem.type=='image'" /><!--:idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editImageBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>-->
+                          <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
                             <div class= 'section-block'>
                               <div class="btn-group">
@@ -126,21 +129,36 @@
       					</footer>
               </section>
             </div>
+            <section id="references">
+                <h2>
+                  <i class="el-icon-arrow-right"></i>
+                  References
+                </h2>
+                <el-col :span='24' v-for="(ref) in references" v-bind:key="ref.id">
+                  [R{{ref.id}}] -  {{ref.name}}
+                </el-col>
+
+            </section>
             <span id="triggerEndNav"></span>
         </article>
     </main>
 
     </el-card>
-    <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
-    <aside type="button" class="content-comments-reviews" id="triggerAside">
-      <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
-    </aside>
-
+    <div class='leftpanel'>
+      <aside  class="comments-reviews" ><p>Show comments &amp; reviews</p></aside>
+      <aside type="button" class="content-comments-reviews" id="triggerAside">
+        <reviewComponent :uuid='uuid_comment' v-on:changecomment='onChangeComment'/>
+      </aside>
+      <aside  class="activity" ><p>Activity</p></aside>
+      <aside type="button" class="content-activity" id="triggerActivity">
+        <activityComponent v-on:close='closeActivityTab()'/>
+      </aside>
+    </div>
     <el-dialog
       title="Add collaborators"
       :visible.sync="diagAuthorVisible"
       width="70%">
-    <addCollaborator v-bind:authors='postForm.authors' v-on:close="diagAuthorVisible=false"/>
+      <addCollaborator v-bind:authors='postForm.authors' :socket="this.socket" v-on:close="diagAuthorVisible=false"/>
     </el-dialog>
 
     <el-dialog
@@ -154,7 +172,6 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigurePlotlyVisible=false" >Cancel</el-button>
           <el-button type="primary" @click="" >Preview</el-button>
           <el-button type="primary" @click="diagInsertFigurePlotlyVisible=false" >Insert Figure</el-button>
@@ -177,18 +194,16 @@
           <el-dropdown trigger="click" @command="changePythonVersion">
             <el-button type="primary">Python version<i class="el-icon-arrow-down el-icon--right"></i></el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="3.7">Python 3.7</el-dropdown-item>
-              <el-dropdown-item command="3.6">Python 3.6</el-dropdown-item>
+              <el-dropdown-item command="3.5">Python 3.5</el-dropdown-item>
               <el-dropdown-item command="2.7">Python 2.7</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click.prevent="execPythonCode" :loading="renderLoading">Preview</el-button>
-          <el-button type="primary" @click="diagInsertFigurePythonVisible=false" :loading="renderLoading">Insert Figure</el-button>
+          <el-button type="primary" @click="insertPythonFigure" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptPython :idfigure='editidfigure' :visible="diagInsertFigurePythonVisible" ref="pythonChild"
+      <scriptPython :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigurePythonVisible" ref="pythonChild"
                     v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
@@ -203,25 +218,16 @@
 
       <span slot="title" class="dialog-header" >
         <div style='text-align:right;'>
-          <el-button type="primary" @click="importDialogVisible=true">Import data</el-button>
           <el-button type=""  @click="diagInsertFigureRVisible=false" :loading="renderLoading">Cancel</el-button>
           <el-button type="primary" @click="execRCode" :loading="renderLoading">Preview</el-button>
           <el-button type="primary" @click="diagInsertFigureRVisible=false" :loading="renderLoading">Insert Figure</el-button>
         </div>
       </span>
-      <scriptR :idfigure='editidfigure' :visible="diagInsertFigureRVisible" ref="rChild"
+      <scriptR :idfigure='editidfigure' :socket="this.socket" :visible="diagInsertFigureRVisible" ref="rChild"
                v-on:loading="renderLoading=!(renderLoading)"/>
     </el-dialog>
 
     <div id="container"></div>
-
-    <el-dialog
-      title="Insert data"
-      :visible.sync="importDialogVisible"
-      width="80%"
-      top="0">
-      <ImportData ref="importDataDialog"></ImportData>
-    </el-dialog>
 
     <el-dialog
       title="Insert a figure"
@@ -235,33 +241,44 @@
                     v-on:changeStatusMainDiag="(data) => { this.dialogVisible = data }"/>
     </el-dialog>
 
+    <el-dialog
+      title="Insert a picture"
+      :visible.sync="dialogPictureVisible"
+      width="80%"
+      top="0">
+      <span slot="title" class="dialog-header" >
+        <div style='text-align:right;'>
+          <el-button type=""  @click="dialogPictureVisible=false" >Cancel</el-button>
+          <el-button type="primary" @click="dialogPictureVisible=false" >Insert Picture</el-button>
+        </div>
+      </span>
+
+    <importImage ref="dialogPicture" :idpicture='editidfigure' v-on:update='updatePictureBlock' :numBlock='poseditfigure[0]' :numSubBlock='poseditfigure[1]' :numSubSubBlock='poseditfigure[2]' ></importImage>
+  </el-dialog>
   </div>
 
 </template>
 <script>
-import editor from 'vue2-medium-editor'
-import { mapGetters, mapActions } from 'vuex'
-import MarkdownEditor from '../../../../components/MarkdownEditor'
-import { validateURL } from '../../../../utils/validate'
-import axios from 'axios'
-import velocity from 'velocity-animate'
-import uploadData from './uploadData'
-import asideRightAnimation from '../../../../utils/js/animation/aside.right.js';
-import hightlightText from '../../../../utils/js/animation/highlight.js';
-import reviewComponent from '../../../../components/Review'
-import quilleditor from '../../../../components/QuillEditor'
-import VuePlotly from '@statnett/vue-plotly'
-import figureComponent from '../../../../components/Figure'
-import imageComponent from '../../../../components/Image'
-import scriptPython from '../../../../components/ScriptPython'
-import scriptR from '../../../../components/ScriptR'
-import figureFactory from '../../../../components/Charts'
-import addCollaborator from '../../../../components/Collaborator'
-import LoadScript from 'vue-plugin-load-script'
-import Cursors from '../../../../utils/js/collaboration/cursors.js'
-import ImportData from '../../../../components/ImportData/index'
-import InsertFigure from '../../../../components/InsertFigure/index'
-//import Zotero from '../../../../utils/zotero/include.js'
+  import { mapActions, mapGetters } from 'vuex'
+  import MarkdownEditor from '../../../../components/MarkdownEditor'
+  import axios from 'axios'
+  import velocity from 'velocity-animate'
+  import asideRightAnimation from '../../../../utils/js/animation/aside.right.js'
+  import asideRightActivity from '../../../../utils/js/animation/activity.right.js'
+  import reviewComponent from '../../../../components/Review'
+  import activityComponent from '../../../../components/Activity'
+  import quilleditor from '../../../../components/QuillEditor'
+  import VuePlotly from '@statnett/vue-plotly'
+  import figureComponent from '../../../../components/Figure'
+  import imageComponent from '../../../../components/Image'
+  import importImage from '../../../../components/Image/ImportImage'
+  import scriptPython from '../../../../components/ScriptPython'
+  import scriptR from '../../../../components/ScriptR'
+  import figureFactory from '../../../../components/Charts'
+  import addCollaborator from '../../../../components/Collaborator'
+  import InsertFigure from '../../../../components/InsertFigure/index'
+  import richText from 'rich-text'
+  //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
 // var Zotero = require('libzotero');
@@ -286,10 +303,12 @@ const defaultForm = {
                   name:"titre_1",
                   title:"Titre 1",
                   title_placeholder:"Titre 1",
-                  block: [[{ type: 'text',uuid: '',content: 'Type your text'},{ type: 'chart',uuid: '',content: ''}]],
-                  content:"Type your text",
+                  block: [[{ type: 'text',uuid: '',content: `Type your text<br><br>
+
+                  `},{ type: 'chart',uuid: '',content: ''}]],
+                  content:`Type your text`,
                   path_figure: "",
-                  display:true
+                  display:true,
                 }],
   content_short: '',
   source_uri: '',
@@ -299,7 +318,7 @@ const defaultForm = {
   platforms: ['a-platform'],
   comment_disabled: false,
   importance: 0
-}
+};
 
 const options = {
   toolbar: {
@@ -312,16 +331,34 @@ const options = {
       'image'
     ]
   }
-}
+};
 
 export default {
   name: 'LightEditor',
+  props: [
+    "socket", "wssdb"
+  ],
   components: {
     InsertFigure,
-    ImportData,
-    addCollaborator, imageComponent, figureComponent, VuePlotly, figureFactory, scriptPython, MarkdownEditor,'medium-editor': editor , reviewComponent, 'quill-editor' : quilleditor, scriptR},
+    addCollaborator,
+    importImage,
+    imageComponent,
+    figureComponent,
+    VuePlotly,
+    figureFactory,
+    scriptPython,
+    MarkdownEditor,
+    reviewComponent,
+    'quill-editor' : quilleditor,
+    scriptR,
+    activityComponent
+  },
   data() {
     return {
+      // shareDoc: null,
+      flagActivity: true,
+      listConnectedUsers: Array,
+      references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
@@ -337,7 +374,7 @@ export default {
       diagInsertFigureRVisible: false,
       diagInsertFigurePythonVisible: false,
       diagInsertFigurePlotlyVisible: false,
-      importDialogVisible: false,
+      dialogPictureVisible: false,
       userListOptions: [],
       html: '',
       activeNames: ['1'],
@@ -387,53 +424,101 @@ export default {
       value: 'vertical',
       label: 'Vertical'
     }]
-    }
+  }
+
   },
   computed: {
-    ...mapGetters(['accessToken']),
+    ...mapGetters(['accessToken', 'userId']),
     ...mapActions(['closeSideBar']),
     contentShortLength() {
       return this.postForm.content_short.length
     }
   },
   created() {
-    this.id = this.$route.params && this.$route.params.id
-    //this.cursors = new Cursors('id-cursors-socket-indicator','id-cursors-socket-state',this.username)
-    //this.cursors.update()
-
+    this.id = this.$route.params && this.$route.params.id  
   },
   mounted() {
-    this.fetchData(this.id)
-    asideRightAnimation()
-    //this.updateUserList()
-    /*this.$watch(this.dialogVisible, (val) => {
-      this.$refs.insertFigureDialog.setDialogStatus(val)
-    })*/
+    this.fetchData(this.id);
+
+    /**
+     * Socket instructions from API
+     */
+    
+    this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
+    this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
+    this.socket.on('ADD_TAG', data => {
+      this.newTag = data.newTag;
+      this.addNewTag(data.ev, true)
+    });
+    this.socket.on('ADD_ONE_BLOCK', data => this.addOneBlock(data.ev, data.key, true));
+    this.socket.on('ADD_TWO_BLOCK', data => this.addTwoBlocks(data.ev, data.key, true));
+    this.socket.on('ADD_BLOCK_TEXT',
+      data => this.addTextBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_BLOCK_CHART',
+      data => this.addChartBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_BLOCK_PICTURE',
+      data => this.addPictureBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('ADD_COLLABORATOR',);
+    this.socket.on('DELETE_BLOCK',
+      data => this.removeBlock(data.ev, data.key, data.subkey, data.subsubkey, true));
+    this.socket.on('DELETE_ROW', data => this.removeRow(data.ev, data.key, true));
+    this.socket.on('MODIFY_BLOCK_PICTURE',
+      data => this.updatePictureBlock(data.key, data.subkey, data.subsubkey, data.idPicture, true));
+    this.socket.on('MODIFY_TITLE', data => this.postForm.title = data.title);
+    this.socket.on('LOAD_CODE_R', () => this.execRCode);
+    this.socket.on('LOAD_CODE_PYTHON', () => this.execPythonCode);
+    this.socket.on('ADD_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_COLLABORATOR', data => {
+      this.postForm.authors = data.list;
+      this.$forceUpdate();
+    });
+    this.socket.on('MODIFY_VERSION', data => {
+      this.postForm.title = data.title;
+      this.postForm.abstract = data.abstract;
+      this.postForm.arr_content = data.arr_content;
+
+    });
+    this.socket.on('RESULT_USERS', data => {
+      this.listConnectedUsers = data;
+      this.isUserConnected()
+    });
+    this.socket.on('MODIFY_BLOCK_TITLE', data => {
+        this.postForm.arr_content[data.key].title = data.title
+    });
+
+    asideRightActivity();
+    asideRightAnimation();
+
+
+    window.setInterval(()=>{ this.socket.emit('GET_USERS',{id_article: this.id}) }, 5000);
   },
   watch: {
     diagInsertFigurePlotlyVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogLightStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogLightStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
     },
     diagInsertFigurePythonVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogPythonStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogPythonStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
     },
     diagInsertFigureRVisible (val) {
       if(val==false) {
-        var idfigure = this.editidfigure
-        this.$refs.insertFigureDialog.setDialogRStatus(true)
-        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++
+        var idfigure = this.editidfigure;
+        this.$refs.insertFigureDialog.setDialogRStatus(true);
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
         console.log( 'diagInsertFigureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
         this.save(this.$event)
       }
@@ -448,13 +533,37 @@ export default {
           console.log(err)
         })
       }
+    },
+    dialogPictureVisible (val) {
+      if(val==false) {
+        //this.$ref.dialogPicture.reset()
+        this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].nbEdit++;
+        console.log( 'dialogPictureVisible :: ' + this.postForm.arr_content[this.poseditfigure[0]].block[this.poseditfigure[1]][this.poseditfigure[2]].uuid);
+        this.save(this.$event)
+
+      }
     }
   },
   methods: {
-    /*signalUpdateUserList (newCursors) {
-      this.updateUserList (editor)
-    },*/
-
+    insertPythonFigure (){
+      this.diagInsertFigurePythonVisible=false
+      // this.$refs.pythonChild.destroy()
+    },
+    closeActivityTab () {
+      $('aside.content-activity').css('display', 'none');
+      console.log('echo')
+    },
+    isUserConnected () {
+      for(let i = 0; i < this.postForm.authors.length; i++) {
+        // console.log(this.listConnectedUsers);
+        for(let user in this.listConnectedUsers){
+          if(user.idUser === this.postForm.authors[i].author._id || this.userId === this.postForm.authors[i].author._id){
+            this.postForm.authors[i].isActive = true;
+            break
+          }
+        }
+      }
+    },
     onChangeComment(commentStateVector) {
       this.$emit("changecomment",commentStateVector)
     },
@@ -468,10 +577,10 @@ export default {
         //var userItemEl = document.createElement('li');
         var userNameEl = document.createElement('div');
         var userParagraphEl = document.createElement('p');
-        userNameEl.className = 'circle'
+        userNameEl.className = 'circle';
         //var userDataEl = document.createElement('div');
 
-        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A'
+        userParagraphEl.innerHTML = connection.name.charAt(0) || 'A';
         //userNameEl.innerHTML = '<strong>' + (connection.name || '(Waiting for username...)') + '</strong>';
         //userNameEl.classList.add('user-name');
 
@@ -500,15 +609,20 @@ export default {
     },
     createComment (uuid_comment){
       // console.log('signal creation comment :',uuid_comment)
-      $('aside.content-comments-reviews').css('display', 'block')
-      this.uuid_comment = uuid_comment
+      $('aside.content-comments-reviews').css('display', 'block');
+      this.uuid_comment = uuid_comment;
       $('aside.content-comments-reviews section.reviews textarea').focus()
 
     },
-    addNewTag (ev) {
-      this.inputTagsVisible = false
+    addNewTag (ev, socket = false) {
+      this.inputTagsVisible = false;
       if (this.newTag !== '') {
-        this.postForm.tags.push(this.newTag)
+        this.postForm.tags.push(this.newTag);
+        if (!socket)
+          this.socket.emit('NEW_TAG', {
+            ev: ev,
+            newTag: this.newTag
+          });
         this.save(ev)
       }
       this.newTag = ''
@@ -524,7 +638,12 @@ export default {
       axios.get('/api/articles/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        this.postForm = response.data
+        this.postForm = response.data;
+        for(let i = 0; i < this.postForm.authors.length; i++) {
+          this.postForm.authors[i].isActive = false;
+          if(this.postForm.authors[i].author._id === this.userId)
+            this.postForm.authors[i].isActive = true;
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -546,12 +665,20 @@ export default {
       velocity(el, 'slideUp', { duration: 400, easing: 'easeInBack' },
         { complete: done })
     },
-    save (ev) {
+    applyTitleEdit (ev, key) {
+        this.socket.emit('UPDATE_BLOCK_TITLE', {
+            title: this.postForm.arr_content[key].title,
+            key: key
+        });
+        this.save(ev)
+    },
+    save(ev) {
       axios.put('/api/articles/'  + this.id, {
         "title": this.postForm.title,
         "abstract": this.postForm.abstract,
         "content": this.postForm.content,
         "arr_content": this.postForm.arr_content,
+        "status": this.postForm.status,
         "tags": this.postForm.tags,
         "published": true
       }, {
@@ -560,34 +687,55 @@ export default {
         }
       })
       .then(response => {
-        console.log("article saved")
+        console.log("saved")
       })
       .catch(e => {
         console.log(e)
       })
     },
-    applyAbstractEdit (ev) {
-      if (ev.event.target) {
-        this.postForm.abstract = ev.event.target.innerHTML
-        //this.save(ev);
-        setTimeout(async ()=>{
-          this.save(ev)
-         },2000);
-      }
+    updateReferences () {
+      console.log(this.references);
+      axios.put('/api/articles/'  + this.id + '/updateReferences', {
+        "references": this.references,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      })
+      .then(response => {
+        console.log("References updated")
+      })
+      .catch(e => {
+        console.log(e)
+      })
     },
-    applyTextEdit (editor, delta, source,key,subkey,subsubkey) {
-      // this.postForm.arr_content[key].content =   editor.root.innerHTML
-      this.postForm.arr_content[key].block[subkey][subsubkey].content = editor.root.innerHTML
+    applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
+      this.postForm.abstract = editor.root.innerHTML;
+      this.socket.emit('ABSTRACT_EDIT', {
+        content: this.postForm.abstract
+      });
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event)
+      },1000);
+    },
+    createUuid () {
+      const uuidv4 = require('uuid/v4');
+      return uuidv4();
+		},
+		applyTextEdit (editor, delta, cursor, key,subkey,subsubkey) {
+      const block = this.postForm.arr_content[key].block[subkey][subsubkey]
+      block.content = editor.root.innerHTML;
+
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
-       },2000);
-      //this.updateUserList(editor)
+      },1000);
     },
-    addNewRow (ev,key) {
-      var uuid_ = String(uuidv4())
-      var uuid_block = String(uuidv4())
+    addNewRow (ev,key, socket = false) {
+      var uuid_ = String(uuidv4());
+      var uuid_block = String(uuidv4());
       var new_content = {
         name:"titre_1",
         uuid: uuid_,
@@ -597,33 +745,70 @@ export default {
         block: [[{ type: 'tbd',uuid: uuid_block,content: ''}]],
         path_figure: "",
         display:true
-      }
+      };
       this.postForm.arr_content.splice(key+1,0, new_content);
+      if (!socket)
+        this.socket.emit('NEW_ROW', {
+          key: key,
+          ev: ev
+        });
       this.save(ev)
     },
-    addTextBlock (ev,key,subkey,subsubkey) {
-      var uuid_block = String(uuidv4())
-      var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'}
+    addTextBlock (ev,key,subkey,subsubkey, socket = false) {
+      var uuid_block = String(uuidv4());
+      var new_block = { type: 'text', uuid: uuid_block ,content: 'Type your text'};
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      if (!socket)
+        this.socket.emit('NEW_BLOCK_TEXT', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        });
       this.save(ev)
     },
-    async addChartBlock (ev, key, subkey, subsubkey) {
-      const idFigure = await this.createFigure()
-      console.log("addChartBlock::idFigure: " + idFigure)
-      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 }
-      this.editidfigure = idFigure
-      this.poseditfigure = [key, subkey, subsubkey]
+    async addChartBlock (ev, key, subkey, subsubkey, socket = false) {
+      const idFigure = await this.createFigure();
+      console.log("addChartBlock::idFigure: " + idFigure);
+      var new_block = { type: 'chart', uuid: idFigure, content: 'New Figure', nbEdit: 0 };
+      this.editidfigure = idFigure;
+      this.poseditfigure = [key, subkey, subsubkey];
       this.postForm.arr_content[key].block[subkey].splice(subsubkey, 1, new_block);
-      this.openEditFigure(ev, key, subkey, subsubkey)
+      if (!socket) {
+        this.openEditFigure();
+        this.socket.emit('NEW_BLOCK_CHART', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
+      }
     },
-    addPictureBlock (ev,key,subkey,subsubkey) {
-      console.log("addPictureBlock::idFigure: " + 'mqlssdfpsdazoizeDSQMKqsdmlk')
-      var new_block = { type: 'image', uuid: 'mqlssdfpsdazoizeDSQMKqsdmlk', content: 'New Image',nbEdit:0}
-      this.poseditfigure = [key, subkey, subsubkey]
+    addPictureBlock (ev,key,subkey,subsubkey, socket = false) {
+      var uuid_block = String(uuidv4());
+      var new_block = { type: 'image', uuid: uuid_block, content: 'New Image',nbEdit:0};
+      this.poseditfigure = [key, subkey, subsubkey];
       this.postForm.arr_content[key].block[subkey].splice(subsubkey,1,new_block);
+      if (!socket) {
+        this.openEditPicture();
+        this.socket.emit('NEW_BLOCK_PICTURE', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey
+        })
+      }
     },
-    removeBlock (ev,key,subkey,subsubkey) {
-      this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+    removeBlock (ev,key,subkey,subsubkey, socket = false) {
+      const block = this.postForm.arr_content[key].block[subkey].splice(subsubkey,1);
+      if (!socket)
+        this.socket.emit('REMOVE_BLOCK', {
+          ev: ev,
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey,
+          blockId: block[0].uuid
+        });
       this.save(ev)
     },
     async editChartBlock (ev, key, subkey, subsubkey, idFigure) {
@@ -631,7 +816,7 @@ export default {
       this.poseditfigure = [key, subkey, subsubkey]
       const response = await axios.get('/api/figure/' + this.editidfigure, {
         headers: { 'Authorization': `Bearer ${this.accessToken}` }
-      })
+      });
       if (response.data.script.language === 'Python') {
         this.diagInsertFigurePythonVisible = true
       } else if (response.data.script.language === 'R') {
@@ -640,24 +825,57 @@ export default {
         this.diagInsertFigurePlotlyVisible = true
       }
     },
-    addOneBlock (ev,key) {
-      var uuid_block = String(uuidv4())
-      var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}]
+    updatePictureBlock(key, subkey, subsubkey, idPicture, socket = false) {
+      this.postForm.arr_content[key].block[subkey][subsubkey].uuid = idPicture;
+      this.postForm.arr_content[key].block[subkey][subsubkey].nbEdit++;
+      if (!socket)
+        this.socket.emit('UPDATE_BLOCK_PICTURE', {
+          key: key,
+          subkey: subkey,
+          subsubkey: subsubkey,
+          idPicture: idPicture
+        });
+      this.save(this.$event)
+    },
+    editPictureBlock (ev, key, subkey, subsubkey, idPicture) {
+      this.editidfigure = idPicture;
+      this.openEditPicture ()
+    },
+    addOneBlock (ev,key, socket = false) {
+      var uuid_block = String(uuidv4());
+      var new_block = [{ type: 'tbd',uuid: uuid_block,content: 'Type your text'}];
       this.postForm.arr_content[key].block.push(new_block);
+      if (!socket)
+        this.socket.emit('NEW_ONE_BLOCK', {
+          ev: ev,
+          key: key,
+          blockId: uuid_block
+        });
       this.save(ev)
     },
-    addTwoBlocks (ev,key) {
-      var uuid_block_1 = String(uuidv4())
-      var uuid_block_2 = String(uuidv4())
-      var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}]
+    addTwoBlocks (ev,key, socket = false) {
+      var uuid_block_1 = String(uuidv4());
+      var uuid_block_2 = String(uuidv4());
+      var new_block = [{ type: 'tbd',uuid: uuid_block_1,content: 'Type your text'},{ type: 'tbd',uuid: uuid_block_2,content: 'Type your text'}];
       this.postForm.arr_content[key].block.push(new_block);
+      if (!socket)
+        this.socket.emit('NEW_TWO_BLOCK', {
+          ev: ev,
+          key: key,
+          blockIds: [uuid_block_1, uuid_block_2]
+        });
       this.save(ev)
     },
-    removeRow (ev,key) {
+    removeRow (ev,key, socket = false) {
       this.postForm.arr_content.splice(key, 1);
-      this.save(ev)
+      if (!socket)
+        this.socket.emit('REMOVE_ROW', {
+          ev: ev,
+          key: key
+        });
+      this.save(ev);
       if(this.postForm.arr_content == ''){
-        var uuid_block_1 = String(uuidv4())
+        var uuid_block_1 = String(uuidv4());
         var new_content = {
           name:"titre_1",
           title:"Titre 1",
@@ -666,14 +884,25 @@ export default {
           content:"Type the text",
           path_figure: "",
           display:true
-        }
+        };
         this.postForm.arr_content.splice(key+1,0, new_content);
         this.save(ev)
       }
-
     },
-    openEditFigure (ev,key,subkey,subsubkey) {
+    updateTitle () {
+      if (this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(async () => {
+        this.save(this.$event);
+        this.socket.emit('UPDATE_TITLE', {
+          title: this.postForm.title
+        });
+      }, 1000);
+    },
+    openEditFigure () {
       this.dialogVisible = true
+    },
+    openEditPicture () {
+      this.dialogPictureVisible = true
     },
     async createFigure () {
       const newFigure = {
@@ -689,54 +918,44 @@ export default {
           showlegend: false
         }
       };
-      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      const response = await axios.post('/api/figure/', newFigure, { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
       let _idFigure = response.data;
-      console.log("createFigure::idFigure: " + _idFigure)
+      console.log("createFigure::idFigure: " + _idFigure);
       return _idFigure
-    },
-    createImage () {
-      const newImage = {
-        headers: { 'Authorization': `Bearer ${this.accessToken}` }
-      }
-      return axios.post('/api/image/', newImage)
-      .then(response => {
-        let _idFigure = response.data;
-        console.log("createFigure::idFigure: " + _idFigure)
-        return _idFigure
-      })
-      .catch(err => {
-
-      })
     },
     markdown2Html() {
       import('showdown').then(showdown => {
-        const converter = new showdown.Converter()
+        const converter = new showdown.Converter();
         this.html = converter.makeHtml(this.postForm.content)
       })
     },
     getRemoteUserList(query) {
       userSearch(query).then(response => {
-        if (!response.data.items) return
+        if (!response.data.items) return;
         this.userListOptions = response.data.items.map(v => v.name)
       })
     },
     async execPythonCode () {
-      this.renderLoading = true
-      await this.$refs.pythonChild.execCode()
+      this.renderLoading = true;
+      await this.$refs.pythonChild.execCode();
       this.renderLoading = false
     },
     async execRCode () {
-      this.renderLoading = true
-      await this.$refs.rChild.execCode()
+      this.renderLoading = true;
+      await this.$refs.rChild.execCode();
       this.renderLoading = false
     },
     changePythonVersion (newValue) {
       this.$refs.pythonChild.setVersion(newValue)
+    },
+    handleCollaboratorInvitations() {
+      this.dialogTableVisible = true;
+      this.diagAuthorVisible=true
     }
   }
 }
 </script>
-<style>
+<style lang="scss">
   .el-dropdown {
     vertical-align: top;
   }
@@ -744,6 +963,9 @@ export default {
     margin-left: 15px;
   }
   .el-icon-arrow-down {
+    font-size: 12px;
+  }
+  .el-icon-arrow-right {
     font-size: 12px;
   }
 
@@ -790,6 +1012,11 @@ export default {
 #users-panel .user-data > div {
   flex-grow: 1;
 }
+
+.ql-editor{
+    min-height:100px;
+}
+
 </style>
 <!--<style>
 @import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";

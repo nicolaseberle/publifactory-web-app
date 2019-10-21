@@ -1,11 +1,6 @@
 <template>
-  <div class="dashboard-container">
-
-  </div>
+  <div class="dashboard-container">{{doc}}</div>
 </template>
 
 <script>
-
-export default {
-}
 </script>

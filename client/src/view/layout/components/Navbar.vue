@@ -1,13 +1,20 @@
 <template>
-  <div class="navbar">
+  <div :class="{'navbar': !flag_user, 'navbar_editor' : flag_user}">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
 
     <breadcrumb class="breadcrumb-container"/>
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <error-log class="errLog-container right-menu-item"/>
-
+        <!--<error-log class="errLog-container right-menu-item"/>-->
+        <div style='vertical-align:middle' class="right-menu-item">
+          <el-switch
+            v-model="flag_user"
+            inactive-text="Author view"
+            active-text="Editor view"
+            >
+          </el-switch>
+        </div>
         <el-tooltip :content="$t('navbar.nightmode')" effect="dark" placement="bottom">
           <nightmode class="nightmode right-menu-item"/>
         </el-tooltip>
@@ -47,16 +54,16 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import Breadcrumb from '../../../components/Breadcrumb'
-import Hamburger from '../../../components/Hamburger'
-import ErrorLog from '../../../components/ErrorLog'
-import Screenfull from '../../../components/Screenfull'
-import Nightmode from '../../../components/Nightmode'
-// import SizeSelect from '../../../components/SizeSelect'
-import LangSelect from '../../../components/LangSelect'
-import locales from  '../../../locales/navbar'
-// import locales2 from '../../../locales/header'
+  import { mapActions, mapGetters } from 'vuex'
+  import Breadcrumb from '../../../components/Breadcrumb'
+  import Hamburger from '../../../components/Hamburger'
+  import ErrorLog from '../../../components/ErrorLog'
+  import Screenfull from '../../../components/Screenfull'
+  import Nightmode from '../../../components/Nightmode'
+  // import SizeSelect from '../../../components/SizeSelect'
+  import LangSelect from '../../../components/LangSelect'
+  import locales from '../../../locales/navbar'
+  // import locales2 from '../../../locales/header'
 
 export default {
   locales,
@@ -70,6 +77,12 @@ export default {
     // SizeSelect,
     LangSelect
   },
+  data () {
+    return {
+      flag_user: false,
+      navbar_user: false
+    }
+  },
   computed: {
     ...mapGetters([
       'username',
@@ -82,8 +95,21 @@ export default {
       'device'
     ])
   },
+  watch: {
+    flag_user (new_role) {
+      console.log(new_role)
+      if(new_role == false) {
+        this.toggleRole('user')
+        this.$emit('input', new_role)
+      }
+      else {
+        this.toggleRole('editor')
+        this.$emit('input', new_role)
+      }
+    }
+  },
   methods: {
-    ...mapActions(['logout', 'updateGlobalConfig']),
+    ...mapActions(['logout', 'updateGlobalConfig','toggleRole']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')
@@ -106,3 +132,10 @@ export default {
   }
 }
 </script>
+<style>
+.el-switch{
+  display: block;
+  margin-bottom: 25px;
+  margin-right: 30px;
+}
+</style>

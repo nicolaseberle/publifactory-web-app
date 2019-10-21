@@ -4,26 +4,32 @@
 
  'use strict';
 
-const shortid = require('shortid')
-const configEmail = require('../../../config.js').email
+const shortid = require('shortid');
+const configEmail = require('../../../config.js').email;
 
-const User = require('../user/user.model')
-const Invitation = require('./invitations.model')
+const User = require('../user/user.model');
+const Invitation = require('./invitations.model');
 const Email = require('../email/email.controller');
 
 
 /**
- * createInvitation
- *
  * @function createInvitation
+ * @description This function is used to create a new invitations to send by mail
+ * This function takes several parameters in the body field:
+ *  - link, the link to send to the user
+ *  - msg, the message to send with the link
+ *  - to, the receiver's mail address
+ *  - name, the name of the receiver
  * @memberof module:controllers/invitations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-
 async function createInvitation(req, res, next) {
   try {
+    if (req.body.link === undefined || req.body.msg === undefined ||
+      req.body.to === undefined || req.body.name === undefined)
+      throw { code: 422, message: 'Missing parameters.' };
     let senderId = req.body.link,
         senderMsg = req.body.msg,
         receiverEmail = req.body.to,
@@ -33,7 +39,7 @@ async function createInvitation(req, res, next) {
     while(newLink.indexOf('-')>=0){
       newLink = shortid.generate();
     }
-    let current = new Date().toISOString()
+    let current = new Date().toISOString();
     const newInvitation = new Invitation({
       "created_at": current,
       "updated_at": current,
@@ -43,64 +49,56 @@ async function createInvitation(req, res, next) {
       "senderMsg": senderMsg,
       "senderName": senderName
     });
-    const invitation = await newInvitation.save(async (error, result) => {
-      if (error) {
-        return console.log(error);
-      } else {
-        //we send the email to invite the new author to access
-        const mail = new Email(receiverEmail);
-        const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
-        req.params.role === 'collaborator' ?
-          await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
-          await mail.sendInvitationReviewer(req.body.sender, clientUrl);
-      }
-    })
-    const receiver = await User.findOne({ email: receiverEmail }).exec()
+    await newInvitation.save();
+    const mail = new Email(receiverEmail);
+    if (req.params.role === 'collaborator' || req.params.role === 'reviewer') {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'collaborator' ?
+        await mail.sendInvitationCoAuthor(req.body.sender, clientUrl) :
+        await mail.sendInvitationReviewer(req.body.sender, clientUrl);
+    } else {
+      const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}`;
+      req.params.role === 'editor' ?
+        await mail.sendInvitationCoEditor(req.body.sender, clientUrl) :
+        await mail.sendInvitationJournalAssociateEditor(req.body.sender, clientUrl);
+    }
+    const receiver = await User.findOne({ email: receiverEmail }).exec();
     res.json(receiver)
   } catch (err) {
     next(err);
   }
 }
+
 /**
- * getMyInvitations
- *
  * @function getMyInvitations
+ * @deprecated You need to use checkInvitation.
  * @memberof module:controllers/invitations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-
 async function getMyInvitations (req, res, next) {
   try {
-    let link=req.query.link
-    console.log(link)
-    const invitations = await Invitation.findOne({ senderId: link }, (error, doc) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(doc);
-          res.status(200).send(doc.rows);
-        }
-      }
-    );
+    let link=req.query.link;
+    console.log(link);
+    const invitations = await Invitation.findOne({ senderId: link });
+    res.json(invitations);
   } catch (err) {
     return next(err);
   }
 }
+
 /**
- * checkInvitation
- *
  * @function checkInvitation
+ * @description This function is used to verify the authenticity of the
+ * invitation's link.
  * @memberof module:controllers/invitations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-
 async function checkInvitation(req, res, next) {
   try {
-    console.log(req.params);
     const sender = req.params.id
       .trim()
       .split("-")[0]
@@ -111,16 +109,17 @@ async function checkInvitation(req, res, next) {
       .trim();
     const seen = new Date().toISOString();
     const invitation = await Invitation.findOneAndUpdate(
-        { senderName: sender ,link: inviteLink},
-        { $set: { updated_at :seen } })
+        { senderId: sender ,link: inviteLink},
+        { $set: { updated_at :seen } }).exec();
 
-    const _sender = await User.findById( invitation.senderName ).exec();
-    const _guest = await User.findOneAndUpdate( {'email': invitation.recieptEmail},{ $set: {'invitationId': invitation._id}} ).exec();
 
-    invitation.senderLastname = _sender.lastname
-    invitation.senderFirstname = _sender.firstname
+    const _sender = await User.findOne({ _id: invitation.senderName }).exec();
+    await User.findOneAndUpdate( {'email': invitation.recieptEmail},{ $set: {'invitationId': invitation._id}} ).exec();
 
-    return res.status(200).json(invitation);
+    invitation.senderLastname = _sender.lastname;
+    invitation.senderFirstname = _sender.firstname;
+
+    return res.json(invitation);
 
   } catch (err) {
     return next(err);

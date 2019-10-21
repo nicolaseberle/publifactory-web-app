@@ -2,7 +2,7 @@
   <el-scrollbar wrap-class="scrollbar-wrapper">
     <div class="logo-wrapper">
       <transition name="fade">
-         <router-link v-if="!isCollapse" to="/" exact>PubliFactory</router-link>
+         <router-link v-if="!isCollapse" to="/" exact>PubliFactory <el-tag style='transform:translate(8px,-8px)' color='#EE8E4A' effect="dark" type='warning' size="mini">Alpha</el-tag></router-link>
       </transition>
          <router-link v-if="isCollapse" to="/" exact><div class='filter-logo' >P</div></router-link>
     </div>
@@ -21,34 +21,47 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import SidebarItem from './SidebarItem'
-import locales from  '../../../../locales/menu'
+  import { mapActions, mapGetters } from 'vuex'
+  import SidebarItem from './SidebarItem'
+  import locales from '../../../../locales/menu'
+  import axios from 'axios'
 
-export default {
+  export default {
   locales,
   components: { SidebarItem },
   data(){
     return {
-      followedJournals : [{'id': '5d0264a4d0738816c96658ca', 'title':'Genetics'},
-      {'id':'5d0264a4d0738816c96658c9','title':'Dev Biology'}]
+      followedJournals : []
     }
   },
   computed: {
     ...mapGetters([
       'permissionrouters',
       'sidebar',
-      'roles'
+      'roles',
+      'accessToken'
     ]),
     isCollapse() {
       return !this.sidebar.opened
     }
   },
   mounted (){
-    this.updateRoutes(this.roles)
+    this.findFollowedJournals()
   },
   methods:{
-    ...mapActions(['updateRoutes'])
+    ...mapActions(['updateRoutes']),
+    findFollowedJournals () {
+      axios.get('/api/journals/followed/all', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(list => {
+        this.followedJournals = list.data.journals
+        console.log(this.followedJournals)
+        this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
+
+      }).catch(err => {
+        console.error(err)
+      })
+    }
   }
 }
 </script>
@@ -59,5 +72,29 @@ export default {
   top: 0;
   padding-top: 10px;
   font-size: 2rem;
+}
+/*
+.scrollbar-wrapper:after{
+  content: "beta";
+  position: fixed;
+  width: 80px;
+  height: 25px;
+  background: #EE8E4A;
+  top: 7px;
+  left: -20px;
+  text-align: center;
+  font-size: 13px;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #fff;
+  line-height: 27px;
+  -ms-transform:rotate(-45deg);
+  -webkit-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+  z-index:1000;
+}*/
+.logo-wrapper{
+  /*margin-top:20px;*/
 }
 </style>

@@ -1,0 +1,75 @@
+swagger: "2.0"
+info:
+  title: Publifactory API
+  description: This API is used to communicate between the **[web application](https://app.publifactory.co/)** and the database in MongoDB.
+  version: 1.0.0
+host: localhost
+basePath: /v1
+schemes:
+  - https
+paths:
+  /articles:
+    get:
+      summary: Returns a list of articles.
+      description: This route is used to get every articles of the database.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+    post:
+      summary: Create a new article.
+      description: This route is used to create a new article in the database.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: title
+          required: true
+          type: string
+          description: the title of the new article
+        - in: body
+          name: abstract
+          required: true
+          type: string
+          description: the abstract of the new article
+        - in: body
+          name: arr_content
+          required: true
+          type: [[string]]
+          description: the body content of the new article
+        - in: body
+          name: content
+          required: true
+          type: string
+          description: the LaTeX's content of the new article
+        - in: body
+          name: status
+          required: true
+          type: string
+          description: the status of the new article (ENUM -> Draft, Submit, Reviewing, Publish)
+        - in: body
+          name: published
+          required: true
+          type: boolean
+          description: parameters to set the new article on public or private mode
+      responses:
+        200:
+          description: OK
+        422:
+          description: Missing parameters
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+                description: the success parameter
+              message:
+                type: string
+                example: 'Missing parameters.'
+                description: the error message

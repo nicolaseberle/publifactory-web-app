@@ -24,8 +24,9 @@
   </div>
 </template>
 <script>
-import ContentLoading from 'components/ContentLoading'
-export default {
+  import ContentLoading from 'components/ContentLoading'
+
+  export default {
   props: {
     name: {
       type: String,
@@ -45,7 +46,7 @@ export default {
     }
   },
   components: {
-    ContentLoading
+    'content-loading':ContentLoading
   }
 }
 </script>

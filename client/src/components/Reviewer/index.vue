@@ -44,17 +44,17 @@
 
         <el-table-column align="left" min-width="140px" label="Firstname">
           <template slot-scope="scope">
-            <span>{{ scope.row.firstname }}</span>
+            <span>{{ scope.row.id_user.firstname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="left" min-width="140px" label="Lastname">
           <template slot-scope="scope">
-            <span>{{ scope.row.lastname }}</span>
+            <span>{{ scope.row.id_user.lastname }}</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="Action" width="80">
           <template slot-scope="scope">
-            <a @click='removeReviewer(scope.row._id)'><i class="el-icon-delete"></i></a>
+            <a @click='removeReviewer(scope.row.id_user._id)'><i class="el-icon-delete"></i></a>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +69,6 @@
 </template>
 <script>
   import axios from 'axios'
-  import Sortable from 'sortablejs'
   import { mapGetters } from 'vuex'
 
   const shortid = require('shortid');
@@ -125,6 +124,11 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.addReviewer()
+            //change status of the article
+            axios.post('/api/history/' + this.article_id,
+              { instruction: 'UPDATE_STATUS'},
+              { headers: { 'Authorization': `Bearer ${this.accessToken}` } });
+            this.changeStatus()
           } else {
             debug('error submit!!');
             return false;
@@ -217,6 +221,16 @@
               this.fetchMyArticles()
             })
         }).catch(() => {})
+      },
+      async changeStatus () {
+        this.articleInfo = await new Promise((resolve, reject) => {
+          axios.get('/api/articles/' + this.article_id, { headers: { 'Authorization': 'Bearer ' + this.accessToken } })
+            .then(data => resolve(data.data))
+            .catch(err => reject(err))
+        });
+        if (this.articleInfo.status === 'Submited')
+          axios.patch(`/api/articles/${this.article_id}/review`, {},
+            { headers: { 'Authorization': `Bearer ${this.accessToken}` }});
       }
     }
   }

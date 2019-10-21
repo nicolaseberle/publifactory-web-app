@@ -5,9 +5,9 @@
 </template>
 
 <script>
-import hist from '../../../components/Charts/histChart'
+  import hist from '../../../components/Charts/histChart'
 
-export default {
+  export default {
   name: 'LineChart',
   components: { hist },
   data() {

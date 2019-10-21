@@ -1,6 +1,10 @@
 # Created by https://www.gitignore.io/api/node,vuejs,webstorm+all
 # Edit at https://www.gitignore.io/?templates=node,vuejs,webstorm+all
 
+ssl/
+ssl_cert/
+database/
+nginx/dhparam.pem
 srv
 heroku-app
 script_set_var_prod_heroku.sh
@@ -9,11 +13,19 @@ script_set_var_prod_gcloud.sh
 npm-debug.log
 client/dist
 
+certbot/conf/*
+certbot/www/*
 
 ### Node ###
 # Logs
 logs
 *.log
+
+# Public folders
+client/public
+
+
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -191,5 +203,8 @@ modules.xml
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/node,vuejs,webstorm+all
+
+# VSCode
+.vscode/
 
 client/dist

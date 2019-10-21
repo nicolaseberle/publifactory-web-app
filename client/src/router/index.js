@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
+import Layout_services from '../view/layout_services/Layout'
 // import componentsRouter from './modules/components'
 // import otherModuleRoutes from './module'
 
@@ -33,6 +34,42 @@ export const constantRouterMap = [{
   path: '/auth-redirect',
   component: () => import('../view/auth/authredirect'),
   hidden: true
+},
+{
+  path: '/services',
+  component: Layout_services,
+  redirect: 'services',
+  hidden: true,
+  children: [
+    {
+      path: '/services',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/reviewermatcher/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
+  path: '/summarize',
+  component: Layout_services,
+  redirect: 'summarize',
+  hidden: true,
+  children: [
+    {
+      path: '/summarize',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/summarize/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
 },
 {
   path: '/invite/:id',
@@ -117,13 +154,21 @@ export const constantRouterMap = [{
   component: Layout,
   redirect: 'applications',
   // hidden: true,
-  meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true },
+  meta: { title: 'services', icon: 'puzzle-piece-plugin', noCache: true , skipAuth: true},
   children: [
     {
       path: 'reviewermatcher',
       name: 'reviewer_matcher',
-      meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
+      meta: { title: 'reviewer_matcher', icon: 'network', noCache: true,skipAuth: true },
+
       component: () => import('../view/applications/reviewermatcher/index.vue')
+    },
+    {
+      path: 'summarize',
+      name: 'summarize_text',
+      meta: { title: 'summarize_text', icon: 'network', noCache: true,skipAuth: true },
+
+      component: () => import('../view/applications/summarize/index.vue')
     },
     {
       path: 'preprintsearch',
@@ -133,7 +178,6 @@ export const constantRouterMap = [{
     },
     {
       path: 'applications',
-      hidden: true,
       component: () => import('../view/applications/index.vue')
     }
   ]
@@ -146,14 +190,26 @@ export const constantRouterMap = [{
   meta: { title: 'Admin', icon: 'lock', noCache: true, roles: ['admin'] },
   children: [
     {
+      path: 'activity',
+      name: 'Activity',
+      meta: { title: 'Activity', icon: 'dashboard', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/Activity.vue')
+    },
+    {
       path: 'user',
       name: 'Users',
       meta: { title: 'Users', icon: 'profile', noCache: true, roles: ['admin'] },
       component: () => import('../view/admin/UserList.vue')
     },
     {
+      path: 'publisher',
+      name: 'Publishers',
+      meta: { title: 'Publishers', icon: 'books_1', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/Publishers.vue')
+    },
+    {
       path: 'admin',
-      component: () => import('../view/admin/UserList.vue')
+      component: () => import('../view/admin/Activity.vue')
     }
   ]
 },

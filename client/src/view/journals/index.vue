@@ -3,7 +3,7 @@
   <el-row :gutter="10" @page-change="fetch">
     <el-col :span="12">
       <div>
-        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; ">Create A Journal</el-button>
+        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; " icon='el-icon-plus'>Create Collection</el-button>
         <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
           <CreateJournal v-if="flagCreateJournal" v-on:close="flagCreateJournal=false"></CreateJournal>
         </el-dialog>
@@ -21,12 +21,16 @@
         ><el-button slot="append" icon="el-icon-search"></el-button></el-autocomplete>
       </div>
     </el-col>
-    <el-col :span="22" v-for="journal in journals" v-bind:data="journal" v-bind:key="journal._id">
+    <el-col :span="22" v-for="(journal,key) in journals" :key='changeState'>
       <el-card class="box-card"  style='margin-bottom:20px;'>
         <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
           <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
-          <i class="ai ai-open-access ai-2x"></i>
-          <el-button  v-on:click="handleCreateJournal()" type="info" style="float:right;">Submit your article</el-button>
+          <!--<i class="ai ai-open-access ai-2x"></i>-->
+          <div style='float:right'>
+            <el-button  v-on:click="handleCreateJournal()" type=""  round>Submit your article</el-button>
+            <el-button v-show='journal.followed===false'  v-on:click="handleFollowJournal(key,journal._id)" type="" plain round>Follow the journal</el-button>
+            <el-button v-show='journal.followed===true' v-on:click="handleUnFollowJournal(key,journal._id)" type="primary" plain round>Followed</el-button>
+          </div>
         </div>
         <div class="body">
           <el-row :gutter="10">
@@ -65,21 +69,22 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import locales from '../../locales/article'
-import axios from 'axios'
-import CreateJournal from '../../components/Journal/CreateJournal'
+  import { mapGetters } from 'vuex'
+  import locales from '../../locales/article'
+  import axios from 'axios'
+  import CreateJournal from '../../components/Journal/CreateJournal'
 
-export default {
+  export default {
   locales,
   data () {
     return {
       journals: [],
+      followedJournals : [],
       dialogCreationJournal : false,
       links: [],
       state2: '',
-      flagCreateJournal: false
+      flagCreateJournal: false,
+      changeState : 0
     }
   },
   computed: {
@@ -91,19 +96,54 @@ export default {
   components: {
     CreateJournal
   },
+  created () {
+
+  },
   mounted () {
-    this.$nextTick(() => {
-      this.fetch()
+    this.$nextTick(() =>  {
+      var initializePromise = this.initialize()
+      initializePromise.then( () => {
+        this.fetch()
+      });
     })
     this.links = this.loadAll();
   },
   methods: {
-    fetch (current = 1) {
-      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+    initialize () {
+      return new Promise((resolve, reject) => {
+        axios.get('/api/journals/followed/all', {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then(list => {
+          this.followedJournals = list.data.journals
+          //console.log('intern function findFollowedJournals :: ',this.followedJournals)
+          resolve(this.followedJournals);
+        }).catch(err => {
+          reject(err);
+        })
+      })
+    },
+    fetch () {
       axios.get('/api/journals/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
+      }).then(async list => {
+
         this.journals = list.data.journals
+        this.journals = await  this.journals.map((item,key)=>{
+          let journal = item;
+          journal.followed = false;
+          return journal;
+        })
+        //console.log('followedJournals :: ',this.followedJournals)
+        for (let i = 0; i < this.journals.length; i++) {
+          for (let j = 0; j< this.followedJournals.length; j++){
+
+            if(this.journals[i]._id === this.followedJournals[j].id_journal._id )
+            {
+              this.journals[i].followed = true
+            }
+          }
+        }
+        console.log('journals :: ',this.journals)
       }).catch(err => {
         console.error(err)
       })
@@ -145,16 +185,31 @@ export default {
           category : String('Physics'),
           id_author : this.userId,
           published: true
-        };/*
-        axios.post('/api/articles/', newArticle)
-        .then(response => {
-          let new_article_id = response.data
-          console.log("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
-        })
-        .catch(e => {
-          console.log(e)
-        })*/
+        };
+
+    },
+    handleFollowJournal (key,idJournal) {
+      // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
+      axios.post('/api/journals/' + idJournal + '/follow', {}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(() => {
+        this.journals[key].followed = true
+        this.changeState = this.changeState + 1
+        //console.log('handleFollowJournal :: ',this.journals[key].followed )
+      }).catch(err => {
+        console.error(err)
+      })
+    },
+    handleUnFollowJournal (key,idJournal) {
+      axios.post('/api/journals/' + idJournal + '/follow', {}, {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(() => {
+        this.journals[key].followed = false
+        this.changeState = this.changeState + 1
+        //console.log('handleFollowJournal :: ',this.journals[key].followed )
+      }).catch(err => {
+        console.error(err)
+      })
     }
   }
 }

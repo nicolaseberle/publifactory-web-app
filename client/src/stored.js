@@ -1,6 +1,16 @@
 import { read } from './storage'
-import { STORE_KEY_USERNAME, STORE_KEY_USEREMAIL, STORE_KEY_ACCESS_TOKEN, STORE_KEY_REFRESH_TOKEN,
-  STORE_KEY_CONFIG_LANG, STORE_KEY_CONFIG_SIDEBAR, STORE_KEY_CONFIG_PAGE_LIMIT } from './constants'
+import {
+  STORE_KEY_ACCESS_TOKEN,
+  STORE_KEY_CONFIG_LANG,
+  STORE_KEY_CONFIG_PAGE_LIMIT,
+  STORE_KEY_CONFIG_SIDEBAR,
+  STORE_KEY_REFRESH_TOKEN,
+  STORE_KEY_USEREMAIL,
+  STORE_KEY_USERNAME,
+  STORE_KEY_ROLES
+} from './constants'
+
+export const roles = read(STORE_KEY_ROLES) || 'guest'
 
 export const username = read(STORE_KEY_USERNAME) || ''
 // eslint-disable-next-line camelcase

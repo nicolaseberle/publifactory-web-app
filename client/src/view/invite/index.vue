@@ -3,12 +3,12 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { Loading } from 'element-ui';
-import locales from 'locales/invitation'
-import axios from 'axios'
+  import { mapActions, mapGetters } from 'vuex'
+  import { Loading } from 'element-ui'
+  import locales from 'locales/invitation'
+  import axios from 'axios'
 
-export default {
+  export default {
   locales,
   name: 'InvitationView',
   data() {
@@ -26,6 +26,7 @@ export default {
     let loadingInstance = Loading.service({ fullscreen: true });
     setTimeout(async () => {
       this.id = this.$route.params && this.$route.params.id
+      console.log(this.id)
       this.postForm  = await this.fetch(this.id)
       this.guestLogin()
       this.$nextTick(() => { // Loading should be closed asynchronously
@@ -42,10 +43,11 @@ export default {
   },
   methods: {
     ...mapActions(['login']),
-    fetch(id) {
-      var data = axios.get('/api/invitations/invite/' + id , {
+    fetch() {
+      var data = axios.get('/api/invitations/invite/' + this.id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
+        console.log(response.data)
          return response.data
       }).catch(err => {
         console.log(err)

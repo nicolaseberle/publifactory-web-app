@@ -6,21 +6,24 @@
           <vue-plotly :data="currentData" :layout="layout" :options="options"/>
         </div>
         <div class='action-button'>
-            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle v-on:click=""></el-button>
-            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle v-on:click=""></el-button>
+            <el-button icon="el-icon-edit" type="primary" plain @click="$emit('edit',true)" title="Edit chart" circle></el-button>
+            <el-button icon="el-icon-delete"  type="warning" plain @click="$emit('delete',true)" title="delete chart" circle></el-button>
         </div>
-        <p><span class="font-dnltp-medium">Fig 1. </span></p>
+      <div class="font-dnltp-medium">
+        <p><b style="font-family: DNLTPro-bold;">Legends</b>: {{infos.legend}}</p>
+        <p><b style="font-family: DNLTPro-bold;">Source</b>: "{{infos.name}}" from figure n°{{infos.uuid_figure}}</p>
+        <p><b style="font-family: DNLTPro-bold;">DOI</b>: {{infos.source}}</p>
+      </div>
     </figure>
   </div>
 </template>
 <script>
-import Vue from 'vue';
-import locales from 'locales/charts'
-import VuePlotly from '@statnett/vue-plotly'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
+  import locales from 'locales/charts'
+  import VuePlotly from '@statnett/vue-plotly'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
 
-const debug = require('debug')('frontend');
+  const debug = require('debug')('frontend');
 
 
 export default {
@@ -43,7 +46,13 @@ export default {
       }],
       currentData: [{
 
-      }]
+      }],
+      infos: {
+        legend: '',
+        source: '',
+        name: '',
+        uuid_figure: ''
+      }
     }
   },
   computed: {
@@ -67,6 +76,7 @@ export default {
         this.currentData = response.data.data
         this.layout = response.data.layout
         this.option = response.data.option
+        this.infos = response.data.infos
       }).catch(err => {
         console.log(err)
       })

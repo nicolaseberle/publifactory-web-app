@@ -15,7 +15,7 @@
 <!--item.meta.admin==flagAdmin-->
       <template v-for="child in item.children" v-if="!child.hidden">
         <sidebar-item
-          v-if="child.children&&child.children.length>0"
+          v-if="child.children&&child.children.length>0&&child.path!==''"
           :is-nest="false"
           :item="child"
           :key="child.path"
@@ -33,14 +33,13 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import path from 'path'
-import { generateTitle } from '../../../../utils/i18n'
-import { validateURL } from '../../../../utils/validate'
-import Item from './Item'
+  import { mapGetters } from 'vuex'
+  import path from 'path'
+  import { generateTitle } from '../../../../utils/i18n'
+  import { validateURL } from '../../../../utils/validate'
+  import Item from './Item'
 
-
-export default {
+  export default {
   name: 'SidebarItem',
   components: { Item },
   props: {

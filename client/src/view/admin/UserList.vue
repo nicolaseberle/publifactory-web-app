@@ -11,6 +11,12 @@
             <el-table-column property="lastname" label="Lastname" sortable min-width="120"></el-table-column>
             <el-table-column property="email" label="Email" sortable min-width="120"></el-table-column>
             <el-table-column property="role" :label="$t('user.model.role')" min-width="90"></el-table-column>
+            <el-table-column property="isVerified" :label="$t('user.model.validated')" min-width="90">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.isVerified===true" type="success">Yes</el-tag>
+                <el-tag v-else type="info">No</el-tag>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('operation.operation')" align="center" width="120">
               <template slot-scope="scope">
                 <!--<router-link :to="'/example/edit/'+scope.row.id">-->
@@ -39,12 +45,12 @@
   </div>
 </template>
 <script>
-import DataTable from '../../components/DataTable'
-import locales from '../../locales/users'
-import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
+  import DataTable from '../../components/DataTable'
+  import locales from '../../locales/users'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
 
-export default {
+  export default {
   locales,
   data () {
     return {
@@ -149,3 +155,8 @@ export default {
   }
 }
 </script>
+<style>
+.el-table__header{
+  text-align:left;
+}
+</style>

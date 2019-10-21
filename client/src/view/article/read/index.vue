@@ -65,6 +65,37 @@
                 </section>
               </div>
 
+              <social-sharing
+                      title="PubliFactory's article | Checkout the web application to view the entire article! More info on http://publifactory.co"
+                      description="Checkout the web application to view the entire article! More info on http://publifactory.co"
+                      hashtags="publifactory, scientist" inline-template>
+              <div>
+                  <li>
+                      <network network="facebook">
+                          <h3><img src="../../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
+                              Facebook</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="linkedin">
+                          <h3><img src="../../../../static/img/linkedin-button-sharing.png"
+                                   alt="linkedin"/> LinkedIn</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="reddit">
+                          <h3><img src="../../../../static/img/reddit-button-sharing.png"
+                                   alt="Reddit"/> Reddit</h3>
+                      </network>
+                  </li>
+                  <li>
+                      <network network="twitter">
+                          <h3><img src="../../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
+                      </network>
+                  </li>
+              </div>
+              </social-sharing>
+
               <span id="triggerEndNav"></span>
           </article>
       </main>
@@ -78,18 +109,21 @@
   </div>
 </template>
 <script>
-import editor from 'vue2-medium-editor'
-import { mapGetters } from 'vuex'
-import MarkdownEditor from '../../../components/MarkdownEditor'
-import { validateURL } from '../../../utils/validate'
-import axios from 'axios'
-import velocity from 'velocity-animate'
-import asideRightAnimation from '../../../utils/js/animation/aside.right.js';
-import VuePlotly from '@statnett/vue-plotly'
-import figureComponent from '../../../components/Figure'
-import reviewComponent from '../../../components/Review'
+  import { mapGetters } from 'vuex'
+  import MarkdownEditor from '../../../components/MarkdownEditor'
+  import { validateURL } from '../../../utils/validate'
+  import axios from 'axios'
+  import velocity from 'velocity-animate'
+  import asideRightAnimation from '../../../utils/js/animation/aside.right.js'
+  import VuePlotly from '@statnett/vue-plotly'
+  import figureComponent from '../../../components/Figure'
+  import reviewComponent from '../../../components/Review'
+  import SocialSharing from 'vue-social-sharing'
+  import Vue from 'vue'
 
-const debug = require('debug')('frontend')
+  Vue.use(SocialSharing)
+
+  const debug = require('debug')('frontend')
 
 
 const defaultForm = {
@@ -115,7 +149,7 @@ const defaultForm = {
 
 
 export default {
-  name: 'ArticleDetail',
+  name: 'ArticleRead',
   components: { figureComponent, VuePlotly,MarkdownEditor,reviewComponent },
   props: {
     isEdit: {

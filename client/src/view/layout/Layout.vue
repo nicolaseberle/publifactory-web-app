@@ -3,18 +3,18 @@
     <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
     <sidebar class="sidebar-container"/>
     <div class="main-container">
-      <navbar/>
+      <navbar v-model="flag_user"/>
 
-      <app-main/>
+      <app-main :flagUser="flag_user"/>
     </div>
   </div>
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from './components'
-import ResizeMixin from './mixin/ResizeHandler'
+  import { AppMain, Navbar, Sidebar } from './components'
+  import ResizeMixin from './mixin/ResizeHandler'
 
-export default {
+  export default {
   name: 'Layout',
   components: {
     Navbar,
@@ -22,6 +22,14 @@ export default {
     AppMain
   },
   mixins: [ResizeMixin],
+  data () {return {
+    flag_user : false
+  }},
+  watch: {
+    flag_user() {
+      console.log("Layout.vue - ça bouge en dessous")
+    }
+  },
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar

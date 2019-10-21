@@ -12,6 +12,7 @@ const helpers                  = require('./helpers');
 const commonConfig             = require('./webpack.config.common');
 const isProd                   = process.env.NODE_ENV === 'production';
 const environment              = isProd ? require('./env/prod.env') : require('./env/staging.env');
+const CopyPlugin               = require('copy-webpack-plugin');
 
 const webpackConfig = merge(commonConfig, {
     mode: 'production',
@@ -86,6 +87,7 @@ const webpackConfig = merge(commonConfig, {
           },
           chunks: ['manifest', 'vendor', 'element', 'app'],
           // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+
           chunksSortMode: function (a, b) {
             var orders = ['manifest', 'vendor', 'element', 'app']
             var order1 = orders.indexOf(a.names[0])
@@ -99,7 +101,15 @@ const webpackConfig = merge(commonConfig, {
             }
           }
         }),
-        new webpack.HashedModuleIdsPlugin()
+        new webpack.HashedModuleIdsPlugin(),
+        new CopyPlugin([
+          { from: helpers.root('client/static/img'), to: '../dist/static/img' },
+          { from: helpers.root('client/static/icons'), to: '../dist/static/icons' },
+          { from: helpers.root('client/static/Default.png'), to: '../dist/static' },
+          { from: helpers.root('client/static/css/katex.css'), to: '../dist/static/css/' },
+          { from: helpers.root('client/static/css/codemirror.css'), to: '../dist/static/css/' }
+        ]),
+
     ]
 });
 

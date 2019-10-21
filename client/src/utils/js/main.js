@@ -5,18 +5,16 @@
 // Imports
 // -------
 
-import ScrollMagic from 'scrollmagic/scrollmagic/uncompressed/ScrollMagic';
-import 'scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap';
-import 'scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators';
-import TweenMax from 'gsap/src/uncompressed/TweenMax';
-import TimelineMax from 'gsap/src/uncompressed/TimelineMax';
+import 'scrollmagic/scrollmagic/uncompressed/plugins/animation.gsap'
+import 'scrollmagic/scrollmagic/uncompressed/plugins/debug.addIndicators'
 
-import svgInline from "./function/svg.inline.js";
-import {smoothScroll, LinkScroll} from "./class/LinkScroll.js";
-import headerNavigation from "./animation/header.js";
-import navAnimation from "./animation/nav.js";
-import accordion from "./animation/accordion.js";
-import asideRightAnimation from "./animation/aside.right.js";
+import svgInline from './function/svg.inline.js'
+import { LinkScroll } from './class/LinkScroll.js'
+import headerNavigation from './animation/header.js'
+import navAnimation from './animation/nav.js'
+import accordion from './animation/accordion.js'
+import asideRightAnimation from './animation/aside.right.js'
+import asideRightActivity from './animation/activity.right.js'
 
 // Call instances
 // --------------
@@ -25,6 +23,8 @@ var inst_navAnimation = new navAnimation();
 var inst_headerAnimation = new headerNavigation();
 var inst_accordion = new accordion();
 var inst_asideRightAnimation = new asideRightAnimation();
+var inst_asideRightActivity = new asideRightActivity();
+
 
 // Init LinkScroll on every a[href^='#']
 // -------------------------------------

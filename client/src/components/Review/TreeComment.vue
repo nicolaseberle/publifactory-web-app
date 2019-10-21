@@ -131,15 +131,17 @@
   </div>
 </template>
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-import velocity from 'velocity-animate'
-const debug = require('debug')('frontend');
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import axios from 'axios'
+  import { mapGetters } from 'vuex'
+  import velocity from 'velocity-animate'
+
+  const debug = require('debug')('frontend');
 var uuidv4 = require('uuid/v4');
 
 export default {
   props: {
+    socket: {},
     uuidComment: {type: String},
     label: {type: String},
     nodes: {type: Array,
@@ -251,12 +253,11 @@ export default {
         uuidComment: String(uuid),
         reviewRequest : 'None',
         commentFlag : false, //it's a review,
-        anonymousFlag: this.checkedAnonymous,
-        uuidParentComment: this.uuidComment
+        anonymousFlag: this.checkedAnonymous
       };
       this.checkedAnonymous = false
 
-      axios.post('/api/comments/'  + this.id + '/comment/' + this.uuidComment + '/answer', newComment, {
+      axios.post('/api/comments/'  + this.id + '/' + this.uuidComment + '/answer', newComment, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
       .then(response => {
@@ -270,7 +271,7 @@ export default {
       });
     },
     saveComment () {
-      axios.put('/api/comments/'  + this.id + '/comments/' + this.uuidComment + '/content',{'content':this.comment}, {
+      axios.put('/api/comments/'  + this.id + '/' + this.uuidComment + '/content',{'content':this.comment}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
         .then(response => {
@@ -286,7 +287,7 @@ export default {
       this.$confirm(`This action will remove the selected comment forever, still going on?`, this.$t('confirm.title'), {
         type: 'warning'
       }).then(() => {
-        axios.delete('/api/comments/'+this.id+'/comments/'+ this.uuidComment, {
+        axios.delete('/api/comments/'+this.id+'/'+ this.uuidComment, {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(() => {
           this.$message({
@@ -300,7 +301,7 @@ export default {
     upvoteComment (ev) {
       debug('upvoteComment')
       this.scores.upvote = ++this.scores.upvote
-      axios.put('/api/comments/'  + this.id + '/comments/' + this.uuidComment,{"upvote": 1, "downvote": 0 , "userId":[this.userId]}, {
+      axios.put('/api/comments/'  + this.id + '/' + this.uuidComment,{"upvote": 1, "downvote": 0 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
         .then(response => {
@@ -311,7 +312,7 @@ export default {
     downvoteComment (ev,idComment,key) {
       debug('downvoteComment')
       this.scores.upvote = --this.scores.upvote
-      axios.put('/api/comments/'  + this.id + '/comments/' + this.uuidComment,{"upvote": -1, "downvote": 0 , "userId":[this.userId]}, {
+      axios.put('/api/comments/'  + this.id + '/' + this.uuidComment,{"upvote": -1, "downvote": 0 , "userId":[this.userId]}, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       })
         .then(response => {

@@ -113,14 +113,13 @@
 </div>
 </template>
 <script>
-import moment from 'moment'
-import { mapGetters } from 'vuex'
-import DataTable from '../../../components/DataTable'
-import locales from '../../../locales/article'
-import axios from 'axios'
-import accessComponent from '../../../components/AccessComponent'
+  import { mapGetters } from 'vuex'
+  import DataTable from '../../../components/DataTable'
+  import locales from '../../../locales/article'
+  import axios from 'axios'
+  import accessComponent from '../../../components/AccessComponent'
 
-var uuidv4 = require('uuid/v4');
+  var uuidv4 = require('uuid/v4');
 const debug = require('debug')('frontend')
 
 export default {
@@ -138,7 +137,15 @@ export default {
       search: {
       },
       formVisible: false,
-      articles: []
+      articles: [{
+          id: '',
+          creationDate: '',
+          title: '',
+          address: '',
+          status: '',
+          authors: '',
+          reviewers: ''
+        }]
     }
   },
   computed: {
@@ -165,8 +172,8 @@ export default {
         this.deleteArticle(this.selectedArticleId)
       }
     },
-    fetch (current = 1) {
-      axios.get('/api/articles/', {
+    async fetch (current = 1) {
+      await axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles
@@ -174,8 +181,8 @@ export default {
         console.error(err)
       })
     },
-    fetchMyArticles () {
-      axios.get(`/api/articles/mine/${this.userId}`, {
+    async fetchMyArticles () {
+      await axios.get(`/api/articles/mine`, {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles

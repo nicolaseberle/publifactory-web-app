@@ -1,30 +1,95 @@
-version: "3.0"
-
+version: "3.3"
 services:
-  shiny:
-    container_name: shiny
-    # To build the image locally, comment out "image" below, and uncomment
-    # "build" and the lines indented under it.
-    # image: rocker/shiny
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    # Setting this to something other than 'root' will cause shiny apps not to
-    # run on the localhost:80 "Welcome to Shiny" diagnostics page mentioned
-    # below.
-    user: 'root'
-    # Uncomment the lines below to disable application logs STDOUT output
-    # environment:
-    #   - APPLICATION_LOGS_TO_STDOUT=false
-    ports:
-      - '80:3838'
-    volumes:
-      - 'shiny_logs:/var/log/shiny-server'
-      # Comment the line below out for initial testing. With it commented out,
-      # going to localhost:80 in one's web browser will show a "Welcome to
-      # Shiny Server!" diagnostics page.
-      # - './mountpoints/apps:/srv/shiny-server'
+  whale:
+    image: docker/whalesay
+    command: ["cowsay", "Containers are deployed !"]
 
-volumes:
-  shiny_logs:
+  api:
+    restart: always
+    build:
+      context: ./
+      dockerfile: server.dockerfile
+    volumes:
+      - ./:/src/app
+      - /src/app/node_modules
+    ports:
+      - "4000:4000"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    environment:
+      WAIT_HOSTS: mongo:27017
+      NODE_ENV: development
+      BASE_MONGO : mongo
+      ROOT_APP : "http://app.publifactory.co"
+      DOCKER: "true"
+    networks:
+      - backend
+      - frontend
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+    depends_on:
+      - whale
+
+  client_dev:
+    restart: always
+    ports:
+      - "9001:9001"
+    build:
+      context: ./
+      dockerfile: client.dev.dockerfile
+    volumes:
+      - ./:/src/app/
+      - /src/app/node_modules
+    environment:
+      - PORT=9001
+      - NODE_ENV=development
+      - BASE_API=api
+      - SITE_IP="35.246.243.12"
+    depends_on:
+      - api
+    links:
+      - api
+    networks:
+      - frontend
+
+  nginx:
+    image: nginx
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    build:
+      context: ./
+      dockerfile: nginx.dockerfile
+    volumes:
+      - ./:/src/app
+      - /src/app/node_modules
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - mongo
+    links:
+      - api
+    environment:
+      - NGINX_PORT=80
+    networks:
+      - backend
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  backend:
+  frontend:

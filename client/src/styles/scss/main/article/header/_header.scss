@@ -36,6 +36,30 @@
     to   { opacity: 1; }
 }
 
+@-webkit-keyframes right-spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(180deg);
+  }
+}
+/* Rotate the left side of the progress bar from 0 to 360 degrees */
+@-webkit-keyframes left-spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+/* Set the wrapper clip to auto, effectively removing the clip */
+@-webkit-keyframes close-wrapper {
+  to {
+    clip: rect(auto, auto, auto, auto);
+  }
+}
+
 /* Internet Explorer */
 @-ms-keyframes fadein {
     from { opacity: 0; }
@@ -193,7 +217,7 @@ header {
             -ms-transform: translateX(-40px);
             transform: translateX(-40px);
         }*/
-/*
+
         img + img {
             float: left;
             -webkit-transform: translateX(-40px);
@@ -201,7 +225,7 @@ header {
             transform: translateX(-40px) translateX(-50%);
             z-index: -1;
 
-        }*/
+        }
         @for $i from 1 through 10 {
         img:nth-child(#{$i}) {
 
@@ -212,11 +236,14 @@ header {
           margin: 0;
           border: 2px solid white;
           float: left;
-          -webkit-transform: translateX(-40px);
-          -ms-transform: translateX(-40px);
+          -webkit-transform: translateX(-40px) translateX(get-pos-img($i));
+          -ms-transform: translateX(-40px) translateX(get-pos-img($i));
           transform: translateX(-20px) translateX(get-pos-img($i));
           z-index: get-zindex-img($i);
           }
+        }
+        img.active{
+          border: 4px solid #00a459;
         }
 
         p {
@@ -233,6 +260,48 @@ header {
                 color: $greyColor;
             }
         }
+
+
+        .wrapper {
+          width: 100px; /* Set the size of the progress bar */
+          height: 100px;
+          position: absolute; /* Enable clipping */
+          clip: rect(0px, 100px, 100px, 50px); /* Hide half of the progress bar */
+        }
+        /* Set the sizes of the elements that make up the progress bar */
+        .circle {
+          width: 80px;
+          height: 80px;
+          border: 10px solid rgb(75, 210, 143);
+          border-radius: 50px;
+          position: absolute;
+          background-color: transparent;
+          clip: rect(0px, 50px, 100px, 0px);
+        }
+        /* Using the data attributes for the animation selectors. */
+        /* Base settings for all animated elements */
+        div[data-anim~=base] {
+          -webkit-animation-iteration-count: 1;  /* Only run once */
+          -webkit-animation-fill-mode: forwards; /* Hold the last keyframe */
+          -webkit-animation-timing-function:linear; /* Linear animation */
+        }
+
+        .wrapper[data-anim~=wrapper] {
+          -webkit-animation-duration: 0.01s; /* Complete keyframes asap */
+          -webkit-animation-delay: 3s; /* Wait half of the animation */
+          -webkit-animation-name: close-wrapper; /* Keyframes name */
+        }
+
+        .circle[data-anim~=left] {
+          -webkit-animation-duration: 6s; /* Full animation time */
+          -webkit-animation-name: left-spin;
+        }
+
+        .circle[data-anim~=right] {
+          -webkit-animation-duration: 3s; /* Half animation time */
+          -webkit-animation-name: right-spin;
+        }
+
     }
 
     address {

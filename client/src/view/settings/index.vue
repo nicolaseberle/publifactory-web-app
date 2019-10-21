@@ -227,13 +227,13 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import locales from 'locales/settings'
-import axios from 'axios'
-import ImageCropper from '../../components/ImageCropper'
-import PanThumb from '../../components/PanThumb'
+  import { mapActions, mapGetters } from 'vuex'
+  import locales from 'locales/settings'
+  import axios from 'axios'
+  import ImageCropper from '../../components/ImageCropper'
+  import PanThumb from '../../components/PanThumb'
 
-export default {
+  export default {
   locales,
   components: { "image-cropper": ImageCropper, "pan-thumb": PanThumb },
   data () {
@@ -348,7 +348,7 @@ export default {
       this.imagecropperShow = false
     },
     onSave () {
-      this.updateUser({id: this.userId,
+      this.updateUser({
                   firstname: this.form.firstname,
                   lastname: this.form.lastname,
                   field: this.form.field,
@@ -369,7 +369,6 @@ export default {
       this.$refs.formPassword.validate(valid => {
         if (valid) {
           this.changePassword({
-            id: this.userId,
             oldPassword:this.formPassword.oldPassword,
             newPassword:this.formPassword.newPassword,
             token:this.accessToken
