@@ -445,14 +445,6 @@ export default {
      */
     
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
-    // this.socket.on('SECTION_UPDATE', data =>
-    // {
-    //   const payload = { delta: data.content, cursor: data.cursor, source: 'api' }
-    //   const index = `${data.key}${data.subkey}${data.subsubkey}`
-
-    //   //original this.postForm.arr_content[data.key].block[data.subkey][data.subsubkey].content = { delta: data.content, cursor: data.cursor, source: 'api' }
-    //   this.$set(this.collaborationPayload, index, payload)
-    // });
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -734,16 +726,6 @@ export default {
 		applyTextEdit (editor, delta, cursor, key,subkey,subsubkey) {
       const block = this.postForm.arr_content[key].block[subkey][subsubkey]
       block.content = editor.root.innerHTML;
-
-      // this.socket.emit('SECTION_EDIT', {
-      //   delta,
-      //   cursor,
-      //   content: block.content,
-      //   key: key,
-      //   subkey: subkey,
-      //   subsubkey: subsubkey,
-      //   blockId: block.uuid
-      // });
 
       //this.save(this.$event)
       if (this.timeoutId) clearTimeout(this.timeoutId);
