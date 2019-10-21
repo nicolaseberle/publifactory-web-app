@@ -159,7 +159,7 @@ Quill.register(ProcRef, true);
 export default {
 	name: 'QuillEditor',
 	props: {
-		rws: Object,
+		wssdb: Object,
 		socket: Object,
 		content: {
 			type: String | Array | Object
@@ -258,7 +258,7 @@ export default {
 	
 	mounted() {
 		if (this.shareDoc === null) {
-			const connection = this.rws.getConnection()
+			const connection = this.wssdb.getConnection()
 			this.shareDoc = connection.get('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
 		}
 		if (this.shareDoc.type === null) {

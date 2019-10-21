@@ -186,7 +186,7 @@
       <component
         v-bind:is="currentEditor"
         :socket="socket"
-        :rws="rws"
+        :wssdb="wssdb"
         :hidePDF="flagHidePDF"
         v-on:changecomment="onChangeComment"
       />
@@ -277,7 +277,7 @@ import markdownEditorComponent from "./MarkdownEditorComponent";
 import latexEditorComponent from "./LatexEditorComponent";
 import ImportData from "../../../components/ImportData/index";
 import axios from "axios";
-import rwsClient from "../../../utils/js/rws-client/";
+import wsShareDBClient from "../../../utils/js/ws-sharedb-client/";
 import io from "socket.io-client";
 
 const printJS = require("print-js");
@@ -315,7 +315,7 @@ export default {
       },
       journalList: [], //[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
       socket: "",
-      rws: ""
+      wssdb: ""
     };
   },
 
@@ -337,10 +337,11 @@ export default {
       }
     };
     this.socket = io("/", socketOptions);
-    this.rws = new rwsClient(this.userId, this.id);
+
+    this.wssdb = new wsShareDBClient(this.userId, this.id);
   },
   beforeDestroy() {
-    this.rws.close();
+    this.wssdb.close();
     this.socket.close();
   },
   async mounted() {

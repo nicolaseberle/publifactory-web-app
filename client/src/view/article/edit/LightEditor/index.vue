@@ -59,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:rws='rws'></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -77,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- Quill editor when double text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:rws='rws'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -95,7 +95,7 @@
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- quill editor when single text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:rws='rws'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -336,7 +336,7 @@ const options = {
 export default {
   name: 'LightEditor',
   props: [
-    "socket", "rws"
+    "socket", "wssdb"
   ],
   components: {
     InsertFigure,

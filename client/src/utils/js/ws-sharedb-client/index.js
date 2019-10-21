@@ -11,17 +11,18 @@ const url =
 /**
  * Wrapper on Reconnecting-Websocket
  */
-class rwsClient {
+
+class wsShareDBClient {
 	constructor(userId, articleId) {
 		this.userId = userId;
 		this.articleId = articleId;
-		this.rws = new WebSocket(url);
+		this.wssdb = new WebSocket(url);
 		this.type = richText.type.name;
-		this.connection = new ShareDB.Connection(this.rws);
+		this.connection = new ShareDB.Connection(this.wssdb);
 	}
 
 	close() {
-		this.rws.close();
+		this.wssdb.close();
 	}
 
 	getConnection() {
@@ -29,4 +30,4 @@ class rwsClient {
 	}
 }
 
-export default rwsClient;
+export default wsShareDBClient;
