@@ -15,11 +15,11 @@
       <el-col :span='12'>
       <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
-        <el-form-item label="Title">
+        <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
-        <el-form-item label="Keywords">
+        <el-form-item label="Keywords" prop="keywords">
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -84,7 +84,7 @@
       </el-col>
 
         <el-col :span='1'>
-          <div style='text-align:center; vertical-align:middle; height:100px;'><p>or</p></div>
+          <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
         <el-col :span='11'>
           <el-upload
@@ -96,7 +96,7 @@
           <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
           <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
         </el-upload>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="progress_status_pdf" style="width:100%;margin-top:22px;"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
         </el-col>
       </el-row>
       </div>
@@ -695,6 +695,10 @@ hgroup {
 
 .el-table .cell {
   padding: 0 20px!important;
+}
+
+.el-upload-dragger .el-icon-upload {
+  margin: 16px 0;
 }
 
 @media (max-width: 1280px) {
