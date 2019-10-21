@@ -278,7 +278,6 @@ export default {
 		});
 
       this.socket.on('QUILL_EXEC_SELECT', data => {
-				console.log("EXEC=>")
 					collaboration.selectionUpdate(this, data)
 			});
 			
@@ -287,11 +286,11 @@ export default {
 				this.cursorModule.removeCursor(data.cursorId);
 			});
 
+			
 			this.socket.on('QUILL_RESP_SELECT', (data) => {
 				collaboration.selectionUpdate(this, data)
 				const selection = this.editor.getSelection()
 				if (!selection) return;
-				console.log("QUILL RESP SELECT")
 				this.socket.emit('QUILL_NEW_SELECT', {
 					range: selection,
 				numBlock: this.numBlock,
@@ -299,7 +298,6 @@ export default {
 				numSubSubBlock: this.numSubSubBlock,
 				cursorId: this.cursorId,
 				});
-
 			});
 
 	    var quill = new Quill('#' + this.idEditor, {
@@ -347,26 +345,24 @@ export default {
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
-
-
 				
 			this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
-				// collaboration.textCommit(this, delta)
 				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
 					if (err && err.code === 4015) {
 						console.warn(err)
 					}
 				})
-				// const selection = this.editor.getSelection()
-				// if (!selection) return;
-				// this.socket.emit('QUILL_REQ_UPDATE', {
-				// 	range: selection,
-				// 	numBlock: this.numBlock,
-				// 	numSubBlock: this.numSubBlock,
-				// 	numSubSubBlock: this.numSubSubBlock,
-				// 	cursorId: this.cursorId,
-				// });
+				collaboration.textCommit(this, delta)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_REQ_UPDATE', {
+					range: selection,
+					numBlock: this.numBlock,
+					numSubBlock: this.numSubBlock,
+					numSubSubBlock: this.numSubSubBlock,
+					cursorId: this.cursorId,
+				});
 				// collaboration.updateForeignCursors(this, delta)
 			});
 

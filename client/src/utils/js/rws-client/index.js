@@ -8,8 +8,6 @@ const url =
 		? 'wss' + '://' + window.location.hostname + '/collaboration'
 		: 'ws' + '://' + window.location.hostname + ':4000' + '/collaboration';
 
-console.log('WEBSOCKET ON URL=>', url);
-
 /**
  * Wrapper on Reconnecting-Websocket
  */
@@ -20,6 +18,10 @@ class rwsClient {
 		this.rws = new WebSocket(url);
 		this.type = richText.type.name;
 		this.connection = new ShareDB.Connection(this.rws);
+	}
+
+	close() {
+		this.rws.close();
 	}
 
 	getConnection() {
