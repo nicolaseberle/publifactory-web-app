@@ -43,33 +43,32 @@ exports.getJournals = async (req, res, next) => {
 	const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
 	const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
-	try {
-		let journals;
-		if (req.params.id === undefined) {
-			journals = await Journal.paginate(
-				{ deleted: false, published: true },
-				{
-					page,
-					limit,
-					populate: 'users',
-					lean: true
-				}
-			);
-			// console.log(JSON.stringify(journals, null, "\t"));
-			renameObjectProperty(journals, 'docs', 'journals');
-		} else {
-			//console.log(JSON.stringify("findJournalById", null, "\t"))
-			journals = await Journal.findById(req.params.id)
-				.populate('users')
-				.populate('article')
-				.lean();
-			// console.log(JSON.stringify(journals, null, "\t"));
-			if (!journals) throw { code: 404, message: 'Journals not found.' };
-		}
-		return res.status(200).json(journals);
-	} catch (err) {
-		return next(err);
-	}
+  try {
+    let journals;
+    if (req.params.id === undefined) {
+      journals = await Journal.paginate({ deleted: false, published: true }, {
+        page,
+        limit,
+        populate: 'users content.reference',
+        lean: true
+      });
+      console.log(JSON.stringify(journals, null, "\t"));
+      renameObjectProperty(journals, 'docs', 'journals');
+    } else {
+      //console.log(JSON.stringify("findJournalById", null, "\t"))
+      journals = await Journal.findById(req.params.id)
+        .populate('users')
+        .populate('content.reference')
+        .lean();
+      console.log(JSON.stringify(journals, null, "\t"));
+      if (!journals)
+        throw { code: 404, message: 'Journals not found.' };
+    }
+    console.log(journals)
+    return res.status(200).json(journals);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 /**
@@ -474,11 +473,19 @@ module.exports.updateTags = async (req, res, next) => {
  * @return {Promise<void>}
  */
 module.exports.userFollowedJournals = async (req, res, next) => {
-	try {
-		const result = await RolesJournal.find({ id_user: req.decoded._id }).exec();
-		res.json({ success: true, journals: result });
-	} catch (e) {
-		console.log('userFollowedJournals :: error :: ', e);
-		next(e);
-	}
+  try {
+    let journals;
+    const result = await RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal').exec();
+    console.log(result)
+    /*var arr2 = []
+    await result.forEach(async (item)=>{
+      var journals =  Journal.findById(item.id_journal)
+      console.log(journals)
+      await arr2.push(journals)
+    })*/
+    res.json({success: true, journals: result});
+  } catch (e) {
+    console.log('userFollowedJournals :: error :: ',e);
+    next(e)
+  }
 };

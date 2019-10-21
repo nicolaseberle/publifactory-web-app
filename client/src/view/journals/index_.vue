@@ -83,11 +83,14 @@
             Date: <span>{{ journal.creationDate | moment("DD/MM/YYYY") }}</span>
           </li>
           <li style='color:#a8a8a8'>ISSN : 2049-3630</li>
+        </div>
+        <div class='details'>
           <social-sharing
                   title="PubliFactory's journal | Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   description="Checkout the web application to view every article from this journal! More info on http://publifactory.co"
                   v-bind:hashtags="this.journal.title + ', publifactory'" inline-template>
             <div>
+              <!--
               <li>
               <network network="facebook">
                 <h3><img src="../../../static/img/facebook-button-sharing.png" alt="Facebook"/>
@@ -105,7 +108,7 @@
                 <h3><img src="../../../static/img/reddit-button-sharing.png"
                      alt="Reddit"/> Reddit</h3>
               </network>
-              </li>
+            </li>-->
               <li>
               <network network="twitter">
                 <h3><img src="../../../static/img/twitter-button-sharing.png" alt="Twitter"/> Twitter</h3>
@@ -123,13 +126,16 @@
     <el-col :span='18'>
       <div class='container'>
       <div class='journal-list-articles'>
-          <div class='entry' v-for='(article,index) in articles' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
-            <div class='visual'>
+          <div v-if='journal.content===null'>No article</div>
+          <div class='entry' v-for='(item,index) in journal.content' :key='index' v-on:mouseover="flag=index" v-on:mouseleave="flag='-1'">
+            <div :id='item.reference._id' class='visual'>
 
             </div>
             <div class='content'>
               <div class='title'>
-                <a :href="'/article/' + article._id "><span>{{article.title}}</span></a>
+                <router-link :to="'/articles/' + item.reference._id">
+                  <span>{{item.reference.title}}</span>
+                </router-link>
               </div>
               <el-tooltip class="item" effect="dark" content="Mark as read an hide" placement="top" >
                 <button v-show='flag==index' class='hide' alt='Mark as read an hide'><i class="el-icon-close"></i></button>
@@ -144,10 +150,10 @@
                 <button v-show='flag==index' class='save-for-later' alt='Read Later'><i class="el-icon-collection-tag"></i></button>
               </el-tooltip>
               <div class='metadata'>
-                {{article.authors}}
+                <span v-for='el in item.reference.authors.list'>{{el}},</span>
               </div>
               <div class='summary'>
-                {{article.abstract}}
+                {{item.reference.abstract}}
               </div>
             </div>
           </div>
@@ -174,6 +180,8 @@
   import addAssociateEditor from '../../components/AssociateEditor'
   import SocialSharing from 'vue-social-sharing'
   import Vue from 'vue'
+  var Trianglify = require('trianglify'); // only needed in node.js
+
 
   Vue.use(SocialSharing)
   export default {
@@ -192,32 +200,7 @@
       editors: '',
       associate_editors: '',
       monitors: '',
-      articles: [
-        {_id: '#MLKSdmlqjsdnml',
-        title:'First report on the effective intraperitoneal therapy of insulin-dependent diabetes mellitus in pet dogs using “Neo-Islets”, aggregates of adipose stem and pancreatic islet cells',
-        authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-        abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Plasmodium Kinesin-8X associates with mitotic spindles and is essential for oocyst development during parasite proliferation and transmission',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'RanGTP induces an effector gradient of XCTK2 and importin α/β for spindle microtubule cross-linking',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'A Single Cell Transcriptomic Atlas Characterizes Aging Tissues in the Mouse',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'},
-      {_id: '#mlqsdklmqdnnml',
-      title:'Caveolae coupling of melanocytes signaling and mechanics is required for human skin pigmentation',
-      authors:'M. Zeeshan, F. Shilliday... C. A. Moores, R. Tewari',
-      abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in dapibus diam. Maecenas imperdiet convallis iaculis. Nunc dapibus gravida lectus sed cursus. Suspendisse consectetur nulla lectus, ac vulputate leo pulvinar in. In hac habitasse platea dictumst. Duis dolor enim, eleifend ac sapien nec, finibus eleifend sem. Proin felis elit, facilisis sit amet mollis a, rutrum id purus. Nullam suscipit nec neque at vestibulum. Nam feugiat mi quis odio fringilla tempor ut sit amet risus. Nullam feugiat non velit vehicula laoreet. Cras sagittis malesuada justo, ut volutpat ligula.'}
-      ]
+      articles: []
     }
   },
   computed: {
@@ -249,12 +232,32 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         this.journal = res.data
+        this.journal.content.forEach((item)=>{
+          let strInputCode = item.reference.abstract
+          item.reference.abstract = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+          item.reference.authors.list = []
+          item.reference.authors.forEach( (el)=>{
+
+          axios.get('/api/users/' + el.author, {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then(respond => {
+            let _user = respond.data
+            let str_user = `${_user.firstname[0].toUpperCase()}. ${_user.lastname.charAt(0).toUpperCase()}${_user.lastname.slice(1)}`
+            item.reference.authors.list.push(str_user)
+            this.$forceUpdate();
+            // var pattern = Trianglify({seed: 10,width: 130, height: 78, cell_size: 15,x_colors:'Blues'})
+            // $("#" + item.reference._id).append(pattern.canvas())
+
+          })
+
+          })
+        })
       }).catch(err => {
         console.error(err)
       })
     },
     fetchEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchEditor :: ', res.data)
@@ -264,7 +267,7 @@
       })
     },
     fetchAssociateEditor () {
-      axios.get('/api/roles/journal/' + this.journalId + '/associate_editor', {
+      axios.get('/api/roles/journal/all/' + this.journalId + '/associate_editor', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(res => {
         console.log('fetchAssociateEditor :: ', res.data)
@@ -297,8 +300,6 @@
           .catch(err=>{console.error(err)})
 
       }).catch(() => {})
-
-
     }
   }
 }
@@ -395,6 +396,14 @@
       display: flex;
       -ms-flex-align: baseline;
       align-items: baseline;
+      text-align:center;
+      h3 {
+          display: block;
+          font-size: 1.17em;
+          margin: 5px 0 0 0;
+          font-weight: bold;
+          font-family: 'DNLTPro-bold';
+      }
     }
   }
 }
@@ -456,9 +465,12 @@
     margin-right: 20px;
     height: 78px;
     width: 130px;
-    background : #a8a8a8;
+    background : #eeeeee;
     //background-image: url('https://lh3.googleusercontent.com/9zWQqBt6i8tdr44hL5O-GK6Ye1wwhHAkJvOx24BF7w4EWIfQHm4RRaODPmvIJ7DH6yhWS6y-Y4Q2pqadWDc9hGYT_Q=s260');
     background-repeat: no-repeat;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#b8c6df+0,6d88b7+100;Grey+Blue+3D+%231 */
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+
 
 }
 
@@ -467,11 +479,13 @@
   opacity: 1;
   border-radius: 3px;
   display: flex;
-  border: 1px solid #DFDFDF;
   background-position: 50% 20%;
   transition-delay: 0.2s;
   -webkit-transition: opacity 0.35s;
   background-size: cover;
+
+
+
 
 }
 .el-card .el-card__body{

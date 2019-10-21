@@ -124,7 +124,7 @@
     },
     methods: {
       fetchAssociateEditor () {
-        axios.get('/api/roles/journal/' + this.journal_id + '/associate_editor', {
+        axios.get('/api/roles/journal/all/' + this.journal_id + '/associate_editor', {
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then(res => {
           console.log('fetchAssociateEditor :: ', res.data.users)
