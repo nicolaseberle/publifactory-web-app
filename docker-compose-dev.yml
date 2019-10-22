@@ -22,7 +22,7 @@ services:
       WAIT_HOSTS: mongo:27017
       NODE_ENV: development
       BASE_MONGO: mongo
-      ROOT_APP: 'http://app.publifactory.co'
+      ROOT_APP: 'http://dev.publifactory.co'
       DOCKER: 'true'
     networks:
       - backend
@@ -65,7 +65,7 @@ services:
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     build:
       context: ./
-      dockerfile: nginx.dockerfile.dev
+      dockerfile: nginx.dev.dockerfile
     volumes:
       - ./:/src/app
       - /src/app/node_modules
