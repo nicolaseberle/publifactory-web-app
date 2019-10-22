@@ -13,7 +13,7 @@ blocks:
       jobs:
         - name: 'START'
           commands:
-            - "echo "start"
+            - echo "start"
     dependencies: []
 
 promotions:
