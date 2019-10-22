@@ -7,8 +7,6 @@ agent:
 blocks:
   - name: Deploy to production
     task:
-      secrets:
-        - name: gcloud
       prologue:
         commands:
           - checkout

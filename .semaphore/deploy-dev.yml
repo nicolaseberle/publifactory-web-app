@@ -7,15 +7,13 @@ agent:
 blocks:
   - name: Deploy to dev
     task:
-      secrets:
-        - name: gcloud
       prologue:
         commands:
           - checkout
       jobs:
-        - name: 'START'
+        - name: "START"
           commands:
-            - "echo "start""
+            - echo "start"
             - >-
               gcloud auth activate-service-account
               --key-file=gcloud-secret.json

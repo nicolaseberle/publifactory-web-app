@@ -11,7 +11,7 @@ blocks:
         commands:
           - checkout
       jobs:
-        - name: 'START'
+        - name: "START"
           commands:
             - echo "start"
     dependencies: []
