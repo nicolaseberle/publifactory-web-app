@@ -1,0 +1,28 @@
+version: v1.0
+name: Deploy to dev
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Deploy to dev
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: 'START'
+          commands:
+            - "echo "start""
+            - >-
+              gcloud auth activate-service-account
+              --key-file=gcloud-secret.json
+            - >-
+              gcloud compute --project "smart-rope-243709" ssh --zone
+              "europe-west3-c" "atome-01-dev" --command="sudo cd
+              /home/publifactory/web-app/ && git pull origin dev"
+            - >-
+              gcloud compute --project "smart-rope-243709" ssh --zone
+              "europe-west3-c" "atome-01-dev" --command="sudo
+              /home/publifactory/web-app/script_docker.sh start prod"
+    dependencies: []
