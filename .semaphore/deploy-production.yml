@@ -11,9 +11,8 @@ blocks:
         commands:
           - checkout
       jobs:
-        - name: 'START'
+        - name: exec deploy
           commands:
-            - "echo "start""
             - >-
               gcloud auth activate-service-account
               --key-file=gcloud-secret.json
