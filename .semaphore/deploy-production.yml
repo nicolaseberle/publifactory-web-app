@@ -13,7 +13,7 @@ blocks:
       jobs:
         - name: exec deploy
           commands:
-            - echo $(ls)
+            - echo ${toto}
             - >-
               gcloud auth activate-service-account
               --key-file=${gcloud-secret.json}
