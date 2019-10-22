@@ -16,7 +16,7 @@ blocks:
             - echo $(ls)
             - >-
               gcloud auth activate-service-account
-              --key-file=gcloud-secret.json
+              --key-file=${gcloud-secret.json}
             - >-
               gcloud compute --project "smart-rope-243709" ssh --zone
               "europe-west3-c" "atome-01" --command="sudo cd
