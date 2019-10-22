@@ -65,7 +65,7 @@ services:
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
     build:
       context: ./
-      dockerfile: nginx.dockerfile
+      dockerfile: nginx.dockerfile.dev
     volumes:
       - ./:/src/app
       - /src/app/node_modules

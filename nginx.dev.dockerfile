@@ -1,4 +1,3 @@
-ARG BUILD_MODE
 FROM node:latest as build-front-stage
 COPY ./ /src
 WORKDIR /src
@@ -16,7 +15,7 @@ RUN mkdir -p /etc/nginx/snippets/
 RUN rm -rf /etc/nginx/conf.d/*
 
 # Copy all the files necessary to dump nginx server
-COPY ./nginx/publifactory-nginx-prod.conf /etc/nginx/conf.d/publifactory-nginx-frontend-prod.conf
+COPY ./nginx/publifactory-nginx-dev.conf /etc/nginx/conf.d/publifactory-nginx-frontend-dev.conf
 COPY --from=build-front-stage /src/dist /usr/share/nginx/html
 
 # Expose the port 80 for HTTP and port 443 for HTTPS
