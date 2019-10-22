@@ -43,7 +43,12 @@ print_help () {
 build_container () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
-  sudo docker-compose build --build-arg BUILD_MODE=$1
+  if [[ ${options} = "dev" ]];
+  then
+    sudo docker-compose -f docker-compose-dev.yml build
+  else
+    sudo docker-compose build
+  fi
   echo -ne '###############           (72%)\r'
   debug "Images built.\n"
 }
@@ -71,27 +76,22 @@ execution_time () {
   debug "Execution time : $minute minutes and $second second"
 }
 
-init () {
-  build_container $1
+start () {
+  build_container
   up_database
   echo -ne '###################       (88%)\r'
   debug "Up the API.\n"
   sudo docker-compose up --no-deps -d api
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
-}
-
-start () {
   if [[ ${options} = "prod" ]];
   then
-    init "prod"
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
     debug "Up Certbot\n"
     sudo docker-compose up  --no-deps -d certbot
   elif [[ ${options} = "dev" ]];
   then
-    init "dev"
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
     debug "Up Certbot\n"
