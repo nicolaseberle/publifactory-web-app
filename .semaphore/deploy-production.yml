@@ -7,6 +7,8 @@ agent:
 blocks:
   - name: Deploy to production
     task:
+      secrets:
+        - name: google-cloud-stg
       prologue:
         commands:
           - checkout
