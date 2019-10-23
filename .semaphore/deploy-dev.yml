@@ -21,7 +21,7 @@ blocks:
               --key-file=/home/semaphore/gcloud.json --account=hapax.jean@gmail.com
             - >-
               gcloud compute --project "smart-rope-243709" ssh --zone 
-              "europe-west3-c" "atome-01-dev" --command="whoami"
+              "europe-west3-c" "atome-01-dev" --command="whoami"  --account=hapax.jean@gmail.com
             - >-
               gcloud compute --project "smart-rope-243709" ssh --zone
               "europe-west3-c" "atome-01-dev" --command="sudo cd
