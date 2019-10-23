@@ -18,7 +18,10 @@ blocks:
             - cat /home/semaphore/gcloud.json
             - >-
               gcloud auth activate-service-account
-              --key-file=/home/semaphore/gcloud.json
+              --key-file=/home/semaphore/gcloud.json --account=hapax.jean@gmail.com
+            - >-
+              gcloud compute --project "smart-rope-243709" ssh --zone 
+              "europe-west3-c" "atome-01-dev" --command="whoami"
             - >-
               gcloud compute --project "smart-rope-243709" ssh --zone
               "europe-west3-c" "atome-01-dev" --command="sudo cd
