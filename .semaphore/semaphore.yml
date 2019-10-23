@@ -22,11 +22,12 @@ promotions:
     auto_promote_on:
       - result: passed
         branch:
-          - dev
+          # - dev
+          - features/deployement
 
   - name: Deploy to production
     pipeline_file: deploy-production.yml
     auto_promote_on:
       - result: passed
         branch:
-          - features/deployement
+          - master
