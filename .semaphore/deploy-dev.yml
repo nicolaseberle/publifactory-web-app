@@ -15,19 +15,17 @@ blocks:
       jobs:
         - name: exec deploy
           commands:
-            - cat /home/semaphore/gcloud.json
-            - >-
-              gcloud auth activate-service-account
-              --key-file=/home/semaphore/gcloud.json --account=hapax.jean@gmail.com
+            - ls /home/semaphore/
+              # ssh -i /home/semaphore/ssh.json collin_q@34.89.179.162
+              # gcloud auth activate-service-account
+              # --key-file=/home/semaphore/gcloud.json
             - >-
               gcloud compute --project "smart-rope-243709" ssh --zone 
-              "europe-west3-c" "atome-01-dev" --command="whoami"  --account=hapax.jean@gmail.com
+              "europe-west3-c" "atome-01-dev"
+              --ssh-key-file=/home/semaphore/ssh.json
+              --command="cd /home/publifactory/web-app && git pull origin dev"
             - >-
-              gcloud compute --project "smart-rope-243709" ssh --zone
-              "europe-west3-c" "atome-01-dev" --command="sudo cd
-              /home/publifactory/web-app/ && git pull origin master"
-            - >-
-              gcloud compute --project "smart-rope-243709" ssh --zone
+              gcloud compute ssh --project "smart-rope-243709" ssh --zone
               "europe-west3-c" "atome-01-dev" --command="sudo
               /home/publifactory/web-app/script_docker.sh start prod"
     dependencies: []
