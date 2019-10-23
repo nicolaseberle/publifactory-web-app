@@ -21,9 +21,9 @@ blocks:
               gcloud auth activate-service-account
               --key-file=/home/semaphore/gcloud.json
             - >-
-              gcloud compute --account hapax.jean@gmail.com --project "smart-rope-243709" ssh --zone 
+              gcloud compute --project "smart-rope-243709" ssh --zone 
               "europe-west3-c" "atome-01-dev"
-              --ssh-key-file=/home/semaphore/ssh.json
+              # --ssh-key-file=/home/semaphore/ssh.json
               --command="cd /home/publifactory/web-app && git pull origin dev"
             - >-
               gcloud compute ssh --project "smart-rope-243709" ssh --zone
