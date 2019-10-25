@@ -202,7 +202,7 @@
 
           <el-table-column
             label="Actions"
-            width="200">
+            width="260">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -236,6 +236,19 @@
                 circle
                 disabled>
               </el-button>
+              <el-popover
+                ref="popcheck"
+                placement="top"
+                trigger="hover"
+                content="The author matches correctly">
+              </el-popover>
+              <el-button
+                type="success"
+                plain
+                icon="el-icon-check"
+                circle
+                @click.native.prevent="validateRow(scope.$index, tableData)"
+                v-popover:popcheck/>
               <el-popover
                 ref="popdel"
                 placement="top"
@@ -542,7 +555,9 @@ export default {
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
-
+    validateRow(index, rows) {
+      rows.splice(index, 1);
+    },
     handleEdit(index, row) {
       console.log(index, row);
     },
