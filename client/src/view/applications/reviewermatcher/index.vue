@@ -3,12 +3,12 @@
     <div class="app-container">
 
       <hgroup>
-        <h1>Reviewer Matcher</h1>
-        <p>The service allows to match an article with the best reviewers</p>
+        <h1>Search Reviewers</h1>
+        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
       </hgroup>
       <div>
       <h2>Load the article</h2>
-      <p>Insert your publication informations (title, abstract or keywords)</p>
+      <p>Insert your publication informations (title, authors, abstract or keywords)</p>
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
