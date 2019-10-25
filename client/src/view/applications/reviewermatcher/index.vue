@@ -118,34 +118,39 @@
           @cell-click="displayInfos"
           style="width: 100%">
           <el-table-column type="expand" width="1">
-             <template slot-scope="props">
-               <article v-if="state_click[props.$index] == 1">
-                 <strong>Most pertinents works :</strong>
-                 <ul>
-                   <li v-for="article in props.row.article">
-                     {{ article.title }}
-                     <ul>
-                       <li>Year : {{ article.year }}</li>
-                       <li>Score : {{ article.score }}</li>
-                       <li>{{ article.co_auth }}</li>
-                       <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
-                       <li v-else > Doi : Unknown</li>
-                     </ul>
-                   </li>
-                 </ul>
-               </article>
-               <article v-if="state_click[props.$index] == 2">
-                 <strong>Contacts :</strong>
-                 <ul>
-                   <li v-if="props.row.contact.length == 0">Unknown</li>
-                   <li v-else v-for="contact in props.row.contact">
-                     <span v-for="(v,i,count) in contact">{{i}} : {{v}}
-                       <span v-show="count<(Object.keys(contact).length-1)">, </span>
-                     </span>
-                   </li>
-                 </ul>
-               </article>
-             </template>
+            <template slot-scope="props">
+              <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
+
+                <!--
+                <strong>Most pertinents works :</strong>
+                <ul>
+                  <li v-for="article in props.row.article">
+                    {{ article.title }}
+                    <ul>
+                      <li>Year : {{ article.year }}</li>
+                      <li>Score : {{ article.score }}</li>
+                      <li>{{ article.co_auth }}</li>
+                      <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
+                      <li v-else > Doi : Unknown</li>
+                    </ul>
+                  </li>
+                </ul>-->
+                <researcherCard :author="props.row"/>
+              </div>
+              <article v-if="state_click[props.$index] == 2">
+                <strong>Contacts :</strong>
+                <ul>
+                  <li v-if="props.row.contact.length == 0">Unknown</li>
+                  <li v-else v-for="contact in props.row.contact">
+                    <span v-for="(v,i,count) in contact">{{i}} : {{v}}
+                      <span v-show="count<(Object.keys(contact).length-1)">, </span>
+                    </span>
+                  </li>
+                </ul>
+              </article>
+            </template>
+
+
           </el-table-column>
 
           <el-table-column
@@ -256,7 +261,9 @@
 
 <script>
 import axios from 'axios'
+import researcherCard from './researcher_card'
 export default {
+  components: {researcherCard},
   data () {
     return {
       state_click: [],
