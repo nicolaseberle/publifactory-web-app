@@ -269,6 +269,37 @@
       </el-row>
     </div>
     </div>
+    <el-dialog
+      title="Send a Request to Review"
+      :visible.sync="centerDialogVisible"
+      width="75%">
+      <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+
+
+        <el-form-item label="Your email">
+          <el-input v-model="formPost.emailDest"></el-input>
+        </el-form-item>
+        <el-form-item label="Object">
+          <el-input v-model="formPost.object"></el-input>
+        </el-form-item>
+        <el-form-item label="Message">
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 10, maxRows: 30}"
+          :placeholder="formPost.abstract"
+          v-model="formMail.abstract">
+        </el-input>
+        </el-form-item>
+      <el-form-item label="Option">
+        <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
+      </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">Send</el-button>
+      </span>
+
+    </el-dialog>
   </div>
 </template>
 
@@ -279,10 +310,12 @@ export default {
   components: {researcherCard},
   data () {
     return {
+      centerDialogVisible: true,
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
+      formMail: {publisher: '',mail: '', abstract: '' , title: ''},
       formPost: {abstract: '' , title: '', keywords: [], authors: []},
       rules: {
         abstract: [
@@ -290,6 +323,14 @@ export default {
         ],
         authors: [
           {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
+        ]
+      },
+      mailRules: {
+        message: [
+          {required: true, message: 'Please input enter a message for your email', trigger: 'blur'}
+        ],
+        object: [
+          {required: true, message: 'A email needs an object', trigger: 'blur'}
         ]
       },
       tableData: [{}],
@@ -300,7 +341,8 @@ export default {
       inputValue: '',
       inputValueAut: '',
       load_var: false,
-      id: ''
+      id: '',
+      receiveCopy: false
     }
   },
   methods: {
@@ -505,6 +547,7 @@ export default {
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
+      this.centerDialogVisible = true
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -556,7 +599,7 @@ export default {
       rows.splice(index, 1);
     },
     validateRow(index, rows) {
-      rows.splice(index, 1);
+
     },
     handleEdit(index, row) {
       console.log(index, row);
