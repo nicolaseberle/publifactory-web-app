@@ -221,7 +221,7 @@
                 ref="popcon"
                 placement="top"
                 trigger="hover"
-                content="Watch his contacts">
+                content="Send a request">
               </el-popover>
               <el-button v-if="scope.row.contact.length > 0"
                 type="success"
@@ -273,32 +273,32 @@
       title="Send a Request to Review"
       :visible.sync="centerDialogVisible"
       width="75%">
-      <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+      <div>
+        <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
 
-
-        <el-form-item label="Your email">
-          <el-input v-model="formPost.emailDest"></el-input>
+      <el-form-item label="Your email" required>
+          <el-input v-model="formMail.emailDest"></el-input>
         </el-form-item>
-        <el-form-item label="Object">
-          <el-input v-model="formPost.object"></el-input>
+        <el-form-item label="Object" required>
+          <el-input v-model="formMail.object">{{formPost.object}}</el-input>
         </el-form-item>
-        <el-form-item label="Message">
+        <el-form-item label="Message" required>
         <el-input
           type="textarea"
           :autosize="{ minRows: 10, maxRows: 30}"
           :placeholder="formPost.abstract"
-          v-model="formMail.abstract">
+          v-model="formMail.message">
         </el-input>
         </el-form-item>
       <el-form-item label="Option">
         <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
       </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
+      <el-form-item>
         <el-button @click="centerDialogVisible = false">Cancel</el-button>
         <el-button type="primary" @click="centerDialogVisible = false">Send</el-button>
-      </span>
-
+      </el-form-item>
+        </el-form>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -310,12 +310,12 @@ export default {
   components: {researcherCard},
   data () {
     return {
-      centerDialogVisible: true,
+      centerDialogVisible: false,
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
-      formMail: {publisher: '',mail: '', abstract: '' , title: ''},
+      formMail: {objet: '',mailDest: '', message: '' },
       formPost: {abstract: '' , title: '', keywords: [], authors: []},
       rules: {
         abstract: [
@@ -547,7 +547,7 @@ export default {
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.centerDialogVisible = true
+
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -580,6 +580,7 @@ export default {
     displayInfosB(index, row) {
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
       this.$refs.refTable.toggleRowExpansion(row);
+      this.centerDialogVisible = true
       if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
         this.state_click[index] = 3;
