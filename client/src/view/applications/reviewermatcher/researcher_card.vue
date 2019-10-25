@@ -3,10 +3,7 @@
     <div style='margin-bottom:15px'>
       <strong>Most pertinents works :</strong>
     </div>
-      <div v-for="article in author.article">
-        <el-card class="box-card">
-
-
+      <article v-for="article in author.article">
           <div class='paginated-list-item publication-list-item'>
             <div class='publication-list-item-details'>
 
@@ -38,8 +35,7 @@
               </div>
             </div>
           </div>
-        </el-card>
-      </div>
+      </article>
   </div>
 </template>
 <script>
@@ -89,7 +85,7 @@ a.very-dark-gray-link {
     color: #111;
 }
 .publication-list-item .publication-list-item-date, .publication-list-item .publication-list-item-journal {
-    grid-area: journal;
+    /*grid-area: journal;*/
     font-size: 12px!important;
     font-weight: 200;
 }
@@ -116,19 +112,33 @@ a.very-dark-gray-link {
 }
 .publication-list-item-journal-published-copy p {
     margin-bottom: 20px;
-    line-height: 140%;
+    line-height: 100%;
     max-width: 720px;
 }
 .publication-list-item a {
     color: #111;
 }
 .publication-list-item-details {
-    grid-area: title;
+    /*grid-area: title;*/
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
     overflow: hidden;
     padding-right: 10px;
-    font-size: 16px;
+    font-size: 12px;
+    line-height: 14px;
+
+}
+article {
+  padding-left: 30px;
+  border-left: 1px solid lightgrey;
+}
+.publication-list-item-title{
+  font-size: 14px!important;
+}
+.publication-list-item .publication-list-item-date, .publication-list-item .publication-list-item-journal {
+    /*grid-area: journal;*/
+    font-size: 12px!important;
+    font-weight: 200;
 }
 </style>

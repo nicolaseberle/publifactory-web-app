@@ -119,7 +119,8 @@
           style="width: 100%">
           <el-table-column type="expand" width="1">
             <template slot-scope="props">
-              <article v-if="state_click[props.$index] == 1">
+              <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
+
                 <!--
                 <strong>Most pertinents works :</strong>
                 <ul>
@@ -135,7 +136,7 @@
                   </li>
                 </ul>-->
                 <researcherCard :author="props.row"/>
-              </article>
+              </div>
               <article v-if="state_click[props.$index] == 2">
                 <strong>Contacts :</strong>
                 <ul>
