@@ -3,12 +3,12 @@
     <div class="app-container">
 
       <hgroup>
-        <h1>Reviewer Matcher</h1>
-        <p>The service allows to match an article with the best reviewers</p>
+        <h1>Search Reviewers</h1>
+        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
       </hgroup>
       <div>
       <h2>Load the article</h2>
-      <p>Insert your publication informations (title, abstract or keywords)</p>
+      <p>Insert your publication informations (title, authors, abstract or keywords)</p>
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
@@ -118,34 +118,39 @@
           @cell-click="displayInfos"
           style="width: 100%">
           <el-table-column type="expand" width="1">
-             <template slot-scope="props">
-               <article v-if="state_click[props.$index] == 1">
-                 <strong>Most pertinents works :</strong>
-                 <ul>
-                   <li v-for="article in props.row.article">
-                     {{ article.title }}
-                     <ul>
-                       <li>Year : {{ article.year }}</li>
-                       <li>Score : {{ article.score }}</li>
-                       <li>{{ article.co_auth }}</li>
-                       <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
-                       <li v-else > Doi : Unknown</li>
-                     </ul>
-                   </li>
-                 </ul>
-               </article>
-               <article v-if="state_click[props.$index] == 2">
-                 <strong>Contacts :</strong>
-                 <ul>
-                   <li v-if="props.row.contact.length == 0">Unknown</li>
-                   <li v-else v-for="contact in props.row.contact">
-                     <span v-for="(v,i,count) in contact">{{i}} : {{v}}
-                       <span v-show="count<(Object.keys(contact).length-1)">, </span>
-                     </span>
-                   </li>
-                 </ul>
-               </article>
-             </template>
+            <template slot-scope="props">
+              <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
+
+                <!--
+                <strong>Most pertinents works :</strong>
+                <ul>
+                  <li v-for="article in props.row.article">
+                    {{ article.title }}
+                    <ul>
+                      <li>Year : {{ article.year }}</li>
+                      <li>Score : {{ article.score }}</li>
+                      <li>{{ article.co_auth }}</li>
+                      <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
+                      <li v-else > Doi : Unknown</li>
+                    </ul>
+                  </li>
+                </ul>-->
+                <researcherCard :author="props.row"/>
+              </div>
+              <article v-if="state_click[props.$index] == 2">
+                <strong>Contacts :</strong>
+                <ul>
+                  <li v-if="props.row.contact.length == 0">Unknown</li>
+                  <li v-else v-for="contact in props.row.contact">
+                    <span v-for="(v,i,count) in contact">{{i}} : {{v}}
+                      <span v-show="count<(Object.keys(contact).length-1)">, </span>
+                    </span>
+                  </li>
+                </ul>
+              </article>
+            </template>
+
+
           </el-table-column>
 
           <el-table-column
@@ -197,7 +202,7 @@
 
           <el-table-column
             label="Actions"
-            width="200">
+            width="260">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -216,7 +221,7 @@
                 ref="popcon"
                 placement="top"
                 trigger="hover"
-                content="Watch his contacts">
+                content="Send a request">
               </el-popover>
               <el-button v-if="scope.row.contact.length > 0"
                 type="success"
@@ -231,6 +236,19 @@
                 circle
                 disabled>
               </el-button>
+<!--              <el-popover
+                ref="popcheck"
+                placement="top"
+                trigger="hover"
+                content="The author matches correctly">
+              </el-popover>
+              <el-button
+                type="success"
+                plain
+                icon="el-icon-check"
+                circle
+                @click.native.prevent="validateRow(scope.$index, tableData)"
+                v-popover:popcheck/>
               <el-popover
                 ref="popdel"
                 placement="top"
@@ -245,24 +263,59 @@
                 @click.native.prevent="deleteRow(scope.$index, tableData)"
                 v-popover:popdel>
               </el-button>
+-->
             </template>
           </el-table-column>
         </el-table>
       </el-row>
     </div>
     </div>
+    <el-dialog
+      title="Send a Request to Review"
+      :visible.sync="centerDialogVisible"
+      width="75%">
+      <div>
+        <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+
+      <el-form-item label="Your email" required>
+          <el-input v-model="formMail.emailDest"></el-input>
+        </el-form-item>
+        <el-form-item label="Object" required>
+          <el-input v-model="formMail.object">{{formPost.object}}</el-input>
+        </el-form-item>
+        <el-form-item label="Message" required>
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 10, maxRows: 30}"
+          v-model="formPost.abstract">
+        </el-input>
+        </el-form-item>
+      <el-form-item label="Option">
+        <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="centerDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="centerDialogVisible = false">Send</el-button>
+      </el-form-item>
+        </el-form>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import researcherCard from './researcher_card'
 export default {
+  components: {researcherCard},
   data () {
     return {
+      centerDialogVisible: false,
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
+      formMail: {objet: '',mailDest: '', message: '' },
       formPost: {abstract: '' , title: '', keywords: [], authors: []},
       rules: {
         abstract: [
@@ -270,6 +323,14 @@ export default {
         ],
         authors: [
           {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
+        ]
+      },
+      mailRules: {
+        message: [
+          {required: true, message: 'Please input enter a message for your email', trigger: 'blur'}
+        ],
+        object: [
+          {required: true, message: 'A email needs an object', trigger: 'blur'}
         ]
       },
       tableData: [{}],
@@ -280,7 +341,8 @@ export default {
       inputValue: '',
       inputValueAut: '',
       load_var: false,
-      id: ''
+      id: '',
+      receiveCopy: false
     }
   },
   methods: {
@@ -485,6 +547,7 @@ export default {
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
+
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -517,6 +580,7 @@ export default {
     displayInfosB(index, row) {
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
       this.$refs.refTable.toggleRowExpansion(row);
+      this.centerDialogVisible = true
       if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
         this.state_click[index] = 3;
@@ -535,7 +599,9 @@ export default {
     deleteRow(index, rows) {
       rows.splice(index, 1);
     },
+    validateRow(index, rows) {
 
+    },
     handleEdit(index, row) {
       console.log(index, row);
     },
