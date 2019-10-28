@@ -236,7 +236,7 @@
                 circle
                 disabled>
               </el-button>
-              <el-popover
+<!--              <el-popover
                 ref="popcheck"
                 placement="top"
                 trigger="hover"
@@ -263,6 +263,7 @@
                 @click.native.prevent="deleteRow(scope.$index, tableData)"
                 v-popover:popdel>
               </el-button>
+-->
             </template>
           </el-table-column>
         </el-table>
@@ -286,8 +287,7 @@
         <el-input
           type="textarea"
           :autosize="{ minRows: 10, maxRows: 30}"
-          :placeholder="formPost.abstract"
-          v-model="formMail.message">
+          v-model="formPost.abstract">
         </el-input>
         </el-form-item>
       <el-form-item label="Option">

@@ -3,10 +3,9 @@
     <div style='margin-bottom:15px'>
       <strong>Most pertinents works :</strong>
     </div>
-      <article v-for="article in author.article">
-          <div class='paginated-list-item publication-list-item'>
+      <div class='paginated-list-item publication-list-item'>
+      <article v-for="article in author.article" class="container">
             <div class='publication-list-item-details'>
-
               <div class='publication-list-item-title-publication margin-bottom-sm' >
                 <a :href="article.doi" class='publication-list-item-title very-dark-gray-link'>
                   {{ article.title }}
@@ -34,9 +33,38 @@
                 </div>
               </div>
             </div>
+            <div class='publication-list-item-citations'>
 
-          </div>
+              <el-popover
+                ref="popcheck"
+                placement="top"
+                trigger="hover"
+                content="The author matches correctly">
+              </el-popover>
+              <el-button
+                type="success"
+                plain
+                icon="el-icon-check"
+                circle
+                @click.native.prevent="validateRow()"
+                v-popover:popcheck/>
+              <el-popover
+                ref="popdel"
+                placement="top"
+                trigger="hover"
+                content="The author does not match">
+              </el-popover>
+              <el-button
+                type="info"
+                plain
+                icon="el-icon-close"
+                circle
+                @click.native.prevent="deleteRow()"
+                v-popover:popdel>
+              </el-button>
+            </div>
       </article>
+          </div>
   </div>
 </template>
 <script>
@@ -64,6 +92,12 @@ export default {
 ul {
   font-family: 'DNLTPro-regular';
 }
+.container {
+
+   display: grid;
+   grid-template-columns: 4fr 10px 1fr;
+   grid-template-areas: "title   .      citations";
+}
 .paginated-list .paginated-list-item {
     padding: 20px 10px;
     border-bottom: 1px solid #ddd;
@@ -75,6 +109,7 @@ ul {
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+    font-family: 'DNLTPro-regular';
 }
 .margin-bottom-sm {
     margin-bottom: 10px!important;
@@ -120,26 +155,41 @@ a.very-dark-gray-link {
     color: #111;
 }
 .publication-list-item-details {
-    /*grid-area: title;*/
+    grid-area: title;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
     overflow: hidden;
+    padding-top: 5px;
     padding-right: 10px;
     font-size: 12px;
     line-height: 14px;
 
 }
+.publication-list-item-citations {
+    grid-area: citations;
+    -webkit-box-flex: 2;
+    -ms-flex-positive: 2;
+    flex-grow: 2;
+    overflow: hidden;
+    padding-right: 10px;
+    font-size: 24px;
+    text-align: center;
+
+}
 article {
   padding-left: 30px;
   border-left: 1px solid lightgrey;
+  width: 100%;
 }
 .publication-list-item-title{
-  font-size: 14px!important;
+  color: #999;
+  font-size: 16px!important;
 }
 .publication-list-item .publication-list-item-date, .publication-list-item .publication-list-item-journal {
     /*grid-area: journal;*/
     font-size: 12px!important;
     font-weight: 200;
 }
+
 </style>
