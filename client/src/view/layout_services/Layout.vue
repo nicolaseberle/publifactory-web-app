@@ -1,5 +1,5 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
+  <div class="app-wrapper">
     <el-row style='margin:10px 0px 20px 0px'>
       <el-col :span='20' :offset='2'>
         <navbar/>

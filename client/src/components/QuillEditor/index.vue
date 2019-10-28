@@ -96,6 +96,8 @@
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
 	import collaboration from './collaboration'
+  import richText from 'rich-text'
+
 
 	const io = require('socket.io-client');
 
@@ -154,17 +156,13 @@ ProcRef.tagName = 'a';
 Quill.register(ProcLink, true);
 Quill.register(ProcRef, true);
 
-
-
 export default {
 	name: 'QuillEditor',
 	props: {
-	  socket: Object,
+		wssdb: Object,
+		socket: Object,
 		content: {
 			type: String | Array | Object
-		},
-		collaborationPayload: { 
-			type: Object
 		},
 		uuid: {
 			type: String,
@@ -193,6 +191,8 @@ export default {
 	},
 	data() {
 		return {
+			cursorId: null, // === userName
+			shareDoc: null,
 			id: '',
 			inputRefVisible: false,
 			editor: {},
@@ -229,8 +229,13 @@ export default {
 	},
 	beforeDestroy() {
 		clearInterval(this.updateLocalCursorIntervalId)
+		if (!this.shareDoc) return
+		this.shareDoc.removeListener('op', () => {})
+		this.shareDoc.destroy();
+		this.shareDoc = null;
 	},
-	created() {
+	async created() {
+		this.cursorId = await this.getUserName();
 		this.id = this.$route.params && this.$route.params.id
 		// this.updateLocalCursorIntervalId = setInterval(async () => {
 		// 	const selection = this.editor.getSelection()
@@ -243,20 +248,56 @@ export default {
 		// 		cursorId: await this.getUserName(),
 		// });
 		// }, 2000)
+
 	},
 	async destroyed() {
 		this.socket.emit('REMOVE_QUILL_SELECT', {
 			cursorId: await this.getUserName(),
 		});
 	},
-	async mounted() {			
-      this.socket.on('QUILL_EXEC_SELECT', async data => {
+	
+	mounted() {
+		if (this.shareDoc === null) {
+			const connection = this.wssdb.getConnection()
+			this.shareDoc = connection.get('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+		}
+		if (this.shareDoc.type === null) {
+			this.shareDoc.create([{ insert: '' }], richText.type.name);
+		}
+		this.shareDoc.subscribe(err => {
+			if (err) console.warn('SHAREDB', err);
+			if (this.shareDoc.type === null) {
+				console.warn("DOC NOT CREATED")
+			}
+		});
+
+		this.shareDoc.on('op', (op, source) => {
+			if (source === this.editor) return
+			this.editor.updateContents(op, 'api');
+
+		});
+
+      this.socket.on('QUILL_EXEC_SELECT', data => {
 					collaboration.selectionUpdate(this, data)
 			});
 			
 			this.socket.on('DELETE_CURSOR', data => {
 				if (!this.sameBlock(data)) return;
 				this.cursorModule.removeCursor(data.cursorId);
+			});
+
+			
+			this.socket.on('QUILL_RESP_SELECT', (data) => {
+				collaboration.selectionUpdate(this, data)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_NEW_SELECT', {
+					range: selection,
+				numBlock: this.numBlock,
+				numSubBlock: this.numSubBlock,
+				numSubSubBlock: this.numSubSubBlock,
+				cursorId: this.cursorId,
+				});
 			});
 
 	    var quill = new Quill('#' + this.idEditor, {
@@ -301,16 +342,28 @@ export default {
 	    });
 
 			this.cursorModule = this.editor.getModule('cursors');
-			// this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
-
-      this.editor.on('text-change', (delta, oldDelta, source) => {
+				
+			this.editor.on('text-change', (delta, oldDelta, source) => {
 				if (source === 'api')	return;
+				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
+					if (err && err.code === 4015) {
+						console.warn(err)
+					}
+				})
 				collaboration.textCommit(this, delta)
-
-				collaboration.updateForeignCursors(this, delta)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_REQ_UPDATE', {
+					range: selection,
+					numBlock: this.numBlock,
+					numSubBlock: this.numSubBlock,
+					numSubSubBlock: this.numSubSubBlock,
+					cursorId: this.cursorId,
+				});
+				// collaboration.updateForeignCursors(this, delta)
 			});
 
       this.editor.on('selection-change', (range, oldRange, source) => {
@@ -362,17 +415,6 @@ export default {
 	    });
 			*/
   },
-	watch: {
-		collaborationPayload: {
-			deep: true,
-			handler(payload) {
-				// console.log("DELTA", JSON.stringify(payload));
-				if (!payload) return;
-				this.editor.updateContents(payload.delta, payload.source);
-				this.cursorModule.moveCursor(payload.cursor.cursorId, payload.cursor.range)
-			}
-		}
-	},
   computed: {
     ...mapGetters(['userId', 'accessToken'])
   },

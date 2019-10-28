@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar">
+  <div :class="{'navbar': !flag_user, 'navbar_editor' : flag_user}">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
 
     <breadcrumb class="breadcrumb-container"/>
@@ -10,7 +10,7 @@
         <div style='vertical-align:middle' class="right-menu-item">
           <el-switch
             v-model="flag_user"
-            inactive-text="User view"
+            inactive-text="Author view"
             active-text="Editor view"
             >
           </el-switch>
@@ -79,7 +79,8 @@ export default {
   },
   data () {
     return {
-      flag_user: false
+      flag_user: false,
+      navbar_user: false
     }
   },
   computed: {
@@ -94,8 +95,21 @@ export default {
       'device'
     ])
   },
+  watch: {
+    flag_user (new_role) {
+      console.log(new_role)
+      if(new_role == false) {
+        this.toggleRole('user')
+        this.$emit('input', new_role)
+      }
+      else {
+        this.toggleRole('editor')
+        this.$emit('input', new_role)
+      }
+    }
+  },
   methods: {
-    ...mapActions(['logout', 'updateGlobalConfig']),
+    ...mapActions(['logout', 'updateGlobalConfig','toggleRole']),
     doLogout () {
       this.logout().then(() => {
         this.$router.push('/login')

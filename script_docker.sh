@@ -7,7 +7,7 @@ NC='\033[0m' # No Color
 # Constants
 DATE_BEGIN=$(date +%s)
 USER=$(whoami)
-CWD='/home/nicolas/web-app'
+CWD=`pwd`
 
 # Variable
 command=$1
@@ -43,7 +43,12 @@ print_help () {
 build_container () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
-  sudo docker-compose build
+  if [[ ${options} = "dev" ]];
+  then
+    sudo docker-compose -f docker-compose-dev.yml build
+  else
+    sudo docker-compose build
+  fi
   echo -ne '###############           (72%)\r'
   debug "Images built.\n"
 }
@@ -80,6 +85,12 @@ start () {
   debug "Up the client WebApp.\n"
   echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
+  then
+    debug "Up NGiNX \n"
+    sudo docker-compose up --no-deps -d nginx
+    debug "Up Certbot\n"
+    sudo docker-compose up  --no-deps -d certbot
+  elif [[ ${options} = "dev" ]];
   then
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx

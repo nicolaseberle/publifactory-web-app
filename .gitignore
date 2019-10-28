@@ -206,3 +206,5 @@ modules.xml
 
 # VSCode
 .vscode/
+
+client/dist
