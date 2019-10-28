@@ -45,8 +45,10 @@ build_container () {
   debug "Begin build container.\n"
   if [[ ${options} = "dev" ]];
   then
+    debug "Using docker-compose for development \n"
     sudo docker-compose -f docker-compose-dev.yml build
   else
+    debug "Using docker-compose for production \n"
     sudo docker-compose build
   fi
   echo -ne '###############           (72%)\r'

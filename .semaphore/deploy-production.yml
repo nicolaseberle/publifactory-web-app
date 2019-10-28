@@ -15,16 +15,16 @@ blocks:
       jobs:
         - name: exec deploy
           commands:
-            - cat /home/semaphore/gcloud.json
+            - ls /home/semaphore/
+            - sudo chmod 600 /home/semaphore/ssh
+            - sudo locale-gen en_US.UTF-8
             - >-
-              gcloud auth activate-service-account
-              --key-file=/home/semaphore/gcloud.json
-            - >-
-              gcloud compute --project "smart-rope-243709" ssh --zone
-              "europe-west3-c" "atome-01" --command="sudo cd
-              /home/publifactory/web-app/ && git pull origin master"
-            - >-
-              gcloud compute --project "smart-rope-243709" ssh --zone
-              "europe-west3-c" "atome-01" --command="sudo
-              /home/publifactory/web-app/script_docker.sh start prod"
+              ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12 
+              "cd /home/publifactory;
+              mv web-app/database/ .;
+              rm -rf web-app; 
+              git clone -b master https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
+              mv database/ ./web-app/;
+              cd web-app;
+              sudo ./script_docker.sh start prod"
     dependencies: []
