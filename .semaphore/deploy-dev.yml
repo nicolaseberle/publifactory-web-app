@@ -23,7 +23,7 @@ blocks:
               "cd /home/publifactory;
               mv web-app/database/ .;
               rm -rf web-app;
-              git clone -b dev https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
+              git clone -b features/deployement https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               mv database/ ./web-app/;
               cd web-app;
               sudo ./script_docker.sh start dev"
