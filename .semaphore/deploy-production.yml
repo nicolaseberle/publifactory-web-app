@@ -21,10 +21,14 @@ blocks:
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12 
               "cd /home/publifactory;
-              mv web-app/database/ .;
-              rm -rf web-app; 
-              git clone -b master https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
-              mv database/ ./web-app/;
+              git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               cd web-app;
               sudo ./script_docker.sh start prod"
+              # mv web-app/database/ .;
+              # rm -rf web-app; 
+              # git clone -b master https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
+              # mv database/ ./web-app/;
+
+              # sudo chmod 770 -R web-app
+              # sudo chown -R collin_q:publifactory-team web-app
     dependencies: []
