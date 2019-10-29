@@ -65,8 +65,19 @@ if (process.env.NODE_ENV === 'production') {
 	console.log('listen port :' + config.port);
 }
 
+app.get('/', (req, res, next) => {
+	return res
+		.status(200)
+		.json({ ok: 'ok' })
+		.end();
+});
+
 server.listen(config.port, config.ip, function() {
-	console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'));
+	console.log(
+		'Express side server listening on %d, in %s mode',
+		config.port,
+		app.get('env')
+	);
 });
 
 // Expose app
