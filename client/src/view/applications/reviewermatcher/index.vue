@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-
+      <el-tag type="warning" effect="dark" style="font-weight:bold;">ALPHA v1.0.3</el-tag>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -76,7 +76,7 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
+          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
           <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
         </el-form-item>
 
@@ -100,6 +100,10 @@
         </el-col>
       </el-row>
       </div>
+
+
+
+
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
@@ -162,7 +166,7 @@
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
                 <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
-                <p class="align">{{ props.row.name}}</p>
+                <strong class="align">{{ props.row.name}}</strong>
                 <p v-if="props.row.id.length > 10">
                   <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
                 </p>
@@ -193,6 +197,15 @@
           </el-table-column>
 
           <el-table-column
+            label="Citations"
+            prop="citations"
+            width="100">
+            <template slot-scope="props">
+              <p>{{ props.row.citations }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             label="Conflict of interest"
             prop="conflit">
             <template slot-scope="props">
@@ -202,13 +215,13 @@
 
           <el-table-column
             label="Actions"
-            width="260">
+            width="160">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
                 placement="top"
                 trigger="hover"
-                content="Watch his works">
+                content="Most pertinents works">
               </el-popover>
               <el-button
                 type="primary"
@@ -346,6 +359,9 @@ export default {
     }
   },
   methods: {
+    format(value){
+      return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
     info_caption(h, { column, $index }) {
       return h("span", [
         column.label,
@@ -475,7 +491,7 @@ export default {
       window.setInterval(()=>{
         if (this.progress_status_pdf<100)
           this.progress_status_pdf = this.progress_status_pdf +1
-      }, 250);
+      }, 500);
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
@@ -508,6 +524,7 @@ export default {
               this.progress_status = this.progress_status +1
           }, 250);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
+          this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
