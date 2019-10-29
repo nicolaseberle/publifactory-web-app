@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-
+      <div class="bandeau">ALPHA v0.1.3</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -15,11 +15,11 @@
       <el-col :span='12'>
       <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
-        <el-form-item label="Title">
+        <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
-        <el-form-item label="Keywords">
+        <el-form-item label="Keywords" prop="keywords">
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -76,7 +76,7 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
+          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
           <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
         </el-form-item>
 
@@ -84,7 +84,7 @@
       </el-col>
 
         <el-col :span='1'>
-          <div style='text-align:center; vertical-align:middle; height:100px;'><p>or</p></div>
+          <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
         <el-col :span='11'>
           <el-upload
@@ -96,10 +96,14 @@
           <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
           <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
         </el-upload>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="progress_status_pdf" style="width:100%;margin-top:22px;"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
         </el-col>
       </el-row>
       </div>
+
+
+
+
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
@@ -162,7 +166,7 @@
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
                 <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
-                <p class="align">{{ props.row.name}}</p>
+                <strong class="align">{{ props.row.name}}</strong>
                 <p v-if="props.row.id.length > 10">
                   <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
                 </p>
@@ -193,22 +197,35 @@
           </el-table-column>
 
           <el-table-column
+            label="Citations"
+            prop="citations"
+            width="100">
+            <template slot-scope="props">
+              <p>{{ props.row.citations }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             label="Conflict of interest"
             prop="conflit">
             <template slot-scope="props">
-                <p>{{ props.row.conflit }}</p>
+                <div v-if="props.row.conflit == 0" class="round c_green"></div>
+                <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
+                <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
+                <div v-else class="round c_grey"></div>
+                <p style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
           <el-table-column
             label="Actions"
-            width="260">
+            width="160">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
                 placement="top"
                 trigger="hover"
-                content="Watch his works">
+                content="Most pertinents works">
               </el-popover>
               <el-button
                 type="primary"
@@ -346,6 +363,9 @@ export default {
     }
   },
   methods: {
+    format(value){
+      return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
     info_caption(h, { column, $index }) {
       return h("span", [
         column.label,
@@ -475,7 +495,7 @@ export default {
       window.setInterval(()=>{
         if (this.progress_status_pdf<100)
           this.progress_status_pdf = this.progress_status_pdf +1
-      }, 250);
+      }, 500);
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
@@ -508,6 +528,7 @@ export default {
               this.progress_status = this.progress_status +1
           }, 250);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
+          this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
@@ -612,6 +633,17 @@ export default {
 }
 </script>
 <style>
+
+.bandeau {
+  position: fixed;
+  top: 30px;
+  right: -45px;
+  background-color: #E6A23C;
+  color: white;
+  padding: 0px 40px;
+  transform: rotate(45deg);
+  font-weight: bold;
+}
 
 .app-container {
   max-width: 1140px;
@@ -726,6 +758,19 @@ hgroup {
       background-color: #A5A9AD;
     }
 
+    .c_red {
+      background-color: #F56C6C;
+    }
+
+.round {
+  width: 13px;
+  height: 13px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
 .el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
 }
@@ -761,6 +806,10 @@ hgroup {
 
 .el-table .cell {
   padding: 0 20px!important;
+}
+
+.el-upload-dragger .el-icon-upload {
+  margin: 16px 0;
 }
 
 @media (max-width: 1280px) {

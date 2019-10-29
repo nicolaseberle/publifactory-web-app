@@ -1,24 +1,32 @@
 <template >
   <div>
-    <div style='margin-bottom:15px'>
-      <strong>Most pertinents works :</strong>
-    </div>
       <div class='paginated-list-item publication-list-item'>
       <article v-for="article in author.article" class="container">
             <div class='publication-list-item-details'>
-              <div class='publication-list-item-title-publication margin-bottom-sm' >
+              <div class='publication-list-item-title-publication margin-bottom-sm'>
                 <a :href="article.doi" class='publication-list-item-title very-dark-gray-link'>
                   {{ article.title }}
                 </a>
               </div>
-              <div classs='publication-list-item-citations'>
+              <div>
                 <div class='publication-list-item-journal-copy'>
                   <p class='publication-list-item-journal-published-copy'>
-                  Authors:  <a class='very-dark-gray-link'>{{ article.co_auth }}</a>, <a> see more</a>
+                    <el-tooltip class="item" effect="dark" :content="article.abstract" placement="right">
+                      <a class='very-dark-gray-link'>View abstract</a>
+                    </el-tooltip>
+                  </p>
+                  <!-- <p class='publication-list-item-journal-published-copy'>
+                  Role:  <a class='very-dark-gray-link'>{{ article.co_auth }}</a>
+                  </p> -->
+                  <p class='publication-list-item-journal-published-copy' style="display:inline">
+                  Authors:  <a v-for="(auth, index) in author.list_auth" style="display:inline">
+                      <strong v-if="author.pos == index" style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></strong>
+                      <span v-else style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></span>
+                    </a>
                   </p>
                   <p class='publication-list-item-journal-published-copy'>
                   Published: <a class='very-dark-gray-link'>{{ article.year }}</a>
-                  , IN:
+                  , IN: <a class='very-dark-gray-link' v-if='article.journal'>{{ article.journal }}</a><a class='very-dark-gray-link' v-else>Unknown</a>
                   </p>
                   <div v-if='article.doi'>
                   <p class='publication-list-item-journal-published-copy'>
@@ -27,44 +35,55 @@
                   </div>
                   <div v-else >
                     <p class='publication-list-item-journal-published-copy'>
-                    DOI :<a class='very-dark-gray-link'> Unknown</a>
+                    DOI:<a class='very-dark-gray-link'> Unknown</a>
+                    </p>
+                  </div>
+                  <div v-if='article.inCitations'>
+                  <p class='publication-list-item-journal-published-copy'>
+                    Citations: <a class='very-dark-gray-link'>{{ article.inCitations }}+</a>
+                  </p>
+                  </div>
+                  <div v-else >
+                    <p class='publication-list-item-journal-published-copy'>
+                    Citations:<a class='very-dark-gray-link'> Unknown</a>
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class='publication-list-item-citations'>
-
-              <el-popover
-                ref="popcheck"
-                placement="top"
-                trigger="hover"
-                content="The author matches correctly">
-              </el-popover>
-              <el-button
-                type="success"
-                plain
-                icon="el-icon-check"
-                circle
-                @click.native.prevent="validateRow()"
-                v-popover:popcheck/>
-              <el-popover
-                ref="popdel"
-                placement="top"
-                trigger="hover"
-                content="The author does not match">
-              </el-popover>
-              <el-button
-                type="info"
-                plain
-                icon="el-icon-close"
-                circle
-                @click.native.prevent="deleteRow()"
-                v-popover:popdel>
-              </el-button>
-            </div>
       </article>
-          </div>
+      <div class='publication-list-item-citations'>
+        <el-popover
+          ref="popcheck"
+          placement="top"
+          trigger="hover"
+          content="The author matches correctly">
+        </el-popover>
+        <el-button
+          type="success"
+          size="mini"
+          plain
+          icon="el-icon-check"
+          circle
+          @click.native.prevent="validateRow()"
+          v-popover:popcheck/>
+        <el-popover
+          ref="popdel"
+          placement="top"
+          trigger="hover"
+          content="The author does not match">
+        </el-popover>
+        <el-button
+          type="info"
+          size="mini"
+          plain
+          icon="el-icon-close"
+          circle
+          @click.native.prevent="deleteRow()"
+          v-popover:popdel>
+        </el-button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -93,22 +112,21 @@ ul {
   font-family: 'DNLTPro-regular';
 }
 .container {
-
-   display: grid;
+   /* display: grid;
    grid-template-columns: 4fr 10px 1fr;
-   grid-template-areas: "title   .      citations";
+   grid-template-areas: "title   .      citations"; */
 }
 .paginated-list .paginated-list-item {
     padding: 20px 10px;
     border-bottom: 1px solid #ddd;
 }
 .publication-list-item {
-    display: -webkit-box;
+    /* display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
-    align-items: center;
+    align-items: center; */
     font-family: 'DNLTPro-regular';
 }
 .margin-bottom-sm {
@@ -167,17 +185,18 @@ a.very-dark-gray-link {
 
 }
 .publication-list-item-citations {
-    grid-area: citations;
+    /* grid-area: citations;
     -webkit-box-flex: 2;
     -ms-flex-positive: 2;
     flex-grow: 2;
     overflow: hidden;
     padding-right: 10px;
-    font-size: 24px;
-    text-align: center;
-
+    font-size: 24px; */
+    text-align: right;
+    margin-top: -45px;
 }
 article {
+  margin-bottom: 15px!important;
   padding-left: 30px;
   border-left: 1px solid lightgrey;
   width: 100%;
@@ -190,6 +209,10 @@ article {
     /*grid-area: journal;*/
     font-size: 12px!important;
     font-weight: 200;
+}
+
+.el-tooltip__popper.is-dark{
+  max-width: 400px;
 }
 
 </style>
