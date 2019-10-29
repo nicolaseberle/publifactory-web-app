@@ -4,9 +4,13 @@
   </div>
 </template>
 <script>
+import locales from 'locales/article'
+
 export default{
   data () {
-    name: 'Vincent'
+    return {
+      name: 'Vincent'
+    }
   }
 }
 </script>
