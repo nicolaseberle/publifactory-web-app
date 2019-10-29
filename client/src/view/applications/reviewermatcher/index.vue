@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <el-tag type="warning" effect="dark" style="font-weight:bold;">ALPHA v1.0.3</el-tag>
+      <div class="bandeau">ALPHA v0.1.3</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -209,7 +209,11 @@
             label="Conflict of interest"
             prop="conflit">
             <template slot-scope="props">
-                <p>{{ props.row.conflit }}</p>
+                <div v-if="props.row.conflit == 0" class="round c_green"></div>
+                <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
+                <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
+                <div v-else class="round c_grey"></div>
+                <p style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
@@ -630,6 +634,17 @@ export default {
 </script>
 <style>
 
+.bandeau {
+  position: fixed;
+  top: 30px;
+  right: -45px;
+  background-color: #E6A23C;
+  color: white;
+  padding: 0px 40px;
+  transform: rotate(45deg);
+  font-weight: bold;
+}
+
 .app-container {
   max-width: 1140px;
   padding: 0px 20px;
@@ -742,6 +757,19 @@ hgroup {
     .c_grey {
       background-color: #A5A9AD;
     }
+
+    .c_red {
+      background-color: #F56C6C;
+    }
+
+.round {
+  width: 13px;
+  height: 13px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
 
 .el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
