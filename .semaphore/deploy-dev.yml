@@ -24,8 +24,8 @@ blocks:
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               cd web-app;
               git status;
-              git branch;"
-              # sudo ./script_docker.sh start dev;"
+              git branch;
+              sudo ./script_docker.sh start dev;"
 
 
               # git clone -b features/deployement https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git
