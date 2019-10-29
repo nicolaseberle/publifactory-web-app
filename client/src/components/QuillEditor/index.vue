@@ -1,78 +1,86 @@
 <template>
-	<div>
-	<div>
-		<div class='insert-button-box' v-bind:id="idButton">
-			<el-button type="" plain class="el-icon-caret-top" v-on:click='' circle size='mini'></el-button>
-			<el-button type="warning" plain  icon="el-icon-delete" v-on:click='deleteBlock' circle size='mini'></el-button>
-			<el-button type="" plain class="el-icon-caret-bottom" v-on:click='' circle size='mini'></el-button>
-		</div>
-		<div class='box' style='z-index=1000;'>
-
-<!--
+  <div>
+    <div>
+      <div class="insert-button-box" v-bind:id="idButton">
+        <el-button type plain class="el-icon-caret-top" v-on:click circle size="mini"></el-button>
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-delete"
+          v-on:click="deleteBlock"
+          circle
+          size="mini"
+        ></el-button>
+        <el-button type plain class="el-icon-caret-bottom" v-on:click circle size="mini"></el-button>
+      </div>
+      <div class="box" style="z-index=1000;">
+        <!--
 			<div style='position: absolute; right:0px; bottom:0px;z-index:1;'>
 				<el-button type='danger' size="mini" icon="el-icon-delete" v-on:click='' circle></el-button>
-			</div>-->
-		<div class='pre' lang='en'>
-			<div v-bind:id="idEditor">
-				<span class='p-span' v-html="content"></span>
-			</div>
-		</div>
-
-
-	</div>
-	<div v-bind:id="idToolBar"  style='z-index=1000;'>
-		<span class="ql-formats">
-			<button class="ql-bold"></button>
-			<button class="ql-italic"></button>
-			<button class="ql-underline"></button>
-			<button class="ql-strike"></button>
-		</span>
-			<span class="ql-formats">
-			<button class="ql-blockquote"></button>
-		</span>
-		<span class="ql-formats">
-			<button class="ql-list" value="bullet"></button>
-			<button class="ql-indent" value="-1"></button>
-			<button class="ql-indent" value="+1"></button>
-		</span>
-			<span class="ql-formats">
-			<select class="ql-align"></select>
-		</span>
-		<span class="ql-formats">
-			<button class="ql-link"></button>
-			<button class="ql-formula"></button>
-			<button v-bind:id="idButtonZotero" style='transform:translate(0, -6px)'>
-				<img src='/static/img/zotero-small-icon.png'/>
-				<!--<i class="ai ai-zotero ai-1x"></i>-->
-			</button>
-			<button v-bind:id="idButtonComment" style='margin-left:10px; transform:translate(5px, 0)'>
-				<svg-icon icon-class='comment-black'/>
-				<!--<i class="ai ai-zotero ai-1x"></i>-->
-			</button>
-			<!--<input  class="ql-input" name="title" type="text"></input>-->
-		</span>
-	</div>
-		<!--<div class='bottom-right'/>-->
-		<div class='questions' v-bind:id="idZotero">
-			<!--<div class="close-toto"><i class="fa fa-times"></i>
-			</div>-->
-			<div class="question" style='z-index=2000;'>
-				<div v-bind:id="idInputZotero"  style="display:none;">
-					<el-row>
-						<el-col :span='2'>
-							<img src='/static/img/zotero-small-icon.png'/>
-						</el-col>
-						<el-col :span='22'>
-							<v-autocomplete :items="items" v-model="item" :get-label="getLabel" :component-item="template" @update-items="updateItems">
-							</v-autocomplete>
-						</el-col>
-					</el-row>
-				</div>
-			</div>
-		</div>
-</div>
-</div>
-
+        </div>-->
+        <div class="pre" lang="en">
+          <div v-bind:id="idEditor">
+            <span class="p-span" v-html="content"></span>
+          </div>
+        </div>
+      </div>
+      <div v-bind:id="idToolBar" style="z-index=1000;">
+        <span class="ql-formats">
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-underline"></button>
+          <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-blockquote"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-list" value="bullet"></button>
+          <button class="ql-indent" value="-1"></button>
+          <button class="ql-indent" value="+1"></button>
+        </span>
+        <span class="ql-formats">
+          <select class="ql-align"></select>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link"></button>
+          <button class="ql-formula"></button>
+          <button v-bind:id="idButtonZotero" style="transform:translate(0, -6px)">
+            <img src="/static/img/zotero-small-icon.png" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
+          </button>
+          <button v-bind:id="idButtonComment" style="margin-left:10px; transform:translate(5px, 0)">
+            <svg-icon icon-class="comment-black" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
+          </button>
+          <!--<input  class="ql-input" name="title" type="text"></input>-->
+        </span>
+      </div>
+      <!--<div class='bottom-right'/>-->
+      <div class="questions" v-bind:id="idZotero">
+        <!--<div class="close-toto"><i class="fa fa-times"></i>
+        </div>-->
+        <div class="question" style="z-index=2000;">
+          <div v-bind:id="idInputZotero" style="display:none;">
+            <el-row>
+              <el-col :span="2">
+                <img src="/static/img/zotero-small-icon.png" />
+              </el-col>
+              <el-col :span="22">
+                <v-autocomplete
+                  :items="items"
+                  v-model="item"
+                  :get-label="getLabel"
+                  :component-item="template"
+                  @update-items="updateItems"
+                ></v-autocomplete>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -82,29 +90,27 @@
 	import ItemTemplate from './ItemTemplate.vue'
 	import 'quill'
 	import 'quill/dist/quill.core.css'
-
 	import 'quill/dist/quill.snow.css'
 	import 'quill/dist/quill.bubble.css'
 	import 'v-autocomplete/dist/v-autocomplete.css'
 	import QuillCursors from 'quill-cursors'
 	import axios from 'axios';
+	import collaboration from './collaboration'
+  import richText from 'rich-text'
+
+
 	const io = require('socket.io-client');
 
 	Vue.use(Autocomplete)
 
-	//var ShareDB = require('sharedb/lib/client')// cursor
-// var ReconnectingWebSocket = require('reconnectingwebsocket')// cursor
-// var utils = require('../../utils/js/collaboration/utils')// cursor
+	var Quill = require('quill');
+	var uuidv4 = require('uuid/v4');
+	Quill.register('modules/cursors', QuillCursors);
 
-var Quill = require('quill');
-var uuidv4 = require('uuid/v4');
-Quill.register('modules/cursors', QuillCursors);
 
-//ShareDB.types.register(require('rich-text').type);
+	const debug = require('debug')('frontend');
 
-const debug = require('debug')('frontend');
-
-const InlineBlot = Quill.import('blots/inline');
+	const InlineBlot = Quill.import('blots/inline');
 
 
 /*Zotero, highlight button in quill toolbar*/
@@ -130,9 +136,6 @@ ProcLink.blotName = 'datareview';
 ProcLink.className = 'datareview';
 ProcLink.tagName = 'span';
 
-
-
-
 class ProcRef extends InlineBlot {
     static create(value) {
         let node = super.create(value);
@@ -153,14 +156,13 @@ ProcRef.tagName = 'a';
 Quill.register(ProcLink, true);
 Quill.register(ProcRef, true);
 
-
-
 export default {
 	name: 'QuillEditor',
 	props: {
-	  socket: Object,
+		wssdb: Object,
+		socket: Object,
 		content: {
-			type: String
+			type: String | Array | Object
 		},
 		uuid: {
 			type: String,
@@ -185,10 +187,12 @@ export default {
 				default() {
 						return {}
 				},
-		}
+		},
 	},
 	data() {
 		return {
+			cursorId: null, // === userName
+			shareDoc: null,
 			id: '',
 			inputRefVisible: false,
 			editor: {},
@@ -211,51 +215,98 @@ export default {
 			actionValidate: 0,
 			mouse_pos : '',
 			hostname: '',
-			timeoutId : '',
-
-
+			timeout : 600,
 			cursor: {
 				id: '',
 				name: '',
 				color: '',
 				range: {}
 			},
-			cursorModule: {}
+			cursorModule: {},
+			lastRange: {},
+			updateLocalCursorIntervalId: null,
 		}
 	},
-	created() {
+	beforeDestroy() {
+		clearInterval(this.updateLocalCursorIntervalId)
+		if (!this.shareDoc) return
+		this.shareDoc.removeListener('op', () => {})
+		this.shareDoc.destroy();
+		this.shareDoc = null;
+	},
+	async created() {
+		this.cursorId = await this.getUserName();
 		this.id = this.$route.params && this.$route.params.id
+		// this.updateLocalCursorIntervalId = setInterval(async () => {
+		// 	const selection = this.editor.getSelection()
+		// 	if (!selection) return;
+		// 	this.socket.emit('QUILL_NEW_SELECT', {
+		// 		range: selection,
+		// 		numBlock: this.numBlock,
+		// 		numSubBlock: this.numSubBlock,
+		// 		numSubSubBlock: this.numSubSubBlock,
+		// 		cursorId: await this.getUserName(),
+		// });
+		// }, 2000)
 
 	},
-	async mounted() {
-      this.socket.on('QUILL_EXEC_TEXT', data => {
-          if (this.sameBlock(data))
-              this.editor.updateContents(data.delta);
-      });
+	async destroyed() {
+		this.socket.emit('REMOVE_QUILL_SELECT', {
+			cursorId: await this.getUserName(),
+		});
+	},
+	
+	mounted() {
+		if (this.shareDoc === null) {
+			const connection = this.wssdb.getConnection()
+			this.shareDoc = connection.get('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+		}
+		if (this.shareDoc.type === null) {
+			this.shareDoc.create([{ insert: '' }], richText.type.name);
+		}
+		this.shareDoc.subscribe(err => {
+			if (err) console.warn('SHAREDB', err);
+			if (this.shareDoc.type === null) {
+				console.warn("DOC NOT CREATED")
+			}
+		});
+
+		this.shareDoc.on('op', (op, source) => {
+			if (source === this.editor) return
+			this.editor.updateContents(op, 'api');
+
+		});
+
       this.socket.on('QUILL_EXEC_SELECT', data => {
-          if (this.sameBlock(data))
-              this.cursorModule.moveCursor(this.cursor.id, data.range);
-      });
-      /*
-			this.socket.on('QUILL_EXEC_USER', data => {
-				if (this.sameBlock(data)) {
-						for (let i = 0, len = this.mapCursor.length; i < len; ++i)
-								if (data.cursor.id === this.mapCursor[i].id)
-										return;
-						this.mapCursor.push(data.cursor);
-						this.socket.emit('QUILL_NEW_USER', {
-								cursor: this.cursor
-						});
-				}
+					collaboration.selectionUpdate(this, data)
 			});
-			*/
+			
+			this.socket.on('DELETE_CURSOR', data => {
+				if (!this.sameBlock(data)) return;
+				this.cursorModule.removeCursor(data.cursorId);
+			});
+
+			
+			this.socket.on('QUILL_RESP_SELECT', (data) => {
+				collaboration.selectionUpdate(this, data)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_NEW_SELECT', {
+					range: selection,
+				numBlock: this.numBlock,
+				numSubBlock: this.numSubBlock,
+				numSubSubBlock: this.numSubSubBlock,
+				cursorId: this.cursorId,
+				});
+			});
 
 	    var quill = new Quill('#' + this.idEditor, {
 	        modules: {
 						formula: true,
             cursors: {
                 hideDelayMs: 5000,
-                hideSpeedMs: 0
+								hideSpeedMs: 0,
+								selectionChangeSource: null
             },
             toolbar: '#' + this.idToolBar
 	        },
@@ -282,47 +333,53 @@ export default {
 	      var cObj = {text : "[R1]", value : uuid_ref};
 	      //this.editor.deleteText(range.index  , range.length);
 	      this.editor.insertEmbed(range.index,"ref",cObj)
-
 	      //this.insertStar()
-	      //this.pasteHtmlAtCaret(html_)
+				//this.pasteHtmlAtCaret(html_)
 	    });
 
 	    document.querySelector('#' + this.idButtonComment).addEventListener('click', () => {
 	      this.highlightSelection()
 	    });
 
-      this.cursorModule = this.editor.getModule('cursors');
-      this.cursor = this.cursorModule.createCursor(`${this.idUser}-${this.uuid}`, await this.getUserName(), this.chooseColors());
+			this.cursorModule = this.editor.getModule('cursors');
       this.socket.emit('QUILL_NEW_USER', {
           cursor: this.cursor
       });
+				
+			this.editor.on('text-change', (delta, oldDelta, source) => {
+				if (source === 'api')	return;
+				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
+					if (err && err.code === 4015) {
+						console.warn(err)
+					}
+				})
+				collaboration.textCommit(this, delta)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_REQ_UPDATE', {
+					range: selection,
+					numBlock: this.numBlock,
+					numSubBlock: this.numSubBlock,
+					numSubSubBlock: this.numSubSubBlock,
+					cursorId: this.cursorId,
+				});
+				// collaboration.updateForeignCursors(this, delta)
+			});
 
-      this.editor.on('text-change', (delta, oldDelta, source) => {
-          if (this.timeoutId) clearTimeout(this.timeoutId);
-          this.timeoutId = setTimeout(async () => {
-              await this.$emit('edit', this.editor, delta, oldDelta, this.numBlock, this.numSubBlock, this.numSubSubBlock)
-              /*this.socket.emit('QUILL_NEW_TEXT', {
-                  editor: this.editor,
-                  delta: delta,
-                  oldDelta: oldDelta,
-                  numBlock: this.numBlock,
-                  numSubBlock: this.numSubBlock,
-                  numSubSubBlock: this.numSubSubBlock
-              })*/
-          }, 500);
-      });
-      this.editor.on('selection-change', range => {
-          this.socket.emit('QUILL_NEW_SELECT', {
-              range: range,
-              numBlock: this.numBlock,
-              numSubBlock: this.numSubBlock,
-              numSubSubBlock: this.numSubSubBlock
-          })
+      this.editor.on('selection-change', (range, oldRange, source) => {
+				if (source === 'api') return;
+				if (source === 'user' && range === null) {
+					collaboration.cursorRemove(this);
+					return;
+				}
+				this.lastRange = range;
+				collaboration.selectionCommit(this, range)
       });
 
     	this.editor.root.innerHTML = this.content
 
-    	window.cursors = this.cursors
+			window.cursors = this.cursors
+
 
 	    $('#'+this.idButtonZotero).click( () => {
 	      this.showZoteroMenu(
@@ -358,13 +415,6 @@ export default {
 	    });
 			*/
   },
-	watch: {
-		content (newContent) {
-			if (this.content !== this.editor.root.innerHTML) {
-				this.editor.root.innerHTML = newContent
-			}
-		}
-	},
   computed: {
     ...mapGetters(['userId', 'accessToken'])
   },
@@ -378,7 +428,7 @@ export default {
 					});
 			});
 		},
-	  sameBlock (json) {
+	  sameBlock(json) {
 	    return json.numBlock === this.numBlock && json.numSubBlock === this.numSubBlock &&
 				json.numSubSubBlock === this.numSubSubBlock;
 		},
@@ -403,14 +453,6 @@ export default {
 			];
 			return allColors[Math.floor(Math.random() * Math.floor(16))];
 		},
-		sendUpdates () {
-			this.socket.emit('UPDATE_SECTION', {
-				content: this.content,
-				numBlock: this.numBlock,
-				numSubBlock: this.numSubBlock,
-				numSubSubBlock: this.numSubSubBlock
-			})
-		},
     insertStar() {
       const cursorPosition = this.editor.getSelection().index;
       // this.editor.insertText(cursorPosition, "★");
@@ -421,16 +463,8 @@ export default {
 
       // $("#" + this.idEditor).html(tmpOut);
 
-      this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
-      this.editor.setSelection(cursorPosition + 2);
-    },
-    sendUpdates () {
-      this.socket.emit('UPDATE_SECTION', {
-        content: this.content,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock
-      })
+			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
+      // this.editor.setSelection(cursorPosition + 2);
     },
 
 
@@ -440,7 +474,6 @@ export default {
 				this.highlightRange();
 		},
 		highlightRange () {
-
 				var uuid_review = String(uuidv4())
 
 				var range = this.editor.getSelection();
@@ -566,180 +599,179 @@ export default {
 }
 </script>
 <style>
+.ql-input {
+  color: black;
+  background-color: transparent;
+}
 
-.ql-input{
-	color:black;
-	background-color:transparent;
-}
-/*
 .ql-cursor-flag {
-	display: none;
+  /* margin-top: 4px; */
 }
-*/
+
 .pre {
-	margin: 0 auto;
-	width: 100%;
+  margin: 0 auto;
+  width: 100%;
 }
 
 p {
-	text-align: justify;
+  text-align: justify;
 
-	/*white-space: pre-line;*/
-	-webkit-hyphens: auto;
-		-moz-hyphens: auto;
-		-ms-hyphens: auto;
-		hyphens: auto;
-
+  /*white-space: pre-line;*/
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
 }
 
-.insert-button-box{
-	width: 0px;
-	height: 0px;
-	padding: 0px 0px 0px 0px;
-	display: block;
-	text-align: center;
-	z-index:1;
-	float: right;
+.insert-button-box {
+  width: 0px;
+  height: 0px;
+  padding: 0px 0px 0px 0px;
+  display: block;
+  text-align: center;
+  z-index: 1;
+  float: right;
 
-	margin: 0px 0px 0px 0px;
-	-webkit-transform: translate(10px,0);
-	-ms-transform: translate(10px,0px);
-	transform: translate(10px,0px);
-
+  margin: 0px 0px 0px 0px;
+  -webkit-transform: translate(10px, 0);
+  -ms-transform: translate(10px, 0px);
+  transform: translate(10px, 0px);
 }
-.insert-button-box .el-button{
-
+.insert-button-box .el-button {
 }
-.insert-button-box .el-button+.el-button {margin-left: 0px}
+.insert-button-box .el-button + .el-button {
+  margin-left: 0px;
+}
 
-.bottom-right{
-	width: 0px;
-	height: 0px;
-	border-style: solid;
-	border-width: 0 0 20px 20px;
-	border-color: transparent transparent #909993 transparent;
-
+.bottom-right {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0 0 20px 20px;
+  border-color: transparent transparent #909993 transparent;
 }
 .box {
-	width: 100%;
-	height: auto;
-	/*margin: 15px auto;*/
-	background: transparent;
-	position: relative;
-	z-index:1000;
+  width: 100%;
+  height: auto;
+  /*margin: 15px auto;*/
+  background: transparent;
+  position: relative;
+  z-index: 1000;
 }
 .box:before {
-	position: absolute;
-	content: "";
-	width: 20px;
-	height: 20px;
-	top: -1px;
-	left: -1px;
-	z-index:1000;
-	border-left: 1px solid #d9e2dc;
-	border-top: 1px solid #d9e2dc;
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 20px;
+  top: -1px;
+  left: -1px;
+  z-index: 1000;
+  border-left: 1px solid #d9e2dc;
+  border-top: 1px solid #d9e2dc;
 }
 .box:after {
-	position: absolute;
-	content: "";
-	width: 20px;
-	height: 20px;
-	right: -1px;
-	bottom: -1px;
-	z-index:1;
-	border-right: 1px solid #d9e2dc;
-	border-bottom: 1px solid #d9e2dc;
+  position: absolute;
+  content: "";
+  width: 20px;
+  height: 20px;
+  right: -1px;
+  bottom: -1px;
+  z-index: 1;
+  border-right: 1px solid #d9e2dc;
+  border-bottom: 1px solid #d9e2dc;
 }
 .v-autocomplete .v-autocomplete-input-group .v-autocomplete-input {
-	font-size: 1.1em;
-	color: black;
-	padding: 10px 10px;
-	box-shadow: none;
-	border: 1px solid #222 ;
-	width: calc(100% - 32px);
-	outline: none;
-	background-color: #eee;
+  font-size: 1.1em;
+  color: black;
+  padding: 10px 10px;
+  box-shadow: none;
+  border: 1px solid #222;
+  width: calc(100% - 32px);
+  outline: none;
+  background-color: #eee;
 }
-.v-autocomplete .v-autocomplete-input-group.v-autocomplete-selected .v-autocomplete-input {
-	color: black;
-	background-color: #eee;
+.v-autocomplete
+  .v-autocomplete-input-group.v-autocomplete-selected
+  .v-autocomplete-input {
+  color: black;
+  background-color: #eee;
 }
 .v-autocomplete .v-autocomplete-list {
-	width: 100%;
-	text-align: left;
-	border: none;
-	border-top: none;
-	max-height: 200px;
-	overflow-y: auto;
-	border-bottom: 1px solid #157977;
-	color: black;
+  width: 100%;
+  text-align: left;
+  border: none;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  border-bottom: 1px solid #157977;
+  color: black;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item {
-	cursor: pointer;
-	background-color: #fff;
-	padding: 10px;
-	border-bottom: 1px solid #157977;
-	border-left: 1px solid #157977;
-	border-right: 1px solid #157977;
+  cursor: pointer;
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #157977;
+  border-left: 1px solid #157977;
+  border-right: 1px solid #157977;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:last-child {
-	border-bottom: none;
+  border-bottom: none;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item:hover {
-	background-color: #eee;
+  background-color: #eee;
 }
 .v-autocomplete .v-autocomplete-list .v-autocomplete-list-item abbr {
-	opacity: 0.8;
-	font-size: 0.8em;
-	display: block;
-	font-family: sans-serif;
+  opacity: 0.8;
+  font-size: 0.8em;
+  display: block;
+  font-family: sans-serif;
 }
 .questions {
-		display: none;
-		background: #222;
-		position: absolute;
-		z-index: 1000;
-		color: #EEE;
-		border-radius: 6px;
+  display: none;
+  background: #222;
+  position: absolute;
+  z-index: 1000;
+  color: #eee;
+  border-radius: 6px;
 
-		width: 600px;
-		min-height: 54px;
-		height:auto;
+  width: 600px;
+  min-height: 54px;
+  height: auto;
 }
 .question {
-		position: absolute;
-		width: 100%;
-		padding: 5px 2px 5px 5px;
-		font-size: 16px;
-		text-align: center;
+  position: absolute;
+  width: 100%;
+  padding: 5px 2px 5px 5px;
+  font-size: 16px;
+  text-align: center;
 }
-.question img{
-	margin-top: 7px;
+.question img {
+  margin-top: 7px;
 }
 .question p {
-		margin: 0;
-		padding: 0;
+  margin: 0;
+  padding: 0;
 }
 .close-toto {
-		font-size:22px;
-		cursor: pointer;
-		position: absolute;
-		right:10px;
-		top:5px;
+  font-size: 22px;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 5px;
 }
-button-ref{
-    background-color: Transparent;
-    background-repeat:no-repeat;
-    border: 1px solid black;
-    margin-left:5px;
-    margin-right: 5px;
-    cursor:pointer;
-    overflow: hidden;
-    outline:none;
+button-ref {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: 1px solid black;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
 }
 
-.ql-container.ql-snow{
-	border: none;
-	display: hidden;
+.ql-container.ql-snow {
+  border: none;
+  display: hidden;
 }
 </style>

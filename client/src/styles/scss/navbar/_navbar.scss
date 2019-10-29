@@ -15,6 +15,28 @@
     display: inline-block;
     vertical-align: top;
   }
+  .m-left-menu{
+    font-family: DNLTPro-bold;
+    float: left;
+    height: 100%;
+    font-size: 16px;
+    .logo {
+      display: inline-block;
+      font-size: 2rem;
+      margin: 0 8px;
+    }
+  }
+  .m-right-menu{
+    float: right;
+    height: 100%;
+    font-size: 16px;
+    .right-menu-item {
+      display: inline-block;
+      font-size: 16px;
+      margin: 0 8px;
+    }
+
+  }
   .right-menu {
     float: right;
     height: 100%;
@@ -48,6 +70,106 @@
       display: inline-block;
       cursor: pointer;
       fill: #5a5e66;;
+      width: 20px;
+      height: 20px;
+      vertical-align: 14px;
+    }
+    .nightmode {
+      height: 20px;
+    }
+    .avatar-container {
+      height: 50px;
+      margin-right: 30px;
+      .avatar-wrapper {
+        cursor: pointer;
+        margin-top: 5px;
+        position: relative;
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
+        .el-icon-caret-bottom {
+          position: absolute;
+          right: -20px;
+          top: 25px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+.navbar_editor {
+  height: 50px;
+  line-height: 50px;
+  border-radius: 0px !important;
+  background-color: #e6f2ff;
+  .hamburger-container {
+    line-height: 58px;
+    height: 50px;
+    float: left;
+    padding: 0 10px;
+  }
+  .breadcrumb-container{
+    float: left;
+  }
+  .errLog-container {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .m-left-menu{
+    font-family: DNLTPro-bold;
+    float: left;
+    height: 100%;
+    font-size: 16px;
+    .logo {
+      display: inline-block;
+      font-size: 2rem;
+      margin: 0 8px;
+    }
+  }
+  .m-right-menu{
+    float: right;
+    height: 100%;
+    font-size: 16px;
+    .right-menu-item {
+      display: inline-block;
+      font-size: 16px;
+      margin: 0 8px;
+    }
+
+  }
+  .right-menu {
+    float: right;
+    height: 100%;
+    &:focus{
+     outline: none;
+    }
+    .right-menu-item {
+      display: inline-block;
+      margin: 0 8px;
+    }
+    .international-icon {
+      font-size: 20px;
+      cursor: pointer;
+      vertical-align: -5px!important;
+    }
+    .screenfull-svg {
+      display: inline-block;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      vertical-align: 10px;
+    }
+    .screenfull {
+      height: 20px;
+    }
+    .international{
+      vertical-align: top;
+    }
+    .nightmode-svg {
+      display: inline-block;
+      cursor: pointer;
       width: 20px;
       height: 20px;
       vertical-align: 14px;

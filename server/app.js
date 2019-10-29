@@ -8,6 +8,7 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const express = require('express');
+const http = require('http');
 const favicon = require('express-favicon');
 const config = require('../config').backend;
 const serveStatic = require('serve-static');
@@ -36,23 +37,36 @@ const credentials = {
 
 // Setup server
 const app = express();
-const serverApi = require('http').createServer(app);
-const socketIo = require('socket.io')(serverApi);
+const server = http.createServer(app);
+const wsShareDB = require('./config/ws-sharedb/');
+
+server.on('upgrade', (request, socket, head) => {
+	const pathname = url.parse(request.url).pathname;
+	if (pathname === '/collaboration') {
+		wsShareDB.handleUpgrade(request, socket, head, function done(socket) {
+			console.log('WSSHAREDB::UPGRADE');
+			wsShareDB.emit('connection', socket, request);
+		});
+	}
+});
+
+const socketIo = require('socket.io')(server);
+
 require('./config/database')();
 require('./config/socketio')(socketIo);
 require('./config/express')(app);
 require('./routes')(app);
 
 if (process.env.NODE_ENV === 'production') {
-  //app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
-  //app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
-  app.use(serveStatic(__dirname + "/../client/dist"));
-  console.log(__dirname + "/../client/dist")
-  console.log("listen port :"+ config.port)
+	//app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
+	//app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
+	app.use(serveStatic(__dirname + '/../client/dist'));
+	console.log(__dirname + '/../client/dist');
+	console.log('listen port :' + config.port);
 }
 
-serverApi.listen(config.port, config.ip,  function () {
-  console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'))
+server.listen(config.port, config.ip, function() {
+	console.log('Express side server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
 // Expose app

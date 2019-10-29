@@ -131,6 +131,7 @@ module.exports.findArticleById = async function (req, res, next) {
     if (!article) return res.sendStatus(404);
     return res.json(article);
   } catch (err) {
+    console.log(err)
     return next(err);
   }
 };

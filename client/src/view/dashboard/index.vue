@@ -36,8 +36,12 @@
   locales,
   name: 'Dashboard',
   components: { adminDashboard, userDashboard, editorDashboard },
+  props: {
+    flagUser: false
+  },
   data() {
     return {
+      user_flag: false,
       id: '',
       visibleDiagFirstConnexion: false,
       currentRole: 'userDashboard',
@@ -64,6 +68,22 @@
       'accessToken',
       'sidebar'
     ])
+  },
+  watch: {
+    flagUser (change) {
+      console.log("ça bouge dans la fenêtre princ")
+      console.log(change)
+      if (this.roles.includes('editor')) {
+        this.currentRole = 'editorDashboard'
+        this.visibleDiagFirstConnexion = false
+        this.$forceUpdate();
+      }
+      if (this.roles.includes('user')) {
+        this.currentRole = 'userDashboard'
+        this.visibleDiagFirstConnexion = false
+      }
+      console.log(this.currentRole)
+    }
   },
   created() {
     if (this.roles.includes('editor')) {

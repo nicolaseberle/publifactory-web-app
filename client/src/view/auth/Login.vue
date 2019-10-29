@@ -1,7 +1,7 @@
 <template>
 
   <div class="login-main">
-  <div class="bg"></div>
+  <div class="bg" style='background-image: url("../assets/images/login-bg-"+ random(5) +".jpg");'></div>
   <div class="login-wrapper" v-show="!loggedIn">
 
     <!--<h1>{{$t('title')}}</h1>-->
@@ -246,7 +246,7 @@ export default {
   }
 }
 </script>
-<style>
+<style lang='scss'>
 .login-wrapper{
   position: fixed;
   top:0;

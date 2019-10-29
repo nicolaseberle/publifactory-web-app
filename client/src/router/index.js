@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
+import Layout_services from '../view/layout_services/Layout'
 // import componentsRouter from './modules/components'
 // import otherModuleRoutes from './module'
 
@@ -36,9 +37,35 @@ export const constantRouterMap = [{
 },
 {
   path: '/services',
-  component: (resolve) => {
-    import('../view/applications/reviewermatcher/index.vue').then(resolve)
+  component: Layout_services,
+  redirect: 'services',
+  hidden: true,
+  children: [
+    {
+      path: '/services',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/reviewermatcher/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
   },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
+  path: '/summarize',
+  component: Layout_services,
+  redirect: 'summarize',
+  hidden: true,
+  children: [
+    {
+      path: '/summarize',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/summarize/index.vue').then(resolve)}
+    }],
   meta: {
     skipAuth: true
   },
@@ -135,6 +162,13 @@ export const constantRouterMap = [{
       meta: { title: 'reviewer_matcher', icon: 'network', noCache: true,skipAuth: true },
 
       component: () => import('../view/applications/reviewermatcher/index.vue')
+    },
+    {
+      path: 'summarize',
+      name: 'summarize_text',
+      meta: { title: 'summarize_text', icon: 'network', noCache: true,skipAuth: true },
+
+      component: () => import('../view/applications/summarize/index.vue')
     },
     {
       path: 'preprintsearch',

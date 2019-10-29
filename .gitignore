@@ -203,3 +203,11 @@ modules.xml
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/node,vuejs,webstorm+all
+
+# VSCode
+.vscode/
+
+client/dist
+
+# Save database file
+database/
