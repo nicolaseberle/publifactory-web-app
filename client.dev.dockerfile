@@ -8,7 +8,7 @@ RUN apt install -y inotify-tools
 COPY ./ /src
 WORKDIR /src
 ADD ./package.json /src/package.json
-RUN npm install --silent
+RUN npm install
 EXPOSE 9001
 
 CMD npm run client
