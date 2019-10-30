@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const RequestSchema = new mongoose.Schema(
 	{
 		reviewer: {
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User'
 		},
 		journal: {
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User'
 		},
 		status: {

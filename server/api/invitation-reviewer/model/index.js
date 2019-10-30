@@ -15,7 +15,7 @@ const InvitationReviewerSchema = new mongoose.Schema(
 		},
 		requests: [
 			{
-				type: Schema.Types.ObjectId,
+				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Request'
 			}
 		],
