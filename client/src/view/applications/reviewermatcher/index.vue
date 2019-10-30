@@ -291,31 +291,8 @@
       title="Send a Request to Review"
       :visible.sync="centerDialogVisible"
       width="75%">
-      <div>
-        <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+      <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
-      <el-form-item label="Your email" required>
-          <el-input v-model="formMail.emailDest"></el-input>
-        </el-form-item>
-        <el-form-item label="Object" required>
-          <el-input v-model="formMail.object">{{formPost.object}}</el-input>
-        </el-form-item>
-        <el-form-item label="Message" required>
-        <el-input
-          type="textarea"
-          :autosize="{ minRows: 10, maxRows: 30}"
-          v-model="formPost.abstract">
-        </el-input>
-        </el-form-item>
-      <el-form-item label="Option">
-        <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="centerDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">Send</el-button>
-      </el-form-item>
-        </el-form>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -323,31 +300,41 @@
 <script>
 import axios from 'axios'
 import researcherCard from './researcher_card'
+import requestView from './requestView'
 export default {
-  components: {researcherCard},
+  components: {researcherCard,requestView},
   data () {
     return {
+      formMail: {
+        object: '',
+        mailDest: '',
+        name: '',
+        journal: '',
+        message: '',
+        deadline: '',
+        cgu:false
+        // ,issn: ''
+      },
       centerDialogVisible: false,
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
-      formMail: {objet: '',mailDest: '', message: '' },
-      formPost: {abstract: '' , title: '', keywords: [], authors: []},
+      formPost: {
+        abstract: '',
+        title: '',
+        keywords: [],
+        authors: []
+      },
       rules: {
         abstract: [
-          {required: true, message: 'Please input enter abstract of the article', trigger: 'blur'}
+          {required: true, message: 'Please enter the abstract of the article', trigger: 'blur'}
         ],
         authors: [
-          {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
-        ]
-      },
-      mailRules: {
-        message: [
-          {required: true, message: 'Please input enter a message for your email', trigger: 'blur'}
+          {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
         ],
-        object: [
-          {required: true, message: 'A email needs an object', trigger: 'blur'}
+        title: [
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
         ]
       },
       tableData: [{}],
@@ -359,12 +346,44 @@ export default {
       inputValueAut: '',
       load_var: false,
       id: '',
-      receiveCopy: false
+      rowInfos: {},
+      requestInfos: {}
     }
   },
   methods: {
+    closeDialogBox (new_val) {
+      this.centerDialogVisible = new_val
+    },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    sendRequestRev(formMail){
+      this.$refs[formMail].validate((valid) => {
+        if (valid) {
+          this.requestInfos["title"] = this.formPost["title"]
+          this.requestInfos["abstract"] = this.formPost["abstract"]
+          this.requestInfos["rev_id"] = this.rowInfos["id"]
+          this.requestInfos["rev_name"] = this.rowInfos["name"]
+          this.requestInfos["deadline"] = this.formMail["deadline"]
+          this.requestInfos["pub_mail"] = this.formMail["mailDest"]
+          this.requestInfos["pub_journal"] = this.formMail["journal"]
+          this.requestInfos["pub_name"] = this.formMail["name"]
+
+          new Promise ((resolve,reject) => {
+            axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
+            .then( async (res) => {
+              if (res) {
+                this.requestInfos["rev_mail"] = res['data'][0]["_source"]["mail"]
+              }
+              else {
+                this.requestInfos["rev_mail"] = ""
+              }
+              this.centerDialogVisible = false;
+              console.log(this.requestInfos);
+            })
+          })
+        }
+      })
     },
     info_caption(h, { column, $index }) {
       return h("span", [
@@ -599,6 +618,11 @@ export default {
     },
 
     displayInfosB(index, row) {
+      this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
+      this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
+      this.formMail.cgu = false
+      this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
+
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
       this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
@@ -643,6 +667,7 @@ export default {
   padding: 0px 40px;
   transform: rotate(45deg);
   font-weight: bold;
+  z-index: 1000;
 }
 
 .app-container {
@@ -699,10 +724,11 @@ hgroup {
     vertical-align: bottom;
   }
 
-.el-icon-arrow-right:before {
+/* .el-icon-arrow-right:before {
   content:"";
   display: none;
-}
+} */
+
   .el-table__expand-icon {
     display: none;
   }
