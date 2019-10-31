@@ -13,7 +13,7 @@ blocks:
       jobs:
         - name: 'START'
           commands:
-            - echo "start"
+            - echo "starting deployement"
     dependencies: []
 
 promotions:
@@ -22,7 +22,6 @@ promotions:
     auto_promote_on:
       - result: passed
         branch:
-          # - dev
           - features/deployement
 
   - name: Deploy to production
