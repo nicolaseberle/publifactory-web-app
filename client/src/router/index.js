@@ -208,6 +208,12 @@ export const constantRouterMap = [{
       component: () => import('../view/admin/Publishers.vue')
     },
     {
+      path: 'invitationReviewer',
+      name: 'Invitation Reviewer',
+      meta: { title: 'Invation Reviewer', icon: 'guide 2', noCache: true, roles: ['admin'] },
+      component: () => import('../view/admin/invitationReviewer.vue')
+    },
+    {
       path: 'admin',
       component: () => import('../view/admin/Activity.vue')
     }
