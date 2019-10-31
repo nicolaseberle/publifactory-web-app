@@ -17,11 +17,10 @@ blocks:
           commands:
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
-            - sudo locale-gen en_US.UTF-8
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
               cd web-app;
-              sudo git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
+              git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
               sudo ./script_docker.sh start dev;"
     dependencies: []
