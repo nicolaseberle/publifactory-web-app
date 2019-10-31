@@ -21,9 +21,7 @@ blocks:
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162 
               "cd /home/publifactory;
-              git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               cd web-app;
-              git status;
-              git branch;
+              git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               sudo ./script_docker.sh start dev;"
     dependencies: []
