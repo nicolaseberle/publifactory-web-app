@@ -1,76 +1,81 @@
 <template>
-  <div @page-change='fetchRequests'>
-    <el-row v-for="data in dataTest" style='padding-top:20px; margin-bottom: 20px;'>
-      <h3>{{data.title}}</h3>
+  <div>
+    <el-row style='padding: 20px; margin-bottom: 20px;'>
+      <!-- <h3>{{data.title}}</h3> -->
       <el-table
-      :ref="data.title"
+      ref="dataReq"
       highlight-current-row
-      :data="data.requests"
+      :data="dataTest"
       style="width: 100%"
-      :key="data.title">
+      height="500">
+
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-steps :active="1">
+            <el-step title="Pending" description="Une description"></el-step>
+            <el-step title="Étape 2" description="Une description"></el-step>
+            <el-step title="Étape 3" description="Une description"></el-step>
+          </el-steps>
+        </template>
+      </el-table-column>
 
         <el-table-column
-          label="Reviewer ID"
-          prop="rev_id"
-          width="100">
+          label="Title"
+          prop="title"
+          width="200">
           <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Reviewer Name"
-          prop="rev_name">
-          <template slot-scope="props">
-            <p>{{ props.row.reviewer.rev_name }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Reviewer mail"
-          prop="rev_name">
-          <template slot-scope="props">
-            <el-input
-              placeholder=""
-              v-model="props.row.reviewer.rev_mail"
-              v-on:change.native="changeMail(props.row.reviewer.rev_id, props.row.reviewer.rev_mail)">
-            </el-input>
+            <p style="text-align:center;">{{ props.row.title }}</p>
           </template>
         </el-table-column>
 
         <el-table-column
-          label="Publisher Name"
+          label="Publisher"
           prop="edi_name">
           <template slot-scope="props">
-            <p>{{ props.row.editor.edi_name }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Publisher Mail"
-          prop="edi_mail">
-          <template slot-scope="props">
+            <!-- <p>{{ props.row.editor.edi_name }}</p> -->
             <p>{{ props.row.editor.edi_mail }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Publisher Journal"
-          prop="edi_journal">
-          <template slot-scope="props">
             <p>{{ props.row.editor.edi_journal }}</p>
           </template>
         </el-table-column>
 
-        <el-table-column
+        <el-table-column label="Reviewer">
+          <el-table-column
+            label="Name"
+            prop="rev_id">
+            <template slot-scope="props">
+              <!-- <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p> -->
+              <el-tooltip class="item" effect="dark" placement="top">
+                <div slot="content">{{props.row.reviewer.rev_id}}</div>
+                <p style="text-align:center; font-weight:bold;"><a v-bind:href="'https://www.semanticscholar.org/author/'+props.row.reviewer.rev_id">{{ props.row.reviewer.rev_name }}</a></p>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="Mail"
+            prop="rev_mail">
+            <template slot-scope="props">
+              <el-input
+                placeholder=""
+                v-model="props.row.reviewer.rev_mail"
+                v-on:change.native="changeMail(props.row.reviewer.rev_id, props.row.reviewer.rev_mail)">
+              </el-input>
+            </template>
+          </el-table-column>
+        </el-table-column>
+
+        <!-- <el-table-column
           label="Status"
           prop="status"
           width="110">
           <template slot-scope="props">
             <p style="text-align:center;">{{ props.row.status }}</p>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
-          label="Date"
+          label="Deadline"
           prop="date">
           <template slot-scope="props">
-            <p>Date : {{ props.row.date }}</p>
+            <!-- <p>Date : {{ props.row.date }}</p> -->
             <p>Deadline : {{ props.row.deadline }}</p>
             <el-select v-model="relance" placeholder="Relance">
               <el-option
@@ -89,6 +94,7 @@
             <el-button type="primary" @click="">Delete</el-button>
           </template>
         </el-table-column>
+
       </el-table>
     </el-row>
   </div>
@@ -100,21 +106,101 @@ export default{
   data () {
     return {
       options: [{
-          value: '1x1sem',
-          label: '1 fois par semaine'
+          value: '1x1week',
+          label: 'Once a week'
         }, {
-          value: '2x1mois',
-          label: '2 fois par mois'
+          value: '2x1month',
+          label: '2 times each month'
         }, {
-          value: '1x1mois',
-          label: '1 fois par mois'
+          value: '1x1month',
+          label: 'Once a month'
         }, {
-          value: '1x2mois',
-          label: '1 fois tous les 2 mois'
+          value: '1x2month',
+          label: 'Once every 2 month'
         }
       ],
-      relance: '2x1mois',
-      dataTest: []
+      relance: '2x1month',
+      dataTest: [
+        {
+          "title": "titre1",
+          "abstract": "abstract1",
+          "deadline": "12-12-2019",
+          "requests": [
+            {
+              "status": "En attente",
+              "date": "05-12-2019",
+            },
+            {
+              "status": "Envoyé",
+              "date": "07-12-2019",
+            }
+          ],
+          "reviewer": {
+            "rev_id": "46485613",
+            "rev_name": "Vincent Schuck",
+            "rev_mail": ""
+          },
+          "editor": {
+            "edi_name": "Nicolas Eberle",
+            "edi_mail": "nico@example.com",
+            "edi_journal": "Nature"
+          }
+        },
+        {
+          "title": "titre1",
+          "abstract": "abstract1",
+          "requests": [
+            {
+              "status": "En attente",
+              "date": "05-12-2019",
+            },
+            {
+              "status": "Envoyé",
+              "date": "07-12-2019",
+            }
+          ],
+          "deadline": "12-12-2019",
+          "reviewer": {
+            "rev_id": "46485614",
+            "rev_name": "Pierre Schuck",
+            "rev_mail": ""
+          },
+          "editor": {
+            "edi_name": "Nicolas Eberle",
+            "edi_mail": "nico@example.com",
+            "edi_journal": "Nature"
+          }
+        },
+        {
+          "title": "titre2",
+          "abstract": "abstract2",
+          "deadline": "12-12-2019",
+          "requests": [
+            {
+              "status": "En attente",
+              "date": "05-12-2019",
+            },
+            {
+              "status": "Envoyé",
+              "date": "05-12-2019",
+            },
+            {
+              "status": "Read",
+              "date": "06-12-2019",
+            }
+          ],
+          "reviewer": {
+            "rev_id": "46485615",
+            "rev_name": "Jean Michel",
+            "rev_mail": "jm@example.com"
+          },
+          "editor": {
+            "edi_name": "Nicolas Eberle",
+            "edi_mail": "nico@example.com",
+            "edi_journal": "Nature"
+          }
+        }
+      ]
     }
   },
   methods: {
@@ -124,74 +210,22 @@ export default{
       new Promise ((resolve,reject) => {
         axios.get('https://service.publifactory.co/api/update_mail?id=' + id + '&mail=' + mail)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
         .then( async (res) => {
-          console.log(res);
+          console.log(res.data);
         })
       })
     },
     fetchRequests() {
-      this.dataTest = [
-        {
-          "title": "titre1",
-          "abstract": "abstract1",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-              "deadline": "12-12-2019",
-              "reviewer": {
-                "rev_id": "46485613",
-                "rev_name": "Vincent Schuck",
-                "rev_mail": ""
-              },
-              "editor": {
-                "edi_name": "Nicolas Eberle",
-                "edi_mail": "nico@example.com",
-                "edi_journal": "Nature"
-              }
-            },
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-              "deadline": "12-12-2019",
-              "reviewer": {
-                "rev_id": "46485614",
-                "rev_name": "Pierre Schuck",
-                "rev_mail": ""
-              },
-              "editor": {
-                "edi_name": "Nicolas Eberle",
-                "edi_mail": "nico@example.com",
-                "edi_journal": "Nature"
-              }
-            }
-          ]
-        },
-        {
-          "title": "titre2",
-          "abstract": "abstract2",
-          "requests": [
-            {
-              "status": "Envoyé",
-              "deadline": "12-12-2019",
-              "date": "05-12-2019",
-              "reviewer": {
-                "rev_id": "46485615",
-                "rev_name": "Jean Michel",
-                "rev_mail": "jm@example.com"
-              },
-              "editor": {
-                "edi_name": "Nicolas Eberle",
-                "edi_mail": "nico@example.com",
-                "edi_journal": "Nature"
-              }
-            }
-          ]
-        }
-      ]
+      // this.dataTest = []
     }
-  },
-  mounted() {
-    this.fetchRequests()
   }
+  // ,
+  // mounted() {
+  //   this.fetchRequests()
+  // }
 }
 </script>
+<style>
+.el-table th {
+  border-bottom: 1px solid #EBEEF5;
+}
+</style>
