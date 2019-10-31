@@ -52,7 +52,7 @@ services:
       - PORT=9001
       - NODE_ENV=development
       - BASE_API=api
-      - SITE_IP="34.89.179.162"
+      - SITE_IP="34.89.235.153"
     depends_on:
       - api
     links:
