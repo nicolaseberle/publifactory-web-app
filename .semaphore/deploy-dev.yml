@@ -1,3 +1,4 @@
+# git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
 version: v1.0
 name: Deploy to dev
 agent:
@@ -14,6 +15,8 @@ blocks:
           - checkout
       jobs:
         - name: exec deploy
+          execution_time_limit:
+            hours: 2
           commands:
             - export LANG=C.UTF-8
             - export LC_ALL=""
@@ -26,10 +29,7 @@ blocks:
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
-              whoami;
               cd web-app;
-              ls -lq;
               sudo ./script_docker.sh stop;
               sudo ./script_docker.sh start dev;"
-              # git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
     dependencies: []

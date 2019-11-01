@@ -27,5 +27,3 @@ promotions:
       - result: passed
         branch:
           - master
-execution_time_limit:
-  hours: 2
