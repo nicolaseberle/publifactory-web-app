@@ -6,19 +6,26 @@ agent:
     os_image: ubuntu1804
 blocks:
   - name: Deploy to production
+    execution_time_limit:
+      hours: 2
     task:
       secrets:
         - name: gfile
       jobs:
         - name: exec deploy
           commands:
+            - export LANG=C.UTF-8
+            - export LC_ALL=""
+            - export LC_TIME=fr_FR.UTF-8
+            - export LC_IDENTIFICATION=fr_FR.UTF-8
+            - export LANG=C.UTF-8
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
-            - sudo locale-gen en_US.UTF-8
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12 
               "cd /home/publifactory;
               cd web-app;
+              sudo ./script_docker.sh stop;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               sudo ./script_docker.sh start prod;"
     dependencies: []
