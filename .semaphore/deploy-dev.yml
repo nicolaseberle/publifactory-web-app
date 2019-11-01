@@ -15,16 +15,21 @@ blocks:
       jobs:
         - name: exec deploy
           commands:
+            - export LANG=C.UTF-8
+            - export LC_ALL=""
+            - export LC_TIME=fr_FR.UTF-8
+            - export LC_IDENTIFICATION=fr_FR.UTF-8
+            - export LANG=C.UTF-8
             - ls /home/semaphore/
+            - locale
             - sudo chmod 600 /home/semaphore/ssh
-            - sudo locale-gen en_US.UTF-8
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
               whoami;
               cd web-app;
               ls -lq;
+              sudo ./script_docker.sh stop;
               sudo ./script_docker.sh start dev;"
-              # sudo ./script_docker.sh stop;
               # git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
     dependencies: []
