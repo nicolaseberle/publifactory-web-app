@@ -9,9 +9,6 @@ blocks:
     task:
       secrets:
         - name: gfile
-      prologue:
-        commands:
-          - checkout
       jobs:
         - name: exec deploy
           commands:

@@ -7,9 +7,6 @@ agent:
 blocks:
   - name: Deployement
     task:
-      prologue:
-        commands:
-          - checkout
       jobs:
         - name: 'START'
           commands:
@@ -22,7 +19,7 @@ promotions:
     auto_promote_on:
       - result: passed
         branch:
-          - dev
+          - features/deployement
 
   - name: Deploy to production
     pipeline_file: deploy-production.yml
@@ -30,3 +27,5 @@ promotions:
       - result: passed
         branch:
           - master
+execution_time_limit:
+  hours: 2
