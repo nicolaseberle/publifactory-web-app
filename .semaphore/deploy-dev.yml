@@ -7,6 +7,8 @@ agent:
     os_image: ubuntu1804
 blocks:
   - name: Deploy to dev
+    execution_time_limit:
+      hours: 2
     task:
       secrets:
         - name: gfile
@@ -15,8 +17,6 @@ blocks:
           - checkout
       jobs:
         - name: exec deploy
-          execution_time_limit:
-            hours: 2
           commands:
             - export LANG=C.UTF-8
             - export LC_ALL=""
@@ -33,3 +33,5 @@ blocks:
               sudo ./script_docker.sh stop;
               sudo ./script_docker.sh start dev;"
     dependencies: []
+execution_time_limit:
+  hours: 2
