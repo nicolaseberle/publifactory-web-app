@@ -1,13 +1,13 @@
 <template>
   <div>
-  <el-form label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+  <el-form label-width="200px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
     <el-form-item label="Your email" prop="mailDest">
       <el-input v-model="formMail.mailDest"></el-input>
     </el-form-item>
     <el-form-item label="Your name" prop="name">
       <el-input v-model="formMail.name"></el-input>
     </el-form-item>
-    <el-form-item label="Journal name" prop="journal">
+    <el-form-item label="Journal requesting the reviewing" prop="journal">
       <el-input v-model="formMail.journal"></el-input>
     </el-form-item>
     <!-- <el-form-item label="Journal issn" prop="issn">
@@ -27,7 +27,7 @@
         <el-date-picker type="date" placeholder="Deadline" v-model="formMail.deadline"></el-date-picker>
     </el-form-item>
     <el-form-item label="Option">
-      <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
+      <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
     <el-form-item label="CGU / RGPD">
       <el-checkbox v-model="formMail.cgu">

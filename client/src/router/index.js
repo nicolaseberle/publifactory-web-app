@@ -54,6 +54,24 @@ export const constantRouterMap = [{
   props: (route) => ({ userId: route.query.userId })
 },
 {
+  path: '/services_test',
+  component: Layout_services,
+  redirect: 'services_test',
+  hidden: true,
+  children: [
+    {
+      path: '/services_test',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/applications/reviewermatcher/index_test.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  },
+  props: (route) => ({ userId: route.query.userId })
+},
+{
   path: '/summarize',
   component: Layout_services,
   redirect: 'summarize',
