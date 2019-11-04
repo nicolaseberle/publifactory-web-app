@@ -29,9 +29,9 @@
                   , IN: <a class='very-dark-gray-link' v-if='article.journal'>{{ article.journal }}</a><a class='very-dark-gray-link' v-else>Unknown</a>
                   </p>
                   <div v-if='article.doi'>
-                  <p class='publication-list-item-journal-published-copy'>
-                    DOI: <a class='very-dark-gray-link' :href="article.doi">{{ article.doi }}</a>
-                  </p>
+                    <p class='publication-list-item-journal-published-copy'>
+                      DOI: <a class='very-dark-gray-link' target="new" :href="article.doi">{{ article.doi }}</a>
+                    </p>
                   </div>
                   <div v-else >
                     <p class='publication-list-item-journal-published-copy'>
@@ -39,13 +39,19 @@
                     </p>
                   </div>
                   <div v-if='article.inCitations'>
-                  <p class='publication-list-item-journal-published-copy'>
-                    Citations: <a class='very-dark-gray-link'>{{ article.inCitations }}+</a>
-                  </p>
+                    <p class='publication-list-item-journal-published-copy'>
+                      Citations: <a class='very-dark-gray-link'>{{ article.inCitations }}+</a>
+                    </p>
                   </div>
                   <div v-else >
                     <p class='publication-list-item-journal-published-copy'>
                     Citations:<a class='very-dark-gray-link'> Unknown</a>
+                    </p>
+                  </div>
+                  <div class='pertinence'>
+                    <p>Pertinence:
+                      <span v-if="typeof list.list_failed[index] != 'undefined'" style="color:#F56C6C">No</span>
+                      <span v-else style="color:#67C23A">Yes</span>
                     </p>
                   </div>
                 </div>
@@ -56,44 +62,55 @@
         <el-popover
           ref="popcheck"
           placement="top"
-          trigger="hover"
-          content="The author matches correctly">
+          v-model="visibleB">
+          <p>Are you sure you want to validate this author?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visibleB = false">Cancel</el-button>
+            <el-button type="primary" size="mini" v-on:click="$emit('validate')">Confirm</el-button>
+          </div>
         </el-popover>
-        <el-button
-          type="success"
-          size="mini"
-          plain
-          icon="el-icon-check"
-          circle
-          @click.native.prevent="validateRow()"
-          v-popover:popcheck/>
+        <el-tooltip class="item" effect="dark" content="The author does not match" placement="top">
+          <el-button
+            type="success"
+            size="mini"
+            plain
+            icon="el-icon-check"
+            circle
+            v-popover:popcheck>
+          </el-button>
+        </el-tooltip>
+
         <el-popover
           ref="popdel"
           placement="top"
-          trigger="hover"
-          content="The author does not match">
+          v-model="visible">
+          <p>Are you sure you want to unmatch this author?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visible = false">Cancel</el-button>
+            <el-button type="primary" size="mini" v-on:click="$emit('close')">Confirm</el-button>
+          </div>
         </el-popover>
-        <el-button
-          type="info"
-          size="mini"
-          plain
-          icon="el-icon-close"
-          circle
-          @click.native.prevent="deleteRow()"
-          v-popover:popdel>
-        </el-button>
+        <el-tooltip class="item" effect="dark" content="The author does not match" placement="top">
+          <el-button
+            type="info"
+            size="mini"
+            plain
+            icon="el-icon-close"
+            circle
+            v-popover:popdel>
+          </el-button>
+        </el-tooltip>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: {
-    author : Object
-  },
+  props: ["author", "index", "list"],
   data () {
     return {
-
+      visible: false,
+      visibleB: false
     }
   },
   created() {
