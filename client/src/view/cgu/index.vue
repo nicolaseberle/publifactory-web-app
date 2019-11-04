@@ -6,6 +6,12 @@
               <h1>Term of Use</h1>
           </div>
       </el-row>
+
+      <el-row>
+          <div class="container">
+              <p>(To be done)</p>
+          </div>
+      </el-row>
 </div>
 </div>
 </template>

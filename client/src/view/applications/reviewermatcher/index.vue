@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.1.3</div>
+      <div v-show="!loggedIn" class="bandeau">ALPHA v0.1.3</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -301,8 +301,15 @@
 import axios from 'axios'
 import researcherCard from './researcher_card'
 import requestView from './requestView'
+import { mapGetters } from 'vuex'
+
 export default {
   components: {researcherCard,requestView},
+  computed: {
+    ...mapGetters([
+      'loggedIn'
+    ])
+  },
   data () {
     return {
       formMail: {
