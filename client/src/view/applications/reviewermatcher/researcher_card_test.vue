@@ -48,10 +48,59 @@
                     Citations:<a class='very-dark-gray-link'> Unknown</a>
                     </p>
                   </div>
+                  <div class='pertinence'>
+                    <p>Pertinence:
+                      <span v-if="typeof list.list_failed[index] != 'undefined'" style="color:#F56C6C">No</span>
+                      <span v-else style="color:#67C23A">Yes</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
       </article>
+      <div class='publication-list-item-citations'>
+        <el-popover
+          ref="popcheck"
+          placement="top"
+          v-model="visibleB">
+          <p>Are you sure you want to validate this author?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visibleB = false">Cancel</el-button>
+            <el-button type="primary" size="mini" v-on:click="$emit('validate')">Confirm</el-button>
+          </div>
+        </el-popover>
+        <el-tooltip class="item" effect="dark" content="The author does not match" placement="top">
+          <el-button
+            type="success"
+            size="mini"
+            plain
+            icon="el-icon-check"
+            circle
+            v-popover:popcheck>
+          </el-button>
+        </el-tooltip>
+
+        <el-popover
+          ref="popdel"
+          placement="top"
+          v-model="visible">
+          <p>Are you sure you want to unmatch this author?</p>
+          <div style="text-align: right; margin: 0">
+            <el-button size="mini" type="text" @click="visible = false">Cancel</el-button>
+            <el-button type="primary" size="mini" v-on:click="$emit('close')">Confirm</el-button>
+          </div>
+        </el-popover>
+        <el-tooltip class="item" effect="dark" content="The author does not match" placement="top">
+          <el-button
+            type="info"
+            size="mini"
+            plain
+            icon="el-icon-close"
+            circle
+            v-popover:popdel>
+          </el-button>
+        </el-tooltip>
+      </div>
     </div>
   </div>
 </template>
@@ -60,7 +109,8 @@ export default {
   props: ["author", "index", "list"],
   data () {
     return {
-
+      visible: false,
+      visibleB: false
     }
   },
   created() {
@@ -163,6 +213,7 @@ a.very-dark-gray-link {
     margin-top: -45px;
 }
 article {
+  margin-bottom: 15px!important;
   padding-left: 30px;
   border-left: 1px solid lightgrey;
   width: 100%;

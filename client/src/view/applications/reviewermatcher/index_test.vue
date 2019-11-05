@@ -257,7 +257,7 @@
 
 <script>
 import axios from 'axios'
-import researcherCard from './researcher_card'
+import researcherCard from './researcher_card_test'
 import requestView from './requestView'
 export default {
   components: {researcherCard,requestView},
@@ -270,6 +270,7 @@ export default {
         journal: '',
         message: '',
         deadline: '',
+        relaunch: '2x1month',
         cgu:false
         // ,issn: ''
       },

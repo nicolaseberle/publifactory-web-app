@@ -23,13 +23,23 @@
         v-model="formMail.message">
       </el-input>
     </el-form-item>
-    <el-form-item label="Deadline" prop="deadline">
+    <el-form-item label="Review due by" prop="deadline">
         <el-date-picker type="date" placeholder="Deadline" v-model="formMail.deadline"></el-date-picker>
+    </el-form-item>
+    <el-form-item label="Relaunch" prop="relaunch">
+      <el-select v-model="formMail.relaunch">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="Option">
       <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
-    <el-form-item label="CGU / RGPD">
+    <el-form-item label="CGU / RGPD" prop="cgu">
       <el-checkbox v-model="formMail.cgu">
         I accept the
         <el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">
@@ -51,6 +61,20 @@ export default {
   data() {
     return {
       requestInfos: {},
+      options: [{
+          value: '1x1week',
+          label: 'Once a week'
+        }, {
+          value: '2x1month',
+          label: '2 times each month'
+        }, {
+          value: '1x1month',
+          label: 'Once a month'
+        }, {
+          value: '1x2month',
+          label: 'Once every 2 month'
+        }
+      ],
       mailRules: {
         message: [
           {required: true, message: 'Please input enter a message for your email', trigger: 'blur'}
