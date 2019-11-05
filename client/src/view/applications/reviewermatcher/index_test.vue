@@ -105,12 +105,6 @@
                 </div>
               </el-collapse-item>
             </el-collapse>
-            <div class='description-demo'>
-              <video width="320" height="240" controls>
-                <source src="/static/video/R2M_demo.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-              </video>
-            </div>
             <!--
             <h2>What is it?</h2>
             <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
@@ -512,7 +506,15 @@ export default {
     handleInputConfirmAut() {
       let inputValueAut = this.inputValueAut;
       if (inputValueAut) {
-        this.formPost.authors.push(inputValueAut);
+        if (inputValueAut.includes(",")) {
+          let temp = inputValueAut.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.authors.push(inputValueAut);
+        }
       }
       this.inputVisibleAut = false;
       this.inputValueAut = '';
@@ -801,9 +803,6 @@ strong {
 }
 .description {
   padding: 50px;
-}
-.description-demo{
-  text-align: center;  
 }
 .description > p {
     margin: 0;
