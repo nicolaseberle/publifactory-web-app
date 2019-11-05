@@ -183,6 +183,7 @@
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
+              <p v-if="props.row.country != 'N/A'">({{ props.row.country[0] }})</p>
             </template>
           </el-table-column>
 
