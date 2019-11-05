@@ -48,16 +48,16 @@
                     Citations:<a class='very-dark-gray-link'> Unknown</a>
                     </p>
                   </div>
-                  <div class='pertinence'>
-                    <p>Pertinence:
-                      <span v-if="typeof list.list_failed[index] != 'undefined'" style="color:#F56C6C">No</span>
-                      <span v-else style="color:#67C23A">Yes</span>
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
       </article>
+      <div class='pertinence'>
+        <p>Pertinence:
+          <span v-if="typeof list.list_failed[index] != 'undefined'" style="color:#F56C6C">No</span>
+          <span v-else style="color:#67C23A">Yes</span>
+        </p>
+      </div>
       <div class='publication-list-item-citations'>
         <el-popover
           ref="popcheck"
