@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const slug = require('mongoose-slug-generator');
 
+mongoose.plugin(slug);
+
 const InvitationReviewerSchema = new mongoose.Schema(
 	{
+		title: {
+			type: String,
+			required: true
+		},
 		slug: {
 			type: String,
-			required: true,
-			unique: true,
 			slug: 'title'
 		},
 		abstract: {
@@ -24,6 +28,10 @@ const InvitationReviewerSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
+InvitationReviewerSchema.index(
+	{ 'requests.semanticScholarId': 1 },
+	{ unique: true }
+);
 module.exports.InvitationReviewer = mongoose.model(
 	'InvitationReviewer',
 	InvitationReviewerSchema

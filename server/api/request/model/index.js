@@ -3,12 +3,20 @@ const mongoose = require('mongoose');
 const RequestSchema = new mongoose.Schema(
 	{
 		reviewer: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User'
-		},
-		journal: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User'
+			semanticScholarId: {
+				type: String,
+				required: true
+			},
+			email: {
+				type: String
+			},
+			name: {
+				type: String
+			},
+			emailVerified: {
+				type: Boolean,
+				required: true
+			}
 		},
 		status: {
 			type: String,
@@ -29,5 +37,5 @@ const RequestSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-module.exports.Request = mongoose.model('InvitationReviewer', RequestSchema);
+module.exports.Request = mongoose.model('Request', RequestSchema);
 module.exports.RequestSchema = RequestSchema;

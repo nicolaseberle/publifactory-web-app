@@ -1,21 +1,14 @@
 const express = require('express');
-const requestRoutes = require('./api/request');
-// const controllers = require('./controller');
+const controllers = require('./controllers');
 
 const router = express.Router();
 
-// Base route: '/api/invitation-reviewer'
+// Base route: '/api/invitation-reviewers'
 
-const empty = (req, res, next) => {
-	return res
-		.status(200)
-		.json({ ok: 'ok' })
-		.end();
-};
-
-router.post('/', empty);
-router.get('/', empty);
-
-router.use('/requests', requestRoutes);
+router.get('/:invitationReviewerId', controllers.readById);
+router.get('/:publisherId/:invitationReviewerTitle', controllers.readByTitle);
+router.delete('/:invitationReviewerId', controllers.remove);
+router.patch('/:invitationReviewerId', controllers.update);
+router.get('/', controllers.list);
 
 module.exports = router;
