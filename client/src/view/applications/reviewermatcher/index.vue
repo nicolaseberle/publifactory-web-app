@@ -312,6 +312,7 @@ export default {
         journal: '',
         message: '',
         deadline: '',
+        relaunch: '2x1month',
         cgu:false
         // ,issn: ''
       },
