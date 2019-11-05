@@ -110,6 +110,20 @@
         <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
+            <el-popover
+              placement="top"
+              width="330">
+              <p>To get the mail list, please enter your email</p>
+              <el-form :inline="true" :model="formMini" :rules="rulesMini" ref="formMini" class="demo-form-inline">
+                <el-form-item prop="mail">
+                  <el-input v-model="formMini.mail" placeholder="example@mail.com" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
+                </el-form-item>
+              </el-form>
+              <el-button slot="reference">Get mail list</el-button>
+            </el-popover>
             <el-button @click="exportListJson()">Export list (json)</el-button>
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
@@ -329,6 +343,14 @@ export default {
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
+      formMini: {
+        mail: ''
+      },
+      rulesMini: {
+        abstract: [
+          {required: true, message: 'Please enter your email', trigger: 'blur'}
+        ]
+      },
       formPost: {
         abstract: '',
         title: '',
@@ -356,7 +378,9 @@ export default {
       load_var: false,
       id: '',
       rowInfos: {},
-      requestInfos: {}
+      requestInfos: {},
+      listMails: [],
+      requestMails: {}
     }
   },
   methods: {
@@ -559,11 +583,11 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+            axios.get('http://localhost:5000/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
             .then( async (id) => {
                 console.log(id);
 
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+                resolve(res = await axios.get('http://localhost:5000/api/results_rev/' + id.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
                 this.tableData = res.data
@@ -591,6 +615,22 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+
+    getMailList() {
+      for (let x=0; x<10; x++) {
+        this.listMails.push({
+          "id": this.tableData[x].original_id,
+          "name": this.tableData[x].name,
+          "mail": ""
+        });
+      };
+      this.requestMails = {
+        "title": this.formPost.title,
+        "mail_publisher": this.formMini.mail,
+        "list": this.listMails
+      }
+      console.log(this.requestMails);
     },
 
     displayInfos(row) {
@@ -845,6 +885,10 @@ hgroup {
 
 .el-upload-dragger .el-icon-upload {
   margin: 16px 0;
+}
+
+.el-popper[x-placement^=bottom] {
+  text-align: center!important;
 }
 
 @media (max-width: 1280px) {

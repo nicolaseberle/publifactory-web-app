@@ -163,6 +163,7 @@ a.very-dark-gray-link {
     margin-top: -45px;
 }
 article {
+  margin-bottom: 15px!important;
   padding-left: 30px;
   border-left: 1px solid lightgrey;
   width: 100%;
