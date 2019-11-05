@@ -65,13 +65,13 @@ module.exports = class Email {
 		};
 	}
 
-	sendReviewerMail(cb) {
+	sendReviewerMail({ subject, content }, cb) {
 		this.transporter.sendMail(
 			{
 				from: '"PubliFactory" <publifactory.noreply@gmail.com>',
 				to: this.email,
-				subject: 'test',
-				text: 'Bonjour'
+				subject,
+				html: content
 			},
 			(err, info) => cb(err, info)
 		);
