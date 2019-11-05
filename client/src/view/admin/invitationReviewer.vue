@@ -179,16 +179,9 @@ export default{
           "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
           "abstract": "abstract1",
           "deadline": "12-12-2019",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "07-12-2019",
-            }
-          ],
+          "objet": "test",
+          "content": "blablablalbal",
+          "remind": "1x2month",
           "reviewer": {
             "rev_id": "46485613",
             "rev_name": "Vincent Schuck",
@@ -198,7 +191,17 @@ export default{
             "edi_name": "Nicolas Eberle",
             "edi_mail": "nico@example.com",
             "edi_journal": "Nature"
-          }
+          },
+          "requests": [
+            {
+              "status": "En attente",
+              "date": "05-12-2019",
+            },
+            {
+              "status": "Envoyé",
+              "date": "07-12-2019",
+            }
+          ]
         },
         {
           "title": "titre1",

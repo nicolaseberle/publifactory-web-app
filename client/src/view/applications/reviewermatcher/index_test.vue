@@ -72,7 +72,7 @@
             type="textarea"
             :autosize="{ minRows: 10, maxRows: 30}"
             placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
+            v-model="formPost.abstract" @change="replaceChariot">
           </el-input>
         </el-form-item>
 
@@ -209,18 +209,19 @@
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
+              <p v-if="props.row.country != 'N/A'">({{ props.row.country[0] }})</p>
             </template>
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="Score"
             prop="score"
             width="100">
             <template slot-scope="props">
               <p>{{ props.row.score }}</p>
-              <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
+              <p>Score (year) : {{ props.row.scorePond }}</p>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column
             label="Citations"
@@ -239,7 +240,8 @@
                 <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
                 <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
                 <div v-else class="round c_grey"></div>
-                <p style="display:inline-block;">{{ props.row.conflit }}</p>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
@@ -334,7 +336,8 @@ export default {
           {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
         ],
         title: [
-          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'},
+          {min: 3, message: 'Length should be at least 3', trigger: 'blur'}
         ]
       },
       tableData: [{}],
@@ -347,12 +350,18 @@ export default {
       load_var: false,
       id: '',
       rowInfos: {},
-      requestInfos: {}
+      requestInfos: {},
+      activeNames: ""
     }
   },
   methods: {
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
+    },
+    replaceChariot () {
+      // console.log(this.formPost.abstract);
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
@@ -699,6 +708,10 @@ export default {
             console.log("after", res.data);
           })
         })
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
       }
     },
     handleEdit(index, row) {
@@ -706,6 +719,9 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    handleChange(){
+      console.log('yay');
     }
   }
 }
