@@ -1,8 +1,5 @@
-const { Publisher } = require('../../publisher/model');
-const { InvitationReviewer } = require('../../invitation-reviewer/model');
 const { Request } = require('../model');
-const createPublisher = require('../../publisher/services/create');
-const createInvitationReviewer = require('../../invitation-reviewer/services/create');
+const Email = require('../../email/email.controller');
 
 async function create({ reviewer, editor, ...request }) {
 	console.log(reviewer, editor, request);
@@ -15,6 +12,22 @@ async function create({ reviewer, editor, ...request }) {
 		status: 'pending',
 		date: new Date().toUTCString()
 	});
+
+	if (newRequest.reviewer.email) {
+		const email = new Email(newRequest.reviewer.email);
+
+		// Todo validate async
+		email.sendReviewerMail((err, info) => {
+			if (err) {
+				// TODO set something on requestId
+				return;
+			}
+			newRequest.history.push({
+				status: 'sent',
+				date: new Date().toUTCString()
+			});
+		});
+	}
 	await newRequest.save();
 	return newRequest;
 }
