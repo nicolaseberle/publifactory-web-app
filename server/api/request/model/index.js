@@ -1,7 +1,41 @@
 const mongoose = require('mongoose');
 
+const enumStatus = [
+	'pending',
+	'sent',
+	'remind',
+	'read',
+	'accepted',
+	'rejected',
+	'outfield',
+	'done'
+];
+
 const RequestSchema = new mongoose.Schema(
 	{
+		title: {
+			type: String,
+			required: true
+		},
+		abstract: {
+			type: String,
+			required: true
+		},
+		deadline: {
+			type: Date,
+			required: true
+		},
+		object: {
+			type: String
+		},
+		content: {
+			type: String
+		},
+		remind: {
+			type: String
+		},
+		remindMax: { type: Number },
+		remindCount: { type: Number, default: 0 },
 		reviewer: {
 			semanticScholarId: {
 				type: String,
@@ -12,25 +46,30 @@ const RequestSchema = new mongoose.Schema(
 			},
 			name: {
 				type: String
-			},
-			emailVerified: {
-				type: Boolean,
-				required: true
 			}
 		},
-		status: {
-			type: String,
-			default: 'pending',
-			enum: {
-				values: [
-					'pending',
-					'sent',
-					'read',
-					'accepted',
-					'reject',
-					'outfield',
-					'done'
-				]
+		editor: {
+			name: {
+				type: String,
+				required: true
+			},
+			email: {
+				type: String,
+				required: true
+			},
+			journal: {
+				type: String
+			}
+		},
+		history: {
+			type: Array,
+			date: Date,
+			status: {
+				type: String,
+				default: 'pending',
+				enum: {
+					values: enumStatus
+				}
 			}
 		}
 	},
@@ -39,3 +78,4 @@ const RequestSchema = new mongoose.Schema(
 
 module.exports.Request = mongoose.model('Request', RequestSchema);
 module.exports.RequestSchema = RequestSchema;
+module.exports.enumStatus = enumStatus;

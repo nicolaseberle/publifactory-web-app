@@ -29,9 +29,9 @@ module.exports = function(app) {
 	app.use(function(req, res, next) {
 		console.log('Ommit Connection for:', req.originalUrl);
 		if (
-			req.originalUrl.startsWith('/api/invitation-reviewers/') ||
-			req.originalUrl.startsWith('/api/publishers/') ||
-			req.originalUrl.startsWith('/api/requests/')
+			req.originalUrl.startsWith('/api/invitation-reviewers') ||
+			req.originalUrl.startsWith('/api/publishers') ||
+			req.originalUrl.startsWith('/api/requests')
 		) {
 			return next();
 		}
