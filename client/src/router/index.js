@@ -238,6 +238,40 @@ export const constantRouterMap = [{
   ]
 },
 {
+  path: '/cgu_publifactory_v1',
+  component: Layout_services,
+  redirect: 'cgu_publifactory_v1',
+  hidden: true,
+  children: [
+    {
+      path: '/cgu_publifactory_v1',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/cgu/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  }
+},
+{
+  path: '/help_publifactory_v1',
+  component: Layout_services,
+  redirect: 'help_publifactory_v1',
+  hidden: true,
+  children: [
+    {
+      path: '/help_publifactory_v1',
+      meta: {
+        skipAuth: true
+      },
+      component: (resolve) => { import('../view/help/index.vue').then(resolve)}
+    }],
+  meta: {
+    skipAuth: true
+  }
+},
+{
   path: '',
   component: Layout,
   hidden: true,

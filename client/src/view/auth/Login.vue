@@ -1,7 +1,14 @@
 <template>
 
   <div class="login-main">
-  <div class="bg" style='background-image: url("../assets/images/login-bg-"+ random(5) +".jpg");'></div>
+<!--
+  <div class="bg" style='background-image: url("../assets/images/login-bg-"+ random(5) +".jpg");'>
+  </div>-->
+  <v-lazy-image class='bg'
+    :src='bg.image'
+    :src-placeholder='bg.small_image'
+  />
+  <div class='legend'>{{bg.legend}}</div>
   <div class="login-wrapper" v-show="!loggedIn">
 
     <!--<h1>{{$t('title')}}</h1>-->
@@ -99,6 +106,7 @@ export default {
   },
   data () {
     return {
+      bg:  this.randomImage() ,
       id: '',
       redirect: '',
       form: {
@@ -130,12 +138,21 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'loginOrcid', 'changeLang', 'checkEmail']),
+    randomImage() {
+      let number = Math.ceil(Math.random()*7)
+      return {
+        'image':"/static/images/login-bg-"+ number + ".jpg",
+        'small_image':"/static/images/login-bg-"+ number + "-small.jpg",
+        'legend': ''
+      }
+    },
     onOrcidSubmit () {
       this.$refs.form.validate(async valid => {
         if (valid) {
           await new Promise(async (resolve, reject) => {
             const response = await this.login({
               email: this.form.email,
+
               password: this.form.password
             }).then((data) => {
               console.log(data)
@@ -306,5 +323,18 @@ text-align: center;
   margin-top: 0px !important;
   margin-bottom: 0px !important;
 }
-
+.v-lazy-image {
+  filter: blur(10px);
+  transition: filter 0.7s;
+}
+.v-lazy-image-loaded {
+  filter: blur(0);
+}
+.legend{
+  position:absolute;
+  bottom:0;
+  right:0;
+  background-color: AliceBlue ;
+  font-size:0.7rem;
+}
 </style>

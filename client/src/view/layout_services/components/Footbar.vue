@@ -3,27 +3,24 @@
     <el-footer>
       <div class="container-footer">
         <div class="art">
-          <strong>Compagny</strong>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sagittis consectetur massa, eu malesuada magna laoreet sit amet. Pellentesque sit amet dui orci. </p>
+          <strong>Publifactory</strong>
+          <p><b>PubliFactory</b> is a software company developing solutions for publishers.</p>
         </div>
         <div class="art">
           <strong>Products</strong>
-          <p><a href="#">Reviewer Matcher</a></p>
-          <p><a href="#">Summarizer</a></p>
-          <p><a href="#">Preprint Search</a></p>
+          <p><a href="/services">Reviewer Matcher</a></p>
+          <p><a href="https://publifactory.co">Editorial Manager</a></p>
         </div>
         <div class="art">
           <strong>Usefull links</strong>
-          <p><a href="#">Your account</a></p>
-          <p><a href="#">Pricing</a></p>
-          <p><a href="#">GCU</a></p>
-          <p><a href="#">Help</a></p>
+          <p><a href="/cgu_publifactory_v1">Terms of Use</a></p>
+          <p><a href="/help_publifactory_v1">Help</a></p>
         </div>
         <div class="art">
           <strong>Contacts</strong>
-          <p>Addr : 5 rue des fleurs, 75005 Paris</p>
-          <p>Mail : publifactory@example.com</p>
-          <p>Tel : 0102030405</p>
+          <p>Publifactory SAS,</p>
+          <p> 181 rue de Charenton, 75012 Paris</p>
+          <!--<p>contact@publifactory.co</p>-->
         </div>
       </div>
     </el-footer>
