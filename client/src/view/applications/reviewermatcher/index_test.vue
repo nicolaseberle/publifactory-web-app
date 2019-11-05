@@ -2,10 +2,13 @@
   <div class="dashboard-container">
     <div class="app-container">
       <div class="bandeau">ALPHA v0.1.3</div>
-      <el-row :gutter='30' >
-        <h1>Search Reviewers (Relevance test)</h1>
+      <el-row :gutter='50' >
+        <div class='head'>
+          <h1>Reviewer search engine </h1>
+          <h2>Getting the most relevant reviewers for your paper</h2>
+        </div>
       </el-row>
-      <el-row :gutter='30' style='margin-top:60px'>
+      <el-row :gutter='50' style='margin-top:60px'>
 
 
       <el-col :span='12'>
@@ -97,7 +100,7 @@
               </el-collapse-item>
               <el-collapse-item title="Why a relevance test ?" name="3">
                 <div>
-                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match.</p>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
                   <p><b>Warning:</b> the conflict of interest is not completely operational</p>
                 </div>
               </el-collapse-item>
@@ -720,7 +723,15 @@ export default {
   padding: 0px 20px;
   margin: 0 auto;
 }
+.head{
+  text-align: center;
 
+}
+.head h2 {
+  font-family: 'DNLTPro-light-italic';
+  font-size: 1.3em;
+
+}
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
@@ -743,26 +754,31 @@ strong {
 }
 .el-collapse-item__header{
   font-family: 'DNLTPro-regular';
-  background-color: #f2f2f2;
-  font-size: 1.4rem;
+  background-color: #f4f4f4;
+  font-size: 1.5em;
   font-weight: 800;
 
 }
 .el-collapse-item__wrap{
-  background-color: #f2f2f2;
+  background-color: #f4f4f4;
 
 }
 .el-collapse-item__content{
   font-family: 'DNLTPro-regular';
   font-size: 1rem;
-  background-color: #f2f2f2;
+  background-color: #f4f4f4;
 }
-
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
 .description-container {
-  background-color: #f2f2f2;
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
 }
 .description {
-  padding: 30px;
+  padding: 50px;
 }
 .description > p {
     margin: 0;
