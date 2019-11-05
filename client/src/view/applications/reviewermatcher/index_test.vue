@@ -506,7 +506,15 @@ export default {
     handleInputConfirmAut() {
       let inputValueAut = this.inputValueAut;
       if (inputValueAut) {
-        this.formPost.authors.push(inputValueAut);
+        if (inputValueAut.includes(",")) {
+          let temp = inputValueAut.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.authors.push(inputValueAut);
+        }
       }
       this.inputVisibleAut = false;
       this.inputValueAut = '';
