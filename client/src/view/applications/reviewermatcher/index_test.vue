@@ -72,7 +72,7 @@
             type="textarea"
             :autosize="{ minRows: 10, maxRows: 30}"
             placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
+            v-model="formPost.abstract" @change="replaceChariot">
           </el-input>
         </el-form-item>
 
@@ -344,12 +344,18 @@ export default {
       load_var: false,
       id: '',
       rowInfos: {},
-      requestInfos: {}
+      requestInfos: {},
+      activeNames: ""
     }
   },
   methods: {
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
+    },
+    replaceChariot () {
+      // console.log(this.formPost.abstract);
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
@@ -696,6 +702,10 @@ export default {
             console.log("after", res.data);
           })
         })
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
       }
     },
     handleEdit(index, row) {
@@ -703,6 +713,9 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    handleChange(){
+      console.log('yay');
     }
   }
 }
