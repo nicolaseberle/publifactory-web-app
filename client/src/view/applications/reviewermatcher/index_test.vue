@@ -3,8 +3,13 @@
     <div class="app-container">
       <div class="bandeau">ALPHA v0.1.3</div>
       <hgroup>
-        <h1>Search Reviewers (Testing Pertinence)</h1>
-        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
+        <h1>Search Reviewers (Relevance test)</h1>
+        <h2>What's that?</h2>
+        <p>The reviewer matcher is a reviewer search engine which helps you to find the best reviewers for your manuscrits</p>
+        <h2>How does it work ?</h2>
+        <p>Load the title, the abstract and the author of the manuscript. The algorithm finds similarity between this article and all the articles in the database 40M of articles.</p>
+        <h2>Why a relevance test ?</h2>
+        <p>We need you to check the relevance of the search engine outputs. When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match.</p>
       </hgroup>
       <div>
       <h2>Load the article</h2>
