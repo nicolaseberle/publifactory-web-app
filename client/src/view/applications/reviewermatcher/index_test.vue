@@ -174,18 +174,19 @@
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
+              <p v-if="props.row.country != 'N/A'">({{ props.row.country[0] }})</p>
             </template>
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="Score"
             prop="score"
             width="100">
             <template slot-scope="props">
               <p>{{ props.row.score }}</p>
-              <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
+              <p>Score (year) : {{ props.row.scorePond }}</p>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column
             label="Citations"
@@ -204,7 +205,8 @@
                 <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
                 <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
                 <div v-else class="round c_grey"></div>
-                <p style="display:inline-block;">{{ props.row.conflit }}</p>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
@@ -299,7 +301,8 @@ export default {
           {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
         ],
         title: [
-          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'},
+          {min: 3, message: 'Length should be at least 3', trigger: 'blur'}
         ]
       },
       tableData: [{}],
