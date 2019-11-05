@@ -17,6 +17,12 @@
     src: url('../fonts/dinnextltpro/dinnextltpro-medium-italic.otf');
 }
 
+@font-face {
+    font-family: 'DNLTPro-light-italic';
+    src: url('../fonts/dinnextltpro/dinnextltpro-light-italic.otf');
+}
+
+
 // Droid Serif fonts
 // -----------------
 

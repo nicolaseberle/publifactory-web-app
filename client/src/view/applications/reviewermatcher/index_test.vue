@@ -2,22 +2,19 @@
   <div class="dashboard-container">
     <div class="app-container">
       <div class="bandeau">ALPHA v0.1.3</div>
-      <hgroup>
-        <h1>Search Reviewers (Relevance test)</h1>
-        <h2>What's that?</h2>
-        <p>The reviewer matcher is a reviewer search engine which helps you to find the best reviewers for your manuscrits</p>
-        <h2>How does it work ?</h2>
-        <p>Load the title, the abstract and the author of the manuscript. The algorithm finds similarity between this article and all the articles in the database 40M of articles.</p>
-        <h2>Why a relevance test ?</h2>
-        <p>We need you to check the relevance of the search engine outputs. When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match.</p>
-      </hgroup>
-      <div>
-      <h2>Load the article</h2>
-      <p>Insert your publication informations (title, authors, abstract or keywords)</p>
-      <p>You can also upload the pdf to extract the different fields </p>
+      <el-row :gutter='50' >
+        <div class='head'>
+          <h1>Reviewer search engine </h1>
+          <h2>Getting the most relevant reviewers for your paper</h2>
+        </div>
+      </el-row>
+      <el-row :gutter='50' style='margin-top:60px'>
 
-      <el-row :gutter='30' style='margin-top=80px;'>
+
       <el-col :span='12'>
+        <h2>Load the article</h2>
+        <p>Insert your publication informations (title, authors, abstract or keywords)</p>
+        <p>You can also upload the pdf to extract the different fields </p>
       <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
         <el-form-item label="Title" prop="title">
@@ -87,7 +84,39 @@
 
       </el-form>
       </el-col>
-
+      <el-col :span='12'>
+        <div class='description-container'>
+          <div class='description'>
+            <el-collapse v-model="activeNames" @change="handleChange">
+              <el-collapse-item title="What is it?" name="1">
+                <div>
+                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="How does it work ?" name="2">
+                <div>
+                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="Why a relevance test ?" name="3">
+                <div>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
+                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+            <!--
+            <h2>What is it?</h2>
+            <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+            <h2>How does it work ?</h2>
+            <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+            <h2>Why a relevance test ?</h2>
+            <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match.</p>
+            <p><b>Warning:</b> the conflict of interest is not completely operational</p>-->
+          </div>
+        </div>
+      </el-col>
+<!--
         <el-col :span='1'>
           <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
@@ -103,8 +132,8 @@
           </el-upload>
           <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
         </el-col>
+      -->
       </el-row>
-      </div>
 
 
 
@@ -697,7 +726,15 @@ export default {
   padding: 0px 20px;
   margin: 0 auto;
 }
+.head{
+  text-align: center;
 
+}
+.head h2 {
+  font-family: 'DNLTPro-light-italic';
+  font-size: 1.3em;
+
+}
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
@@ -715,14 +752,40 @@ strong {
   display: block;
   margin-top: 5px;
 }
-
-hgroup {
-  text-align: center;
-  margin-bottom: 40px;
+.el-collapse-item{
+  padding-bottom: 20px;
 }
-  hgroup > p {
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
     margin: 0;
-  }
+}
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
