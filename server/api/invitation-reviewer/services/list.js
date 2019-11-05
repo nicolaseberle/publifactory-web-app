@@ -20,7 +20,9 @@ async function list({ page = 1, count = 5, filters }) {
 	};
 	pipeline.push(sort, lookup);
 	if (filters.title) {
-		pipeline.push({ $match: { title: { $regex: `^${filters.title}` } } });
+		pipeline.push({
+			$match: { title: { $regex: `^${filters.title}`, $options: 'i' } }
+		});
 	}
 
 	pipeline.push(...paginate(page, count));
