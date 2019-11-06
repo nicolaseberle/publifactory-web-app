@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const enumStatus = [
 	'pending',
+	'bademail',
 	'sent',
 	'remind',
 	'read',
@@ -34,7 +35,7 @@ const RequestSchema = new mongoose.Schema(
 		remind: {
 			type: String
 		},
-		remindMax: { type: Number },
+		remindMax: { type: Number, default: 3 },
 		remindCount: { type: Number, default: 0 },
 		reviewer: {
 			semanticScholarId: {

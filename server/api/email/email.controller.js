@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const User = require('../user/user.model');
-
+const { emailReviewerTemplate } = require('../../config/emailing');
 /**
  * @class Email
  * @description This class is used to create transport to send SMTP message
@@ -65,13 +65,15 @@ module.exports = class Email {
 		};
 	}
 
-	sendReviewerMail({ subject, content }, cb) {
+	sendReviewerMail({ requestId, subject, content }, cb) {
 		this.transporter.sendMail(
 			{
 				from: '"PubliFactory" <publifactory.noreply@gmail.com>',
 				to: this.email,
 				subject,
-				html: content
+				html: `<div>${content}<br><br>${emailReviewerTemplate.redirect(
+					requestId
+				)}</div>`
 			},
 			(err, info) => cb(err, info)
 		);
