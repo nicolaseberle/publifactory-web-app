@@ -139,7 +139,7 @@ export default {
   methods: {
     ...mapActions(['login', 'loginOrcid', 'changeLang', 'checkEmail']),
     randomImage() {
-      let number = Math.ceil(Math.random()*7)
+      let number = Math.ceil(Math.random()*9)
       return {
         'image':"/static/images/login-bg-"+ number + ".jpg",
         'small_image':"/static/images/login-bg-"+ number + "-small.jpg",
