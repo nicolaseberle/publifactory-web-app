@@ -1,0 +1,32 @@
+version: v1.0
+name: First pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Deployement
+    task:
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: 'START'
+          commands:
+            - echo "starting deployement"
+    dependencies: []
+
+promotions:
+  - name: Deploy to dev
+    pipeline_file: deploy-dev.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - dev
+
+  - name: Deploy to production
+    pipeline_file: deploy-production.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - master

@@ -208,3 +208,6 @@ modules.xml
 .vscode/
 
 client/dist
+
+# Save database file
+database/

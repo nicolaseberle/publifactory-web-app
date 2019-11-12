@@ -1,0 +1,36 @@
+version: v1.0
+name: Deploy to dev
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Deploy to dev
+    execution_time_limit:
+      hours: 2
+    task:
+      secrets:
+        - name: gfile
+      prologue:
+        commands:
+          - checkout
+      jobs:
+        - name: exec deploy
+          commands:
+            - export LANG=C.UTF-8
+            - export LC_ALL=""
+            - export LC_TIME=fr_FR.UTF-8
+            - export LC_IDENTIFICATION=fr_FR.UTF-8
+            - export LANG=C.UTF-8
+            - ls /home/semaphore/
+            - sudo chmod 600 /home/semaphore/ssh
+            - >-
+              ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
+              "cd /home/publifactory;
+              cd web-app;
+              sudo ./script_docker.sh stop;
+              git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
+              sudo ./script_docker.sh start dev;"
+    dependencies: []
+execution_time_limit:
+  hours: 2

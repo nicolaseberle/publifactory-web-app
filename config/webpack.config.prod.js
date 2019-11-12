@@ -104,6 +104,7 @@ const webpackConfig = merge(commonConfig, {
         new webpack.HashedModuleIdsPlugin(),
         new CopyPlugin([
           { from: helpers.root('client/static/img'), to: '../dist/static/img' },
+          { from: helpers.root('client/static/images'), to: '../dist/static/images' },
           { from: helpers.root('client/static/icons'), to: '../dist/static/icons' },
           { from: helpers.root('client/static/Default.png'), to: '../dist/static' },
           { from: helpers.root('client/static/css/katex.css'), to: '../dist/static/css/' },
