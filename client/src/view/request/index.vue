@@ -15,7 +15,7 @@
           <h4>Perhaps another time.</h4>
         </div>
         <div v-else-if="status === 'outfield'">
-          <h4>Sorry, we thought that this article could match your interests.</h4>
+          <h4>Sorry, we thought that this article could have match your interests.</h4>
         </div>
         <div v-else>
           <h4>The request has already been answered.</h4>
@@ -38,54 +38,6 @@ export default {
     };
   },
   async created() {
-    // this.request = {
-    //   reviewer: {
-    //     semanticScholarId: '1324',
-    //     email: 'quentin.collin@epitech.eu',
-    //     name: 'Quentin(R)'
-    //   },
-    //   editor: {
-    //     name: 'editorName',
-    //     email: 'quentin.collin@epitech.eu',
-    //     journal: 'journalName'
-    //   },
-    //   remindMax: 4,
-    //   remindCount: 0,
-    //   history: [
-    //     {
-    //       status: 'pending',
-    //       date: 'Tue, 12 Nov 2019 09:33:18 GMT'
-    //     },
-    //     {
-    //       status: 'sent',
-    //       date: 'Tue, 12 Nov 2019 09:33:19 GMT'
-    //     },
-    //     {
-    //       status: 'read',
-    //       date: 'Tue, 12 Nov 2019 09:33:24 GMT'
-    //     },
-    //     {
-    //       status: 'rejected',
-    //       date: 'Tue, 12 Nov 2019 09:33:25 GMT'
-    //     },
-    //     {
-    //       status: 'done',
-    //       data: 'Tue, 12 Nov 2019 09:33:25 GMT'
-    //     }
-    //   ],
-    //   _id: '5dca7c5edfa25c0791315557',
-    //   title: 'New consomption of energy',
-    //   abstract: 'ABSTRACT WILL BE PUT HERE',
-    //   deadline: '2019-10-30T13:32:51.000Z',
-    //   object: 'Review article from journal Editor',
-    //   content:
-    //     "<h4>Dear Dr Rera, I would like to invite you to review the above-referenced manuscript. To maintain our journal's high standards we need the best reviewers, and given your expertise in this area I would greatly appreciate your contribution. I kindly ask you to give this review invitation the same consideration that you would want one of your own manuscripts to receive.</h4>",
-    //   remind: 'code',
-    //   createdAt: '2019-11-12T09:33:18.639Z',
-    //   updatedAt: '2019-11-12T09:33:25.897Z',
-    //   __v: 1
-    // };
-    // this.status = this.request.history.slice(-2, -1)[0].status;
     this.status = this.$route.params.status;
     this.requestId = this.$route.params.requestId;
     const response = await axios({
@@ -96,8 +48,9 @@ export default {
     if (
       response.status === 500 &&
       !response.data.success &&
-      response.data.message === 'REAQUEST_ALREADY_DONE'
+      response.data.message === 'REQUEST_ALREADY_DONE'
     ) {
+      this.status = 'done';
       return;
     }
     this.request = response.data;
@@ -106,7 +59,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .request-background {
   display: flex;
   flex-direction: row;
@@ -117,7 +70,7 @@ export default {
 }
 .request-container {
   height: 30%;
-  width: 40%;
+  width: 30%;
   margin-top: 100px;
   padding: 0px 20px 20px 20px;
   background-color: #304156;

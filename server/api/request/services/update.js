@@ -15,7 +15,7 @@ function getRemindCount(history) {
 // todo move status update here =>
 function updateStatus(request, status) {
 	const rawStatus = getRawStatus(request.history);
-	if (rawStatus.includes('done')) throw new Error('REAQUEST_ALREADY_DONE');
+	if (rawStatus.includes('done')) throw new Error('REQUEST_ALREADY_DONE');
 	request.history.push({
 		status,
 		date: new Date().toUTCString()
