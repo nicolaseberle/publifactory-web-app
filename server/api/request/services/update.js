@@ -1,10 +1,9 @@
 const { Request } = require('../model/');
-const sendEmail = require('./send-email');
+const sendEmailReviewer = require('./send-email-reviewer');
+const sendEmailEditor = require('./send-email-editor');
 
 function getRawStatus(history) {
-	return history.reduce((acc, request) => {
-		return (acc = [...acc, request.status]);
-	}, []);
+	return history.reduce((acc, request) => [...acc, request.status], []);
 }
 
 function getRemindCount(history) {
@@ -13,32 +12,17 @@ function getRemindCount(history) {
 	}, 0);
 }
 
-function shouldSendEmail(oldRequest, incomingRequest) {
-	if (!incomingRequest.reviewer.email) return;
-	if (oldRequest.reviewer.email === incomingRequest.reviewer.email) return;
-	sendEmail(oldRequest._id);
-}
-
-async function update(requestId, { reviewer, editor, status, ...request }) {
-	const updatedRequest = await Request.findById(requestId);
-	if (!updatedRequest) throw new Error('REQUEST_NOT_FOUND');
-
-	const rawStatus = getRawStatus(updatedRequest.history);
-	if (rawStatus.includes('done'))
-		throw new Error('REQUEST_FORBIDEN_UPDATE_DONE');
-	updatedRequest.history.push({
+// todo move status update here =>
+function updateStatus(request, status) {
+	const rawStatus = getRawStatus(request.history);
+	if (rawStatus.includes('done')) throw new Error('REAQUEST_ALREADY_DONE');
+	request.history.push({
 		status,
 		date: new Date().toUTCString()
 	});
-	if (status === 'accepted' || status === 'rejected' || status === 'outfield') {
-		updatedRequest.history.push({
-			status: 'done',
-			data: new Date().toUTCString()
-		});
-	}
-	const remindCount = getRemindCount(updatedRequest.history);
-	if (remindCount >= updatedRequest.remindMax) {
-		updatedRequest.history.push(
+	const remindCount = getRemindCount(request.history);
+	if (remindCount >= request.remindMax) {
+		request.history.push(
 			{
 				status: 'rejected',
 				date: new Date().toUTCString()
@@ -46,7 +30,33 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 			{ status: 'done', data: new Date().toUTCString() }
 		);
 	}
-	updatedRequest.remindCount = remindCount;
+	request.remindCount = remindCount;
+	if (
+		status === 'accepted' ||
+		status === 'rejected' ||
+		status === 'outfield' ||
+		status === 'unsubscribed'
+	) {
+		request.history.push({
+			status: 'done',
+			data: new Date().toUTCString()
+		});
+	}
+}
+
+function shouldSendEmailReviewer(oldRequest, incomingRequest) {
+	if (!incomingRequest.reviewer.email) return;
+	if (oldRequest.reviewer.email === incomingRequest.reviewer.email) return;
+	sendEmailReviewer(oldRequest._id);
+}
+
+async function update(requestId, { reviewer, editor, status, ...request }) {
+	const updatedRequest = await Request.findById(requestId);
+	if (!updatedRequest) throw new Error('REQUEST_NOT_FOUND');
+
+	if (status) {
+		updateStatus(updatedRequest, status);
+	}
 
 	const updateReviewer = { ...updatedRequest.reviewer.toObject(), ...reviewer };
 	const updateEditor = { ...updatedRequest.editor.toObject(), ...editor };
@@ -57,12 +67,18 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 		reviewer: updateReviewer
 	};
 	await updatedRequest.updateOne(
-		{
-			$set: mergedRequest
-		},
+		{ $set: mergedRequest },
 		{ runValidators: true }
 	);
-	shouldSendEmail(updatedRequest, mergedRequest);
+	// Should send an email if a new email was added
+	shouldSendEmailReviewer(updatedRequest, mergedRequest);
+	// Should send an email if the status === accept/rejected/outfield
+	if (
+		(status && status === 'accepted') ||
+		status === 'rejected' ||
+		status === 'outfield'
+	)
+		sendEmailEditor(updatedRequest._id, status);
 	return mergedRequest;
 }
 

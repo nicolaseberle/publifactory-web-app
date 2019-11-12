@@ -9,6 +9,7 @@ const enumStatus = [
 	'accepted',
 	'rejected',
 	'outfield',
+	'unsubscribed',
 	'done'
 ];
 

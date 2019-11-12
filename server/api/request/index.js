@@ -9,8 +9,8 @@ router.post('/', controllers.create);
 router.get('/:requestId', controllers.read);
 router.patch('/:requestId', controllers.update);
 router.delete('/:requestId', controllers.remove);
-router.get(
-	'/:requestId/:status(accepted|rejected|outfield)',
+router.post(
+	'/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
 	controllers.reviewerResponse
 );
 
