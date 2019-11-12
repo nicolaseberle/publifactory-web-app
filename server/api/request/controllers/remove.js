@@ -7,7 +7,6 @@ async function remove(req, res, next) {
 		await serviceRemove(req.params.requestId);
 		res.status(200).end();
 	} catch (error) {
-		console.log('ERROR=>', error);
 		next(error);
 	}
 }

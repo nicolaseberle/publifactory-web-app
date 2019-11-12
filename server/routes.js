@@ -28,11 +28,7 @@ module.exports = function(app) {
 
 	app.use(function(req, res, next) {
 		console.log('Ommit Connection for:', req.originalUrl);
-		if (
-			req.originalUrl.startsWith('/api/invitation-reviewers') ||
-			req.originalUrl.startsWith('/api/publishers') ||
-			req.originalUrl.startsWith('/api/requests')
-		) {
+		if (req.originalUrl.startsWith('/api/requests')) {
 			return next();
 		}
 		jwtCheck(req, res, next);
@@ -47,8 +43,6 @@ module.exports = function(app) {
 	app.use('/api/roles', require('./api/roles'));
 	app.use('/api/pictures', require('./api/picture'));
 	app.use('/api/history', require('./api/article/history'));
-	app.use('/api/invitation-reviewers', require('./api/invitation-reviewer'));
-	app.use('/api/publishers', require('./api/publisher'));
 	app.use('/api/requests', require('./api/request'));
 
 	// catch 404 and forward to error handler
