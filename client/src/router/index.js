@@ -60,6 +60,39 @@ export const constantRouterMap = [
 		props: route => ({ userId: route.query.userId })
 	},
 	{
+		path: '/services_test',
+		component: Layout_services,
+		redirect: 'services_test',
+		hidden: true,
+		children: [
+			{
+				path: '/services_test',
+				meta: {
+					skipAuth: true
+				},
+				component: resolve => {
+					import('../view/applications/reviewermatcher/index_test.vue').then(
+						resolve
+					);
+				}
+			}
+		],
+		meta: {
+			skipAuth: true
+		},
+		props: route => ({ userId: route.query.userId })
+	},
+	{
+		path:
+			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+		component: resolve => {
+			import('../view/request/').then(resolve);
+		},
+		meta: {
+			skipAuth: true
+		}
+	},
+	{
 		path: '/summarize',
 		component: Layout_services,
 		redirect: 'summarize',
@@ -84,16 +117,6 @@ export const constantRouterMap = [
 		path: '/invite/:id',
 		component: resolve => {
 			import('../view/invite/index.vue').then(resolve);
-		},
-		meta: {
-			skipAuth: true
-		}
-	},
-	{
-		path:
-			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
-		component: resolve => {
-			import('../view/request/').then(resolve);
 		},
 		meta: {
 			skipAuth: true
@@ -208,7 +231,11 @@ export const constantRouterMap = [
 			{
 				path: 'preprintsearch',
 				name: 'preprint_search',
-				meta: { title: 'preprint_search', icon: 'search', noCache: true },
+				meta: {
+					title: 'preprint_search',
+					icon: 'search',
+					noCache: true
+				},
 				component: () => import('../view/applications/preprintsearch/index.vue')
 			},
 			{
@@ -222,7 +249,12 @@ export const constantRouterMap = [
 		component: Layout,
 		redirect: 'admin',
 		// hidden: true,
-		meta: { title: 'Admin', icon: 'lock', noCache: true, roles: ['admin'] },
+		meta: {
+			title: 'Admin',
+			icon: 'lock',
+			noCache: true,
+			roles: ['admin']
+		},
 		children: [
 			{
 				path: 'activity',
@@ -258,10 +290,61 @@ export const constantRouterMap = [
 				component: () => import('../view/admin/Publishers.vue')
 			},
 			{
+				path: 'invitationReviewer',
+				name: 'Invitation Reviewer',
+				meta: {
+					title: 'Invation Reviewer',
+					icon: 'guide 2',
+					noCache: true,
+					roles: ['admin']
+				},
+				component: () => import('../view/admin/invitationReviewer.vue')
+			},
+			{
 				path: 'admin',
 				component: () => import('../view/admin/Activity.vue')
 			}
 		]
+	},
+	{
+		path: '/cgu_publifactory_v1',
+		component: Layout_services,
+		redirect: 'cgu_publifactory_v1',
+		hidden: true,
+		children: [
+			{
+				path: '/cgu_publifactory_v1',
+				meta: {
+					skipAuth: true
+				},
+				component: resolve => {
+					import('../view/cgu/index.vue').then(resolve);
+				}
+			}
+		],
+		meta: {
+			skipAuth: true
+		}
+	},
+	{
+		path: '/help_publifactory_v1',
+		component: Layout_services,
+		redirect: 'help_publifactory_v1',
+		hidden: true,
+		children: [
+			{
+				path: '/help_publifactory_v1',
+				meta: {
+					skipAuth: true
+				},
+				component: resolve => {
+					import('../view/help/index.vue').then(resolve);
+				}
+			}
+		],
+		meta: {
+			skipAuth: true
+		}
 	},
 	{
 		path: '',

@@ -17,6 +17,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
 
+import { VLazyImagePlugin } from "v-lazy-image";
+Vue.use(VLazyImagePlugin);
+
 import VueSplit from 'vue-split-panel'
 import Icon from 'vue-awesome/components/Icon'
 import VueTextareaAutosize from 'vue-textarea-autosize'

@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-
+      <div v-show="!loggedIn" class="bandeau">ALPHA v0.1.3</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -15,11 +15,11 @@
       <el-col :span='12'>
       <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
-        <el-form-item label="Title">
+        <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
-        <el-form-item label="Keywords">
+        <el-form-item label="Keywords" prop="keywords">
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -76,7 +76,7 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" class="progress_bar"></el-progress>
+          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
           <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
         </el-form-item>
 
@@ -84,7 +84,7 @@
       </el-col>
 
         <el-col :span='1'>
-          <div style='text-align:center; vertical-align:middle; height:100px;'><p>or</p></div>
+          <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
         <el-col :span='11'>
           <el-upload
@@ -96,16 +96,34 @@
           <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
           <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
         </el-upload>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="progress_status_pdf" style="width:100%;margin-top:22px;"></el-progress>
+        <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
         </el-col>
       </el-row>
       </div>
+
+
+
+
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
         <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
+            <el-popover
+              placement="top"
+              width="330">
+              <p>To get the mail list, please enter your email</p>
+              <el-form :inline="true" :model="formMini" :rules="rulesMini" ref="formMini" class="demo-form-inline">
+                <el-form-item prop="mail">
+                  <el-input v-model="formMini.mail" placeholder="example@mail.com" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
+                </el-form-item>
+              </el-form>
+              <el-button slot="reference">Get mail list</el-button>
+            </el-popover>
             <el-button @click="exportListJson()">Export list (json)</el-button>
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
@@ -162,7 +180,7 @@
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
                 <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
-                <p class="align">{{ props.row.name}}</p>
+                <strong class="align">{{ props.row.name}}</strong>
                 <p v-if="props.row.id.length > 10">
                   <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
                 </p>
@@ -179,6 +197,7 @@
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
+              <p v-if="props.row.country != 'N/A'">({{ props.row.country[0] }})</p>
             </template>
           </el-table-column>
 
@@ -193,22 +212,35 @@
           </el-table-column>
 
           <el-table-column
+            label="Citations"
+            prop="citations"
+            width="100">
+            <template slot-scope="props">
+              <p>{{ props.row.citations }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             label="Conflict of interest"
             prop="conflit">
             <template slot-scope="props">
-                <p>{{ props.row.conflit }}</p>
+                <div v-if="props.row.conflit == 0" class="round c_green"></div>
+                <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
+                <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
+                <div v-else class="round c_grey"></div>
+                <p style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
           <el-table-column
             label="Actions"
-            width="260">
+            width="160">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
                 placement="top"
                 trigger="hover"
-                content="Watch his works">
+                content="Most pertinents works">
               </el-popover>
               <el-button
                 type="primary"
@@ -274,31 +306,8 @@
       title="Send a Request to Review"
       :visible.sync="centerDialogVisible"
       width="75%">
-      <div>
-        <el-form  label-width="100px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
+      <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
-      <el-form-item label="Your email" required>
-          <el-input v-model="formMail.emailDest"></el-input>
-        </el-form-item>
-        <el-form-item label="Object" required>
-          <el-input v-model="formMail.object">{{formPost.object}}</el-input>
-        </el-form-item>
-        <el-form-item label="Message" required>
-        <el-input
-          type="textarea"
-          :autosize="{ minRows: 10, maxRows: 30}"
-          v-model="formPost.abstract">
-        </el-input>
-        </el-form-item>
-      <el-form-item label="Option">
-        <el-checkbox v-model="receiveCopy">I would like to receive a copy</el-checkbox>
-      </el-form-item>
-      <el-form-item>
-        <el-button @click="centerDialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="centerDialogVisible = false">Send</el-button>
-      </el-form-item>
-        </el-form>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -306,31 +315,57 @@
 <script>
 import axios from 'axios'
 import researcherCard from './researcher_card'
+import requestView from './requestView'
+import { mapGetters } from 'vuex'
+
 export default {
-  components: {researcherCard},
+  components: {researcherCard,requestView},
+  computed: {
+    ...mapGetters([
+      'loggedIn'
+    ])
+  },
   data () {
     return {
+      formMail: {
+        object: '',
+        mailDest: '',
+        name: '',
+        journal: '',
+        message: '',
+        deadline: '',
+        relaunch: '2x1month',
+        cgu:false
+        // ,issn: ''
+      },
       centerDialogVisible: false,
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
-      formMail: {objet: '',mailDest: '', message: '' },
-      formPost: {abstract: '' , title: '', keywords: [], authors: []},
-      rules: {
+      formMini: {
+        mail: ''
+      },
+      rulesMini: {
         abstract: [
-          {required: true, message: 'Please input enter abstract of the article', trigger: 'blur'}
-        ],
-        authors: [
-          {required: true, message: 'Please input enter at least the author of the article', trigger: 'blur'}
+          {required: true, message: 'Please enter your email', trigger: 'blur'}
         ]
       },
-      mailRules: {
-        message: [
-          {required: true, message: 'Please input enter a message for your email', trigger: 'blur'}
+      formPost: {
+        abstract: '',
+        title: '',
+        keywords: [],
+        authors: []
+      },
+      rules: {
+        abstract: [
+          {required: true, message: 'Please enter the abstract of the article', trigger: 'blur'}
         ],
-        object: [
-          {required: true, message: 'A email needs an object', trigger: 'blur'}
+        authors: [
+          {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
+        ],
+        title: [
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
         ]
       },
       tableData: [{}],
@@ -342,10 +377,47 @@ export default {
       inputValueAut: '',
       load_var: false,
       id: '',
-      receiveCopy: false
+      rowInfos: {},
+      requestInfos: {},
+      listMails: [],
+      requestMails: {}
     }
   },
   methods: {
+    closeDialogBox (new_val) {
+      this.centerDialogVisible = new_val
+    },
+    format(value){
+      return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    sendRequestRev(formMail){
+      this.$refs[formMail].validate((valid) => {
+        if (valid) {
+          this.requestInfos["title"] = this.formPost["title"]
+          this.requestInfos["abstract"] = this.formPost["abstract"]
+          this.requestInfos["rev_id"] = this.rowInfos["id"]
+          this.requestInfos["rev_name"] = this.rowInfos["name"]
+          this.requestInfos["deadline"] = this.formMail["deadline"]
+          this.requestInfos["pub_mail"] = this.formMail["mailDest"]
+          this.requestInfos["pub_journal"] = this.formMail["journal"]
+          this.requestInfos["pub_name"] = this.formMail["name"]
+
+          new Promise ((resolve,reject) => {
+            axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
+            .then( async (res) => {
+              if (res) {
+                this.requestInfos["rev_mail"] = res['data'][0]["_source"]["mail"]
+              }
+              else {
+                this.requestInfos["rev_mail"] = ""
+              }
+              this.centerDialogVisible = false;
+              console.log(this.requestInfos);
+            })
+          })
+        }
+      })
+    },
     info_caption(h, { column, $index }) {
       return h("span", [
         column.label,
@@ -475,7 +547,7 @@ export default {
       window.setInterval(()=>{
         if (this.progress_status_pdf<100)
           this.progress_status_pdf = this.progress_status_pdf +1
-      }, 250);
+      }, 500);
       let fileObject = param.file;
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
@@ -508,6 +580,7 @@ export default {
               this.progress_status = this.progress_status +1
           }, 250);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
+          this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
@@ -544,6 +617,22 @@ export default {
       this.$refs[formName].resetFields();
     },
 
+    getMailList() {
+      for (let x=0; x<10; x++) {
+        this.listMails.push({
+          "id": this.tableData[x].original_id,
+          "name": this.tableData[x].name,
+          "mail": ""
+        });
+      };
+      this.requestMails = {
+        "title": this.formPost.title,
+        "mail_publisher": this.formMini.mail,
+        "list": this.listMails
+      }
+      console.log(this.requestMails);
+    },
+
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
@@ -578,6 +667,11 @@ export default {
     },
 
     displayInfosB(index, row) {
+      this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
+      this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
+      this.formMail.cgu = false
+      this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
+
       // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
       this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
@@ -612,6 +706,18 @@ export default {
 }
 </script>
 <style>
+
+.bandeau {
+  position: fixed;
+  top: 30px;
+  right: -45px;
+  background-color: #E6A23C;
+  color: white;
+  padding: 0px 40px;
+  transform: rotate(45deg);
+  font-weight: bold;
+  z-index: 1000;
+}
 
 .app-container {
   max-width: 1140px;
@@ -667,10 +773,11 @@ hgroup {
     vertical-align: bottom;
   }
 
-.el-icon-arrow-right:before {
+/* .el-icon-arrow-right:before {
   content:"";
   display: none;
-}
+} */
+
   .el-table__expand-icon {
     display: none;
   }
@@ -726,6 +833,19 @@ hgroup {
       background-color: #A5A9AD;
     }
 
+    .c_red {
+      background-color: #F56C6C;
+    }
+
+.round {
+  width: 13px;
+  height: 13px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
 .el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
 }
@@ -761,6 +881,14 @@ hgroup {
 
 .el-table .cell {
   padding: 0 20px!important;
+}
+
+.el-upload-dragger .el-icon-upload {
+  margin: 16px 0;
+}
+
+.el-popper[x-placement^=bottom] {
+  text-align: center!important;
 }
 
 @media (max-width: 1280px) {
