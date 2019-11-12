@@ -58,14 +58,23 @@ const redirect = request => `
   </table>
   </div>
   <div style="border-top: 1px solid #cccccc;">
-  <h6>Don't want to get a reminded for this review :
-    <a style="text-decoration: none;" href="${frontUrl}/requests/${request._id}/unsubscribed">
-      unsubscribe
-    </a>
-  </h6>
+    <h6>Don't want to get a reminded for this review :
+      <a style="text-decoration: none;" href="${frontUrl}/requests/${request._id}/unsubscribed">
+        unsubscribe
+      </a>
+    </h6>
+
   </div>
   <div>
-    <h6>Credentials</h6>
+     <h6>© Copyright 2018 <a
+      href='http://publifactory.co'
+      target='_blank'
+      rel='noopener noreferrer'
+      data-auth='NotApplicable'
+      style='font-size:12px; line-height:18px; color:#666666; font-weight:bold'
+    >
+      Publifactory</a>, All Rights Reserved.</h6>
+    <a href='https://app.publifactory.co'> <img widht="25px" height="32px" src="${backUrl}/api/requests/logo/"></a>
     <img src="${backUrl}/api/requests/seen/${request._id}">
   </div>
 `;
@@ -99,7 +108,16 @@ const editor = (request, status) =>
 			}
     </div>
     <div style="border-top: 1px solid #cccccc; text-align: center;">
-      <h6>Credentials</h6>
+
+      <h6>© Copyright 2018 <a
+      href='http://publifactory.co'
+      target='_blank'
+      rel='noopener noreferrer'
+      data-auth='NotApplicable'
+      style='font-size:12px; line-height:18px; color:#666666; font-weight:bold'
+    >
+      Publifactory</a>, All Rights Reserved.</h6>
+      <a href='https://app.publifactory.co'> <img widht="25px" height="32px" src="${backUrl}/api/requests/logo/"></a>
     </div>
   </div>
 `;

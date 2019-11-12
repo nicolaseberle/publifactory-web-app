@@ -5,6 +5,7 @@ const router = express.Router();
 // Base route: '/api/requests'
 
 router.get('/', controllers.list);
+router.get('/logo', controllers.logo);
 router.post('/', controllers.create);
 router.get('/:requestId', controllers.read);
 router.patch('/:requestId', controllers.update);

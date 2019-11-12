@@ -5,6 +5,7 @@ const remove = require('./remove');
 const list = require('./list');
 const reviewerResponse = require('./reviewer-response');
 const reviewerRead = require('./reviewer-read');
+const logo = require('./logo');
 
 module.exports = {
 	create,
@@ -13,5 +14,6 @@ module.exports = {
 	remove,
 	list,
 	reviewerResponse,
-	reviewerRead
+	reviewerRead,
+	logo
 };

@@ -6,8 +6,10 @@
           <h4>PubliFactory</h4>
         </a>
       </div>
-      <div class="request-text-center">
-        <h4>Thanks for replying,</h4>
+      <div class="request-center-middle">
+        <div>
+          <h4>Thanks for replying,</h4>
+        </div>
         <div v-if="status === 'accepted'">
           <h4>We will put you in touch with the publisher.</h4>
         </div>
@@ -82,8 +84,5 @@ export default {
 }
 .request-title {
   font-size: 24px;
-}
-.request-text-center {
-  text-align: center;
 }
 </style>
