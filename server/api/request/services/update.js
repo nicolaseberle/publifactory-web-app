@@ -44,7 +44,11 @@ function updateStatus(request, status) {
 	}
 }
 
-function shouldSendEmailReviewer(oldRequest, incomingRequest) {
+function shouldSendEmailReviewer(oldRequest, incomingRequest, status) {
+	if (status === 'remind') {
+		sendEmailReviewer(oldRequest._id);
+		return;
+	}
 	if (!incomingRequest.reviewer.email) return;
 	if (oldRequest.reviewer.email === incomingRequest.reviewer.email) return;
 	sendEmailReviewer(oldRequest._id);
@@ -70,15 +74,16 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 		{ $set: mergedRequest },
 		{ runValidators: true }
 	);
-	// Should send an email if a new email was added
-	shouldSendEmailReviewer(updatedRequest, mergedRequest);
-	// Should send an email if the status === accept/rejected/outfield
+	// Should send an email if a new email was added or remind as status
+	shouldSendEmailReviewer(updatedRequest, mergedRequest, status);
+
+	// send an email to the editor if the status === accept/rejected/outfield
 	if (
 		(status && status === 'accepted') ||
 		status === 'rejected' ||
 		status === 'outfield'
 	)
-		sendEmailEditor(updatedRequest._id, status);
+		sendEmailEditor(updatedRequest._id);
 	return mergedRequest;
 }
 

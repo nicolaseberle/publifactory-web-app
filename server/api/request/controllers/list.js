@@ -12,7 +12,6 @@ async function list(req, res, next) {
 			.json(response)
 			.end();
 	} catch (error) {
-		console.log('ERROR', error);
 		next(error);
 	}
 }
