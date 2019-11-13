@@ -6,6 +6,7 @@ const list = require('./list');
 const reviewerResponse = require('./reviewer-response');
 const reviewerRead = require('./reviewer-read');
 const logo = require('./logo');
+const remind = require('./remind');
 
 module.exports = {
 	create,
@@ -15,5 +16,6 @@ module.exports = {
 	list,
 	reviewerResponse,
 	reviewerRead,
-	logo
+	logo,
+	remind
 };
