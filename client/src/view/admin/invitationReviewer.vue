@@ -44,22 +44,22 @@
     </el-row>
 
 
-    <el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
+    <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
       <el-table
       ref="dataReq"
       highlight-current-row
-      :data="dataTest"
+      :data="dataFinal"
       style="width: 100%"
       height="500">
 
       <el-table-column type="expand" width="20">
         <template slot-scope="props">
           <el-steps>
-            <el-step v-for="req in props.row.requests" v-if="req.status != 'Accept' && req.status != 'Decline'" :title="req.status" status="success" :description="req.date"></el-step>
-            <el-step v-else-if="req.status == 'Accept'" title="Status" status="success" :description="req.status"></el-step>
-            <el-step v-else-if="req.status == 'Decline'" title="Status" status="error" :description="req.status"></el-step>
-            <el-step v-if="Object.values(props.row.requests[props.row.requests.length -1]).indexOf('Decline') && Object.values(props.row.requests[props.row.requests.length -1]).indexOf('Accept')" title="Status" status="wait" description="Pending"></el-step>
+            <el-step v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date"></el-step>
+            <el-step v-else-if="req.status == 'accept'" title="status" status="success" :description="req.status"></el-step>
+            <el-step v-else-if="req.status == 'decline'" title="status" status="error" :description="req.status"></el-step>
+            <el-step v-if="Object.values(props.row.history[props.row.history.length -1]).indexOf('decline') && Object.values(props.row.history[props.row.history.length -1]).indexOf('accept')" title="status" status="wait" description="pending"></el-step>
           </el-steps>
         </template>
       </el-table-column>
@@ -79,8 +79,8 @@
           width="180">
           <template slot-scope="props">
             <el-tooltip class="item" effect="dark" placement="top">
-              <div slot="content">{{props.row.editor.edi_mail}}<br>{{ props.row.editor.edi_name }}</div>
-              <p style="text-align:center">{{ props.row.editor.edi_journal }}</p>
+              <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
+              <p style="text-align:center">{{ props.row.editor.journal }}</p>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -93,8 +93,8 @@
             <template slot-scope="props">
               <!-- <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p> -->
               <el-tooltip class="item" effect="dark" placement="top">
-                <div slot="content">{{props.row.reviewer.rev_id}}</div>
-                <p style="text-align:center; font-weight:bold;"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+props.row.reviewer.rev_id">{{ props.row.reviewer.rev_name }}</a></p>
+                <div slot="content">{{props.row.reviewer.semanticScholarId}}</div>
+                <p style="text-align:center; font-weight:bold;"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+props.row.reviewer.semanticScholarId">{{ props.row.reviewer.name }}</a></p>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -105,8 +105,8 @@
               <el-input
                 size="mini"
                 placeholder=""
-                v-model="props.row.reviewer.rev_mail"
-                v-on:change.native="changeMail(props.row.reviewer.rev_id, props.row.reviewer.rev_mail)">
+                v-model="props.row.reviewer.mail"
+                v-on:change.native="changeMail(props.row.reviewer.semanticScholarId, props.row.reviewer.mail)">
               </el-input>
             </template>
           </el-table-column>
@@ -174,6 +174,8 @@ export default{
         }
       ],
       relance: [],
+      dataFinal: [],
+      isData: false,
       dataTest: [
         {
           "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
@@ -333,8 +335,15 @@ export default{
         })
       })
     },
-    fetchRequests() {
-      // this.dataTest = []
+    getRequests(){
+      new Promise ((resolve,reject) => {
+        axios.get('http://localhost:4000/api/requests?page=1&count=10')
+        .then( async (res) => {
+          this.dataFinal = res.data.data;
+          console.log(this.dataFinal);
+          this.isData = true;
+        })
+      })
     },
     actionHandleCommand(command) {
       if (command == "remove") {
@@ -353,11 +362,10 @@ export default{
         console.log(command);
       }
     }
+  },
+  async mounted() {
+    await this.getRequests()
   }
-  // ,
-  // mounted() {
-  //   this.fetchRequests()
-  // }
 }
 </script>
 <style>
