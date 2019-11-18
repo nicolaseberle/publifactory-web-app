@@ -119,8 +119,10 @@
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
+            this.loading = true
             axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
             .then(response => {
+              this.loading = false
               this.$message({
                 title: this.$t('message.created'),
                 message: this.$t('message.created'),
@@ -128,12 +130,12 @@
               })
               this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
+            this.loading = false
             this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('register.authFail'),
               type: 'error'
             })
-            this.loading = false
             this.loginError = true
             setTimeout(() => {
               this.loginError = false
