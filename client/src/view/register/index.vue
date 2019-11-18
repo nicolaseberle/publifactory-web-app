@@ -1,6 +1,10 @@
 <template>
   <div class="login-main">
-    <div class="bg"></div>
+  </div>-->
+  <v-lazy-image class='bg'
+    :src='bg.image'
+    :src-placeholder='bg.small_image'
+  />
   <div class="login-wrapper" v-show="!loggedIn">
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
@@ -56,6 +60,7 @@
   locales,
   data () {
     return {
+      bg:  this.randomImage() ,
       checkedCGU: false,
       form: {
         email: '',
@@ -132,6 +137,14 @@
           })
         }
       })
+    },
+    randomImage() {
+      let number = Math.ceil(Math.random()*9)
+      return {
+        'image':"/static/images/login-bg-"+ number + ".jpg",
+        'small_image':"/static/images/login-bg-"+ number + "-small.jpg",
+        'legend': ''
+      }
     }
   }
 }
