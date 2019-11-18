@@ -24,7 +24,11 @@
         <el-input v-model="form.password" type="password" :placeholder="$t('register.password')" ></el-input>
       </el-form-item>
       <el-form-item>
-      <el-checkbox v-model="checkedCGU">I accept the <a style='text-decoration:underline'>Term of Use</a></el-checkbox>
+      <el-checkbox v-model="checkedCGU">I accept the
+        <a style='text-decoration:underline'>
+          <router-link class="logo-wrapper" to="/legal" exact>Term of Use</router-link>
+        </a>
+      </el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
