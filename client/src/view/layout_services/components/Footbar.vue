@@ -63,13 +63,14 @@ footer.el-footer {
 }
 
 .art strong {
-  font-size: 1.2rem;
+  font-size: 1rem;
   border-bottom: 1px solid white;
   padding-bottom: 5px;
   margin-bottom: 30px;
 }
 
 .art p {
+  font-size: 0.8rem;
   margin: 10px 0;
 }
 

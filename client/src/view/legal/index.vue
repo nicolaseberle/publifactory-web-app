@@ -19,13 +19,16 @@
                   <h2>Privacy</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
+                </div>
               </el-collapse-item>
               <el-collapse-item name="2">
                 <template slot="title">
                   <h2>Cookie Policy</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>
                   We use “cookies” to collect information and improve Publifactory. A cookie is a small data file that we transfer to your device. We may use “persistent cookies” to save your registration ID and login password for future logins to Publifactory. We may use “session ID cookies” to enable certain features of Publifactory, to better understand how you interact with it and to monitor aggregate usage and web traffic routing. You can instruct your browser, by changing its options, to stop accepting cookies or to prompt you before accepting a cookie from the websites you visit. If you do not accept cookies, however, you may not be able to use all aspects of Publifactory.
 
@@ -34,6 +37,7 @@
                   More information on data privacy in respect of Google Analytics is available at <a href='https://www.google.co.uk/intl/en/analytics/privacyoverview.html'>https://www.google.co.uk/intl/en/analytics/privacyoverview.html</a> and details about how to opt out can be found at <a href='https://www.google.com/intl/en/policies/privacy/partners'>https://www.google.com/intl/en/policies/privacy/partners</a>.
 
                 </p>
+                </div>
               </el-collapse-item>
 
               <el-collapse-item name="3">
@@ -41,28 +45,36 @@
                   <h2>License and Site Access</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
+                </div>
               </el-collapse-item>
               <el-collapse-item  name="4">
                 <template slot="title">
                   <h2>Trademark</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
+                </div>
               </el-collapse-item>
               <el-collapse-item  name="5">
                 <template slot="title">
                   <h2>Copyright</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
+              </div>
               </el-collapse-item>
               <el-collapse-item name="6">
                 <template slot="title">
                   <h2>Electronic Communications</h2>
                 </template>
                 <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='subcontent'>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
+                </div>
               </el-collapse-item>
             </el-collapse>
             <h2></h2>
@@ -89,7 +101,7 @@ export default{
   text-align: center;
   margin-bottom: 50px;
 }
-.header p{text-align:left;}
+.header p{text-align:left;font-size:1rem;}
 .header h1{font-family: 'DNLTPro-bold';}
 .header h2{font-family: 'DNLTPro-medium-italic';text-align:left;}
 
@@ -97,12 +109,15 @@ export default{
   text-align: left;
 
 }
-.content h2{font-family: 'DNLTPro-bold';}
+.content h2{font-family: 'DNLTPro-bold';font-size:1.2rem;}
 .content p{text-align:left;}
 
 .version {
   font-family: 'DNLTPro-light-italic';
   font-size: 1rem;
   text-align:left;
+}
+.subcontent{
+  font-size: 1rem;
 }
 </style>
