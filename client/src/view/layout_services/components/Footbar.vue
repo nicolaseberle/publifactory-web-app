@@ -42,11 +42,11 @@ export default {
 
 <style>
 
-.el-footer {
+footer.el-footer {
   background-color: #2F4155;
   color: white;
   height: auto!important;
-  padding-top: 25px!important;
+  padding-top: 20px!important;
   padding-bottom: 20px!important;
 }
 
@@ -58,13 +58,14 @@ export default {
 }
 
 .art {
+
   width: 23%;
 }
 
 .art strong {
   font-size: 1.2rem;
   border-bottom: 1px solid white;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
   margin-bottom: 30px;
 }
 
