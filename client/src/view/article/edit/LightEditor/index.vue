@@ -448,7 +448,7 @@ export default {
      * Socket instructions from API
      */
     this.socket.on('ADD_REFERENCE', this.refreshReferences);
-    this.socket.on('UPDATE_REFERENCE', this.fetchReferences())
+		this.socket.on('UPDATE_REFERENCE', this.fetchReferences);
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
