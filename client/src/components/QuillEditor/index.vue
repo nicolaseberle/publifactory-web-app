@@ -62,7 +62,7 @@
 						v-bind:id="idButtonZotero"
 						v-on:click="toggleCitation"
 					>
-						<img class="citation-icon" src="/static/icons/research.svg" />
+						Citations
 					</button>
 					<button v-bind:id="idButtonComment">
 						<svg-icon icon-class="comment-black" />
@@ -950,10 +950,9 @@ p {
 	font-family: sans-serif;
 }
 
-.citation-icon {
-	height: 18px;
-	width: 18px;
-	margin-bottom: 2px;
+.citation-icon-btn {
+	width: auto !important;
+	line-height: 0;
 }
 
 .citation-icon-btn:focus {
