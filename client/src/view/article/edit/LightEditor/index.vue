@@ -720,7 +720,7 @@ export default {
         {
           href: citation.ref,
           // For debug => text: `[R${this.postForm.references.map(ref => ref.id).indexOf(citation.id)} DEBUG:${citation.block}]`
-          text: reference.name//`[*]`
+          text: reference.name,//`[*]`
         }, 'user'
       );
       const htmlElementsCitations = [...document.getElementsByClassName('citation')];
