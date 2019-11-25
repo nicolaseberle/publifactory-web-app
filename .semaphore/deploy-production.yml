@@ -22,10 +22,13 @@ blocks:
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
             - >-
-              ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12 
+              ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12
               "cd /home/publifactory;
               cd web-app;
               sudo ./script_docker.sh stop;
+              chown -R collin_q:publifactory-team web-app/;
+              git reset --hard;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
-              sudo ./script_docker.sh start prod;"
+              sudo ./script_docker.sh start prod;
+              chown -R collin_q:publifactory-team .;"
     dependencies: []
