@@ -438,10 +438,8 @@ export default {
     this.fetchData(this.id);
 
     setTimeout(async () => {
-        console.log("RUN")
         const t = [...this.$el.getElementsByClassName('citation')].map(el => {
           el.addEventListener('click', () => {
-          console.log('click');
           el.scrollIntoView();
           });
         })
@@ -708,10 +706,11 @@ export default {
         const found = this.postForm.references.find(reference => reference.ref === element.hash)
         // TODO resolve bug => https://trello.com/c/eGguYhSv/70-int%C3%A9gration-de-r%C3%A9f%C3%A9rences
         // passed as source === api for quill editor not focused
-        element.innerHTML = `[${index}]`
+        element.innerHTML = `[${index + 1}]`
         if (!found) return acc;
         return [...acc, found]
       }, [])
+      this.updateReference()
     },
     addReference(editor, range, reference) {
       const citation = {...reference}

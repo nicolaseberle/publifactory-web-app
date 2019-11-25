@@ -45,40 +45,35 @@
         <span class="ql-formats">
           <button class="ql-link"></button>
           <button class="ql-formula"></button>
-          <button
-            v-bind:id="idButtonZotero"
-            v-on:click="toggleCitation"
-            style="transform:translate(0, -6px)"
-          >
-            <img src="/static/img/zotero-small-icon.png" />
-            <!--<i class="ai ai-zotero ai-1x"></i>-->
+          <button class="citation-icon-btn" v-bind:id="idButtonZotero" v-on:click="toggleCitation">
+            <img class="citation-icon" src="/static/icons/research.svg" />
           </button>
-          <button v-bind:id="idButtonComment" style="margin-left:10px; transform:translate(5px, 0)">
+          <button v-bind:id="idButtonComment">
             <svg-icon icon-class="comment-black" />
-            <!--<i class="ai ai-zotero ai-1x"></i>-->
           </button>
-          <!--<input  class="ql-input" name="title" type="text"></input>-->
         </span>
       </div>
-      <!--<div class='bottom-right'/>-->
       <div class="questions" v-show="showCitation" v-bind:id="idZotero">
-        <!--<div class="close-toto"><i class="fa fa-times"></i>
-        </div>-->
         <div class="question" v-show="showCitation" style="z-index=2000;">
           <div v-show="showCitation" v-bind:id="idInputZotero">
             <el-row>
-              <el-col :span="2">
-                <img src="/static/img/zotero-small-icon.png" />
+              <el-col class="loader-container" :span="2">
+                <div v-show="toggleLoaderQueryCitation" class="lds-ring">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+                <!-- <img src="/static/img/zotero-small-icon.png" /> -->
               </el-col>
-              <el-col :span="22">
+              <el-col class="question-span" :span="22">
                 <v-autocomplete
                   :items="items"
-                  v-model="item"
                   :get-label="getLabel"
                   :component-item="template"
                   @update-items="updateItems"
                   @item-clicked="addReference"
-                  :wait="500"
+                  :wait="400"
                   :min-len="2"
                 ></v-autocomplete>
               </el-col>
@@ -143,6 +138,7 @@ ProcLink.tagName = 'span';
 class Citation extends InlineBlot {
   static create(value) {
     let node = super.create(value);
+    console.log('CITATION_CREATION');
     // Incoming from sharedb
     if (
       arguments.length === 1 &&
@@ -162,6 +158,7 @@ class Citation extends InlineBlot {
   }
 
   static formats(domNode) {
+    console.log('CITATION_FORMATS', domNode);
     return domNode.getAttribute('href');
   }
 
@@ -177,14 +174,17 @@ class Citation extends InlineBlot {
   // }
   deleteAt(index, length) {
     // Parchment.Container.proptype.deleteAt.call(this, index, length);
-    // https://github.com/quilljs/parchment/issues/74 Should be handled in another way
     super.deleteAt(index, length);
   }
 
-  // formatAt(index, length, format, value) {}
+  formatAt(index, length, format, value) {
+    console.log('CITATION_FORMATAT', format, value);
+    super.formatAt(index, length, format, value);
+  }
   // insertAt(index, text) {}
 
   update(mutations, context) {
+    console.log('CITATION_UPDATE');
     // TODO resolve bug => https://trello.com/c/eGguYhSv/70-int%C3%A9gration-de-r%C3%A9f%C3%A9rences
     // console.log('CITATION_LOG', mutations, context);
     // const target = mutations[0];
@@ -210,7 +210,7 @@ class ProcRef extends InlineBlot {
     let node = super.create(value);
     node.setAttribute('href', value.href);
     // node.setAttribute('target', '_blank');
-    node.innerHTML = value.text;
+    node.innerHTML = value.text + ' ';
     return node;
   }
 }
@@ -280,8 +280,8 @@ export default {
       idButtonHighlight: this.setIdButtonHighlight(),
       item: {
         id: 0,
-        name: 'Reference',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
+        name: '',
+        description: ''
       },
       items: [],
       template: ItemTemplate,
@@ -299,6 +299,7 @@ export default {
       lastRange: {},
       updateLocalCursorIntervalId: null,
       showCitation: false,
+      toggleLoaderQueryCitation: false,
       isCitationToggled: false,
       citationRange: {}
     };
@@ -412,6 +413,11 @@ export default {
       }
 
       if (source === 'api') {
+        console.log(
+          'CITATION_',
+          JSON.stringify(delta),
+          JSON.stringify(oldDelta)
+        );
         // TODO resolve bug => https://trello.com/c/eGguYhSv/70-int%C3%A9gration-de-r%C3%A9f%C3%A9rences
         return;
       }
@@ -626,6 +632,7 @@ export default {
       this.socket.emit('NEW_REFERENCE', reference);
     },
     async updateItems(text) {
+      this.toggleLoaderQueryCitation = !this.toggleLoaderQueryCitation;
       const response = await axios.get(
         'https://service.publifactory.co/api/sync_ref',
         {
@@ -634,7 +641,7 @@ export default {
           }
         }
       );
-
+      this.toggleLoaderQueryCitation = !this.toggleLoaderQueryCitation;
       if (response.data === '' || response.data.length === 0) {
         this.items = [];
         return;
@@ -905,6 +912,7 @@ p {
   padding: 10px 10px;
   box-shadow: none;
   border: 1px solid #222;
+  border-radius: 6px;
   width: calc(100% - 32px);
   outline: none;
   background-color: #eee;
@@ -945,8 +953,24 @@ p {
   display: block;
   font-family: sans-serif;
 }
+
+.citation-icon {
+  height: 18px;
+  width: 18px;
+  margin-bottom: 2px;
+}
+
+.citation-icon-btn:focus {
+  outline: none;
+}
+
+.loader-container {
+  padding-left: 4px;
+}
+
 .questions {
   /* display: none; */
+  padding-bottom: 60px;
   background: #222;
   position: absolute;
   z-index: 1000;
@@ -971,6 +995,10 @@ p {
   margin: 0;
   padding: 0;
 }
+.question-span {
+  padding-top: 3px;
+  float: right;
+}
 .close-toto {
   font-size: 22px;
   cursor: pointer;
@@ -992,5 +1020,40 @@ button-ref {
 .ql-container.ql-snow {
   border: none;
   display: hidden;
+}
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
