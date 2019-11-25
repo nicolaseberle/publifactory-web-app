@@ -170,16 +170,17 @@ module.exports.findArticlebyIdAndUpdateReferences = async function(
 		if (req.body.references === undefined)
 			throw { code: 422, message: 'Missing parameters.' };
 		const references = req.body.references;
+		console.log(references);
 		const article = await Article.findOneAndUpdate(
 			{ _id: req.params.id },
-			{ $set: { references } },
-			{ new: true }
+			{ $set: { references } }
 		);
-
+		console.log('Update=>', article.references);
 		if (!article) return res.sendStatus(404);
 
 		return res.json(article);
 	} catch (err) {
+		console.log('ERR:', err);
 		return next(err);
 	}
 };
