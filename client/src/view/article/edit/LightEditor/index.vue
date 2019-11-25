@@ -448,6 +448,7 @@ export default {
      * Socket instructions from API
      */
     this.socket.on('ADD_REFERENCE', this.refreshReferences);
+    this.socket.on('UPDATE_REFERENCE', this.fetchReferences())
     this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
@@ -700,6 +701,20 @@ export default {
     refreshReferences(reference) {
       this.postForm.references.push(reference)
     },
+    fetchReferences() {
+      axios.get('/api/articles/' + this.id , {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+        this.postForm.references = response.data.references;
+        for(let i = 0; i < this.postForm.authors.length; i++) {
+          this.postForm.authors[i].isActive = false;
+          if(this.postForm.authors[i].author._id === this.userId)
+            this.postForm.authors[i].isActive = true;
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     deleteReference() {
       const htmlElementsCitations = [...document.getElementsByClassName('citation')];
       this.postForm.references = htmlElementsCitations.reduce((acc, element, index) => {
@@ -750,6 +765,7 @@ export default {
       )
       .then(response => {
         this.save()
+					this.socket.emit('EXEC_UPDATE_REFERENCE', {});
       })
       .catch(e => {
         console.warn("ERRRROR", e);

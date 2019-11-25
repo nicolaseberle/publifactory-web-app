@@ -94,6 +94,7 @@ module.exports = function(io) {
 			NEW_REFERENCE: data => {
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_REFERENCE`, data);
 			},
+
 			NEW_BLOCK_CHART: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_BLOCK_CHART`, data),
 			NEW_BLOCK_PICTURE: data =>
@@ -148,6 +149,9 @@ module.exports = function(io) {
 				socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_R`, data),
 			EXEC_CODE_PYTHON: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_PYTHON`, data),
+			EXEC_UPDATE_REFERENCE: data => {
+				socket.to(mapUser[socket.id].idArticle).emit(`UPDATE_REFERENCE`, data);
+			},
 			QUILL_NEW_TEXT: data => {
 				socket.to(mapUser[socket.id].idArticle).emit(`QUILL_EXEC_TEXT`, data);
 			},
