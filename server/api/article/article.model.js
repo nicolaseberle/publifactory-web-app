@@ -59,7 +59,10 @@ const ArticleSchema = new Schema({
 	],
 	references: [
 		{
-			title: String,
+			name: String,
+			description: String,
+			ref: String,
+			block: Number,
 			doi: String
 		}
 	],
