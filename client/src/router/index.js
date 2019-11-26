@@ -347,6 +347,26 @@ export const constantRouterMap = [
 		}
 	},
 	{
+		path: '/legal',
+		component: Layout_services,
+		redirect: 'legal',
+		hidden: true,
+		children: [
+			{
+				path: '/legal',
+				meta: {
+					skipAuth: true
+				},
+				component: resolve => {
+					import('../view/legal/index.vue').then(resolve);
+				}
+			}
+		],
+		meta: {
+			skipAuth: true
+		}
+	},
+	{
 		path: '',
 		component: Layout,
 		hidden: true,

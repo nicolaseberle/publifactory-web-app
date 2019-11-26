@@ -1,93 +1,80 @@
-<template>
+<action-button v-bind:actions="actions"></action-button><template>
   <div class="app-container">
-
     <div class="components-container-dashboard">
-    <content-module name="articles">
-      <el-row :gutter="20">
-        <el-col :span='24'>
-          <el-button-group>
-          <el-button round v-on:click="createArticle()">Create Article</el-button>
-          <el-button round v-on:click="importArticle()">Import</el-button>
-        </el-button-group>
-        </el-col>
-      </el-row>
-      <data-table ref="articles" @page-change="fetchMyArticles" >
-        <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
-        <el-table-column class-name="date-col" width="140px" label="Date">
-          <template slot-scope="scope">
-            <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="260px" label="Title">
-          <template slot-scope="scope">
-            <router-link :to="'/articles/'+scope.row.id" class="link-type">
-              <span>{{ scope.row.title }}</span>
-            </router-link>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="author-col" width="160px"  label="Author">
-          <template slot-scope="articles">
-            <div v-for="item_author in articles.row.authors">
-
-              {{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="author-col" width="160px"  label="Reviewer">
-          <template slot-scope="articles" >
-            <div v-for="reviewer in articles.row.reviewers" >
-                <span style="white-space: pre;">{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="doi-col" label="DOI" width="60">
-          <template v-if="scope.row.doi" slot-scope="scope">
-            <i class="el-icon-check"></i>
-          </template>
-
-        </el-table-column>
-        <el-table-column class-name="status-col" label="Status" width="120">
-          <template slot-scope="scope">
-            <el-tag class-name="el-tag-status"  :type="scope.row.status | statusFilter" >{{ scope.row.status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column class-name="action-col"  label="Actions" width="120">
-          <template slot-scope="scope">
-            <!--<router-link :to="'/example/edit/'+scope.row.id">-->
-              <!--<el-button type="primary" size="small" icon="el-icon-edit">Edit</el-button>-->
-              <el-dropdown trigger="click" class="international" @command="actionHandleCommand">
-                <div>
-                  <el-button class="el-button-action" icon="el-icon-more" circle>
-                  </el-button>
+      <content-module name="articles">
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-button-group>
+              <el-button round v-on:click="createArticle()">Create Article</el-button>
+              <el-button round v-on:click="importArticle()">Import</el-button>
+            </el-button-group>
+          </el-col>
+        </el-row>
+        <data-table ref="articles" @page-change="fetchMyArticles">
+          <el-table
+            :data="articles"
+            @row-click="setSelectedRow"
+            fit
+            highlight-current-row
+            style="width: 100%"
+          >
+            <el-table-column class-name="date-col" width="140px" label="Date">
+              <template slot-scope="scope">
+                <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column min-width="260px" label="Title">
+              <template slot-scope="scope">
+                <router-link :to="'/articles/'+scope.row.id" class="link-type">
+                  <span>{{ scope.row.title }}</span>
+                </router-link>
+              </template>
+            </el-table-column>
+            <el-table-column class-name="author-col" width="160px" label="Author">
+              <template slot-scope="articles">
+                <div
+                  v-for="item_author in articles.row.authors"
+                >{{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column class-name="author-col" width="160px" label="Reviewer">
+              <template slot-scope="articles">
+                <div v-for="reviewer in articles.row.reviewers">
+                  <span
+                    style="white-space: pre;"
+                  >{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
                 </div>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item  command="settings">Access & settings</el-dropdown-item>
-                  <el-dropdown-item  command="openArticle">Open the article</el-dropdown-item>
-                  <el-dropdown-item  command="assignReviewer" disabled>Assign a reviewer</el-dropdown-item>
-                  <el-dropdown-item  command="sendEmailToAuthors">Send an email to authors</el-dropdown-item>
-                  <el-dropdown-item  command="historicalActions">View historical actions</el-dropdown-item>
-                  <el-dropdown-item  command="referee">Referee</el-dropdown-item>
-                  <el-dropdown-item  command="survey">Survey (Scopus, Google Scholar...)</el-dropdown-item>
-                  <el-dropdown-item  command="remove"><div style="color:'red'">Remove the article</div></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-
-
-              </el-button>
-            </el-select>
-            <!--</router-link>-->
-          </template>
-        </el-table-column>
-      </el-table>
-    </data-table>
-    <!-- Dialog Access Component-->
-    <el-dialog
-      title="Article settings"
-      :visible.sync="diagAccessCompVisible"
-      width="50%">
-    <accessComponent v-if="diagAccessCompVisible" :idArticle='selectedArticleId' v-on:close="diagAccessCompVisible=false"/>
-    </el-dialog>
-<!--
+              </template>
+            </el-table-column>
+            <el-table-column class-name="doi-col" label="DOI" width="60">
+              <template v-if="scope.row.doi" slot-scope="scope">
+                <i class="el-icon-check"></i>
+              </template>
+            </el-table-column>
+            <el-table-column class-name="status-col" label="Status" width="120">
+              <template slot-scope="scope">
+                <el-tag
+                  class-name="el-tag-status"
+                  :type="scope.row.status | statusFilter"
+                >{{ scope.row.status }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column class-name="action-col" label="Actions" width="120">
+              <template slot-scope="scope">
+                <action-button v-bind:actions="actions"></action-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </data-table>
+        <!-- Dialog Access Component-->
+        <el-dialog title="Article settings" :visible.sync="diagAccessCompVisible" width="50%">
+          <accessComponent
+            v-if="diagAccessCompVisible"
+            :idArticle="selectedArticleId"
+            v-on:close="diagAccessCompVisible=false"
+          />
+        </el-dialog>
+        <!--
     <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
       <h1>Welcome </h1>
 
@@ -106,38 +93,69 @@
       <span slot="footer" class="dialog-footer">
         <el-button type='primary' @click="onSaveNewPassword">Save</el-button>
       </span>
-    </el-dialog>-->
-
-</content-module>
-</div>
-</div>
+        </el-dialog>-->
+      </content-module>
+    </div>
+  </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
-  import DataTable from '../../../components/DataTable'
-  import locales from '../../../locales/article'
-  import axios from 'axios'
-  import accessComponent from '../../../components/AccessComponent'
+import { mapGetters } from 'vuex';
+import DataTable from '../../../components/DataTable';
+import locales from '../../../locales/article';
+import axios from 'axios';
+import accessComponent from '../../../components/AccessComponent';
+import actionButton from '../components/action-button';
 
-  var uuidv4 = require('uuid/v4');
-const debug = require('debug')('frontend')
+var uuidv4 = require('uuid/v4');
+const debug = require('debug')('frontend');
 
 export default {
   locales,
-  data () {
+  data() {
     return {
+      actions: [
+        {
+          command: this.actionGetSettings,
+          name: 'Acess & settings'
+        },
+        {
+          command: this.actionOpenArticle,
+          name: 'Open the Article'
+        },
+        {
+          command: this.actionAssignReviewer,
+          name: 'Assign a reviewer'
+        },
+        {
+          command: this.actionSendEmailToAuthors,
+          name: 'Send an email to authors'
+        },
+        {
+          command: this.actionGetHistoricalActions,
+          name: 'View historical actions'
+        },
+        {
+          command: this.actionGetReferee,
+          name: 'Referee'
+        },
+        {
+          command: this.actionGetSurvey,
+          name: 'Survey (Scopus, Google Scholar...)'
+        },
+        { command: this.actionRemoveArticle, name: 'Remove the article' }
+      ],
       visibleDiagFirstConnexion: true,
       diagAccessCompVisible: false,
       selectedRow: '',
       selectedArticleId: '',
-      options:{
-        value:"option 1",
-        lable:"option 1"
+      options: {
+        value: 'option 1',
+        lable: 'option 1'
       },
-      search: {
-      },
+      search: {},
       formVisible: false,
-      articles: [{
+      articles: [
+        {
           id: '',
           creationDate: '',
           title: '',
@@ -145,53 +163,73 @@ export default {
           status: '',
           authors: '',
           reviewers: ''
-        }]
-    }
+        }
+      ]
+    };
   },
   computed: {
-    ...mapGetters([
-      'userId',
-      'accessToken'
-    ])
+    ...mapGetters(['userId', 'accessToken'])
   },
   components: {
     DataTable,
-    accessComponent
+    accessComponent,
+    actionButton
   },
   methods: {
-    setSelectedRow (row, event, column) {
-        this.selectedRow = row
-        this.selectedArticleId = row.id
-      },
-    actionHandleCommand (action) {
-      if(action=='settings'){
-        this.diagAccessCompVisible = true
-      }else if(action=='openArticle'){
-        this.$router.push({ path: `/articles/${this.selectedArticleId}` })
-      }else if(action=='remove'){
-        this.deleteArticle(this.selectedArticleId)
+    setSelectedRow(row, event, column) {
+      this.selectedRow = row;
+      this.selectedArticleId = row.id;
+    },
+    actionGetSettings() {
+      this.diagAccessCompVisible = true;
+    },
+    actionOpenArticle() {
+      this.$router.push({ path: `/articles/${this.selectedArticleId}` });
+    },
+    actionAssignReviewer() {},
+    actionSendEmailToAuthors() {},
+    actionGetHistoricalActions() {},
+    actionGetReferee() {},
+    actionGetSurvey() {},
+    actionRemoveArticle() {
+      this.deleteArticle(this.selectedArticleId);
+    },
+
+    actionHandleCommand(action) {
+      if (action == 'settings') {
+        this.diagAccessCompVisible = true;
+      } else if (action == 'openArticle') {
+        this.$router.push({ path: `/articles/${this.selectedArticleId}` });
+      } else if (action == 'remove') {
+        this.deleteArticle(this.selectedArticleId);
       }
     },
-    async fetch (current = 1) {
-      await axios.get('/api/articles/', {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.articles = list.data.articles
-      }).catch(err => {
-        console.error(err)
-      })
+    async fetch(current = 1) {
+      await axios
+        .get('/api/articles/', {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        })
+        .then(list => {
+          this.articles = list.data.articles;
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
-    async fetchMyArticles () {
-      await axios.get(`/api/articles/mine`, {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(list => {
-        this.articles = list.data.articles
-      }).catch(err => {
-        console.error(err)
-      })
+    async fetchMyArticles() {
+      await axios
+        .get(`/api/articles/mine`, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        })
+        .then(list => {
+          this.articles = list.data.articles;
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
-    createArticle () {
-      var uuid_block = String(uuidv4())
+    createArticle() {
+      var uuid_block = String(uuidv4());
       const gen_text = `
 \\documentclass{article}
 \\usepackage[utf8]{inputenc}
@@ -219,89 +257,106 @@ Suspendisse nec consequat lectus. Cras pellentesque felis non metus pulvinar, eu
 
 \\end{multicols}
 \\end{document}
-      `
+      `;
       const newArticle = {
         title: String('Article title'),
         abstract: String('abstract'),
         status: String('Draft'),
-        arr_content: [{
-          name: "titre_1",
-          title: "Titre 1",
-          title_placeholder: "Titre 1",
-          block: [[{ type: 'tbd', uuid: uuid_block, content: '' }]],
-          content: "Type the text",
-          display: true
-        }],
+        arr_content: [
+          {
+            name: 'titre_1',
+            title: 'Titre 1',
+            title_placeholder: 'Titre 1',
+            block: [[{ type: 'tbd', uuid: uuid_block, content: '' }]],
+            content: 'Type the text',
+            display: true
+          }
+        ],
         content: gen_text,
         category: String('physics'),
         id_author: this.userId,
         published: true
       };
-        axios.post('/api/articles/', newArticle, { headers: { 'Authorization': `Bearer ${this.accessToken}` } })
+      axios
+        .post('/api/articles/', newArticle, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        })
         .then(response => {
-          let new_article_id = response.data
-          debug("create successfully ")
-          this.$router.push({ path: `/articles/${new_article_id}` }) // -> /user/123
+          let new_article_id = response.data;
+          debug('create successfully ');
+          this.$router.push({ path: `/articles/${new_article_id}` }); // -> /user/123
         })
         .catch(e => {
-          console.log(e)
-        })
+          console.log(e);
+        });
     },
-    importArticle () {
+    importArticle() {
       const h = this.$createElement;
-              this.$message({
-                message: h('p', null, [
-                  h('span', null, 'Soon...')
-                ])
-              });
+      this.$message({
+        message: h('p', null, [h('span', null, 'Soon...')])
+      });
     },
-    closeCreationDialog () {
-      this.formVisible = false
+    closeCreationDialog() {
+      this.formVisible = false;
     },
-    cancelForm () {
-      this.form.title = ''
-      this.form.abstract = ''
-      this.formVisible = false
+    cancelForm() {
+      this.form.title = '';
+      this.form.abstract = '';
+      this.formVisible = false;
     },
-    saveForm () {
+    saveForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          articleRes.save(null, this.form).then(() => {
-            this.cancelForm()
-            this.$message({
-              type: 'success',
-              message: this.$t('message.created')
+          articleRes
+            .save(null, this.form)
+            .then(() => {
+              this.cancelForm();
+              this.$message({
+                type: 'success',
+                message: this.$t('message.created')
+              });
+              this.fetchMyArticles();
             })
-            this.fetchMyArticles()
-          }).catch((err) => {
-            this.$message({
-              type: 'error',
-              message: err.status === 422 ? this.$t('article.action.articleExisted') : this.$t('message.createFailed')
-            })
-          })
+            .catch(err => {
+              this.$message({
+                type: 'error',
+                message:
+                  err.status === 422
+                    ? this.$t('article.action.articleExisted')
+                    : this.$t('message.createFailed')
+              });
+            });
         }
-      })
+      });
     },
-    deleteArticle (articleId) {
-      this.$confirm(`This action will remove the selected article forever, still going on?`, this.$t('confirm.title'), {
-        type: 'warning'
-      }).then(() => {
-        axios.delete('/api/articles/' + articleId, {
-          headers: {'Authorization': `Bearer ${this.accessToken}`}
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: this.$t('message.removed')
-          })
-          this.fetchMyArticles()
+    deleteArticle(articleId) {
+      this.$confirm(
+        `This action will remove the selected article forever, still going on?`,
+        this.$t('confirm.title'),
+        {
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          axios
+            .delete('/api/articles/' + articleId, {
+              headers: { Authorization: `Bearer ${this.accessToken}` }
+            })
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: this.$t('message.removed')
+              });
+              this.fetchMyArticles();
+            });
         })
-      }).catch(() => {})
+        .catch(() => {});
     }
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
-      this.fetchMyArticles()
-    })
+      this.fetchMyArticles();
+    });
   }
-}
+};
 </script>

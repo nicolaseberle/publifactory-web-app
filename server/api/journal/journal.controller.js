@@ -43,32 +43,33 @@ exports.getJournals = async (req, res, next) => {
 	const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
 	const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
 
-  try {
-    let journals;
-    if (req.params.id === undefined) {
-      journals = await Journal.paginate({ deleted: false, published: true }, {
-        page,
-        limit,
-        populate: 'users content.reference',
-        lean: true
-      });
-      console.log(JSON.stringify(journals, null, "\t"));
-      renameObjectProperty(journals, 'docs', 'journals');
-    } else {
-      //console.log(JSON.stringify("findJournalById", null, "\t"))
-      journals = await Journal.findById(req.params.id)
-        .populate('users')
-        .populate('content.reference')
-        .lean();
-      console.log(JSON.stringify(journals, null, "\t"));
-      if (!journals)
-        throw { code: 404, message: 'Journals not found.' };
-    }
-    console.log(journals)
-    return res.status(200).json(journals);
-  } catch (err) {
-    return next(err);
-  }
+	try {
+		let journals;
+		if (req.params.id === undefined) {
+			journals = await Journal.paginate(
+				{ deleted: false, status: 'public' },
+				{
+					page,
+					limit,
+					populate: 'users content.reference',
+					lean: true
+				}
+			);
+			renameObjectProperty(journals, 'docs', 'journals');
+		} else {
+			//console.log(JSON.stringify("findJournalById", null, "\t"))
+			journals = await Journal.findById(req.params.id)
+				.populate('users')
+				.populate('content.reference')
+				.lean();
+			console.log(JSON.stringify(journals, null, '\t'));
+			if (!journals) throw { code: 404, message: 'Journals not found.' };
+		}
+		console.log(journals);
+		return res.status(200).json(journals);
+	} catch (err) {
+		return next(err);
+	}
 };
 
 /**
@@ -77,7 +78,7 @@ exports.getJournals = async (req, res, next) => {
  * This function take several parameters in the body field :
  *  - title, the new title of the journal
  *  - abstract, the new description of the journal
- *  - published, the new boolean to make this journal public or private
+ *  - status, the new boolean to make this journal public or private
  * @memberof module:controllers/journal
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -88,15 +89,15 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
 		if (
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
-			req.body.published === undefined
+			req.body.status === undefined
 		)
 			throw { code: 422, message: 'Missing parameters.' };
 		const title = req.body.title;
 		const abstract = req.body.abstract;
-		const published = req.body.published;
+		const status = req.body.status;
 		const journal = await Journal.findOneAndUpdate(
 			{ _id: req.params.id },
-			{ $set: { title, abstract, published } },
+			{ $set: { title, abstract, status } },
 			{ new: true }
 		);
 		if (!journal) throw { code: 404, message: 'Journal not found.' };
@@ -112,7 +113,7 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
  * This function takes several parameters in the body field :
  *  - title, the title to set on the journal
  *  - abstract, a short description of the journal
- *  - published, a boolean to set the journal on public or private mode
+ *  - status, a boolean to set the journal on public or private mode
  *  - tags, a list of tags which match with the journal
  * @memberof module:controllers/journal
  * @param {Object} req - Express request object
@@ -130,18 +131,22 @@ module.exports.createJournal = async (req, res, next) => {
 		if (
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
-			req.body.published === undefined ||
+			req.body.status === undefined ||
 			req.body.tags === undefined
 		)
 			throw { code: 422, message: 'Missing parameters.' };
 		const title = req.body.title.trim();
 		const abstract = req.body.abstract.trim();
 		const tags = req.body.tags;
-		const published = req.body.published;
-		const newJournal = new Journal({ title, abstract, tags, published });
+		const status = req.body.status;
+		const newJournal = new Journal({ title, abstract, tags, status });
 		newJournal.users[0] = req.decoded._id;
 		const journal = await newJournal.save();
-		new RolesJournal({ id_user: req.decoded._id, id_journal: journal._id, right: 'editor' }).save();
+		new RolesJournal({
+			id_user: req.decoded._id,
+			id_journal: journal._id,
+			right: 'editor'
+		}).save();
 		res.status(201).json({ success: true, journal: journal });
 	} catch (err) {
 		next(err);
@@ -185,22 +190,27 @@ module.exports.deleteJournal = async (req, res, next) => {
  */
 module.exports.addArticleToJournal = async (req, res, next) => {
 	try {
-		if (req.body.id_article === undefined) throw { code: 422, message: 'Missing parameters.' };
+		console.log('SUBMIT=>,add article journal=>', req.params, req.body);
+		if (req.params.id_article === undefined)
+			throw { code: 422, message: 'Missing parameters.' };
 		let query = { id_journal: req.params.id, right: 'editor' };
 		const journalInfo = await RolesJournal.find(query);
-		if (journalInfo.length === 0) throw { code: 404, message: 'Journals not found.' };
+		if (journalInfo.length === 0)
+			throw { code: 404, message: 'Journals not found.' };
 		for (let i = 0, len = journalInfo.length; i < len; ++i)
 			new RolesArticle({
 				id_user: journalInfo[i].id_user,
-				id_article: req.body.id_article,
+				id_article: req.params.id_article,
 				right: 'editor'
 			}).save();
 		query = { _id: req.params.id };
-		const toAdd = { $push: { content: { published: false, reference: req.body.id_article } } };
+		const toAdd = {
+			$push: { content: { published: false, reference: req.params.id_article } }
+		};
 		const options = { new: true };
 		await Journal.findOneAndUpdate(query, toAdd, options).exec();
 		await Article.findOneAndUpdate(
-			{ _id: req.body.id_article },
+			{ _id: req.params.id_article },
 			{ $set: { journal: req.params.id } }
 		).exec();
 		res.json({ success: true });
@@ -225,7 +235,9 @@ module.exports.addArticleToJournal = async (req, res, next) => {
 module.exports.removeArticleFromJournal = async (req, res, next) => {
 	try {
 		const query = { _id: req.params.id };
-		const toPull = { $pull: { content: { reference: { $in: [req.params.id_article] } } } };
+		const toPull = {
+			$pull: { content: { reference: { $in: [req.params.id_article] } } }
+		};
 		const options = { multi: false };
 		await Journal.findOneAndUpdate(query, toPull, options);
 		res.json({ success: true });
@@ -270,7 +282,10 @@ module.exports.getJournalsUser = async (req, res, next) => {
  */
 module.exports.setArticlePublish = async (req, res, next) => {
 	try {
-		const query = { _id: req.params.id, content: { reference: { $in: [req.params.id_article] } } };
+		const query = {
+			_id: req.params.id,
+			content: { reference: { $in: [req.params.id_article] } }
+		};
 		const toUpdate = { $set: { content: { published: true } } };
 		await RolesJournal.findOneAndUpdate(query, toUpdate);
 		res.json({ success: true });
@@ -326,9 +341,7 @@ module.exports.inviteUser = async (req, res, next) => {
 			} else {
 				//we send the email to invite the new author to access
 				const mail = new Email(receiverEmail);
-				const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}?redirect=${
-					req.params.id
-				}`;
+				const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}?redirect=${req.params.id}`;
 				if (req.params.right === 'user') {
 					await mail.sendInvitationJournalUser(senderId, clientUrl);
 				} else {
@@ -372,7 +385,10 @@ module.exports.followJournal = async (req, res, next) => {
 		const roleInfo = await RolesJournal.findOne(query).exec();
 		if (roleInfo === null) {
 			instruction = { $push: { users: req.decoded._id } };
-			await new RolesJournal({ id_user: req.decoded._id, id_journal: req.params.id }).save();
+			await new RolesJournal({
+				id_user: req.decoded._id,
+				id_journal: req.params.id
+			}).save();
 		} else {
 			instruction = { $pull: { users: { $in: [req.decoded._id] } } };
 			await RolesJournal.findOneAndDelete(query);
@@ -399,7 +415,9 @@ module.exports.addAssociateEditor = async (req, res, next) => {
 	try {
 		if (req.body.associate_editor === undefined)
 			throw { code: 422, message: 'Missing parameters.' };
-		const user = await UserModel.findOne({ email: req.body.associate_editor.email }).exec();
+		const user = await UserModel.findOne({
+			email: req.body.associate_editor.email
+		}).exec();
 		const query = { _id: req.params.id };
 		const toAdd = { $push: { users: user._id } };
 		const options = { new: true };
@@ -429,7 +447,9 @@ module.exports.removeAssociateEditor = async (req, res, next) => {
 	try {
 		if (req.body.associate_editor_id === undefined)
 			throw { code: 422, message: 'Missing parameters.' };
-		const user = await UserModel.findOne({ _id: req.body.associate_editor_id }).exec();
+		const user = await UserModel.findOne({
+			_id: req.body.associate_editor_id
+		}).exec();
 		let query = { _id: req.params.id };
 		//we keep the user in journal.user matrix
 		const toRemove = { $pull: { users: user._id } };
@@ -453,7 +473,8 @@ module.exports.removeAssociateEditor = async (req, res, next) => {
  */
 module.exports.updateTags = async (req, res, next) => {
 	try {
-		if (req.body.tags === undefined) throw { code: 422, message: 'Missing parameters.' };
+		if (req.body.tags === undefined)
+			throw { code: 422, message: 'Missing parameters.' };
 		const query = { _id: req.params.id };
 		const toReplace = { $set: { tags: req.body.tags } };
 		await Journal.findOneAndUpdate(query, toReplace);
@@ -473,19 +494,21 @@ module.exports.updateTags = async (req, res, next) => {
  * @return {Promise<void>}
  */
 module.exports.userFollowedJournals = async (req, res, next) => {
-  try {
-    let journals;
-    const result = await RolesJournal.find({ id_user: req.decoded._id }).populate('id_journal').exec();
-    console.log(result)
-    /*var arr2 = []
+	try {
+		let journals;
+		const result = await RolesJournal.find({ id_user: req.decoded._id })
+			.populate('id_journal')
+			.exec();
+		console.log(result);
+		/*var arr2 = []
     await result.forEach(async (item)=>{
       var journals =  Journal.findById(item.id_journal)
       console.log(journals)
       await arr2.push(journals)
     })*/
-    res.json({success: true, journals: result});
-  } catch (e) {
-    console.log('userFollowedJournals :: error :: ',e);
-    next(e)
-  }
+		res.json({ success: true, journals: result });
+	} catch (e) {
+		console.log('userFollowedJournals :: error :: ', e);
+		next(e);
+	}
 };

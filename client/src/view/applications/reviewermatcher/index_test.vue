@@ -262,14 +262,14 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <!-- <el-button v-if="scope.row.contact.length > 0"
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
-              </el-button>
-              <el-button v-else
+              </el-button> -->
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
