@@ -271,19 +271,19 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
-import lightEditorComponent from "./LightEditor";
-import markdownEditorComponent from "./MarkdownEditorComponent";
-import latexEditorComponent from "./LatexEditorComponent";
-import ImportData from "../../../components/ImportData/index";
-import axios from "axios";
-import wsShareDBClient from "../../../utils/js/ws-sharedb-client/";
-import io from "socket.io-client";
+import { mapGetters } from 'vuex';
+import lightEditorComponent from './LightEditor';
+import markdownEditorComponent from './MarkdownEditorComponent';
+import latexEditorComponent from './LatexEditorComponent';
+import ImportData from '../../../components/ImportData/index';
+import axios from 'axios';
+import wsShareDBClient from '../../../utils/js/ws-sharedb-client/';
+import io from 'socket.io-client';
 
-const printJS = require("print-js");
+const printJS = require('print-js');
 
 export default {
-  name: "ArticleDetail",
+  name: 'ArticleDetail',
   components: {
     ImportData,
     lightEditorComponent,
@@ -293,11 +293,11 @@ export default {
   data() {
     return {
       // postForm: Object.assign({}, defaultForm),
-      currentEditor: "lightEditorComponent",
+      currentEditor: 'lightEditorComponent',
       valueTypeEditor: 1,
       flagHidePDF: 1,
       editorType: false,
-      id: "",
+      id: '',
       importDialogVisible: false,
       articleInfo: {},
       visibleDialogSubmProcess: false,
@@ -308,27 +308,27 @@ export default {
         nbSolved: 0
       },
       formSubmArticle: {
-        journal: "",
-        options: "open",
-        preprint: "no",
-        wishDOI: "yes"
+        journal: '',
+        options: 'open',
+        preprint: 'no',
+        wishDOI: 'yes'
       },
       journalList: [], //[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
-      socket: "",
-      wssdb: ""
+      socket: '',
+      wssdb: ''
     };
   },
 
   computed: {
-    ...mapGetters(["accessToken", "userId"])
+    ...mapGetters(['accessToken', 'userId'])
   },
   created() {
     this.id = this.$route.params && this.$route.params.id;
-    this.currentEditor = "lightEditorComponent";
+    this.currentEditor = 'lightEditorComponent';
     this.getStatus();
 
     const socketOptions = {
-      transports: ["polling"],
+      transports: ['polling'],
       reconnect: true,
       rejectUnauthorized: false,
       query: {
@@ -336,7 +336,7 @@ export default {
         id_user: this.userId
       }
     };
-    this.socket = io("/", socketOptions);
+    this.socket = io('/', socketOptions);
 
     this.wssdb = new wsShareDBClient(this.userId, this.id);
   },
@@ -351,28 +351,28 @@ export default {
      * Socket instructions from API
      */
 
-    this.socket.on("MODIFY_STATUS", () => {
+    this.socket.on('MODIFY_STATUS', () => {
       this.getStatus();
-      this.$router.push("/");
+      this.$router.push('/');
     });
 
-    this.socket.on("MODIFY_VERSION", data => {
+    this.socket.on('MODIFY_VERSION', data => {
       this.articleInfo.title = data.title;
       this.articleInfo.abstract = data.abstract;
       this.articleInfo.arr_content = data.arr_content;
     });
 
-    this.socket.on("ADD_VERSION", data => {
+    this.socket.on('ADD_VERSION', data => {
       this.articleInfo.version.push(data);
       this.$forceUpdate();
     });
   },
   methods: {
     setVersion(item) {
-      this.socket.emit("UPDATE_VERSION", item);
+      this.socket.emit('UPDATE_VERSION', item);
     },
     async createVersion() {
-      const promptName = prompt("Which name would you like for this version?");
+      const promptName = prompt('Which name would you like for this version?');
       try {
         const body = {
           name: promptName,
@@ -382,26 +382,26 @@ export default {
           date: new Date()
         };
         await axios.post(`/api/articles/${this.id}/version`, body, {
-          headers: { Authorization: "Bearer " + this.accessToken }
+          headers: { Authorization: 'Bearer ' + this.accessToken }
         });
-        this.socket.emit("NEW_VERSION", body);
+        this.socket.emit('NEW_VERSION', body);
         this.articleInfo.version.push(body);
         this.$forceUpdate();
       } catch (e) {
         this.$message({
-          message: "Something went wrong when creating your version.",
-          type: "Error",
+          message: 'Something went wrong when creating your version.',
+          type: 'Error',
           center: true,
           duration: 2000
         });
       }
     },
     showCOmmentReviewPanel() {
-      $("aside.content-comments-reviews").css("display", "block");
+      $('aside.content-comments-reviews').css('display', 'block');
     },
     async actionHandleCommand(action) {
       await this.getStatus();
-      if (action === "new") {
+      if (action === 'new') {
         await this.createVersion();
       } else {
         this.setVersion(action);
@@ -460,12 +460,12 @@ export default {
   		});*/
 
       printJS({
-        printable: "article-page",
-        header: "",
-        type: "html",
-        css: "/dist/css/test.css",
-        targetStyles: "*",
-        documentTitle: "New doc",
+        printable: 'article-page',
+        header: '',
+        type: 'html',
+        css: '/dist/css/test.css',
+        targetStyles: '*',
+        documentTitle: 'New doc',
         scanStyles: false
       });
     },
@@ -479,15 +479,15 @@ export default {
       }
     },
     changeEditor(newValue) {
-      if (newValue == "LightEditor") {
-        this.currentEditor = "lightEditorComponent";
+      if (newValue == 'LightEditor') {
+        this.currentEditor = 'lightEditorComponent';
         this.valueTypeEditor = 1;
       } else {
-        if (newValue == "MarkdownEditor") {
-          this.currentEditor = "markdownEditorComponent";
+        if (newValue == 'MarkdownEditor') {
+          this.currentEditor = 'markdownEditorComponent';
           this.valueTypeEditor = 2;
         } else {
-          this.currentEditor = "latexEditorComponent";
+          this.currentEditor = 'latexEditorComponent';
           this.valueTypeEditor = 3;
         }
       }
@@ -504,8 +504,8 @@ export default {
     async getStatus() {
       this.articleInfo = await new Promise((resolve, reject) => {
         axios
-          .get("/api/articles/" + this.id, {
-            headers: { Authorization: "Bearer " + this.accessToken }
+          .get('/api/articles/' + this.id, {
+            headers: { Authorization: 'Bearer ' + this.accessToken }
           })
           .then(data => resolve(data.data))
           .catch(err => reject(err));
@@ -518,24 +518,24 @@ export default {
     async changeStatus() {
       this.articleInfo = await new Promise((resolve, reject) => {
         axios
-          .get("/api/articles/" + this.id, {
-            headers: { Authorization: "Bearer " + this.accessToken }
+          .get('/api/articles/' + this.id, {
+            headers: { Authorization: 'Bearer ' + this.accessToken }
           })
           .then(data => resolve(data.data))
           .catch(err => reject(err));
       });
-      this.socket.emit("UPDATE_STATUS", {});
-      let nextStatus = "";
-      if (this.articleInfo.status === "Submited") nextStatus = "review";
-      else if (this.articleInfo.status === "Reviewing") nextStatus = "publish";
-      else if (this.articleInfo.status === "Draft") {
-        nextStatus = "submit";
+      this.socket.emit('UPDATE_STATUS', {});
+      let nextStatus = '';
+      if (this.articleInfo.status === 'Submited') nextStatus = 'review';
+      else if (this.articleInfo.status === 'Reviewing') nextStatus = 'publish';
+      else if (this.articleInfo.status === 'Draft') {
+        nextStatus = 'submit';
         console.log(
-          "changeStatus :: submit :: in :: ",
+          'changeStatus :: submit :: in :: ',
           this.formSubmArticle.journal
         );
         await axios.post(
-          `/api/journals/${this.formSubmArticle.journal}/article`,
+          `/api/journals/${this.formSubmArticle.journal}/${this.id}`,
           {},
           { headers: { Authorization: `Bearer ${this.accessToken}` } }
         );
@@ -545,11 +545,11 @@ export default {
         {},
         { headers: { Authorization: `Bearer ${this.accessToken}` } }
       );
-      this.$router.push(this.$route.query.redirect || "/");
+      this.$router.push(this.$route.query.redirect || '/');
     },
     async getJournalList() {
       try {
-        const response = await axios.get("/api/journals/", {
+        const response = await axios.get('/api/journals/', {
           headers: { Authorization: `Bearer ${this.accessToken}` }
         });
         console.log(response.data.journals);
