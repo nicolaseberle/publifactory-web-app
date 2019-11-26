@@ -27,13 +27,13 @@ blocks:
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
+              sudo chown -R collin_q:publifactory-team web-app/;
               cd web-app;
               sudo ./script_docker.sh stop;
-              chown -R collin_q:publifactory-team web-app/;
               git reset --hard;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
               sudo ./script_docker.sh start dev;
-              chown -R collin_q:publifactory-team ."
+              chown -R collin_q:publifactory-team .;"
     dependencies: []
 execution_time_limit:
   hours: 2
