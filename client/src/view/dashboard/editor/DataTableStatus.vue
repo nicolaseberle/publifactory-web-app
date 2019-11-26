@@ -182,29 +182,11 @@ export default {
     assignReviewer() {
       this.$emit('assignReviewer', this.selectedArticleId);
     },
-    sendEmailToAuthors() {
-      console.log(router);
-    },
+    sendEmailToAuthors() {},
     historicalActions() {},
     getReferee() {},
     survey() {},
     deleteArticle() {},
-
-    actionHandleCommand(action) {
-      switch (action) {
-        case 'settings':
-          break;
-        case 'openArticle':
-          this.$router.push({ path: `/articles/${this.selectedArticleId}` });
-          break;
-        case 'assignReviewer':
-          this.$emit('assignReviewer', this.selectedArticleId);
-          break;
-        case 'assignAE':
-          this.$emit('assignAE', this.selectedArticleId);
-          break;
-      }
-    },
     fetchArticles() {
       axios
         .get('/api/articles/', {

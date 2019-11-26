@@ -19,16 +19,9 @@ export default {
   props: {
     actions: Array
   },
-  data() {
-    return {};
-  },
-  computed: {},
-  created() {},
-  async mounted() {},
   methods: {
-    actionHandleCommand(action) {
-      console.log('handle action', action);
-      action();
+    actionHandleCommand(command) {
+      command();
     }
   }
 };
