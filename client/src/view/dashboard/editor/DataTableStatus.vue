@@ -88,31 +88,31 @@ export default {
     return {
       actions: [
         {
-          command: this.openArticle,
+          command: this.actionOpenArticle,
           name: 'Open the Article'
         },
         {
-          command: this.assignAssociateEditor,
+          command: this.actionAssignAssociateEditor,
           name: 'Assign an associate editor'
         },
         {
-          command: this.assignReviewer,
+          command: this.actionAssignReviewer,
           name: 'Assign a reviewer'
         },
         {
-          command: this.sendEmailToAuthors,
+          command: this.actionSendEmailToAuthors,
           name: 'Send an email to authors'
         },
         {
-          command: this.getHistoricalActions,
+          command: this.actionHistoricalActions,
           name: 'View historical actions'
         },
         {
-          command: this.getReferee,
+          command: this.actionGetReferee,
           name: 'Referee'
         },
         {
-          command: this.getSurvey,
+          command: this.actionSurvey,
           name: 'Survey (Scopus, Google Scholar...)'
         }
       ],
@@ -173,19 +173,20 @@ export default {
       this.selectedArticleId = row.id;
       console.log('setSelectedRow :: ', this.selectedArticleId);
     },
-    openArticle() {
+    actionOpenArticle() {
       this.$router.push({ path: `/articles/${this.selectedArticleId}` });
     },
-    assignAssociateEditor() {
+    actionAssignAssociateEditor() {
       this.$emit('assignAE', this.selectedArticleId);
     },
-    assignReviewer() {
+    actionAssignReviewer() {
       this.$emit('assignReviewer', this.selectedArticleId);
     },
-    sendEmailToAuthors() {},
-    historicalActions() {},
-    getReferee() {},
-    survey() {},
+    actionSendEmailToAuthors() {},
+    actionHistoricalActions() {},
+    actionGetReferee() {},
+    actionSurvey() {},
+
     deleteArticle() {},
     fetchArticles() {
       axios
