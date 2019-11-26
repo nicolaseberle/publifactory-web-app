@@ -47,8 +47,8 @@
         <el-button v-else class="button-new-tag" size="small" @click="showInput()">+ New keypoint</el-button>
       </el-form-item>
       <el-form-item label="Access Policy" :label-width="formLabelWidth">
-        <el-radio v-model="dynamicForm.access" label="open_access">Open Access</el-radio>
-        <el-radio v-model="dynamicForm.access" label="close_access">Close Access</el-radio>
+        <el-radio v-model="dynamicForm.access" label="public">Open Access</el-radio>
+        <el-radio v-model="dynamicForm.access" label="private">Close Access</el-radio>
       </el-form-item>
       <el-form-item style="text-align:right">
         <el-button type="primary" @click="submitForm('dynamicForm')">Create</el-button>
@@ -77,7 +77,7 @@ export default {
         editor: { firstname: '', lastname: '', name: '' },
         status: 'public',
         tags: ['biology', 'genetics'],
-        access: 'open_access'
+        access: 'public'
       },
       formLabelWidth: '120px',
       inputVisible: false,
@@ -161,7 +161,7 @@ export default {
         title: this.dynamicForm.title,
         abstract: this.dynamicForm.abstract,
         tags: this.dynamicForm.tags,
-        status: 'public'
+        status: this.dynamicForm.access
       };
       axios
         .post('/api/journals/', newJournal, {
