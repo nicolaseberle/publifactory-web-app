@@ -47,7 +47,7 @@ exports.getJournals = async (req, res, next) => {
 		let journals;
 		if (req.params.id === undefined) {
 			journals = await Journal.paginate(
-				{ deleted: false, published: true },
+				{ deleted: false, status: 'public' },
 				{
 					page,
 					limit,
@@ -55,7 +55,6 @@ exports.getJournals = async (req, res, next) => {
 					lean: true
 				}
 			);
-			console.log(JSON.stringify(journals, null, '\t'));
 			renameObjectProperty(journals, 'docs', 'journals');
 		} else {
 			//console.log(JSON.stringify("findJournalById", null, "\t"))
@@ -79,7 +78,7 @@ exports.getJournals = async (req, res, next) => {
  * This function take several parameters in the body field :
  *  - title, the new title of the journal
  *  - abstract, the new description of the journal
- *  - published, the new boolean to make this journal public or private
+ *  - status, the new boolean to make this journal public or private
  * @memberof module:controllers/journal
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -90,15 +89,15 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
 		if (
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
-			req.body.published === undefined
+			req.body.status === undefined
 		)
 			throw { code: 422, message: 'Missing parameters.' };
 		const title = req.body.title;
 		const abstract = req.body.abstract;
-		const published = req.body.published;
+		const status = req.body.status;
 		const journal = await Journal.findOneAndUpdate(
 			{ _id: req.params.id },
-			{ $set: { title, abstract, published } },
+			{ $set: { title, abstract, status } },
 			{ new: true }
 		);
 		if (!journal) throw { code: 404, message: 'Journal not found.' };
@@ -114,7 +113,7 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
  * This function takes several parameters in the body field :
  *  - title, the title to set on the journal
  *  - abstract, a short description of the journal
- *  - published, a boolean to set the journal on public or private mode
+ *  - status, a boolean to set the journal on public or private mode
  *  - tags, a list of tags which match with the journal
  * @memberof module:controllers/journal
  * @param {Object} req - Express request object
@@ -132,15 +131,15 @@ module.exports.createJournal = async (req, res, next) => {
 		if (
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
-			req.body.published === undefined ||
+			req.body.status === undefined ||
 			req.body.tags === undefined
 		)
 			throw { code: 422, message: 'Missing parameters.' };
 		const title = req.body.title.trim();
 		const abstract = req.body.abstract.trim();
 		const tags = req.body.tags;
-		const published = req.body.published;
-		const newJournal = new Journal({ title, abstract, tags, published });
+		const status = req.body.status;
+		const newJournal = new Journal({ title, abstract, tags, status });
 		newJournal.users[0] = req.decoded._id;
 		const journal = await newJournal.save();
 		new RolesJournal({
@@ -191,6 +190,7 @@ module.exports.deleteJournal = async (req, res, next) => {
  */
 module.exports.addArticleToJournal = async (req, res, next) => {
 	try {
+		console.log('SUBMIT=>,add article journal=>', req.params, req.body);
 		if (req.params.id_article === undefined)
 			throw { code: 422, message: 'Missing parameters.' };
 		let query = { id_journal: req.params.id, right: 'editor' };
