@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-show="!loggedIn" class="bandeau">ALPHA v0.1.3</div>
+      <div v-show="!loggedIn" class="bandeau">ALPHA v0.2.2</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -273,6 +273,17 @@
           </el-table-column>
 
           <el-table-column
+            label="Fields"
+            prop="fields"
+            width="100">
+            <template slot-scope="props">
+              <div v-for="field in props.row.fields">
+                <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             label="Citations"
             prop="citations"
             width="100">
@@ -289,7 +300,8 @@
                 <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
                 <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
                 <div v-else class="round c_grey"></div>
-                <p style="display:inline-block;">{{ props.row.conflit }}</p>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
@@ -1091,6 +1103,12 @@ export default {
           cat.disabled = false
         }
       });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
     },
     showInputFie() {
       this.inputVisibleFie = true;
@@ -1196,11 +1214,11 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.sub_cat)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-            .then( async (id) => {
-                console.log(id);
+            axios.get('https://service.publifactory.co/api/request_reviewer_multi?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+            .then( async (ids) => {
+                console.log(ids);
 
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
                 this.tableData = res.data
