@@ -12,33 +12,11 @@
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
-      <el-col :span='12'>
-      <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+      <el-col :span='15'>
+      <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
         <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
-        </el-form-item>
-
-        <el-form-item label="Keywords" prop="keywords">
-          <el-tag
-            :key="tag"
-            v-for="tag in formPost.keywords"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)">
-            {{tag}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisible"
-            v-model="inputValue"
-            ref="saveTagInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
         </el-form-item>
 
         <!-- Ajout authors -->
@@ -47,6 +25,7 @@
             :key="aut"
             v-for="aut in formPost.authors"
             closable
+            effect="dark"
             :disable-transitions="false"
             @close="handleCloseAut(aut)">
             {{aut}}
@@ -64,23 +43,16 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
         </el-form-item>
 
-        <el-form-item label="Abstract" prop="abstract">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 10, maxRows: 30}"
-            placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
-          </el-input>
-        </el-form-item>
-
         <el-form-item label="Fields" prop="fields">
           <el-tag
             :key="fie"
             v-for="fie in formPost.fields"
             closable
             :disable-transitions="false"
+            type="info"
+            effect="dark"
             @close="handleCloseFie(fie)">
-            {{fie}}
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
           </el-tag>
           <el-select
             class="button-new-fie"
@@ -98,14 +70,29 @@
               :disabled="item.disabled">
             </el-option>
           </el-select>
-          <el-button v-else class="button-new-fie" size="small" @click="showInputFie">+ New Field</el-button>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
         </el-form-item>
 
-        <el-form-item label="Sub Categories" prop="sub_cat">
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
           <el-tag
             :key="sub"
             v-for="sub in formPost.sub_cat"
             closable
+            type="info"
             :disable-transitions="false"
             @close="handleCloseSub(sub)">
             {{sub}}
@@ -131,9 +118,48 @@
               </el-option>
             </el-option-group>
           </el-select>
-          <el-button v-else class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
         </el-form-item>
 
+        <el-form-item label="Abstract" prop="abstract">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 10, maxRows: 30}"
+            placeholder="You have to input enter only english abstract"
+            v-model="formPost.abstract">
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="tag"
+            v-for="tag in formPost.keywords"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
+        </el-form-item>
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
@@ -147,7 +173,7 @@
         <el-col :span='1'>
           <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
-        <el-col :span='11'>
+        <el-col :span='8'>
           <el-upload
           class="upload-demo"
           drag
@@ -235,7 +261,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="280"
+            width="220"
             fixed>
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
@@ -1195,7 +1221,6 @@ export default {
             this.formPost.authors = res.data[0].authors
             this.progress_status_pdf = 100
         })
-      //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
       })
     },
 
@@ -1209,12 +1234,27 @@ export default {
           window.setInterval(()=>{
             if (this.progress_status<100)
               this.progress_status = this.progress_status +1
-          }, 250);
+          }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+
+          let phraseKey = ""
+          if (this.formPost.keywords.length > 0){
+            for (let x = 0; x<this.formPost.keywords.length; x++){
+              phraseKey += this.formPost.keywords[x] + " "
+            }
+            phraseKey += "are a part of "
+            for (let x = 0; x<this.formPost.fields.length; x++){
+              phraseKey += this.formPost.fields[x][0].toUpperCase() + this.formPost.fields[x].replace(/_/gi, ' ').slice(1) + " "
+            }
+            phraseKey += "."
+          }
+
+          this.formPost.abstract += phraseKey
+
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer_multi?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+            axios.get('https://service.publifactory.co/api/request_reviewer_multi?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat)
             .then( async (ids) => {
                 console.log(ids);
 
@@ -1516,6 +1556,10 @@ hgroup {
 
 .el-upload-dragger .el-icon-upload {
   margin: 16px 0;
+}
+
+.el-form .el-tag {
+  font-weight: bold
 }
 
 /* .el-popper[x-placement^=bottom] {

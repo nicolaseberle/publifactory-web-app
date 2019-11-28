@@ -19,11 +19,23 @@
                   Role:  <a class='very-dark-gray-link'>{{ article.co_auth }}</a>
                   </p> -->
                   <p class='publication-list-item-journal-published-copy' style="display:inline">
-                  Authors:  <a v-for="(auth, index) in author.list_auth" style="display:inline">
+                  Authors: <a v-for="(auth, index) in author.list_auth" style="display:inline">
                       <strong v-if="author.pos == index" style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></strong>
                       <span v-else style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></span>
                     </a>
                   </p>
+                  <div v-if='article.fields'>
+                    <p class='publication-list-item-journal-published-copy'>
+                      Field: <a class='very-dark-gray-link' v-for="field, index in article.fields">
+                      {{ field }}<span v-if="index != article.fields.length - 1">, </span>
+                      </a>
+                      <span v-if='article.sub_cat'>
+                        (<a class='very-dark-gray-link' v-for="cat, index in article.sub_cat">
+                          {{ cat }}<span v-if="index != article.sub_cat.length - 1">, </span>
+                        </a>)
+                      </span>
+                    </p>
+                  </div>
                   <p class='publication-list-item-journal-published-copy'>
                   Published: <a class='very-dark-gray-link'>{{ article.year }}</a>
                   , IN: <a class='very-dark-gray-link' v-if='article.journal'>{{ article.journal }}</a><a class='very-dark-gray-link' v-else>Unknown</a>
