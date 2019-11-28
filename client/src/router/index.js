@@ -83,6 +83,29 @@ export const constantRouterMap = [
 		props: route => ({ userId: route.query.userId })
 	},
 	{
+		path: '/front_office',
+		component: Layout_services,
+		redirect: 'front_office',
+		hidden: true,
+		children: [
+			{
+				path: '/front_office',
+				meta: {
+					skipAuth: true
+				},
+				component: resolve => {
+					import('../view/applications/frontoffice/front_office.vue').then(
+						resolve
+					);
+				}
+			}
+		],
+		meta: {
+			skipAuth: true
+		},
+		props: route => ({ userId: route.query.userId })
+	},
+	{
 		path:
 			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
 		component: resolve => {
