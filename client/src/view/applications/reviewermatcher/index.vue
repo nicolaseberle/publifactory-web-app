@@ -1372,6 +1372,14 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.display = 5
+      }
+      else {
+        this.display = 3
+      }
     }
   }
 }
