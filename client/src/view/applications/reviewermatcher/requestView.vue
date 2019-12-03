@@ -162,7 +162,8 @@ export default {
             "reviewer":  {
               "semanticScholarId": this.requestInfos["rev_id"],
               // "email": this.requestInfos["rev_mail"],
-              "email": "quentin.collin@example.com",
+              // "email": "quentin.collin@example.com",
+              "email": "vincent.schuck@orange.fr",
               "name": this.requestInfos["rev_name"]
             },
             "editor": {

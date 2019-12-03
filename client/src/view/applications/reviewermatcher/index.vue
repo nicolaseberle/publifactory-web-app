@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-show="!loggedIn" class="bandeau">ALPHA v0.2.2</div>
+      <div class="bandeau">ALPHA v0.3.1</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -354,18 +354,12 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
-              </el-button>
-              <el-button v-else
-                type="success"
-                icon="el-icon-message"
-                circle
-                disabled>
               </el-button>
 <!--              <el-popover
                 ref="popcheck"
@@ -398,6 +392,14 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange()">
+      </el-pagination>
       </el-row>
     </div>
     </div>
@@ -471,12 +473,10 @@ export default {
         fields: [
           {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
-        // ,
-        // sub_cat: [
-        //   {required: true, message: 'Please enter at least one sub category', trigger: 'blur'}
-        // ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
       isData: false,
       search: '',
       inputVisible: false,
@@ -969,6 +969,17 @@ export default {
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
     },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+    },
+    paginChange(){
+      console.log("yay");
+    },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
         if (valid) {
@@ -1254,14 +1265,16 @@ export default {
 
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer_multi?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat)
+            axios.get('https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat)
             .then( async (ids) => {
                 console.log(ids);
 
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi/' + ids.data))
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
                 this.state_click = []
                 this.isExpanded = []
@@ -1286,6 +1299,10 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
     },
 
     getMailList() {
@@ -1306,7 +1323,6 @@ export default {
 
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
 
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
@@ -1343,21 +1359,29 @@ export default {
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
 
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
-      if(this.isExpanded[index] === false || this.isExpanded[index] == null){
-        this.isExpanded[index] = true;
-        this.state_click[index] = 3;
-      }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
-        this.$refs.refTable.toggleRowExpansion(row);
-        this.isExpanded[index] = true;
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
         this.state_click[index] = 0;
       }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
-        this.state_click[index] = 3;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
