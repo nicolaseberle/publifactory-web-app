@@ -163,8 +163,9 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
+          <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long.</p>
+          <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
       </el-form>
@@ -428,6 +429,9 @@ import researcherCard from './researcher_card'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
 
+const CancelToken = axios.CancelToken;
+let cancel;
+
 export default {
   components: {researcherCard,requestView},
   computed: {
@@ -488,6 +492,7 @@ export default {
       pagin: 0,
       currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
@@ -1092,7 +1097,7 @@ export default {
     },
 
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
       let exportFileDefaultName = 'list_reviewer.json';
@@ -1104,11 +1109,11 @@ export default {
     },
 
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
 
-      let keys = Object.keys(this.tableData[0]);
+      let keys = Object.keys(this.tempData[0]);
 
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -1116,7 +1121,7 @@ export default {
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
 
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -1285,6 +1290,7 @@ export default {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
           window.setInterval(()=>{
             if (this.progress_status<100)
@@ -1309,8 +1315,10 @@ export default {
 
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat)
-            .then( async (ids) => {
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
                 console.log(ids);
 
                 resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
@@ -1321,6 +1329,7 @@ export default {
                 this.currentPage = 1;
                 this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
                 this.state_click = []
                 this.isExpanded = []
                 var anchor = document.querySelector("#scroll_anchor");
@@ -1348,6 +1357,9 @@ export default {
       this.cats.forEach(function(cat){
         cat.disabled = false
       });
+      cancel()
+      this.load_var = false
+      this.isLoading = false
     },
 
     getMailList() {
@@ -1536,7 +1548,7 @@ hgroup {
 
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
 

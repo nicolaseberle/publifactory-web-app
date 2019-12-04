@@ -10,7 +10,7 @@
               </div>
               <div>
                 <div class='publication-list-item-journal-copy'>
-                  <div v-if='article.fields && article.fields != [-1]' style="display:flex; justify-content:start; margin:10px 0;">
+                  <div v-if='article.fields && article.fields != "-1"' style="display:flex; justify-content:start; margin:10px 0;">
                     <el-tooltip class="item" effect="light" placement="top" v-bind:key="field" v-for="field in article.fields">
                       <div slot="content">
                         <ul style="list-style-type:none; padding-left:0;">
