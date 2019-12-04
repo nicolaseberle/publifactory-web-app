@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-show="!loggedIn" class="bandeau">ALPHA v0.2.2</div>
+      <div class="bandeau">ALPHA v0.3.1</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -163,8 +163,9 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
+          <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}s)</p>
+          <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
       </el-form>
@@ -194,7 +195,7 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
             <el-popover
@@ -215,6 +216,15 @@
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -261,8 +271,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="220"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -280,7 +289,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -300,8 +309,7 @@
 
           <el-table-column
             label="Fields"
-            prop="fields"
-            width="100">
+            prop="fields">
             <template slot-scope="props">
               <div v-for="field in props.row.fields">
                 <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
@@ -319,7 +327,8 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
@@ -333,7 +342,7 @@
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -354,18 +363,12 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
-              </el-button>
-              <el-button v-else
-                type="success"
-                icon="el-icon-message"
-                circle
-                disabled>
               </el-button>
 <!--              <el-popover
                 ref="popcheck"
@@ -398,6 +401,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -416,6 +428,9 @@ import axios from 'axios'
 import researcherCard from './researcher_card'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
+
+const CancelToken = axios.CancelToken;
+let cancel;
 
 export default {
   components: {researcherCard,requestView},
@@ -471,13 +486,13 @@ export default {
         fields: [
           {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
-        // ,
-        // sub_cat: [
-        //   {required: true, message: 'Please enter at least one sub category', trigger: 'blur'}
-        // ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
@@ -959,7 +974,9 @@ export default {
             "Multidisciplinary"
         ]
       },
-      subcats: []
+      subcats: [],
+      seconds: 0,
+      interId: 0
     }
   },
   methods: {
@@ -968,6 +985,25 @@ export default {
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -1036,8 +1072,34 @@ export default {
       ])
     },
 
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
       let exportFileDefaultName = 'list_reviewer.json';
@@ -1049,11 +1111,11 @@ export default {
     },
 
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
 
-      let keys = Object.keys(this.tableData[0]);
+      let keys = Object.keys(this.tempData[0]);
 
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -1061,7 +1123,7 @@ export default {
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
 
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -1230,10 +1292,15 @@ export default {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
+          this.seconds = 0
+          this.interId = window.setInterval(()=>{
+            this.seconds += 1
+          }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
+              this.progress_status += 1
           }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
@@ -1254,17 +1321,25 @@ export default {
 
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer_multi?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat)
-            .then( async (ids) => {
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
                 console.log(ids);
-
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi/' + ids.data))
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
+                this.load_var = false
                 this.state_click = []
                 this.isExpanded = []
+                this.seconds = 0
+                clearInterval(this.interId)
                 var anchor = document.querySelector("#scroll_anchor");
                 //var anchor = this.$refs.refTable;
                 const sleep = (milliseconds) => {
@@ -1273,7 +1348,6 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
-                this.load_var = false
               }
             )
           })
@@ -1286,6 +1360,14 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      cancel()
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
     },
 
     getMailList() {
@@ -1306,7 +1388,6 @@ export default {
 
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
 
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
@@ -1343,21 +1424,29 @@ export default {
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
 
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
-      if(this.isExpanded[index] === false || this.isExpanded[index] == null){
-        this.isExpanded[index] = true;
-        this.state_click[index] = 3;
-      }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
-        this.$refs.refTable.toggleRowExpansion(row);
-        this.isExpanded[index] = true;
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
         this.state_click[index] = 0;
       }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
-        this.state_click[index] = 3;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
@@ -1467,7 +1556,7 @@ hgroup {
 
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
 
@@ -1484,14 +1573,17 @@ hgroup {
   margin-right: 10px;
 }
 
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
 
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -1568,6 +1660,14 @@ hgroup {
 
 .el-form .el-tag {
   font-weight: bold
+}
+
+.el-pagination {
+  padding: 10px 0!important;
+}
+
+.el-button+.el-button {
+  margin: 0!important;
 }
 
 /* .el-popper[x-placement^=bottom] {
