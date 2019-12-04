@@ -194,7 +194,7 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
             <el-popover
@@ -215,6 +215,15 @@
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -261,8 +270,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="220"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -280,7 +288,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -300,8 +308,7 @@
 
           <el-table-column
             label="Fields"
-            prop="fields"
-            width="100">
+            prop="fields">
             <template slot-scope="props">
               <div v-for="field in props.row.fields">
                 <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
@@ -319,7 +326,8 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
@@ -333,7 +341,7 @@
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -398,8 +406,9 @@
           :total="50"
           @prev-click="paginPrev"
           @next-click="paginNext"
-          @current-change="paginChange()">
-      </el-pagination>
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -477,6 +486,7 @@ export default {
       tempData: [{}],
       tableData: [{}],
       pagin: 0,
+      currentPage: 1,
       isData: false,
       search: '',
       inputVisible: false,
@@ -972,13 +982,21 @@ export default {
     paginPrev(){
       this.pagin -= 10
       this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     paginNext(){
       this.pagin += 10
       this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
-    paginChange(){
-      console.log("yay");
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -1034,6 +1052,32 @@ export default {
                 h("span", {style: "color:#A5A9AD;"}, "Grey"),
                 " : The author isn't referenced in ORCID"
               ]),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
               h(
                   "i",
                   {
@@ -1274,6 +1318,7 @@ export default {
                 this.progress_status = 100
                 this.tempData = res.data.slice(0, 50)
                 this.pagin = 10
+                this.currentPage = 1;
                 this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
                 this.state_click = []
@@ -1508,14 +1553,17 @@ hgroup {
   margin-right: 10px;
 }
 
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
 
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -1592,6 +1640,14 @@ hgroup {
 
 .el-form .el-tag {
   font-weight: bold
+}
+
+.el-pagination {
+  padding: 10px 0!important;
+}
+
+.el-button+.el-button {
+  margin: 0!important;
 }
 
 /* .el-popper[x-placement^=bottom] {

@@ -10,7 +10,7 @@
         <el-table-column type="expand" width="20">
           <template slot-scope="props">
             <el-form ref="formList" :model="formList" label-width="120px">
-              <el-form-item v-for="item in props.row.list" label="temp">
+              <el-form-item v-bind:key="item" v-for="item in props.row.list" label="temp">
                 <p slot="label"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+item.id">{{item.name}} ({{item.id}})</a></p>
                 <el-input v-model="item.mail" size="mini"></el-input>
               </el-form-item>
@@ -56,7 +56,7 @@
       <el-table-column type="expand" width="20">
         <template slot-scope="props">
           <el-steps>
-            <el-step v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date"></el-step>
+            <el-step v-bind:key="req" v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date"></el-step>
             <el-step v-else-if="req.status == 'accept'" title="status" status="success" :description="req.status"></el-step>
             <el-step v-else-if="req.status == 'decline'" title="status" status="error" :description="req.status"></el-step>
             <el-step v-if="Object.values(props.row.history[props.row.history.length -1]).indexOf('decline') && Object.values(props.row.history[props.row.history.length -1]).indexOf('accept')" title="status" status="wait" description="pending"></el-step>
