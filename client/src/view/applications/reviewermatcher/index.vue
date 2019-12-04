@@ -164,7 +164,7 @@
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
-          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long.</p>
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}s)</p>
           <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
@@ -974,7 +974,9 @@ export default {
             "Multidisciplinary"
         ]
       },
-      subcats: []
+      subcats: [],
+      seconds: 0,
+      interId: 0
     }
   },
   methods: {
@@ -1292,9 +1294,13 @@ export default {
           this.isData = false
           this.isLoading = true
           this.progress_status = 0
+          this.seconds = 0
+          this.interId = window.setInterval(()=>{
+            this.seconds += 1
+          }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
+              this.progress_status += 1
           }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
@@ -1320,7 +1326,6 @@ export default {
               {cancelToken: new CancelToken(function executor(c) {cancel = c;})
             }).then( async (ids) => {
                 console.log(ids);
-
                 resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
@@ -1330,8 +1335,11 @@ export default {
                 this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
                 this.isLoading = false
+                this.load_var = false
                 this.state_click = []
                 this.isExpanded = []
+                this.seconds = 0
+                clearInterval(this.interId)
                 var anchor = document.querySelector("#scroll_anchor");
                 //var anchor = this.$refs.refTable;
                 const sleep = (milliseconds) => {
@@ -1340,7 +1348,6 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
-                this.load_var = false
               }
             )
           })
@@ -1360,6 +1367,7 @@ export default {
       cancel()
       this.load_var = false
       this.isLoading = false
+      clearInterval(this.interId)
     },
 
     getMailList() {
