@@ -43,6 +43,7 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
         </el-form-item>
 
+        <!-- Ajout fields -->
         <el-form-item label="Fields" prop="fields">
           <el-tag
             :key="fie"
@@ -78,6 +79,7 @@
           </el-button>
         </el-form-item>
 
+        <!-- Ajout sub_cat -->
         <el-form-item label="SubCategories" prop="sub_cat">
           <span slot="label">
             SubCategories
@@ -121,12 +123,13 @@
           <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
         </el-form-item>
 
+        <!-- Ajout Abstract -->
         <el-form-item label="Abstract" prop="abstract">
           <el-input
             type="textarea"
             :autosize="{ minRows: 10, maxRows: 30}"
             placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
+            v-model="formPost.abstract" @change="replaceChariot">
           </el-input>
         </el-form-item>
 
@@ -982,6 +985,10 @@ export default {
   methods: {
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
+    },
+    replaceChariot () {
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
