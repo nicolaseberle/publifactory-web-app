@@ -1288,12 +1288,14 @@ export default {
             phraseKey += "."
           }
 
-          this.formPost.abstract += phraseKey
+          let abstractTotal = this.formPost.abstract
+          abstractTotal += phraseKey
+          abstractTotal = this.formPost.title + '. ' + abstractTotal
 
           let res = ''
           new Promise ((resolve,reject) => {
             axios.get(
-              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
               {cancelToken: new CancelToken(function executor(c) {cancel = c;})
             }).then( async (ids) => {
                 console.log(ids);
