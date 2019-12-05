@@ -181,6 +181,8 @@
           <el-upload
           class="upload-demo"
           drag
+          :on-change="uploadChange"
+          :file-list="fileList"
           action=""
           :http-request="uploadSectionFile">
           <i class="el-icon-upload"></i>
@@ -979,7 +981,8 @@ export default {
       },
       subcats: [],
       seconds: 0,
-      interId: 0
+      interId: 0,
+      fileList:[]
     }
   },
   methods: {
@@ -992,6 +995,9 @@ export default {
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
     },
     paginPrev(){
       this.pagin -= 10
@@ -1324,12 +1330,14 @@ export default {
             phraseKey += "."
           }
 
-          this.formPost.abstract += phraseKey
+          let abstractTotal = this.formPost.abstract
+          abstractTotal += phraseKey
+          abstractTotal = this.formPost.title + '. ' + abstractTotal
 
           let res = ''
           new Promise ((resolve,reject) => {
             axios.get(
-              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
               {cancelToken: new CancelToken(function executor(c) {cancel = c;})
             }).then( async (ids) => {
                 console.log(ids);
