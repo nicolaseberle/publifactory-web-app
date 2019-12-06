@@ -337,7 +337,14 @@ export default{
     },
     getRequests(){
       new Promise ((resolve,reject) => {
-        axios.get('http://localhost:4000/api/requests?page=1&count=10')
+        // Local
+        axios.get('/api/requests?page=1&count=10')
+
+        // Dev
+        // axios.get('http://34.89.179.162:4000/api/requests?page=1&count=10')
+
+        // Prod
+        // axios.get('http://35.246.243.12:4000/api/requests?page=1&count=10')
         .then( async (res) => {
           this.dataFinal = res.data.data;
           console.log(this.dataFinal);

@@ -138,7 +138,14 @@ export default {
           async function addRequest(dataJson){
             const response = await axios({
               method: 'post',
-              url: 'http://localhost:4000/api/requests',
+              // Local
+              // url: 'http://localhost:4000/api/requests',
+
+              // Dev
+              url: '/api/requests',
+
+              // Prod
+              // url: 'http://35.246.243.12:4000/api/requests',
               validateStatus: undefined,
               headers: {
                 'Content-Type': 'application/json'
@@ -161,9 +168,9 @@ export default {
             "remind": this.requestInfos["remind"],
             "reviewer":  {
               "semanticScholarId": this.requestInfos["rev_id"],
-              // "email": this.requestInfos["rev_mail"],
+              "email": this.requestInfos["rev_mail"],
               // "email": "quentin.collin@example.com",
-              "email": "vincent.schuck@orange.fr",
+              // "email": "vincent.schuck@orange.fr",
               "name": this.requestInfos["rev_name"]
             },
             "editor": {
