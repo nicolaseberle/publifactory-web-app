@@ -138,14 +138,7 @@ export default {
           async function addRequest(dataJson){
             const response = await axios({
               method: 'post',
-              // Local
-              // url: 'http://localhost:4000/api/requests',
-
-              // Dev
               url: '/api/requests',
-
-              // Prod
-              // url: 'http://35.246.243.12:4000/api/requests',
               validateStatus: undefined,
               headers: {
                 'Content-Type': 'application/json'

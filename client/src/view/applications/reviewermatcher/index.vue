@@ -1317,6 +1317,7 @@ export default {
           }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+          this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
 
           let phraseKey = ""
           if (this.formPost.keywords.length > 0){
