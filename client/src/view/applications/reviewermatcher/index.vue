@@ -6,12 +6,41 @@
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
       </hgroup>
+
+      <el-row :gutter='30' style='margin-top=80px;'>
+        <el-col :span='15'>
+        <div class='description-container'>
+          <div class='description'>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="What is it?" name="1">
+                <div>
+                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="How does it work ?" name="2">
+                <div>
+                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="Why a relevance test ?" name="3">
+                <div>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
+                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+        </el-col>
+      </el-row>
+
       <div>
       <h2>Load the article</h2>
       <p>Insert your publication informations (title, authors, abstract or keywords)</p>
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
+      <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
       <el-col :span='15'>
       <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
@@ -982,7 +1011,10 @@ export default {
       subcats: [],
       seconds: 0,
       interId: 0,
-      fileList:[]
+      pdfInter: 0,
+      fileList:[],
+      activeNames: "",
+      dataUpload: false
     }
   },
   methods: {
@@ -1276,7 +1308,7 @@ export default {
 
     uploadSectionFile(param){
       this.progress_status_pdf = 0
-      window.setInterval(()=>{
+      this.pdfInter = window.setInterval(()=>{
         if (this.progress_status_pdf<100)
           this.progress_status_pdf = this.progress_status_pdf +1
       }, 500);
@@ -1295,6 +1327,7 @@ export default {
             this.formPost.keywords = res.data[0].keywords
             this.formPost.authors = res.data[0].authors
             this.progress_status_pdf = 100
+            this.dataUpload = true
         })
       })
     },
@@ -1380,10 +1413,14 @@ export default {
       this.cats.forEach(function(cat){
         cat.disabled = false
       });
-      cancel()
       this.load_var = false
       this.isLoading = false
       clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
     },
 
     getMailList() {
@@ -1623,6 +1660,41 @@ hgroup {
     .c_red {
       background-color: #F56C6C;
     }
+
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
+    margin: 0;
+}
 
 .round {
   width: 13px;
