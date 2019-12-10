@@ -59,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
+                  <quill-editor v-if="isArticleFetch" v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -420,7 +420,8 @@ export default {
     }, {
       value: 'vertical',
       label: 'Vertical'
-    }]
+    }],
+    isArticleFetch: false
   }
 
   },
@@ -449,7 +450,6 @@ export default {
      */
     this.socket.on('ADD_REFERENCE', this.refreshReferences);
 		this.socket.on('UPDATE_REFERENCE', this.fetchReferences);
-    this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -643,6 +643,7 @@ export default {
       axios.get('/api/articles/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
+        this.isArticleFetch = true
         this.postForm = response.data;
         for(let i = 0; i < this.postForm.authors.length; i++) {
           this.postForm.authors[i].isActive = false;
@@ -773,9 +774,6 @@ export default {
     },
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.abstract = editor.root.innerHTML;
-      this.socket.emit('ABSTRACT_EDIT', {
-        content: this.postForm.abstract
-      });
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
