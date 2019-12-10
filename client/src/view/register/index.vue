@@ -1,10 +1,6 @@
 <template>
   <div class="login-main">
-
-  <v-lazy-image class='bg'
-    :src='bg.image'
-    :src-placeholder='bg.small_image'
-  />
+    <div class="bg"></div>
   <div class="login-wrapper" v-show="!loggedIn">
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
     <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
@@ -24,11 +20,7 @@
         <el-input v-model="form.password" type="password" :placeholder="$t('register.password')" ></el-input>
       </el-form-item>
       <el-form-item>
-      <el-checkbox v-model="checkedCGU">I accept the
-        <a style='text-decoration:underline'>
-          <router-link class="logo-wrapper" to="/legal" exact>Term of Use</router-link>
-        </a>
-      </el-checkbox>
+      <el-checkbox v-model="checkedCGU">I accept the <a style='text-decoration:underline'>CGU</a></el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
@@ -64,7 +56,6 @@
   locales,
   data () {
     return {
-      bg:  this.randomImage() ,
       checkedCGU: false,
       form: {
         email: '',
@@ -119,10 +110,8 @@
     onSubmit () {
       this.$refs.form.validate(valid => {
         if (valid) {
-            this.loading = true
             axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
             .then(response => {
-              this.loading = false
               this.$message({
                 title: this.$t('message.created'),
                 message: this.$t('message.created'),
@@ -130,12 +119,12 @@
               })
               this.$router.push(this.$route.query.redirect || '/')
           }).catch((err) => {
-            this.loading = false
             this.$message({
               title: this.$t('message.error'),
               message: err.message || this.$t('register.authFail'),
               type: 'error'
             })
+            this.loading = false
             this.loginError = true
             setTimeout(() => {
               this.loginError = false
@@ -143,14 +132,6 @@
           })
         }
       })
-    },
-    randomImage() {
-      let number = Math.ceil(Math.random()*9)
-      return {
-        'image':"/static/images/login-bg-"+ number + ".jpg",
-        'small_image':"/static/images/login-bg-"+ number + "-small.jpg",
-        'legend': ''
-      }
     }
   }
 }
