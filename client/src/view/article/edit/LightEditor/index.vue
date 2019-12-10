@@ -59,7 +59,7 @@
                 <h2>Abstract</h2><br>
                 <form name="abstract_form_2">
                   <!--<medium-editor id='abstract' :text='postForm.abstract' :options='options' v-on:edit="applyAbstractEdit($event)"/>-->
-                  <quill-editor v-if="isArticleFetch" v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
+                  <quill-editor v-bind:content="postForm.abstract" v-bind:uuid="createUuid()" v-on:edit='applyAbstractEdit' v-bind:idUser="userId" :numBlock="-1" :numSubBlock="0" :numSubSubBlock="0" v-bind:socket="socket" v-bind:wssdb='wssdb'></quill-editor>
                   <!--<ckeditor :editor="editor" v-model="postForm.abstract" :config="editorConfig"></ckeditor>-->
                 </form>
             </section>
@@ -77,7 +77,7 @@
 
                         <el-col :span='12' v-for="(subitem,subsubkey) in subblock"  v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- Quill editor when double text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:wssdb='wssdb' v-on:addReference='addReference' v-on:deleteReference='deleteReference'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)' v-on:comment='createComment' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -95,7 +95,7 @@
                       <el-row :gutter='20' v-if='subblock.length==1' style='margin-bottom:10px'>
                         <el-col :span='24' v-for="(subitem,subsubkey, index) in subblock"   v-bind:data="subitem" v-bind:key="subsubkey">
                           <!-- quill editor when single text block -->
-                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:wssdb='wssdb' v-on:addReference='addReference' v-on:deleteReference='deleteReference'></quill-editor>
+                          <quill-editor v-if="subitem.type=='text'" v-bind:socket="socket" v-bind:idUser="userId" v-bind:numBlock='key' v-bind:numSubBlock='subkey' v-bind:numSubSubBlock='subsubkey' v-bind:uuid='subitem.uuid' v-bind:content="subitem.content" v-on:edit='applyTextEdit' v-on:delete='removeBlock($event,key,subkey,subsubkey)'  v-on:comment='createComment($event,uuid_comment)' v-bind:wssdb='wssdb'></quill-editor>
                           <figureComponent v-if="subitem.type=='chart'" :idfigure="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editChartBlock($event,key,subkey,subsubkey,subitem.uuid)' v-on:delete='removeBlock($event,key,subkey,subsubkey)'/>
                           <imageComponent v-if="subitem.type=='image'" :idpicture="subitem.uuid" :key='subitem.nbEdit' v-on:edit='editPictureBlock($event,key,subkey,subsubkey,subitem.uuid)'/>
                           <el-card v-if="subitem.type=='tbd'" shadow="never" style='text-align: center'>
@@ -134,11 +134,10 @@
                   <i class="el-icon-arrow-right"></i>
                   References
                 </h2>
-                <div style="padding-left: 20px">
-                  <el-col :span='24' v-for="(ref, index) in postForm.references" v-bind:key="ref.id" v-bind:id="ref.ref">
-                    [{{index+1}}] -  {{ref.name}}
-                  </el-col>
-                </div>
+                <el-col :span='24' v-for="(ref) in references" v-bind:key="ref.id">
+                  [R{{ref.id}}] -  {{ref.name}}
+                </el-col>
+
             </section>
             <span id="triggerEndNav"></span>
         </article>
@@ -279,8 +278,10 @@
   import addCollaborator from '../../../../components/Collaborator'
   import InsertFigure from '../../../../components/InsertFigure/index'
   import richText from 'rich-text'
+  //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
+// var Zotero = require('libzotero');
 
 const defaultForm = {
   status: 'draft',
@@ -354,14 +355,16 @@ export default {
   },
   data() {
     return {
+      // shareDoc: null,
       flagActivity: true,
       listConnectedUsers: Array,
-      references: [],
+      references : [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}],
       timeoutId: Number,
       inputTagsVisible : false,
       newTag : '',
       cursors : Object,
       uuid_comment: '',
+      zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
       postForm: {},
@@ -420,8 +423,7 @@ export default {
     }, {
       value: 'vertical',
       label: 'Vertical'
-    }],
-    isArticleFetch: false
+    }]
   }
 
   },
@@ -433,23 +435,16 @@ export default {
     }
   },
   created() {
-    this.id = this.$route.params && this.$route.params.id
+    this.id = this.$route.params && this.$route.params.id  
   },
   mounted() {
     this.fetchData(this.id);
 
-    setTimeout(async () => {
-        const t = [...this.$el.getElementsByClassName('citation')].map(el => {
-          el.addEventListener('click', () => {
-          el.scrollIntoView();
-          });
-        })
-    },4000);
     /**
      * Socket instructions from API
      */
-    this.socket.on('ADD_REFERENCE', this.refreshReferences);
-		this.socket.on('UPDATE_REFERENCE', this.fetchReferences);
+    
+    this.socket.on('ABSTRACT_UPDATE', data => this.postForm.abstract = data.content);
     this.socket.on('ADD_ROW', data => this.addNewRow(data.ev, data.key, true));
     this.socket.on('ADD_TAG', data => {
       this.newTag = data.newTag;
@@ -643,7 +638,6 @@ export default {
       axios.get('/api/articles/' + id , {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(response => {
-        this.isArticleFetch = true
         this.postForm = response.data;
         for(let i = 0; i < this.postForm.authors.length; i++) {
           this.postForm.authors[i].isActive = false;
@@ -699,81 +693,27 @@ export default {
         console.log(e)
       })
     },
-    refreshReferences(reference) {
-      this.postForm.references.push(reference)
-    },
-    fetchReferences() {
-      axios.get('/api/articles/' + this.id , {
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-        this.postForm.references = response.data.references;
-        for(let i = 0; i < this.postForm.authors.length; i++) {
-          this.postForm.authors[i].isActive = false;
-          if(this.postForm.authors[i].author._id === this.userId)
-            this.postForm.authors[i].isActive = true;
+    updateReferences () {
+      console.log(this.references);
+      axios.put('/api/articles/'  + this.id + '/updateReferences', {
+        "references": this.references,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${this.accessToken}`
         }
-      }).catch(err => {
-        console.log(err)
       })
-    },
-    deleteReference() {
-      const htmlElementsCitations = [...document.getElementsByClassName('citation')];
-      this.postForm.references = htmlElementsCitations.reduce((acc, element, index) => {
-        const found = this.postForm.references.find(reference => reference.ref === element.hash)
-        // TODO resolve bug => https://trello.com/c/eGguYhSv/70-int%C3%A9gration-de-r%C3%A9f%C3%A9rences
-        // passed as source === api for quill editor not focused
-        element.innerHTML = `[${index + 1}]`
-        if (!found) return acc;
-        return [...acc, found]
-      }, [])
-      this.updateReference()
-    },
-    addReference(editor, range, reference) {
-      const citation = {...reference}
-      editor.insertEmbed(
-        range,
-        'citation',
-        {
-          href: citation.ref,
-          // For debug => text: `[R${this.postForm.references.map(ref => ref.id).indexOf(citation.id)} DEBUG:${citation.block}]`
-          text: reference.name,//`[*]`
-        }, 'user'
-      );
-      const htmlElementsCitations = [...document.getElementsByClassName('citation')];
-      this.postForm.references = htmlElementsCitations.map((element, index) => {
-        const found = this.postForm.references.find(ref => ref.ref === element.hash)
-        element.innerHTML = `[${index + 1}]`
-        if (!found) {
-          return { name: reference.name, description: '', ref: element.hash, block: reference.block }
-        }
-        return found;
-      })
-      this.updateReference();
-
-    },
-    updateReference() {
-        axios
-        .put(
-          '/api/articles/' + this.id + '/updateReferences',
-          {
-            references: this.postForm.references
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${this.accessToken}`
-            }
-          }
-      )
       .then(response => {
-        this.save()
-					this.socket.emit('EXEC_UPDATE_REFERENCE', {});
+        console.log("References updated")
       })
       .catch(e => {
-        console.warn("ERRRROR", e);
-      });
+        console.log(e)
+      })
     },
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.abstract = editor.root.innerHTML;
+      this.socket.emit('ABSTRACT_EDIT', {
+        content: this.postForm.abstract
+      });
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
@@ -1078,3 +1018,6 @@ export default {
 }
 
 </style>
+<!--<style>
+@import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";
+</style>-->

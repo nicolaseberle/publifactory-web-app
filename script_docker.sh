@@ -15,13 +15,8 @@ options=$2
 
 export BASE_MONGO=localhost
 export BASE_API=localhost
-
-if [[ ${options} = "dev" ]];
-then
-  export ROOT_APP="https://dev.publifactory.co/"
-else
-  export ROOT_APP="https://app.publifactory.co/"
-fi
+export SITE_IP='35.246.243.12'
+export ROOT_APP="http://${SITE_IP}/"
 
 debug () {
   # shellcheck disable=SC2059

@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="insert-button-box" v-bind:id="idButton">
-        <el-button type plain class="el-icon-caret-top" circle size="mini"></el-button>
+        <el-button type plain class="el-icon-caret-top" v-on:click circle size="mini"></el-button>
         <el-button
           type="warning"
           plain
@@ -11,7 +11,7 @@
           circle
           size="mini"
         ></el-button>
-        <el-button type plain class="el-icon-caret-bottom" circle size="mini"></el-button>
+        <el-button type plain class="el-icon-caret-bottom" v-on:click circle size="mini"></el-button>
       </div>
       <div class="box" style="z-index=1000;">
         <!--
@@ -45,36 +45,34 @@
         <span class="ql-formats">
           <button class="ql-link"></button>
           <button class="ql-formula"></button>
-          <button class="citation-icon-btn" v-bind:id="idButtonZotero" v-on:click="toggleCitation">
-            <img class="citation-icon" src="/static/icons/search.svg" />
+          <button v-bind:id="idButtonZotero" style="transform:translate(0, -6px)">
+            <img src="/static/img/zotero-small-icon.png" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
           </button>
-          <button v-bind:id="idButtonComment">
+          <button v-bind:id="idButtonComment" style="margin-left:10px; transform:translate(5px, 0)">
             <svg-icon icon-class="comment-black" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
           </button>
+          <!--<input  class="ql-input" name="title" type="text"></input>-->
         </span>
       </div>
-      <div class="questions" v-show="showCitation" v-bind:id="idZotero">
-        <div class="question" v-show="showCitation" style="z-index=2000;">
-          <div v-show="showCitation" v-bind:id="idInputZotero">
+      <!--<div class='bottom-right'/>-->
+      <div class="questions" v-bind:id="idZotero">
+        <!--<div class="close-toto"><i class="fa fa-times"></i>
+        </div>-->
+        <div class="question" style="z-index=2000;">
+          <div v-bind:id="idInputZotero" style="display:none;">
             <el-row>
-              <el-col class="loader-container" :span="2">
-                <div v-show="toggleLoaderQueryCitation" class="lds-ring">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                </div>
-                <!-- <img src="/static/img/zotero-small-icon.png" /> -->
+              <el-col :span="2">
+                <img src="/static/img/zotero-small-icon.png" />
               </el-col>
-              <el-col class="question-span" :span="22">
+              <el-col :span="22">
                 <v-autocomplete
                   :items="items"
+                  v-model="item"
                   :get-label="getLabel"
                   :component-item="template"
                   @update-items="updateItems"
-                  @item-clicked="addReference"
-                  :wait="400"
-                  :min-len="2"
                 ></v-autocomplete>
               </el-col>
             </el-row>
@@ -86,370 +84,328 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { mapGetters } from "vuex";
-import Autocomplete from "v-autocomplete";
-import ItemTemplate from "./ItemTemplate.vue";
-import "quill";
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
-import "v-autocomplete/dist/v-autocomplete.css";
-import QuillCursors from "quill-cursors";
-import axios from "axios";
-import collaboration from "./collaboration";
-import richText from "rich-text";
+	import Vue from 'vue'
+	import { mapGetters } from 'vuex'
+	import Autocomplete from 'v-autocomplete'
+	import ItemTemplate from './ItemTemplate.vue'
+	import 'quill'
+	import 'quill/dist/quill.core.css'
+	import 'quill/dist/quill.snow.css'
+	import 'quill/dist/quill.bubble.css'
+	import 'v-autocomplete/dist/v-autocomplete.css'
+	import QuillCursors from 'quill-cursors'
+	import axios from 'axios';
+	import collaboration from './collaboration'
+  import richText from 'rich-text'
 
-const io = require("socket.io-client");
 
-Vue.use(Autocomplete);
+	const io = require('socket.io-client');
 
-var Quill = require("quill");
-var uuidv4 = require("uuid/v4");
-Quill.register("modules/cursors", QuillCursors);
+	Vue.use(Autocomplete)
 
-const debug = require("debug")("frontend");
+	var Quill = require('quill');
+	var uuidv4 = require('uuid/v4');
+	Quill.register('modules/cursors', QuillCursors);
 
-const InlineBlot = Quill.import("blots/inline");
-const Embed = Quill.import("blots/embed");
-// import Parchment from 'parchment';
+
+	const debug = require('debug')('frontend');
+
+	const InlineBlot = Quill.import('blots/inline');
+
 
 /*Zotero, highlight button in quill toolbar*/
 class ProcLink extends InlineBlot {
-  static create(value) {
-    let node = super.create(value);
-    // give it some margin
-    node.setAttribute("style", "background-color : #FFDCA6;");
-    node.setAttribute("datareview", value.value);
-    node.innerHTML = value.text;
-    return node;
-  }
+		static create(value) {
+				let node = super.create(value);
+				// give it some margin
+				node.setAttribute('style', "background-color : #FFDCA6;");
+				node.setAttribute('datareview', value.value);
+				node.innerHTML = value.text;
+				return node;
+		}
 
-  static value(node) {
-    return {
-      value: node.getAttribute("datareview"),
-      text: node.innerHTML
-    };
-  }
+		static value(node) {
+			return {
+				value: node.getAttribute('datareview'),
+				text: node.innerHTML
+			};
+		}
 }
 
-ProcLink.blotName = "datareview";
-ProcLink.className = "datareview";
-ProcLink.tagName = "span";
-
-class Citation extends Embed {
-  static create(value) {
-    const node = super.create(value);
-    node.innerHTML = value.text;
-    node.setAttribute("href", value.href);
-    node.setAttribute("style", "font-size: 0.8rem;");
-    node.addEventListener("click", () => {
-      node.scrollIntoView();
-    });
-    return node;
-  }
-
-  format(name, value) {
-    super.format(name, value);
-  }
-
-  static formats(domNode) {
-    return domNode.getAttribute("href");
-  }
-
-  static value(node) {
-    return {
-      href: node.getAttribute("href"),
-      text: node.textContent
-    };
-  }
-  // Parent Func
-  // update(mutations, context) {}
-  // format(name, value) {
-  //   // this.domNode.setAttribute('href', value.href);
-  // }
-  deleteAt(index, length) {
-    // Parchment.Container.proptype.deleteAt.call(this, index, length);
-    super.deleteAt(index, length);
-  }
-
-  formatAt(index, length, format, value) {
-    super.formatAt(index, length, format, value);
-  }
-  // insertAt(index, text) {}
-
-  update(mutations, context) {
-    super.update(mutations, context);
-  }
-  // optimize(context) {}
-}
-
-Citation.blotName = "citation";
-Citation.className = "citation";
-Citation.tagName = "a";
+ProcLink.blotName = 'datareview';
+ProcLink.className = 'datareview';
+ProcLink.tagName = 'span';
 
 class ProcRef extends InlineBlot {
-  static create(value) {
-    let node = super.create(value);
-    node.setAttribute("href", value.href);
-    // node.setAttribute('target', '_blank');
-    node.innerHTML = value.text + " ";
-    return node;
-  }
+    static create(value) {
+        let node = super.create(value);
+        // give it some margin
+				node.setAttribute('href', value);
+				node.setAttribute('target', '_blank');
+        node.innerHTML = value.text;
+        return node;
+    }
 }
 
-ProcRef.blotName = "ref";
-ProcRef.className = "test";
-ProcRef.tagName = "a";
+ProcRef.blotName = 'ref';
+ProcRef.className = 'ref';
+ProcRef.tagName = 'a';
 
 /*Link the new button in quill*/
 
 Quill.register(ProcLink, true);
 Quill.register(ProcRef, true);
-Quill.register(Citation, true);
 
 export default {
-  name: "QuillEditor",
-  props: {
-    wssdb: Object,
-    socket: Object,
-    content: {
-      type: String | Array | Object
-    },
-    uuid: {
-      type: String,
-      default: "abstract"
-    },
-    numBlock: {
-      type: Number,
-      default: 0
-    },
-    numSubBlock: {
-      type: Number,
-      default: 0
-    },
-    numSubSubBlock: {
-      type: Number,
-      default: 0
-    },
-    output: {
-      default: "delta"
-    },
-    config: {
-      default() {
-        return {};
-      }
-    }
-  },
-  data() {
-    return {
-      cursorId: null, // === userName
-      shareDoc: null,
-      id: "",
-      inputRefVisible: false,
-      editor: {},
-      idSharedbSocketIndicator: this.setIdSharedbSocketIndicator(),
-      idSharedbSocketState: this.setIdSharedbSocketState(),
-      idCursorsSocketIndicator: this.setIdCursorsSocketIndicator(),
-      idCursorsSocketState: this.setIdCursorsSocketState(),
-      idUsersList: this.setIdUsersList(),
-      idEditor: this.setIdEditor(),
-      idToolBar: this.setIdToolBar(),
-      idButton: this.setIdButton(),
-      idButtonZotero: this.setIdButtonZotero(),
-      idZotero: this.setIdZotero(),
-      idInputZotero: this.setIdInputZotero(),
-      idButtonComment: this.setIdButtonComment(),
-      idButtonHighlight: this.setIdButtonHighlight(),
-      item: {
-        id: 0,
-        name: "",
-        description: ""
-      },
-      items: [],
-      template: ItemTemplate,
-      actionValidate: 0,
-      mouse_pos: "",
-      hostname: "",
-      timeout: 600,
-      cursor: {
-        id: "",
-        name: "",
-        color: "",
-        range: {}
-      },
-      cursorModule: {},
-      lastRange: {},
-      updateLocalCursorIntervalId: null,
-      showCitation: false,
-      toggleLoaderQueryCitation: false,
-      isCitationToggled: false,
-      citationRange: {}
-    };
-  },
-  beforeDestroy() {
-    clearInterval(this.updateLocalCursorIntervalId);
-    if (!this.shareDoc) return;
-    this.shareDoc.removeListener("op", () => {});
-    this.shareDoc.destroy();
-    this.shareDoc = null;
-  },
-  async created() {
-    this.cursorId = await this.getUserName();
-    this.id = this.$route.params && this.$route.params.id;
-  },
-  async destroyed() {
-    this.socket.emit("REMOVE_QUILL_SELECT", {
-      cursorId: await this.getUserName()
-    });
-  },
+	name: 'QuillEditor',
+	props: {
+		wssdb: Object,
+		socket: Object,
+		content: {
+			type: String | Array | Object
+		},
+		uuid: {
+			type: String,
+			default: 'abstract'
+		},
+		numBlock: {
+			type: Number,
+			default: 0
+		},
+		numSubBlock: {
+			type: Number,
+			default: 0
+		},
+		numSubSubBlock: {
+			type: Number,
+			default: 0
+		},
+		output: {
+				default : 'delta'
+		},
+		config: {
+				default() {
+						return {}
+				},
+		},
+	},
+	data() {
+		return {
+			cursorId: null, // === userName
+			shareDoc: null,
+			id: '',
+			inputRefVisible: false,
+			editor: {},
+			idSharedbSocketIndicator: this.setIdSharedbSocketIndicator(),
+			idSharedbSocketState: this.setIdSharedbSocketState(),
+			idCursorsSocketIndicator: this.setIdCursorsSocketIndicator(),
+			idCursorsSocketState: this.setIdCursorsSocketState(),
+			idUsersList: this.setIdUsersList(),
+			idEditor: this.setIdEditor(),
+			idToolBar: this.setIdToolBar(),
+			idButton: this.setIdButton(),
+			idButtonZotero: this.setIdButtonZotero(),
+			idZotero : this.setIdZotero(),
+			idInputZotero: this.setIdInputZotero(),
+			idButtonComment: this.setIdButtonComment(),
+			idButtonHighlight: this.setIdButtonHighlight(),
+			item: {id: 0, name: 'Reference', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
+			items: [],
+			template: ItemTemplate,
+			actionValidate: 0,
+			mouse_pos : '',
+			hostname: '',
+			timeout : 600,
+			cursor: {
+				id: '',
+				name: '',
+				color: '',
+				range: {}
+			},
+			cursorModule: {},
+			lastRange: {},
+			updateLocalCursorIntervalId: null,
+		}
+	},
+	beforeDestroy() {
+		clearInterval(this.updateLocalCursorIntervalId)
+		if (!this.shareDoc) return
+		this.shareDoc.removeListener('op', () => {})
+		this.shareDoc.destroy();
+		this.shareDoc = null;
+	},
+	async created() {
+		this.cursorId = await this.getUserName();
+		this.id = this.$route.params && this.$route.params.id
+		// this.updateLocalCursorIntervalId = setInterval(async () => {
+		// 	const selection = this.editor.getSelection()
+		// 	if (!selection) return;
+		// 	this.socket.emit('QUILL_NEW_SELECT', {
+		// 		range: selection,
+		// 		numBlock: this.numBlock,
+		// 		numSubBlock: this.numSubBlock,
+		// 		numSubSubBlock: this.numSubSubBlock,
+		// 		cursorId: await this.getUserName(),
+		// });
+		// }, 2000)
 
-  mounted() {
-    if (this.shareDoc === null) {
-      const connection = this.wssdb.getConnection();
-      this.shareDoc = connection.get(
-        "collaboration",
-        `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`
-      );
-    }
-    if (this.shareDoc.type === null) {
-      this.shareDoc.create([{ insert: "" }], richText.type.name);
-    }
-    this.shareDoc.subscribe(err => {
-      if (err) console.warn("SHAREDB", err);
-      if (this.shareDoc.type === null) {
-        console.warn("DOC NOT CREATED");
-      }
-    });
+	},
+	async destroyed() {
+		this.socket.emit('REMOVE_QUILL_SELECT', {
+			cursorId: await this.getUserName(),
+		});
+	},
+	
+	mounted() {
+		if (this.shareDoc === null) {
+			const connection = this.wssdb.getConnection()
+			this.shareDoc = connection.get('collaboration', `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}`)
+		}
+		if (this.shareDoc.type === null) {
+			this.shareDoc.create([{ insert: '' }], richText.type.name);
+		}
+		this.shareDoc.subscribe(err => {
+			if (err) console.warn('SHAREDB', err);
+			if (this.shareDoc.type === null) {
+				console.warn("DOC NOT CREATED")
+			}
+		});
 
-    this.shareDoc.on("op", (op, source) => {
-      if (source === this.editor) return;
-      this.editor.updateContents(op, "api");
-    });
+		this.shareDoc.on('op', (op, source) => {
+			if (source === this.editor) return
+			this.editor.updateContents(op, 'api');
 
-    this.socket.on("QUILL_EXEC_SELECT", data => {
-      collaboration.selectionUpdate(this, data);
-    });
+		});
 
-    this.socket.on("DELETE_CURSOR", data => {
-      if (!this.sameBlock(data)) return;
-      this.cursorModule.removeCursor(data.cursorId);
-    });
+      this.socket.on('QUILL_EXEC_SELECT', data => {
+					collaboration.selectionUpdate(this, data)
+			});
+			
+			this.socket.on('DELETE_CURSOR', data => {
+				if (!this.sameBlock(data)) return;
+				this.cursorModule.removeCursor(data.cursorId);
+			});
 
-    this.socket.on("QUILL_RESP_SELECT", data => {
-      collaboration.selectionUpdate(this, data);
-      const selection = this.editor.getSelection();
-      if (!selection) return;
-      this.socket.emit("QUILL_NEW_SELECT", {
-        range: selection,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock,
-        cursorId: this.cursorId
+			
+			this.socket.on('QUILL_RESP_SELECT', (data) => {
+				collaboration.selectionUpdate(this, data)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_NEW_SELECT', {
+					range: selection,
+				numBlock: this.numBlock,
+				numSubBlock: this.numSubBlock,
+				numSubSubBlock: this.numSubSubBlock,
+				cursorId: this.cursorId,
+				});
+			});
+
+	    var quill = new Quill('#' + this.idEditor, {
+	        modules: {
+						formula: true,
+            cursors: {
+                hideDelayMs: 5000,
+								hideSpeedMs: 0,
+								selectionChangeSource: null
+            },
+            toolbar: '#' + this.idToolBar
+	        },
+	        history: {
+	        	userOnly: true
+	        },
+	        placeholder: this.content,
+	        theme: 'snow',  // or 'bubble',
+					bounds: '#' + this.idEditor
+	    });
+			this.editor = quill
+
+	    document.querySelector('#' + this.idButtonZotero).addEventListener('click', () => {
+	      var range = this.editor.getSelection(focus = true);
+	      $("#"+this.idInputZotero).toggle()
+	      //var html_ = '<a href="#" style="color:red">[R'+ this.nbReferences +']</a>'
+	      //var html_ =  '<button-ref>R</button-ref>'
+	      //quill.clipboard.dangerouslyPasteHTML(range.index, "<button-ref>R1</button-ref>", "api");
+	      var uuid_ref = String(uuidv4())
+
+	      var range = this.editor.getSelection();
+
+	      //var selectedText = this.editor.getText(range.index, range.length);
+	      var cObj = {text : "[R1]", value : uuid_ref};
+	      //this.editor.deleteText(range.index  , range.length);
+	      this.editor.insertEmbed(range.index,"ref",cObj)
+	      //this.insertStar()
+				//this.pasteHtmlAtCaret(html_)
+	    });
+
+	    document.querySelector('#' + this.idButtonComment).addEventListener('click', () => {
+	      this.highlightSelection()
+	    });
+
+			this.cursorModule = this.editor.getModule('cursors');
+      this.socket.emit('QUILL_NEW_USER', {
+          cursor: this.cursor
       });
-    });
+				
+			this.editor.on('text-change', (delta, oldDelta, source) => {
+				if (source === 'api')	return;
+				this.shareDoc.submitOp(delta, {source: this.editor}, err => {
+					if (err && err.code === 4015) {
+						console.warn(err)
+					}
+				})
+				collaboration.textCommit(this, delta)
+				const selection = this.editor.getSelection()
+				if (!selection) return;
+				this.socket.emit('QUILL_REQ_UPDATE', {
+					range: selection,
+					numBlock: this.numBlock,
+					numSubBlock: this.numSubBlock,
+					numSubSubBlock: this.numSubSubBlock,
+					cursorId: this.cursorId,
+				});
+				// collaboration.updateForeignCursors(this, delta)
+			});
 
-    var quill = new Quill("#" + this.idEditor, {
-      modules: {
-        formula: true,
-        cursors: {
-          hideDelayMs: 5000,
-          hideSpeedMs: 0,
-          selectionChangeSource: null
-        },
-        toolbar: "#" + this.idToolBar
-      },
-      history: {
-        userOnly: true
-      },
-      placeholder: this.content,
-      theme: "snow", // or 'bubble',
-      bounds: "#" + this.idEditor
-    });
-    this.editor = quill;
-
-    document
-      .querySelector("#" + this.idButtonComment)
-      .addEventListener("click", () => {
-        this.highlightSelection();
+      this.editor.on('selection-change', (range, oldRange, source) => {
+				if (source === 'api') return;
+				if (source === 'user' && range === null) {
+					collaboration.cursorRemove(this);
+					return;
+				}
+				this.lastRange = range;
+				collaboration.selectionCommit(this, range)
       });
 
-    this.cursorModule = this.editor.getModule("cursors");
-    this.socket.emit("QUILL_NEW_USER", {
-      cursor: this.cursor
-    });
+    	this.editor.root.innerHTML = this.content
 
-    this.editor.on("text-change", (delta, oldDelta, source) => {
-      if (source === "api") {
-        return;
-      }
+			window.cursors = this.cursors
 
-      if (delta.filter(op => op.delete).length !== 0) {
-        const citationsDeleted = oldDelta.reduce((acc, op) => {
-          if (op.insert && op.insert.citation) {
-            const element = document.querySelectorAll(
-              `a[href^='${op.insert.citation.href}']`
-            )[0];
-            if (!element) {
-              return [...acc, op.insert.citation];
-            }
-          }
-          return acc;
-        }, []);
-        if (citationsDeleted.length !== 0) {
-          quill - delta;
-          this.$emit("deleteReference");
-        }
-      }
-      this.shareDoc.submitOp(delta, { source: this.editor }, err => {
-        if (err && err.code === 4015) {
-          console.warn(err);
-        }
-      });
-      collaboration.textCommit(this, delta);
-      const selection = this.editor.getSelection();
-      if (!selection) return;
-      this.socket.emit("QUILL_REQ_UPDATE", {
-        range: selection,
-        numBlock: this.numBlock,
-        numSubBlock: this.numSubBlock,
-        numSubSubBlock: this.numSubSubBlock,
-        cursorId: this.cursorId
-      });
-      // collaboration.updateForeignCursors(this, delta)
-    });
 
-    this.editor.on("selection-change", (range, oldRange, source) => {
-      if (source === "api") return;
-      if (source === "user" && range === null) {
-        // Lose focus on this editor
-        // if (!this.isCitationToggled) this.showCitation = false;
-        collaboration.cursorRemove(this);
-        return;
-      }
-      this.lastRange = range;
-      collaboration.selectionCommit(this, range);
-    });
+	    $('#'+this.idButtonZotero).click( () => {
+	      this.showZoteroMenu(
+	        $(this));
+	    });
+	    $('.close-toto').click( (e) => {
+	      e.stopPropagation();
+	      $(this).parent().hide();
+	      $('.items').removeClass('no-effect');
+	    });
 
-    // this.editor.root.innerHTML = this.content;
+	    $(document).ready(() => {
+	        $("#"+this.idButton).toggle();
+					$("#"+this.idToolBar).toggle();
+	        this.editor.on('selection-change', (range, oldRange, source) => {
+	        if (range === null && oldRange !== null) {
+	          $("#"+this.idButton).toggle()
+						$("#"+this.idToolBar).toggle()
+	        } else if (range !== null && oldRange === null){
+	          	$("#"+this.idButton).toggle()
+							$("#"+this.idToolBar).toggle()
+						}
+	        });
+	    });
 
-    window.cursors = this.cursors;
-
-    $(document).ready(() => {
-      $("#" + this.idButton).toggle();
-      $("#" + this.idToolBar).toggle();
-      this.editor.on("selection-change", (range, oldRange, source) => {
-        if (range === null && oldRange !== null) {
-          $("#" + this.idButton).toggle();
-          $("#" + this.idToolBar).toggle();
-        } else if (range !== null && oldRange === null) {
-          $("#" + this.idButton).toggle();
-          $("#" + this.idToolBar).toggle();
-        }
-      });
-    });
-
-    /*
+	    /*
 			$(document).on('contextmenu', '#'+this.idEditor , (e) => {
 	      e.preventDefault();
 	      this.editor.theme.tooltip.edit();
@@ -460,58 +416,43 @@ export default {
 			*/
   },
   computed: {
-    ...mapGetters(["userId", "accessToken"])
+    ...mapGetters(['userId', 'accessToken'])
   },
-  methods: {
-    toggleCitation() {
-      this.showCitation = !this.showCitation;
-      this.citationRange = this.editor.getSelection();
-      // if (this.showCitation) {
-      //   this.isCitationToggled = true;
-      // }
-    },
-    async getUserName() {
-      return new Promise(resolve => {
-        axios
-          .get("/api/users/me", {
-            headers: { Authorization: `Bearer ${this.accessToken}` }
-          })
-          .then(response => {
-            const user = response.data;
-            resolve(
-              `${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`
-            );
-          });
-      });
-    },
-    sameBlock(json) {
-      return (
-        json.numBlock === this.numBlock &&
-        json.numSubBlock === this.numSubBlock &&
-        json.numSubSubBlock === this.numSubSubBlock
-      );
-    },
-    chooseColors() {
-      const allColors = [
-        "#05a3d5",
-        "#05160e",
-        "#22f2d3",
-        "#5e5da0",
-        "#b3111c",
-        "#4aea2e",
-        "#94e61f",
-        "#e00cf1",
-        "#6019c2",
-        "#2a8c2d",
-        "#9643cf",
-        "#29beb1",
-        "#f62c6b",
-        "#a3ac87",
-        "#556dbb",
-        "#f42916"
-      ];
-      return allColors[Math.floor(Math.random() * Math.floor(16))];
-    },
+	methods:{
+	  async getUserName () {
+	    return new Promise(resolve => {
+          axios.get('/api/users/me',
+            {headers: {'Authorization': `Bearer ${this.accessToken}`}}).then(response => {
+              const user = response.data;
+              resolve(`${user.firstname[0].toUpperCase()}. ${user.lastname.toUpperCase()}`);
+					});
+			});
+		},
+	  sameBlock(json) {
+	    return json.numBlock === this.numBlock && json.numSubBlock === this.numSubBlock &&
+				json.numSubSubBlock === this.numSubSubBlock;
+		},
+		chooseColors () {
+			const allColors = [
+					"#05a3d5",
+					"#05160e",
+					"#22f2d3",
+					"#5e5da0",
+					"#b3111c",
+					"#4aea2e",
+					"#94e61f",
+					"#e00cf1",
+					"#6019c2",
+					"#2a8c2d",
+					"#9643cf",
+					"#29beb1",
+					"#f62c6b",
+					"#a3ac87",
+					"#556dbb",
+					"#f42916"
+			];
+			return allColors[Math.floor(Math.random() * Math.floor(16))];
+		},
     insertStar() {
       const cursorPosition = this.editor.getSelection().index;
       // this.editor.insertText(cursorPosition, "★");
@@ -522,287 +463,140 @@ export default {
 
       // $("#" + this.idEditor).html(tmpOut);
 
-      this.editor.clipboard.dangerouslyPasteHTML(
-        cursorPosition,
-        "<button>R1</button>",
-        "api"
-      );
+			this.editor.clipboard.dangerouslyPasteHTML(cursorPosition, "<button>R1</button>", "api");
       // this.editor.setSelection(cursorPosition + 2);
     },
 
-    /*Hightlight Functions*/
-    highlightSelection() {
-      var userSelection = window.getSelection().getRangeAt(0);
-      this.highlightRange();
-    },
-    highlightRange() {
-      var uuid_review = String(uuidv4());
 
-      var range = this.editor.getSelection();
+		/*Hightlight Functions*/
+		highlightSelection () {
+				var userSelection = window.getSelection().getRangeAt(0);
+				this.highlightRange();
+		},
+		highlightRange () {
+				var uuid_review = String(uuidv4())
 
-      var selectedText = this.editor.getText(range.index, range.length);
-      var cObj = { text: selectedText, value: uuid_review };
-      this.editor.deleteText(range.index, range.length);
-      this.editor.insertEmbed(range.index, "datareview", cObj);
-      this.$emit("comment", uuid_review);
-    },
-    pasteHtmlAtCaret(html) {
-      var sel, range;
-      if (window.getSelection) {
-        // IE9 and non-IE
-        sel = window.getSelection();
-        if (sel.getRangeAt && sel.rangeCount) {
-          range = sel.getRangeAt(0);
-          range.deleteContents();
+				var range = this.editor.getSelection();
 
-          // Range.createContextualFragment() would be useful here but is
-          // only relatively recently standardized and is not supported in
-          // some browsers (IE9, for one)
-          var el = document.createElement("div");
-          el.innerHTML = html;
-          var frag = document.createDocumentFragment(),
-            node,
-            lastNode;
-          while ((node = el.firstChild)) {
-            lastNode = frag.appendChild(node);
-          }
-          range.insertNode(frag);
+				var selectedText = this.editor.getText(range.index, range.length);
+				var cObj = {text : selectedText, value : uuid_review};
+				this.editor.deleteText(range.index  , range.length);
+				this.editor.insertEmbed(range.index,"datareview",cObj)
+				this.$emit('comment', uuid_review)
+		},
+		showZoteroMenu (button) {
+			var offset = this.mouse_pos
+			debug(offset.offsetY)
 
-          // Preserve the selection
-          if (lastNode) {
-            range = range.cloneRange();
-            range.setStartAfter(lastNode);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
-          }
-        }
-      } else if (document.selection && document.selection.type != "Control") {
-        // IE < 9
-        document.selection.createRange().pasteHTML(html);
-      }
-    },
-    getLabel(item) {
-      if (item) {
-        if (this.actionValidate == 1) {
-          $("#" + this.idInputZotero).toggle();
-          $("#" + this.idZotero).toggle();
-        }
-        this.actionValidate = 1;
+			$("#"+this.idZotero)
+				.fadeIn()
+				.css({
+					left: Math.min(0, $(window).innerWidth()-$("#"+this.idZotero).outerWidth()),
+					top: offset.offsetY + 36
+				});
+		},
+		pasteHtmlAtCaret (html) {
+				var sel, range;
+				if (window.getSelection) {
+						// IE9 and non-IE
+						sel = window.getSelection();
+						if (sel.getRangeAt && sel.rangeCount) {
+								range = sel.getRangeAt(0);
+								range.deleteContents();
 
-        return item.name;
-      }
-    },
-    addReference(item) {
-      const block = `${this.numBlock}${this.numSubBlock}${this.numSubSubBlock}${this.citationRange.index}`;
-      const id = `${uuidv4()}`;
-      const reference = {
-        ...item,
-        block,
-        id,
-        ref: `#reference-${id}-${block}`
-      };
+								// Range.createContextualFragment() would be useful here but is
+								// only relatively recently standardized and is not supported in
+								// some browsers (IE9, for one)
+								var el = document.createElement("div");
+								el.innerHTML = html;
+								var frag = document.createDocumentFragment(), node, lastNode;
+								while ( (node = el.firstChild) ) {
+										lastNode = frag.appendChild(node);
+								}
+								range.insertNode(frag);
 
-      this.$emit(
-        "addReference",
-        this.editor,
-        this.citationRange.index,
-        reference
-      );
-      this.socket.emit("NEW_REFERENCE", reference);
-    },
-    async updateItems(text) {
-      this.toggleLoaderQueryCitation = !this.toggleLoaderQueryCitation;
-      const response = await axios.get(
-        "https://service.publifactory.co/api/sync_ref",
-        {
-          params: {
-            title: text
-          }
-        }
-      );
-      this.toggleLoaderQueryCitation = !this.toggleLoaderQueryCitation;
-      if (response.data === "" || response.data.length === 0) {
-        this.items = [];
-        return;
-      }
-      this.items = response.data.map((article, id) => {
-        return { id, name: article.title, description: "" };
-      });
-    },
-    setIdEditor() {
-      return (
-        "editor-container-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdToolBar() {
-      return (
-        "toolbar-container-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdButton() {
-      return (
-        "bottom-right-button-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdTooltip() {
-      return (
-        "toolbar-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdZotero() {
-      return (
-        "zotero-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdButtonZotero() {
-      return (
-        "button-zotero-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdInputZotero() {
-      return (
-        "input-zotero-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdButtonComment() {
-      return (
-        "button-comment-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdButtonHighlight() {
-      return (
-        "button-hightlight-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdSharedbSocketIndicator() {
-      return (
-        "id-sharedb-socket-indicator-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdSharedbSocketState() {
-      return (
-        "id-sharedb-socket-state-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdCursorsSocketIndicator() {
-      return (
-        "id-cursors-socket-indicator-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdCursorsSocketState() {
-      return (
-        "id-cursors-socket-state-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    setIdUsersList() {
-      return (
-        "id-users-list-" +
-        this.uuid +
-        "-" +
-        this.numBlock +
-        "-" +
-        this.numSubBlock +
-        "-" +
-        this.numSubSubBlock
-      );
-    },
-    deleteBlock() {
-      this.$emit("delete", true);
-    }
-  }
-};
+								// Preserve the selection
+								if (lastNode) {
+										range = range.cloneRange();
+										range.setStartAfter(lastNode);
+										range.collapse(true);
+										sel.removeAllRanges();
+										sel.addRange(range);
+								}
+						}
+				} else if (document.selection && document.selection.type != "Control") {
+						// IE < 9
+						document.selection.createRange().pasteHTML(html);
+				}
+		},
+		getLabel (item) {
+			if(item){
+				if(this.actionValidate == 1){
+					$("#"+this.idInputZotero).toggle()
+					$("#"+this.idZotero).toggle()
+				}
+				this.actionValidate = 1
+
+				return item.name
+			}
+		},
+		updateItems (text) {
+				this.items = [{id: 1, name: 'Modulation of longevity and tissue homeostasis by the Drosophila PGC-1 homolog', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
+											{id: 2, name: 'Intestinal barrier dysfunction links metabolic and inflammatory markers of aging to death in Drosophila', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
+											{id: 3, name: 'Parkin overexpression during aging reduces proteotoxicity, alters mitochondrial dynamics, and extends lifespan', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
+											{id: 4, name: 'Distinct shifts in microbiota composition during Drosophila aging impair intestinal function and drive mortality', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'},
+											{id: 5, name: 'AMPK modulates tissue and organismal aging in a non-cell-autonomous manner', description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'}
+										]
+		},
+		setIdEditor () {
+			return 'editor-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdToolBar () {
+			return 'toolbar-container-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdButton () {
+			return 'bottom-right-button-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdTooltip () {
+			return 'toolbar-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdZotero () {
+			return 'zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdButtonZotero () {
+			return 'button-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdInputZotero () {
+			return 'input-zotero-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdButtonComment () {
+			return 'button-comment-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdButtonHighlight () {
+			return 'button-hightlight-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdSharedbSocketIndicator () {
+			return 'id-sharedb-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdSharedbSocketState () {
+			return 'id-sharedb-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdCursorsSocketIndicator () {
+			return 'id-cursors-socket-indicator-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdCursorsSocketState () {
+			return 'id-cursors-socket-state-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		setIdUsersList () {
+			return 'id-users-list-' + this.uuid + '-' + this.numBlock + '-' + this.numSubBlock + '-' + this.numSubSubBlock ;
+		},
+		deleteBlock () {
+			this.$emit('delete',true)
+		},
+
+
+	}
+}
 </script>
 <style>
 .ql-input {
@@ -892,7 +686,6 @@ p {
   padding: 10px 10px;
   box-shadow: none;
   border: 1px solid #222;
-  border-radius: 6px;
   width: calc(100% - 32px);
   outline: none;
   background-color: #eee;
@@ -933,24 +726,8 @@ p {
   display: block;
   font-family: sans-serif;
 }
-
-.citation-icon {
-  height: 18px;
-  width: 18px;
-  margin-bottom: 2px;
-}
-
-.citation-icon-btn:focus {
-  outline: none;
-}
-
-.loader-container {
-  padding-left: 4px;
-}
-
 .questions {
-  /* display: none; */
-  padding-bottom: 60px;
+  display: none;
   background: #222;
   position: absolute;
   z-index: 1000;
@@ -975,10 +752,6 @@ p {
   margin: 0;
   padding: 0;
 }
-.question-span {
-  padding-top: 3px;
-  float: right;
-}
 .close-toto {
   font-size: 22px;
   cursor: pointer;
@@ -1000,40 +773,5 @@ button-ref {
 .ql-container.ql-snow {
   border: none;
   display: hidden;
-}
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 100px;
-  height: 100px;
-}
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  margin: 8px;
-  border: 8px solid #fff;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #fff transparent transparent transparent;
-}
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
-}
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
-}
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
-}
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>
