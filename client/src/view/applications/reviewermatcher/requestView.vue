@@ -113,9 +113,13 @@ export default {
           this.requestInfos["rev_id"] = this.rowInfos["id"]
           this.requestInfos["rev_name"] = this.rowInfos["name"]
           this.requestInfos["deadline"] = this.formMail["deadline"]
+          this.requestInfos["object"] = this.formMail["object"]
+          this.requestInfos["remind"] = this.formMail["relaunch"]
+          this.requestInfos["content"] = this.formMail["message"]
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
+          console.log(this.requestInfos);
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
@@ -130,6 +134,46 @@ export default {
               console.log(this.requestInfos);
             })
           })
+
+          async function addRequest(dataJson){
+            const response = await axios({
+              method: 'post',
+              url: '/api/requests',
+              validateStatus: undefined,
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              data: dataJson
+            });
+            if (response.status !== 200) {
+              console.log("Failed")
+            } else {
+              console.log(response)
+            }
+          }
+
+          let dataJson = {
+            "title": this.requestInfos["title"],
+            "abstract": this.requestInfos["abstract"],
+            "deadline": this.requestInfos["deadline"].toUTCString(),
+            "object": this.requestInfos["object"],
+            "content": this.requestInfos["content"],
+            "remind": this.requestInfos["remind"],
+            "reviewer":  {
+              "semanticScholarId": this.requestInfos["rev_id"],
+              "email": this.requestInfos["rev_mail"],
+              // "email": "quentin.collin@example.com",
+              // "email": "vincent.schuck@orange.fr",
+              "name": this.requestInfos["rev_name"]
+            },
+            "editor": {
+              "name": this.requestInfos["pub_name"],
+              "email": this.requestInfos["pub_mail"],
+              "journal": this.requestInfos["pub_journal"]
+            }
+          }
+
+          addRequest(dataJson)
         }
       })
     }

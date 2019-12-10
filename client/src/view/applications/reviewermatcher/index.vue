@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-show="!loggedIn" class="bandeau">ALPHA v0.1.3</div>
+      <div class="bandeau">ALPHA v0.3.1</div>
       <hgroup>
         <h1>Search Reviewers</h1>
         <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
@@ -12,14 +12,137 @@
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
-      <el-col :span='12'>
-      <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+      <el-col :span='15'>
+      <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
         <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
+        <!-- Ajout authors -->
+        <el-form-item label="Authors" prop="authors">
+          <el-tag
+            :key="aut"
+            v-for="aut in formPost.authors"
+            closable
+            effect="dark"
+            :disable-transitions="false"
+            @close="handleCloseAut(aut)">
+            {{aut}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisibleAut"
+            v-model="inputValueAut"
+            ref="saveAutInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirmAut"
+            @blur="handleInputConfirmAut"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
+        </el-form-item>
+
+        <!-- Ajout fields -->
+        <el-form-item label="Fields" prop="fields">
+          <el-tag
+            :key="fie"
+            v-for="fie in formPost.fields"
+            closable
+            :disable-transitions="false"
+            type="info"
+            effect="dark"
+            @close="handleCloseFie(fie)">
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
+          </el-tag>
+          <el-select
+            class="button-new-fie"
+            v-if="inputVisibleFie"
+            v-model="inputValueFie"
+            ref="saveFieInput"
+            placeholder="Select"
+            @change="handleInputConfirmFie"
+            size="mini">
+            <el-option
+              v-for="item in cats"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
+        </el-form-item>
+
+        <!-- Ajout sub_cat -->
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="sub"
+            v-for="sub in formPost.sub_cat"
+            closable
+            type="info"
+            :disable-transitions="false"
+            @close="handleCloseSub(sub)">
+            {{sub}}
+          </el-tag>
+          <el-select
+            class="button-new-sub"
+            v-if="inputVisibleSub"
+            v-model="inputValueSub"
+            ref="saveSubInput"
+            placeholder="Select"
+            @change="handleInputConfirmSub"
+            size="mini">
+            <el-option-group
+              v-for="group in subcats"
+              :key="group.value"
+              :label="group.value">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+        </el-form-item>
+
+        <!-- Ajout Abstract -->
+        <el-form-item label="Abstract" prop="abstract">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 10, maxRows: 30}"
+            placeholder="You have to input enter only english abstract"
+            v-model="formPost.abstract" @change="replaceChariot">
+          </el-input>
+        </el-form-item>
+
         <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -41,43 +164,11 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
         </el-form-item>
 
-        <!-- Ajout authors -->
-        <el-form-item label="Authors" prop="authors">
-          <el-tag
-            :key="aut"
-            v-for="aut in formPost.authors"
-            closable
-            :disable-transitions="false"
-            @close="handleCloseAut(aut)">
-            {{aut}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisibleAut"
-            v-model="inputValueAut"
-            ref="saveAutInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirmAut"
-            @blur="handleInputConfirmAut"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
-        </el-form-item>
-
-
-        <el-form-item label="Abstract" prop="abstract">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 10, maxRows: 30}"
-            placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
-          </el-input>
-        </el-form-item>
-
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
+          <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}s)</p>
+          <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
       </el-form>
@@ -86,10 +177,12 @@
         <el-col :span='1'>
           <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
-        <el-col :span='11'>
+        <el-col :span='8'>
           <el-upload
           class="upload-demo"
           drag
+          :on-change="uploadChange"
+          :file-list="fileList"
           action=""
           :http-request="uploadSectionFile">
           <i class="el-icon-upload"></i>
@@ -107,7 +200,7 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
             <el-popover
@@ -128,6 +221,15 @@
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -174,8 +276,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="280"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -193,7 +294,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -212,6 +313,16 @@
           </el-table-column>
 
           <el-table-column
+            label="Fields"
+            prop="fields">
+            <template slot-scope="props">
+              <div v-for="field in props.row.fields">
+                <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
             label="Citations"
             prop="citations"
             width="100">
@@ -221,20 +332,22 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
                 <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
                 <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
                 <div v-else class="round c_grey"></div>
-                <p style="display:inline-block;">{{ props.row.conflit }}</p>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -255,18 +368,12 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
-              </el-button>
-              <el-button v-else
-                type="success"
-                icon="el-icon-message"
-                circle
-                disabled>
               </el-button>
 <!--              <el-popover
                 ref="popcheck"
@@ -299,6 +406,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -317,6 +433,9 @@ import axios from 'axios'
 import researcherCard from './researcher_card'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
+
+const CancelToken = axios.CancelToken;
+let cancel;
 
 export default {
   components: {researcherCard,requestView},
@@ -355,7 +474,9 @@ export default {
         abstract: '',
         title: '',
         keywords: [],
-        authors: []
+        authors: [],
+        fields: [],
+        sub_cat: []
       },
       rules: {
         abstract: [
@@ -366,29 +487,536 @@ export default {
         ],
         title: [
           {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+        ],
+        fields: [
+          {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
+      inputVisibleFie: false,
+      inputVisibleSub: false,
       inputValue: '',
       inputValueAut: '',
+      inputValueFie: '',
+      inputValueSub: '',
       load_var: false,
       id: '',
       rowInfos: {},
       requestInfos: {},
       listMails: [],
-      requestMails: {}
+      requestMails: {},
+      cats: [
+        {
+          value: "art_and_humanities",
+          label: "Art and Humanities",
+          disabled: false
+        },
+        {
+          value: "biology",
+          label: "Biology",
+          disabled: false
+        },
+        {
+          value: "business_and_economics",
+          label: "Business and Economics",
+          disabled: false
+        },
+        {
+          value: "chemistry",
+          label: "Chemistry",
+          disabled: false
+        },
+        {
+          value: "computer_science",
+          label: "Computer Science",
+          disabled: false
+        },
+        {
+          value: "earth_and_planetary_sciences",
+          label: "Earth and Planetary Sciences",
+          disabled: false
+        },
+        {
+          value: "engineering",
+          label: "Engineering",
+          disabled: false
+        },
+        {
+          value: "environmental_science",
+          label: "Environmental Science",
+          disabled: false
+        },
+        {
+          value: "health_profession",
+          label: "Health Profession",
+          disabled: false
+        },
+        {
+          value: "materials_science",
+          label: "Materials Science",
+          disabled: false
+        },
+        {
+          value: "mathematics",
+          label: "Mathematics",
+          disabled: false
+        },
+        {
+          value: "medicine",
+          label: "Medicine",
+          disabled: false
+        },
+        {
+          value: "neuroscience",
+          label: "Neuroscience",
+          disabled: false
+        },
+        {
+          value: "nursing",
+          label: "Nursing",
+          disabled: false
+        },
+        {
+          value: "physics",
+          label: "Physics",
+          disabled: false
+        },
+        {
+          value: "psychology",
+          label: "Psychology",
+          disabled: false
+        },
+        {
+          value: "sociology",
+          label: "Sociology",
+          disabled: false
+        }
+        // ,
+        // {
+        //   value: "multidisciplinary",
+        //   label: "Multidisciplinary",
+        //   disabled: false
+        // }
+      ],
+      assoc_cat: {
+        "art_and_humanities": [
+            "Archeology (arts and humanities)",
+            "Arts and Humanities",
+            "Classics",
+            "Conservation",
+            "History",
+            "History and Philosophy of Science",
+            "Issues, Ethics and Legal Aspects",
+            "Language and Linguistics",
+            "Linguistics and Language",
+            "Literature and Literary Theory",
+            "Museology",
+            "Music",
+            "Philosophy",
+            "Religious Studies",
+            "Visual Arts and Performing Arts"
+        ],
+        "biology": [
+            "Aging",
+            "Agricultural and Biological Sciences",
+            "Agronomy and Crop Science",
+            "Animal Science and Zoology",
+            "Applied Microbiology and Biotechnology",
+            "Aquatic Science",
+            "Behavioral Neuroscience",
+            "Biochemistry",
+            "Biochemistry, Genetics and Molecular Biology",
+            "Bioengineering",
+            "Biomaterials",
+            "Biomedical Engineering",
+            "Biophysics",
+            "Biotechnology",
+            "Cancer Research",
+            "Cell Biology",
+            "Clinical Biochemistry",
+            "Developmental Biology",
+            "Developmental Neuroscience",
+            "Drug Discovery",
+            "Ecology, Evolution, Behavior and Systematics",
+            "Food Animals",
+            "Food Science",
+            "Forestry",
+            "Genetics",
+            "Health, Toxicology and Mutagenesis",
+            "Horticulture",
+            "Immunology",
+            "Immunology and Microbiology",
+            "Insect Science",
+            "Microbiology",
+            "Molecular Biology",
+            "Parasitology",
+            "Pharmaceutical Science",
+            "Pharmacology",
+            "Pharmacology, Toxicology and Pharmaceutics",
+            "Pharmacy",
+            "Physiology",
+            "Plant Science",
+            "Small Animals",
+            "Soil Science",
+            "Structural Biology",
+            "Toxicology",
+            "Virology"
+        ],
+        "business_and_economics": [
+            "Accounting",
+            "Business and International Management",
+            "Business, Management and Accounting",
+            "Decision Sciences",
+            "Economics and Econometrics",
+            "Economics, Econometrics and Finance",
+            "Finance",
+            "Industrial Relations",
+            "Leadership and Management",
+            "Management of Technology and Innovation",
+            "Management Science and Operations Research",
+            "Management, Monitoring, Policy and Law",
+            "Marketing",
+            "Organizational Behavior and Human Resource Management",
+            "Strategy and Management",
+            "Tourism, Leisure and Hospitality Management"
+        ],
+        "computer_science": [
+            "Artificial Intelligence",
+            "Computational Mechanics",
+            "Computational Theory and Mathematics",
+            "Computer Graphics and Computer-Aided Design",
+            "Computer Networks and Communications",
+            "Computer Science",
+            "Computer Science Applications",
+            "Computer Vision and Pattern Recognition",
+            "Computers in Earth Sciences",
+            "Hardware and Architecture",
+            "Human-Computer Interaction",
+            "Information Systems",
+            "Information Systems and Management",
+            "Management Information Systems",
+            "Modeling and Simulation",
+            "Signal Processing",
+            "Software",
+            "Theoretical Computer Science"
+        ],
+        "chemistry": [
+            "Analytical Chemistry",
+            "Biochemistry",
+            "Biochemistry, Genetics and Molecular Biology",
+            "Catalysis",
+            "Chemical Engineering",
+            "Chemistry",
+            "Clinical Biochemistry",
+            "Colloid and Surface Chemistry",
+            "Electrochemistry",
+            "Environmental Chemistry",
+            "Filtration and Separation",
+            "Fluid Flow and Transfer Processes",
+            "Inorganic Chemistry",
+            "Materials Chemistry",
+            "Organic Chemistry",
+            "Physical and Theoretical Chemistry",
+            "Process Chemistry and Technology",
+            "Spectroscopy"
+        ],
+        "earth_and_planetary_sciences": [
+            "Atmospheric Science",
+            "Earth and Planetary Sciences",
+            "Earth-Surface Processes",
+            "Economic Geology",
+            "Geochemistry and Petrology",
+            "Geology",
+            "Geophysics",
+            "Geotechnical Engineering and Engineering Geology",
+            "Oceanography",
+            "Paleontology",
+            "Space and Planetary Science",
+            "Stratigraphy"
+        ],
+        "engineering": [
+            "Aerospace Engineering",
+            "Architecture",
+            "Automotive Engineering",
+            "Bioengineering",
+            "Biomedical Engineering",
+            "Building and Construction",
+            "Civil and Structural Engineering",
+            "Control and Systems Engineering",
+            "Electrical and Electronic Engineering",
+            "Engineering",
+            "Environmental Engineering",
+            "Filtration and Separation",
+            "Industrial and Manufacturing Engineering",
+            "Mechanical Engineering",
+            "Mechanics of Materials",
+            "Media Technology",
+            "Ocean Engineering",
+            "Safety, Risk, Reliability and Quality"
+        ],
+        "environmental_science": [
+            "Ecological Modeling",
+            "Ecology",
+            "Environmental Chemistry",
+            "Environmental Engineering",
+            "Environmental Science",
+            "Global and Planetary Change",
+            "Nature and Landscape Conservation",
+            "Pollution",
+            "Renewable Energy, Sustainability and the Environment",
+            "Waste Management and Disposal",
+            "Water Science and Technology"
+        ],
+        "health_profession": [
+            "Chiropractics",
+            "Complementary and Alternative Medicine",
+            "Emergency Medical Services",
+            "Health Information Management",
+            "Health Professions",
+            "Medical Assisting and Transcription",
+            "Medical Laboratory Technology",
+            "Medical Terminology",
+            "Occupational Therapy",
+            "Optometry",
+            "Pharmacy",
+            "Physical Therapy, Sports Therapy and Rehabilitation",
+            "Podiatry",
+            "Radiological and Ultrasound Technology",
+            "Respiratory Care",
+            "Speech and Hearing",
+            "Sports Science"
+        ],
+        "materials_science": [
+            "Biomaterials",
+            "Ceramics and Composites",
+            "Electronic, Optical and Magnetic Materials",
+            "Energy",
+            "Fuel Technology",
+            "Materials Chemistry",
+            "Materials Science",
+            "Mechanics of Materials",
+            "Metals and Alloys",
+            "Nanoscience and Nanotechnology",
+            "Polymers and Plastics",
+            "Surfaces, Coatings and Films"
+        ],
+        "mathematics": [
+            "Algebra and Number Theory",
+            "Analysis",
+            "Applied Mathematics",
+            "Computational Mathematics",
+            "Computational Theory and Mathematics",
+            "Control and Optimization",
+            "Discrete Mathematics and Combinatorics",
+            "Geometry and Topology",
+            "Logic",
+            "Mathematical Physics",
+            "Mathematics",
+            "Numerical Analysis",
+            "Statistics and Probability",
+            "Statistics, Probability and Uncertainty"
+        ],
+        "medicine": [
+            "Anatomy",
+            "Anesthesiology and Pain Medicine",
+            "Biochemistry (medical)",
+            "Biomedical Engineering",
+            "Cardiology and Cardiovascular Medicine",
+            "Chemical Health and Safety",
+            "Community and Home Care",
+            "Complementary and Manual Therapy",
+            "Critical Care and Intensive Care Medicine",
+            "Dental Hygiene",
+            "Dentistry",
+            "Dermatology",
+            "Drug Discovery",
+            "Drug Guides",
+            "Embryology",
+            "Emergency Medicine",
+            "Endocrinology",
+            "Epidemiology",
+            "Equine",
+            "Family Practice",
+            "Gastroenterology",
+            "Genetics (clinical)",
+            "Geriatrics and Gerontology",
+            "Gerontology",
+            "Health Informatics",
+            "Health Policy",
+            "Health, Toxicology and Mutagenesis",
+            "Hematology",
+            "Hepatology",
+            "Histology",
+            "Immunology and Allergy",
+            "Infectious Diseases",
+            "Internal Medicine",
+            "Medicine",
+            "Medicine (miscellaneous)",
+            "Microbiology (medical)",
+            "Molecular Medicine",
+            "Nephrology",
+            "Neurology (clinical)",
+            "Obstetrics and Gynecology",
+            "Oncology",
+            "Ophthalmology",
+            "Oral Surgery",
+            "Orthodontics",
+            "Orthopedics and Sports Medicine",
+            "Otorhinolaryngology",
+            "Pathology and Forensic Medicine",
+            "Pediatrics, Perinatology and Child Health",
+            "Periodontics",
+            "Pharmacology (medical)",
+            "Physiology (medical)",
+            "Psychiatry and Mental Health",
+            "Public Health, Environmental and Occupational Health",
+            "Pulmonary and Respiratory Medicine",
+            "Radiological and Ultrasound Technology",
+            "Radiology, Nuclear Medicine and Imaging",
+            "Rehabilitation",
+            "Reproductive Medicine",
+            "Reviews and References (medical)",
+            "Rheumatology",
+            "Surgery",
+            "Transplantation",
+            "Urology",
+            "Veterinary"
+        ],
+        "neuroscience": [
+            "Behavioral Neuroscience",
+            "Biological Psychiatry",
+            "Cellular and Molecular Neuroscience",
+            "Cognitive Neuroscience",
+            "Developmental Biology",
+            "Endocrine and Autonomic Systems",
+            "Neurology",
+            "Neuroscience",
+            "Sensory Systems"
+        ],
+        "nursing": [
+            "Advanced and Specialized Nursing",
+            "Assessment and Diagnosis",
+            "Care Planning",
+            "Community and Home Care",
+            "Critical Care Nursing",
+            "Emergency Nursing",
+            "Fundamentals and Skills",
+            "Gerontology",
+            "LPN and LVN",
+            "Maternity and Midwifery",
+            "Medical and Surgical Nursing",
+            "Nurse Assisting",
+            "Nursing",
+            "Nutrition and Dietetics",
+            "Oncology (nursing)",
+            "Pediatrics",
+            "Pharmacology (nursing)",
+            "Psychiatric Mental Health",
+            "Research and Theory",
+            "Review and Exam Preparation"
+        ],
+        "physics": [
+            "Acoustics and Ultrasonics",
+            "Astronomy and Astrophysics",
+            "Atomic and Molecular Physics, and Optics",
+            "Biophysics",
+            "Condensed Matter Physics",
+            "Energy Engineering and Power Technology",
+            "Geophysics",
+            "Instrumentation",
+            "Mathematical Physics",
+            "Nuclear and High Energy Physics",
+            "Nuclear Energy and Engineering",
+            "Physics and Astronomy",
+            "Radiation",
+            "Statistical and Nonlinear Physics",
+            "Surfaces and Interfaces"
+        ],
+        "psychology": [
+            "Applied Psychology",
+            "Clinical Psychology",
+            "Developmental and Educational Psychology",
+            "Experimental and Cognitive Psychology",
+            "Neuropsychology and Physiological Psychology",
+            "Psychology",
+            "Social Psychology"
+        ],
+        "sociology": [
+            "Anthropology",
+            "Archeology",
+            "Communication",
+            "Cultural Studies",
+            "Demography",
+            "Development",
+            "E-learning",
+            "Education",
+            "Gender Studies",
+            "Geography, Planning and Development",
+            "Health (social science)",
+            "Human Factors and Ergonomics",
+            "Law",
+            "Library and Information Sciences",
+            "Life-span and Life-course Studies",
+            "Political Science and International Relations",
+            "Public Administration",
+            "Safety Research",
+            "Social Psychology",
+            "Social Sciences",
+            "Social Work",
+            "Sociology and Political Science",
+            "Transportation",
+            "Urban Studies"
+        ],
+        "multidisciplinary": [
+            "Multidisciplinary"
+        ]
+      },
+      subcats: [],
+      seconds: 0,
+      interId: 0,
+      fileList:[]
     }
   },
   methods: {
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
     },
+    replaceChariot () {
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
+    },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -457,8 +1085,34 @@ export default {
       ])
     },
 
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
       let exportFileDefaultName = 'list_reviewer.json';
@@ -470,11 +1124,11 @@ export default {
     },
 
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
 
-      let keys = Object.keys(this.tableData[0]);
+      let keys = Object.keys(this.tempData[0]);
 
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -482,7 +1136,7 @@ export default {
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
 
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -542,6 +1196,84 @@ export default {
       this.inputValueAut = '';
     },
 
+    //Ajout field
+    handleCloseFie(fie) {
+      this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
+      this.cats.forEach(function(cat){
+        if (cat.value == fie){
+          cat.disabled = false
+        }
+      });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
+    },
+    showInputFie() {
+      this.inputVisibleFie = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmFie() {
+      let inputValueFie = this.inputValueFie;
+      if (inputValueFie) {
+        this.formPost.fields.push(inputValueFie);
+        this.cats.forEach(function(cat){
+          if (cat.value == inputValueFie){
+            cat.disabled = true
+          }
+        });
+        let temp = [];
+        this.assoc_cat[inputValueFie].forEach(function(cat){
+          temp.push({"value": cat, "disabled": false})
+        })
+        this.subcats.push({
+          "value": inputValueFie,
+          "options": temp
+        })
+      }
+      this.inputVisibleFie = false;
+      this.inputValueFie = '';
+    },
+
+
+    //Ajout subcat
+    handleCloseSub(sub) {
+      this.formPost.sub_cat.splice(this.formPost.sub_cat.indexOf(sub), 1);
+      this.subcats.forEach(function(group){
+        group.options.forEach(function(cat){
+          if (cat.value == sub){
+            cat.disabled = false
+          }
+        })
+      });
+    },
+    showInputSub() {
+      this.inputVisibleSub = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmSub() {
+      let inputValueSub = this.inputValueSub;
+      if (inputValueSub) {
+        this.formPost.sub_cat.push(inputValueSub);
+        this.subcats.forEach(function(group){
+          group.options.forEach(function(cat){
+            if (cat.value == inputValueSub){
+              cat.disabled = true
+            }
+          })
+        });
+      }
+      this.inputVisibleSub = false;
+      this.inputValueSub = '';
+      console.log(this.formPost.sub_cat);
+    },
+
     uploadSectionFile(param){
       this.progress_status_pdf = 0
       window.setInterval(()=>{
@@ -564,7 +1296,6 @@ export default {
             this.formPost.authors = res.data[0].authors
             this.progress_status_pdf = 100
         })
-      //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
       })
     },
 
@@ -574,26 +1305,57 @@ export default {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
+          this.seconds = 0
+          this.interId = window.setInterval(()=>{
+            this.seconds += 1
+          }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
-          }, 250);
+              this.progress_status += 1
+          }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+          this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
+
+          let phraseKey = ""
+          if (this.formPost.keywords.length > 0){
+            for (let x = 0; x<this.formPost.keywords.length; x++){
+              phraseKey += this.formPost.keywords[x] + " "
+            }
+            phraseKey += "are a part of "
+            for (let x = 0; x<this.formPost.fields.length; x++){
+              phraseKey += this.formPost.fields[x][0].toUpperCase() + this.formPost.fields[x].replace(/_/gi, ' ').slice(1) + " "
+            }
+            phraseKey += "."
+          }
+
+          let abstractTotal = this.formPost.abstract
+          abstractTotal += phraseKey
+          abstractTotal = this.formPost.title + '. ' + abstractTotal
+
           let res = ''
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-            .then( async (id) => {
-                console.log(id);
-
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
+                console.log(ids);
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
+                this.load_var = false
                 this.state_click = []
                 this.isExpanded = []
+                this.seconds = 0
+                clearInterval(this.interId)
                 var anchor = document.querySelector("#scroll_anchor");
                 //var anchor = this.$refs.refTable;
                 const sleep = (milliseconds) => {
@@ -602,7 +1364,6 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
-                this.load_var = false
               }
             )
           })
@@ -615,6 +1376,14 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      cancel()
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
     },
 
     getMailList() {
@@ -635,7 +1404,6 @@ export default {
 
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
 
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
@@ -672,21 +1440,29 @@ export default {
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
 
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
-      if(this.isExpanded[index] === false || this.isExpanded[index] == null){
-        this.isExpanded[index] = true;
-        this.state_click[index] = 3;
-      }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
-        this.$refs.refTable.toggleRowExpansion(row);
-        this.isExpanded[index] = true;
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
         this.state_click[index] = 0;
       }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
-        this.state_click[index] = 3;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
@@ -701,6 +1477,14 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.display = 5
+      }
+      else {
+        this.display = 3
+      }
     }
   }
 }
@@ -788,7 +1572,7 @@ hgroup {
 
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
 
@@ -805,14 +1589,17 @@ hgroup {
   margin-right: 10px;
 }
 
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
 
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -887,9 +1674,21 @@ hgroup {
   margin: 16px 0;
 }
 
-.el-popper[x-placement^=bottom] {
-  text-align: center!important;
+.el-form .el-tag {
+  font-weight: bold
 }
+
+.el-pagination {
+  padding: 10px 0!important;
+}
+
+.el-button+.el-button {
+  margin: 0!important;
+}
+
+/* .el-popper[x-placement^=bottom] {
+  text-align: center!important;
+} */
 
 @media (max-width: 1280px) {
   .app-container {
