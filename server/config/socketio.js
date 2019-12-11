@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const middleware = require('socketio-wildcard')();
-const history = require('../api/article/history/history.controller');
-const User = require('../api/user/user.model');
+const middleware = require("socketio-wildcard")();
+const history = require("../api/article/history/history.controller");
+const User = require("../api/user/user.model");
 
 /**
  * @class SocketUser
@@ -42,11 +42,11 @@ module.exports = function(io) {
 		let queryParameters = socket.handshake.query;
 		if (
 			!(
-				Object.keys(queryParameters).includes('id_article') &&
-				Object.keys(queryParameters).includes('id_user')
+				Object.keys(queryParameters).includes("id_article") &&
+				Object.keys(queryParameters).includes("id_user")
 			)
 		)
-			return next(new Error('authentication error'));
+			return next(new Error("authentication error"));
 		else next();
 	});
 
@@ -54,7 +54,7 @@ module.exports = function(io) {
 	 * @function This function permit to manage the connections.
 	 * @param socket -> Contain the client informations
 	 */
-	io.on('connection', socket => {
+	io.on("connection", socket => {
 		const queryParameters = socket.handshake.query;
 		mapUser[socket.id] = new SocketUser(
 			socket.id,
@@ -63,7 +63,7 @@ module.exports = function(io) {
 		);
 		socket.join(queryParameters.id_article);
 
-		console.log('Connection created');
+		console.log("Connection created");
 		/**
 		 * Enumeration of every events to add in history
 		 * NEW_ instruction => emit ADD_ instruction
@@ -72,12 +72,10 @@ module.exports = function(io) {
 		 * EXEC_ instruction => emit LOAD_ instruction
 		 * QUILL_NEW_ instruction => emit QUILL_EXEC_ instruction
 		 * GET_USERS instruction => emit all connected user from RESULT_USERS instruction
-		 * @type {{SET_ARTICLE: SET_ARTICLE, NEW_ASSOCIATE_EDITOR: (function(*=): *), NEW_ONE_BLOCK: (function(*=): *), REMOVE_ROW: (function(*=): *), UPDATE_STATUS: (function(*=): *), QUILL_NEW_TEXT: (function(*=): *), REMOVE_DATA: (function(*=): *), EXEC_PDF: (function(*=): *), NEW_REVIEWER: (function(*=): *), NEW_COLLABORATOR: (function(*=): *), ABSTRACT_EDIT: (function(*=): *), EXEC_CODE_PYTHON: (function(*=): *), NEW_ROW: (function(*=): *), NEW_TAG: (function(*=): *), NEW_BLOCK_TEXT: (function(*=): *), UPDATE_COLLABORATOR: (function(*=): *), REMOVE_COLLABORATOR: (function(*=): *), SECTION_EDIT: (function(*=): *), UPDATE_BLOCK_PICTURE: (function(*=): *), REMOVE_BLOCK: (function(*=): *), UPDATE_TITLE: (function(*=): *), QUILL_NEW_SELECT: (function(*=): *), NEW_BLOCK_CHART: (function(*=): *), NEW_TWO_BLOCK: (function(*=): *), EXEC_CODE_R: (function(*=): *), NEW_DATA: (function(*=): *), UPDATE_VERSION: (function(*=): *), NEW_VERSION: (function(*=): *), NEW_BLOCK_PICTURE: (function(*=): *), GET_USERS: GET_USERS, NEW_COMMENT: (function(*=): *)}}
+		 * @type {{SET_ARTICLE: SET_ARTICLE, NEW_ASSOCIATE_EDITOR: (function(*=): *), NEW_ONE_BLOCK: (function(*=): *), REMOVE_ROW: (function(*=): *), UPDATE_STATUS: (function(*=): *), QUILL_NEW_TEXT: (function(*=): *), REMOVE_DATA: (function(*=): *), EXEC_PDF: (function(*=): *), NEW_REVIEWER: (function(*=): *), NEW_COLLABORATOR: (function(*=): *), EXEC_CODE_PYTHON: (function(*=): *), NEW_ROW: (function(*=): *), NEW_TAG: (function(*=): *), NEW_BLOCK_TEXT: (function(*=): *), UPDATE_COLLABORATOR: (function(*=): *), REMOVE_COLLABORATOR: (function(*=): *), SECTION_EDIT: (function(*=): *), UPDATE_BLOCK_PICTURE: (function(*=): *), REMOVE_BLOCK: (function(*=): *), UPDATE_TITLE: (function(*=): *), QUILL_NEW_SELECT: (function(*=): *), NEW_BLOCK_CHART: (function(*=): *), NEW_TWO_BLOCK: (function(*=): *), EXEC_CODE_R: (function(*=): *), NEW_DATA: (function(*=): *), UPDATE_VERSION: (function(*=): *), NEW_VERSION: (function(*=): *), NEW_BLOCK_PICTURE: (function(*=): *), GET_USERS: GET_USERS, NEW_COMMENT: (function(*=): *)}}
 		 * @author Léo Riberon-Piatyszek
 		 */
 		const ENUM_INSTRUCTION = {
-			ABSTRACT_EDIT: data =>
-				socket.to(mapUser[socket.id].idArticle).emit(`ABSTRACT_UPDATE`, data),
 			NEW_ROW: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`ADD_ROW`, data),
 			NEW_TAG: data =>
@@ -144,7 +142,7 @@ module.exports = function(io) {
 			UPDATE_BLOCK_TITLE: data =>
 				socket
 					.to(mapUser[socket.id].idArticle)
-					.emit('MODIFY_BLOCK_TITLE', data),
+					.emit("MODIFY_BLOCK_TITLE", data),
 			EXEC_CODE_R: data =>
 				socket.to(mapUser[socket.id].idArticle).emit(`LOAD_CODE_R`, data),
 			EXEC_CODE_PYTHON: data =>
@@ -172,7 +170,7 @@ module.exports = function(io) {
 							userList.push(user);
 					socket
 						.to(mapUser[socket.id].idArticle)
-						.emit('RESULT_USERS', userList);
+						.emit("RESULT_USERS", userList);
 				} catch (e) {
 					console.error(e);
 				}
@@ -182,9 +180,9 @@ module.exports = function(io) {
 		/**
 		 * @function This function disconnect the user from the Socket Room (Article's id room)
 		 */
-		socket.on('disconnect', () => {
+		socket.on("disconnect", () => {
 			console.log(
-				'[socket.io] AN USER JUST DISCONNECTED: %s',
+				"[socket.io] AN USER JUST DISCONNECTED: %s",
 				mapUser[socket.id].id
 			);
 			delete mapUser[socket.id];
@@ -194,7 +192,7 @@ module.exports = function(io) {
 		 * @function This function is used to parse every socket's call and redirect
 		 * to the right function to answer to the socket call
 		 */
-		socket.on('*', data => {
+		socket.on("*", data => {
 			const event = data.data[0];
 			const jsonArgs = data.data[1];
 			if (Object.keys(ENUM_INSTRUCTION).includes(event)) {
