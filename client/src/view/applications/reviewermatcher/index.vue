@@ -1378,8 +1378,12 @@ export default {
             console.log(res.data[0])
             this.formPost.abstract = res.data[0].abstract
             this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
+            if (res.data[0].keywords) {
+              this.formPost.keywords = res.data[0].keywords
+            }
+            if (res.data[0].authors) {
+              this.formPost.authors = res.data[0].authors
+            }
             this.progress_status_pdf = 100
             this.dataUpload = true
         })
@@ -1438,8 +1442,6 @@ export default {
                 console.log(ids);
                 resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
-                resolve(nb_use = await axios.get('https://service.publifactory.co/api/add_nb_use/'))
-                console.log("nb_use :: " , nb_use)
                 this.progress_status = 100
                 this.tempData = res.data.slice(0, 50)
                 this.pagin = 10
