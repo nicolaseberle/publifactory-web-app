@@ -4,7 +4,7 @@
       <div class="bandeau">ALPHA v0.3.3</div>
       <el-row :gutter='50' >
         <div class='head'>
-          <h1>Reviewer search engine </h1>
+          <h1>Reviewer search engine</h1>
           <h2>Getting the most relevant reviewers for your paper</h2>
         </div>
       </el-row>
