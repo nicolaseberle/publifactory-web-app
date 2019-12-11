@@ -16,8 +16,8 @@
         title="Intern error"
         :visible.sync="dialogVisibleError"
         width="30%">
-        <span>{{ errorMessage }}</span><br>
-        <span>Sorry for the problem, please try again.</span>
+        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
+        <span v-else>Request cancelled</span>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
         </span>
