@@ -1369,6 +1369,7 @@ export default {
           abstractTotal = this.formPost.title + '. ' + abstractTotal
 
           let res = ''
+          this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
             axios.get(
               'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
@@ -1422,7 +1423,13 @@ export default {
       this.fileList = []
       cancel()
     },
-
+    updateMetrics(_fields, _title) {
+      const formData = {fields: _fields, title: _title }
+      console.log(formData)
+      axios.post('/api/activity/create', formData)
+      .then( res => {console.log(res)
+        })
+    },
     getMailList() {
       for (let x=0; x<10; x++) {
         this.listMails.push({
