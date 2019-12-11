@@ -3,11 +3,27 @@
     <div class="app-container">
       <div class="bandeau">ALPHA v0.3.3</div>
       <hgroup>
-        <h1>Search Reviewers</h1>
-        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+        </div>
       </hgroup>
 
-      <el-row :gutter='30' style='margin-top=80px;'>
+      <!-- popup message erreur -->
+      <el-dialog
+        title="Intern error"
+        :visible.sync="dialogVisibleError"
+        width="30%">
+        <span>{{ errorMessage }}</span><br>
+        <span>Sorry for the problem, please try again.</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
         <div class='description-container'>
           <div class='description'>
@@ -32,7 +48,7 @@
           </div>
         </div>
         </el-col>
-      </el-row>
+      </el-row> -->
 
       <div>
       <h2>Load the article</h2>
@@ -196,7 +212,7 @@
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
-          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}s)</p>
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}/~{{this.onSeconds}}s)</p>
           <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
@@ -487,6 +503,8 @@ export default {
         // ,issn: ''
       },
       centerDialogVisible: false,
+      dialogVisibleError: false,
+      errorMessage: "",
       state_click: [],
       isExpanded: [],
       progress_status: 0,
@@ -1008,8 +1026,28 @@ export default {
             "Multidisciplinary"
         ]
       },
+      time_cat: {
+        "art_and_humanities": 25,
+        "biology": 80,
+        "business_and_economics": 20,
+        "computer_science": 30,
+        "chemistry": 50,
+        "earth_and_planetary_sciences": 20,
+        "engineering": 40,
+        "environmental_science": 25,
+        "health_profession": 25,
+        "materials_science": 25,
+        "mathematics": 20,
+        "medicine": 70,
+        "neuroscience": 45,
+        "nursing": 25,
+        "physics": 32,
+        "psychology": 25,
+        "sociology": 25
+      },
       subcats: [],
       seconds: 0,
+      onSeconds: 0,
       interId: 0,
       pdfInter: 0,
       fileList:[],
@@ -1306,6 +1344,22 @@ export default {
       console.log(this.formPost.sub_cat);
     },
 
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
+    },
+
     uploadSectionFile(param){
       this.progress_status_pdf = 0
       this.pdfInter = window.setInterval(()=>{
@@ -1341,6 +1395,7 @@ export default {
           this.isLoading = true
           this.progress_status = 0
           this.seconds = 0
+          this.onSeconds = 0
           this.interId = window.setInterval(()=>{
             this.seconds += 1
           }, 1000)
@@ -1364,6 +1419,12 @@ export default {
             phraseKey += "."
           }
 
+          for (let x = 0; x<this.formPost.fields.length; x++){
+            if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
+              this.onSeconds = this.time_cat[this.formPost.fields[x]]
+            }
+          }
+
           let abstractTotal = this.formPost.abstract
           abstractTotal += phraseKey
           abstractTotal = this.formPost.title + '. ' + abstractTotal
@@ -1377,6 +1438,8 @@ export default {
                 console.log(ids);
                 resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
+                resolve(nb_use = await axios.get('https://service.publifactory.co/api/add_nb_use/'))
+                console.log("nb_use :: " , nb_use)
                 this.progress_status = 100
                 this.tempData = res.data.slice(0, 50)
                 this.pagin = 10
@@ -1397,6 +1460,12 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
+              },
+              async (error) => {
+                this.dialogVisibleError = true;
+                this.errorMessage = error.message;
+                this.resetForm('formPost');
+                console.log("error ::", error);
               }
             )
           })
@@ -1405,22 +1474,6 @@ export default {
           return false;
         }
       });
-    },
-
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.subcats = [];
-      this.cats.forEach(function(cat){
-        cat.disabled = false
-      });
-      this.load_var = false
-      this.isLoading = false
-      clearInterval(this.interId)
-      clearInterval(this.pdfInter)
-      this.dataUpload = false
-      this.progress_status_pdf = 0
-      this.fileList = []
-      cancel()
     },
 
     getMailList() {
@@ -1574,6 +1627,17 @@ hgroup {
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
+}
+
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
 }
 
 .el-tag  {
