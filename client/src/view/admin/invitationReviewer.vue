@@ -42,7 +42,7 @@
       </el-table>
 
     </el-row>
-
+{{metricsFinal}}
 
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
@@ -176,6 +176,8 @@ export default{
       relance: [],
       dataFinal: [],
       isData: false,
+      metricsFinal: [],
+      isMetrics: false,
       dataTest: [
         {
           "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
@@ -345,6 +347,14 @@ export default{
         })
       })
     },
+    getMetrics(){
+      axios.get('/api/activity?page=1&count=10')
+      .then( async (res) => {
+        this.metricsFinal = res.data.data;
+        console.log(this.metricsFinal);
+        this.isMetrics = true;
+      })
+    },
     actionHandleCommand(command) {
       if (command == "remove") {
         console.log(command);
@@ -364,6 +374,7 @@ export default{
     }
   },
   async mounted() {
+    await this.getMetrics()
     await this.getRequests()
   }
 }
