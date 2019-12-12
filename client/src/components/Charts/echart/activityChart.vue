@@ -96,7 +96,7 @@
         }
     },
     legend: {
-        data:['Biology','Medicine','Mathematics','Physics']
+        data:['Total']
     },
     toolbox: {
         feature: {
