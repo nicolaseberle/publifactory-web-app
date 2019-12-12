@@ -1,16 +1,12 @@
 const { Request } = require('../model');
 
-async function create({ fields, title }) {
+async function create( title, fields ) {
 	const newRequest = new Request({
-		fields,
-    title
-	});
-	newRequest.history.push({
-    fields:fields,
     title : title,
+		fields: fields,
 		status: 'submitted',
-		date: new Date().toUTCString()
 	});
+	console.log(newRequest)
 
 	await newRequest.save();
 	return newRequest;

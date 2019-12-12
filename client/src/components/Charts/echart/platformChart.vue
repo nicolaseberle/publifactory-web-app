@@ -5,6 +5,7 @@
 <script>
   import echarts from 'echarts'
   import resize from '../mixins/resize'
+  import axios from 'axios'
 
   export default {
   mixins: [resize],
@@ -47,7 +48,7 @@
       this.chart.setOption(
     {
     title: {
-        text: 'Activity'
+        text: ''
     },
     tooltip : {
         trigger: 'axis',
