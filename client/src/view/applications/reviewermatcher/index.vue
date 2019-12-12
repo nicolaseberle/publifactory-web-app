@@ -1,19 +1,64 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-show="!loggedIn" class="bandeau">ALPHA v0.1.3</div>
+      <div class="bandeau">ALPHA v0.3.3</div>
       <hgroup>
-        <h1>Search Reviewers</h1>
-        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+        </div>
       </hgroup>
+
+      <!-- popup message erreur -->
+      <el-dialog
+        title="Intern error"
+        :visible.sync="dialogVisibleError"
+        width="30%">
+        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
+        <span v-else>Request cancelled</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- <el-row :gutter='30' style='margin-top=80px;'>
+        <el-col :span='15'>
+        <div class='description-container'>
+          <div class='description'>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="What is it?" name="1">
+                <div>
+                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="How does it work ?" name="2">
+                <div>
+                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="Why a relevance test ?" name="3">
+                <div>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
+                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+        </el-col>
+      </el-row> -->
+
       <div>
       <h2>Load the article</h2>
       <p>Insert your publication informations (title, authors, abstract or keywords)</p>
       <p>You can also upload the pdf to extract the different fields </p>
 
       <el-row :gutter='30' style='margin-top=80px;'>
-      <el-col :span='12'>
-      <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+      <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
+      <el-col :span='15'>
+      <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
         <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
@@ -76,8 +121,9 @@
 
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress>
-          <el-button @click="resetForm('formPost')" class="button_tab">Reset</el-button>
+          <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}/~{{this.onSeconds}}s)</p>
+          <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
       </el-form>
@@ -201,13 +247,23 @@
             </template>
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="Score"
             prop="score"
             width="100">
             <template slot-scope="props">
               <p>{{ props.row.score }}</p>
-              <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
+            </template>
+          </el-table-column> -->
+
+          <el-table-column
+            label="Fields"
+            prop="fields">
+            <template slot-scope="props">
+              <div v-for="field in props.row.fields">
+                <p v-if="field == 'medicine1' || field == 'medicine2'">Medicine</p>
+                <p v-else>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
             </template>
           </el-table-column>
 
@@ -318,6 +374,14 @@ import researcherCard from './researcher_card'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
 
+// Import JSON
+import cats_json from './json/cats.json'
+import assoc_cat_json from './json/assoc_cat.json'
+import time_cat_json from './json/time_cat.json'
+
+const CancelToken = axios.CancelToken;
+let cancel;
+
 export default {
   components: {researcherCard,requestView},
   computed: {
@@ -339,6 +403,8 @@ export default {
         // ,issn: ''
       },
       centerDialogVisible: false,
+      dialogVisibleError: false,
+      errorMessage: "",
       state_click: [],
       isExpanded: [],
       progress_status: 0,
@@ -380,7 +446,18 @@ export default {
       rowInfos: {},
       requestInfos: {},
       listMails: [],
-      requestMails: {}
+      requestMails: {},
+      cats: cats_json,
+      assoc_cat: assoc_cat_json,
+      time_cat: time_cat_json,
+      subcats: [],
+      seconds: 0,
+      onSeconds: 0,
+      interId: 0,
+      pdfInter: 0,
+      fileList:[],
+      activeNames: "",
+      dataUpload: false
     }
   },
   methods: {
@@ -517,7 +594,33 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.formPost.keywords.push(inputValue);
+        if (inputValue.includes(",")) {
+          let temp = inputValue.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes("/")) {
+          let temp = inputValue.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes("|")) {
+          let temp = inputValue.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes(";")) {
+          let temp = inputValue.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.keywords.push(inputValue);
+        }
       }
       this.inputVisible = false;
       this.inputValue = '';
@@ -536,15 +639,140 @@ export default {
     handleInputConfirmAut() {
       let inputValueAut = this.inputValueAut;
       if (inputValueAut) {
-        this.formPost.authors.push(inputValueAut);
+        if (inputValueAut.includes(",")) {
+          let temp = inputValueAut.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("/")) {
+          let temp = inputValueAut.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("|")) {
+          let temp = inputValueAut.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes(";")) {
+          let temp = inputValueAut.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.authors.push(inputValueAut);
+        }
       }
       this.inputVisibleAut = false;
       this.inputValueAut = '';
     },
 
-    uploadSectionFile(param){
+    //Ajout field
+    handleCloseFie(fie) {
+      this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
+      this.cats.forEach(function(cat){
+        if (cat.value == fie){
+          cat.disabled = false
+        }
+      });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
+    },
+    showInputFie() {
+      this.inputVisibleFie = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmFie() {
+      let inputValueFie = this.inputValueFie;
+      if (inputValueFie) {
+        this.formPost.fields.push(inputValueFie);
+        this.cats.forEach(function(cat){
+          if (cat.value == inputValueFie){
+            cat.disabled = true
+          }
+        });
+        let temp = [];
+        this.assoc_cat[inputValueFie].forEach(function(cat){
+          temp.push({"value": cat, "disabled": false})
+        })
+        this.subcats.push({
+          "value": inputValueFie,
+          "options": temp
+        })
+      }
+      this.inputVisibleFie = false;
+      this.inputValueFie = '';
+    },
+
+
+    //Ajout subcat
+    handleCloseSub(sub) {
+      this.formPost.sub_cat.splice(this.formPost.sub_cat.indexOf(sub), 1);
+      this.subcats.forEach(function(group){
+        group.options.forEach(function(cat){
+          if (cat.value == sub){
+            cat.disabled = false
+          }
+        })
+      });
+    },
+    showInputSub() {
+      this.inputVisibleSub = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmSub() {
+      let inputValueSub = this.inputValueSub;
+      if (inputValueSub) {
+        this.formPost.sub_cat.push(inputValueSub);
+        this.subcats.forEach(function(group){
+          group.options.forEach(function(cat){
+            if (cat.value == inputValueSub){
+              cat.disabled = true
+            }
+          })
+        });
+      }
+      this.inputVisibleSub = false;
+      this.inputValueSub = '';
+      console.log(this.formPost.sub_cat);
+    },
+
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
       this.progress_status_pdf = 0
-      window.setInterval(()=>{
+      this.fileList = []
+      cancel()
+    },
+
+    uploadSectionFile(param){
+      this.formPost.keywords = []
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.progress_status_pdf = 0
+      this.pdfInter = window.setInterval(()=>{
         if (this.progress_status_pdf<100)
           this.progress_status_pdf = this.progress_status_pdf +1
       }, 500);
@@ -560,9 +788,15 @@ export default {
             console.log(res.data[0])
             this.formPost.abstract = res.data[0].abstract
             this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
+            if (res.data[0].keywords) {
+              this.formPost.keywords = res.data[0].keywords
+            }
+            if (res.data[0].authors) {
+              this.formPost.authors = res.data[0].authors
+            }
             this.progress_status_pdf = 100
+            this.dataUpload = true
+            clearInterval(this.pdfInter)
         })
       //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
       })
@@ -575,13 +809,43 @@ export default {
           this.load_var = true
           this.isData = false
           this.progress_status = 0
+          this.seconds = 0
+          this.onSeconds = 0
+          this.interId = window.setInterval(()=>{
+            this.seconds += 1
+          }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
               this.progress_status = this.progress_status +1
           }, 250);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+          this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
+
+          let phraseKey = ""
+          if (this.formPost.keywords.length > 0){
+            for (let x = 0; x<this.formPost.keywords.length; x++){
+              phraseKey += this.formPost.keywords[x] + " "
+            }
+            phraseKey += "are a part of "
+            for (let x = 0; x<this.formPost.fields.length; x++){
+              phraseKey += this.formPost.fields[x][0].toUpperCase() + this.formPost.fields[x].replace(/_/gi, ' ').slice(1) + " "
+            }
+            phraseKey += "."
+          }
+
+          for (let x = 0; x<this.formPost.fields.length; x++){
+            if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
+              this.onSeconds = this.time_cat[this.formPost.fields[x]]
+            }
+          }
+
+          let abstractTotal = this.formPost.abstract
+          abstractTotal += phraseKey
+          abstractTotal = this.formPost.title + '. ' + abstractTotal
+
           let res = ''
+          this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
             .then( async (id) => {
@@ -602,7 +866,12 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
-                this.load_var = false
+              },
+              async (error) => {
+                this.dialogVisibleError = true;
+                this.errorMessage = error.message;
+                this.resetForm('formPost');
+                console.log("error ::", error);
               }
             )
           })
@@ -613,10 +882,13 @@ export default {
       });
     },
 
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    updateMetrics(_fields, _title) {
+      const formData = {fields: _fields, title: _title }
+      console.log(formData)
+      axios.post('/api/activity/create', formData)
+      .then( res => {console.log(res)
+        })
     },
-
     getMailList() {
       for (let x=0; x<10; x++) {
         this.listMails.push({
@@ -755,6 +1027,17 @@ hgroup {
   border-top: 1px solid lightgray;
 }
 
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
+}
+
 .el-tag  {
     margin-right: 10px
   }
@@ -836,6 +1119,41 @@ hgroup {
     .c_red {
       background-color: #F56C6C;
     }
+
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
+    margin: 0;
+}
 
 .round {
   width: 13px;

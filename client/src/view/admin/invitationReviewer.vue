@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='app-container'>
     <el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
       <el-table
@@ -174,6 +174,10 @@ export default{
         }
       ],
       relance: [],
+      dataFinal: [],
+      isData: false,
+      metricsFinal: [],
+      isMetrics: false,
       dataTest: [
         {
           "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
@@ -380,5 +384,19 @@ tbody {
 .el-form-item__label {
   text-align: left;
 }
+.clearfix:before,
+  .clearfix:after {
+    background-color: white;
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .clearfix, .el-card .el-card__header{
+    background-color: white;
+    font-size: 1.2rem;
+  }
 
 </style>

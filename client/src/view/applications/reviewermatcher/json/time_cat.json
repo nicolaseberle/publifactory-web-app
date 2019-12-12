@@ -1,0 +1,19 @@
+{
+  "art_and_humanities": 25,
+  "biology": 80,
+  "business_and_economics": 20,
+  "computer_science": 30,
+  "chemistry": 50,
+  "earth_and_planetary_sciences": 20,
+  "engineering": 40,
+  "environmental_science": 25,
+  "health_profession": 25,
+  "materials_science": 25,
+  "mathematics": 20,
+  "medicine": 70,
+  "neuroscience": 45,
+  "nursing": 25,
+  "physics": 32,
+  "psychology": 25,
+  "sociology": 25
+}

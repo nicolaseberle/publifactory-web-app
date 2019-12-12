@@ -1,21 +1,51 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.1.3</div>
+      <div class="bandeau">ALPHA v0.3.3</div>
       <el-row :gutter='50' >
         <div class='head'>
-          <h1>Reviewer search engine </h1>
+          <h1>Reviewer search engine</h1>
           <h2>Getting the most relevant reviewers for your paper</h2>
         </div>
       </el-row>
-      <el-row :gutter='50' style='margin-top:60px'>
+
+      <el-row :gutter='30' style='margin-top=80px;'>
+        <el-col :span='15'>
+        <div class='description-container'>
+          <div class='description'>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="What is it?" name="1">
+                <div>
+                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="How does it work ?" name="2">
+                <div>
+                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="Why a relevance test ?" name="3">
+                <div>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
+                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+        </el-col>
+      </el-row>
 
 
-      <el-col :span='12'>
+
+
         <h2>Load the article</h2>
         <p>Insert your publication informations (title, authors, abstract or keywords)</p>
         <p>You can also upload the pdf to extract the different fields </p>
-      <el-form  label-width="100px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+        <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
+      <el-row :gutter='30' style='margin-top:30px'>
+      <el-col :span='15'>
+      <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
         <el-form-item label="Title" prop="title">
           <el-input v-model="formPost.title"></el-input>
@@ -84,37 +114,22 @@
 
       </el-form>
       </el-col>
-      <el-col :span='12'>
-        <div class='description-container'>
-          <div class='description'>
-            <el-collapse v-model="activeNames" @change="handleChange">
-              <el-collapse-item title="What is it?" name="1">
-                <div>
-                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item title="How does it work ?" name="2">
-                <div>
-                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item title="Why a relevance test ?" name="3">
-                <div>
-                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
-                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
-                </div>
-              </el-collapse-item>
-            </el-collapse>
-            <!--
-            <h2>What is it?</h2>
-            <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
-            <h2>How does it work ?</h2>
-            <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
-            <h2>Why a relevance test ?</h2>
-            <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match.</p>
-            <p><b>Warning:</b> the conflict of interest is not completely operational</p>-->
-          </div>
-        </div>
+      <el-col :span='1'>
+        <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
+      </el-col>
+      <el-col :span='8'>
+        <el-upload
+        class="upload-demo"
+        drag
+        :on-change="uploadChange"
+        :file-list="fileList"
+        action=""
+        :http-request="uploadSectionFile">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
+        <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
+      </el-upload>
+      <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
       </el-col>
 <!--
         <el-col :span='1'>
@@ -345,7 +360,480 @@ export default {
       id: '',
       rowInfos: {},
       requestInfos: {},
-      activeNames: ""
+      activeNames: "",
+      cats: [
+        {
+          value: "art_and_humanities",
+          label: "Art and Humanities",
+          disabled: false
+        },
+        {
+          value: "biology",
+          label: "Biology",
+          disabled: false
+        },
+        {
+          value: "business_and_economics",
+          label: "Business and Economics",
+          disabled: false
+        },
+        {
+          value: "chemistry",
+          label: "Chemistry",
+          disabled: false
+        },
+        {
+          value: "computer_science",
+          label: "Computer Science",
+          disabled: false
+        },
+        {
+          value: "earth_and_planetary_sciences",
+          label: "Earth and Planetary Sciences",
+          disabled: false
+        },
+        {
+          value: "engineering",
+          label: "Engineering",
+          disabled: false
+        },
+        {
+          value: "environmental_science",
+          label: "Environmental Science",
+          disabled: false
+        },
+        {
+          value: "health_profession",
+          label: "Health Profession",
+          disabled: false
+        },
+        {
+          value: "materials_science",
+          label: "Materials Science",
+          disabled: false
+        },
+        {
+          value: "mathematics",
+          label: "Mathematics",
+          disabled: false
+        },
+        {
+          value: "medicine",
+          label: "Medicine",
+          disabled: false
+        },
+        {
+          value: "neuroscience",
+          label: "Neuroscience",
+          disabled: false
+        },
+        {
+          value: "nursing",
+          label: "Nursing",
+          disabled: false
+        },
+        {
+          value: "physics",
+          label: "Physics",
+          disabled: false
+        },
+        {
+          value: "psychology",
+          label: "Psychology",
+          disabled: false
+        },
+        {
+          value: "sociology",
+          label: "Sociology",
+          disabled: false
+        }
+        // ,
+        // {
+        //   value: "multidisciplinary",
+        //   label: "Multidisciplinary",
+        //   disabled: false
+        // }
+      ],
+      assoc_cat: {
+        "art_and_humanities": [
+            "Archeology (arts and humanities)",
+            "Arts and Humanities",
+            "Classics",
+            "Conservation",
+            "History",
+            "History and Philosophy of Science",
+            "Issues, Ethics and Legal Aspects",
+            "Language and Linguistics",
+            "Linguistics and Language",
+            "Literature and Literary Theory",
+            "Museology",
+            "Music",
+            "Philosophy",
+            "Religious Studies",
+            "Visual Arts and Performing Arts"
+        ],
+        "biology": [
+            "Aging",
+            "Agricultural and Biological Sciences",
+            "Agronomy and Crop Science",
+            "Animal Science and Zoology",
+            "Applied Microbiology and Biotechnology",
+            "Aquatic Science",
+            "Behavioral Neuroscience",
+            "Biochemistry",
+            "Biochemistry, Genetics and Molecular Biology",
+            "Bioengineering",
+            "Biomaterials",
+            "Biomedical Engineering",
+            "Biophysics",
+            "Biotechnology",
+            "Cancer Research",
+            "Cell Biology",
+            "Clinical Biochemistry",
+            "Developmental Biology",
+            "Developmental Neuroscience",
+            "Drug Discovery",
+            "Ecology, Evolution, Behavior and Systematics",
+            "Food Animals",
+            "Food Science",
+            "Forestry",
+            "Genetics",
+            "Health, Toxicology and Mutagenesis",
+            "Horticulture",
+            "Immunology",
+            "Immunology and Microbiology",
+            "Insect Science",
+            "Microbiology",
+            "Molecular Biology",
+            "Parasitology",
+            "Pharmaceutical Science",
+            "Pharmacology",
+            "Pharmacology, Toxicology and Pharmaceutics",
+            "Pharmacy",
+            "Physiology",
+            "Plant Science",
+            "Small Animals",
+            "Soil Science",
+            "Structural Biology",
+            "Toxicology",
+            "Virology"
+        ],
+        "business_and_economics": [
+            "Accounting",
+            "Business and International Management",
+            "Business, Management and Accounting",
+            "Decision Sciences",
+            "Economics and Econometrics",
+            "Economics, Econometrics and Finance",
+            "Finance",
+            "Industrial Relations",
+            "Leadership and Management",
+            "Management of Technology and Innovation",
+            "Management Science and Operations Research",
+            "Management, Monitoring, Policy and Law",
+            "Marketing",
+            "Organizational Behavior and Human Resource Management",
+            "Strategy and Management",
+            "Tourism, Leisure and Hospitality Management"
+        ],
+        "computer_science": [
+            "Artificial Intelligence",
+            "Computational Mechanics",
+            "Computational Theory and Mathematics",
+            "Computer Graphics and Computer-Aided Design",
+            "Computer Networks and Communications",
+            "Computer Science",
+            "Computer Science Applications",
+            "Computer Vision and Pattern Recognition",
+            "Computers in Earth Sciences",
+            "Hardware and Architecture",
+            "Human-Computer Interaction",
+            "Information Systems",
+            "Information Systems and Management",
+            "Management Information Systems",
+            "Modeling and Simulation",
+            "Signal Processing",
+            "Software",
+            "Theoretical Computer Science"
+        ],
+        "chemistry": [
+            "Analytical Chemistry",
+            "Biochemistry",
+            "Biochemistry, Genetics and Molecular Biology",
+            "Catalysis",
+            "Chemical Engineering",
+            "Chemistry",
+            "Clinical Biochemistry",
+            "Colloid and Surface Chemistry",
+            "Electrochemistry",
+            "Environmental Chemistry",
+            "Filtration and Separation",
+            "Fluid Flow and Transfer Processes",
+            "Inorganic Chemistry",
+            "Materials Chemistry",
+            "Organic Chemistry",
+            "Physical and Theoretical Chemistry",
+            "Process Chemistry and Technology",
+            "Spectroscopy"
+        ],
+        "earth_and_planetary_sciences": [
+            "Atmospheric Science",
+            "Earth and Planetary Sciences",
+            "Earth-Surface Processes",
+            "Economic Geology",
+            "Geochemistry and Petrology",
+            "Geology",
+            "Geophysics",
+            "Geotechnical Engineering and Engineering Geology",
+            "Oceanography",
+            "Paleontology",
+            "Space and Planetary Science",
+            "Stratigraphy"
+        ],
+        "engineering": [
+            "Aerospace Engineering",
+            "Architecture",
+            "Automotive Engineering",
+            "Bioengineering",
+            "Biomedical Engineering",
+            "Building and Construction",
+            "Civil and Structural Engineering",
+            "Control and Systems Engineering",
+            "Electrical and Electronic Engineering",
+            "Engineering",
+            "Environmental Engineering",
+            "Filtration and Separation",
+            "Industrial and Manufacturing Engineering",
+            "Mechanical Engineering",
+            "Mechanics of Materials",
+            "Media Technology",
+            "Ocean Engineering",
+            "Safety, Risk, Reliability and Quality"
+        ],
+        "environmental_science": [
+            "Ecological Modeling",
+            "Ecology",
+            "Environmental Chemistry",
+            "Environmental Engineering",
+            "Environmental Science",
+            "Global and Planetary Change",
+            "Nature and Landscape Conservation",
+            "Pollution",
+            "Renewable Energy, Sustainability and the Environment",
+            "Waste Management and Disposal",
+            "Water Science and Technology"
+        ],
+        "health_profession": [
+            "Chiropractics",
+            "Complementary and Alternative Medicine",
+            "Emergency Medical Services",
+            "Health Information Management",
+            "Health Professions",
+            "Medical Assisting and Transcription",
+            "Medical Laboratory Technology",
+            "Medical Terminology",
+            "Occupational Therapy",
+            "Optometry",
+            "Pharmacy",
+            "Physical Therapy, Sports Therapy and Rehabilitation",
+            "Podiatry",
+            "Radiological and Ultrasound Technology",
+            "Respiratory Care",
+            "Speech and Hearing",
+            "Sports Science"
+        ],
+        "materials_science": [
+            "Biomaterials",
+            "Ceramics and Composites",
+            "Electronic, Optical and Magnetic Materials",
+            "Energy",
+            "Fuel Technology",
+            "Materials Chemistry",
+            "Materials Science",
+            "Mechanics of Materials",
+            "Metals and Alloys",
+            "Nanoscience and Nanotechnology",
+            "Polymers and Plastics",
+            "Surfaces, Coatings and Films"
+        ],
+        "mathematics": [
+            "Algebra and Number Theory",
+            "Analysis",
+            "Applied Mathematics",
+            "Computational Mathematics",
+            "Computational Theory and Mathematics",
+            "Control and Optimization",
+            "Discrete Mathematics and Combinatorics",
+            "Geometry and Topology",
+            "Logic",
+            "Mathematical Physics",
+            "Mathematics",
+            "Numerical Analysis",
+            "Statistics and Probability",
+            "Statistics, Probability and Uncertainty"
+        ],
+        "medicine": [
+            "Anatomy",
+            "Anesthesiology and Pain Medicine",
+            "Biochemistry (medical)",
+            "Biomedical Engineering",
+            "Cardiology and Cardiovascular Medicine",
+            "Chemical Health and Safety",
+            "Community and Home Care",
+            "Complementary and Manual Therapy",
+            "Critical Care and Intensive Care Medicine",
+            "Dental Hygiene",
+            "Dentistry",
+            "Dermatology",
+            "Drug Discovery",
+            "Drug Guides",
+            "Embryology",
+            "Emergency Medicine",
+            "Endocrinology",
+            "Epidemiology",
+            "Equine",
+            "Family Practice",
+            "Gastroenterology",
+            "Genetics (clinical)",
+            "Geriatrics and Gerontology",
+            "Gerontology",
+            "Health Informatics",
+            "Health Policy",
+            "Health, Toxicology and Mutagenesis",
+            "Hematology",
+            "Hepatology",
+            "Histology",
+            "Immunology and Allergy",
+            "Infectious Diseases",
+            "Internal Medicine",
+            "Medicine",
+            "Medicine (miscellaneous)",
+            "Microbiology (medical)",
+            "Molecular Medicine",
+            "Nephrology",
+            "Neurology (clinical)",
+            "Obstetrics and Gynecology",
+            "Oncology",
+            "Ophthalmology",
+            "Oral Surgery",
+            "Orthodontics",
+            "Orthopedics and Sports Medicine",
+            "Otorhinolaryngology",
+            "Pathology and Forensic Medicine",
+            "Pediatrics, Perinatology and Child Health",
+            "Periodontics",
+            "Pharmacology (medical)",
+            "Physiology (medical)",
+            "Psychiatry and Mental Health",
+            "Public Health, Environmental and Occupational Health",
+            "Pulmonary and Respiratory Medicine",
+            "Radiological and Ultrasound Technology",
+            "Radiology, Nuclear Medicine and Imaging",
+            "Rehabilitation",
+            "Reproductive Medicine",
+            "Reviews and References (medical)",
+            "Rheumatology",
+            "Surgery",
+            "Transplantation",
+            "Urology",
+            "Veterinary"
+        ],
+        "neuroscience": [
+            "Behavioral Neuroscience",
+            "Biological Psychiatry",
+            "Cellular and Molecular Neuroscience",
+            "Cognitive Neuroscience",
+            "Developmental Biology",
+            "Endocrine and Autonomic Systems",
+            "Neurology",
+            "Neuroscience",
+            "Sensory Systems"
+        ],
+        "nursing": [
+            "Advanced and Specialized Nursing",
+            "Assessment and Diagnosis",
+            "Care Planning",
+            "Community and Home Care",
+            "Critical Care Nursing",
+            "Emergency Nursing",
+            "Fundamentals and Skills",
+            "Gerontology",
+            "LPN and LVN",
+            "Maternity and Midwifery",
+            "Medical and Surgical Nursing",
+            "Nurse Assisting",
+            "Nursing",
+            "Nutrition and Dietetics",
+            "Oncology (nursing)",
+            "Pediatrics",
+            "Pharmacology (nursing)",
+            "Psychiatric Mental Health",
+            "Research and Theory",
+            "Review and Exam Preparation"
+        ],
+        "physics": [
+            "Acoustics and Ultrasonics",
+            "Astronomy and Astrophysics",
+            "Atomic and Molecular Physics, and Optics",
+            "Biophysics",
+            "Condensed Matter Physics",
+            "Energy Engineering and Power Technology",
+            "Geophysics",
+            "Instrumentation",
+            "Mathematical Physics",
+            "Nuclear and High Energy Physics",
+            "Nuclear Energy and Engineering",
+            "Physics and Astronomy",
+            "Radiation",
+            "Statistical and Nonlinear Physics",
+            "Surfaces and Interfaces"
+        ],
+        "psychology": [
+            "Applied Psychology",
+            "Clinical Psychology",
+            "Developmental and Educational Psychology",
+            "Experimental and Cognitive Psychology",
+            "Neuropsychology and Physiological Psychology",
+            "Psychology",
+            "Social Psychology"
+        ],
+        "sociology": [
+            "Anthropology",
+            "Archeology",
+            "Communication",
+            "Cultural Studies",
+            "Demography",
+            "Development",
+            "E-learning",
+            "Education",
+            "Gender Studies",
+            "Geography, Planning and Development",
+            "Health (social science)",
+            "Human Factors and Ergonomics",
+            "Law",
+            "Library and Information Sciences",
+            "Life-span and Life-course Studies",
+            "Political Science and International Relations",
+            "Public Administration",
+            "Safety Research",
+            "Social Psychology",
+            "Social Sciences",
+            "Social Work",
+            "Sociology and Political Science",
+            "Transportation",
+            "Urban Studies"
+        ],
+        "multidisciplinary": [
+            "Multidisciplinary"
+        ]
+      },
+      subcats: [],
+      seconds: 0,
+      interId: 0,
+      pdfInter: 0,
+      fileList:[],
+      progress_status_pdf: 0,
+      dataUpload: false
     }
   },
   methods: {
@@ -425,6 +913,62 @@ export default {
           ]
         )
       ])
+    },
+
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
+    },
+    uploadSectionFile(param){
+      this.progress_status_pdf = 0
+      this.pdfInter = window.setInterval(()=>{
+        if (this.progress_status_pdf<100)
+          this.progress_status_pdf = this.progress_status_pdf +1
+      }, 500);
+      let fileObject = param.file;
+      let formData = new FormData();
+      formData.append("pdf_file", fileObject);
+      let res = ''
+
+      new Promise ((resolve,reject) => {
+        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+        .then( async (id) => {
+            console.log(id);
+            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
+            console.log(res.data[0])
+            this.formPost.abstract = res.data[0].abstract
+            this.formPost.title = res.data[0].title
+            this.formPost.keywords = res.data[0].keywords
+            this.formPost.authors = res.data[0].authors
+            this.progress_status_pdf = 100
+            this.dataUpload = true
+        })
+      })
     },
 
     exportListJson() {
@@ -512,6 +1056,24 @@ export default {
             this.formPost.authors.push(temp[x]);
           }
         }
+        else if (inputValueAut.includes("/")) {
+          let temp = inputValueAut.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("|")) {
+          let temp = inputValueAut.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes(";")) {
+          let temp = inputValueAut.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
         else {
           this.formPost.authors.push(inputValueAut);
         }
@@ -560,6 +1122,7 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           let res = ''
+          this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
             .then( async (id) => {
@@ -610,6 +1173,18 @@ export default {
 
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
     },
 
     displayInfos(row) {
@@ -803,6 +1378,7 @@ strong {
 }
 .description {
   padding: 50px;
+  margin-top: 30px;
 }
 .description > p {
     margin: 0;

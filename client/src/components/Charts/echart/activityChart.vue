@@ -1,10 +1,15 @@
 <template>
+  <div>
   <div :class="className" :id="id" :style="{height:height,width:width}"/>
+  </div>
 </template>
 
 <script>
   import echarts from 'echarts'
   import resize from '../mixins/resize'
+  import axios from 'axios'
+  import moment from 'moment'
+  import _ from 'underscore'
 
   export default {
   mixins: [resize],
@@ -28,11 +33,20 @@
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      metricsFinal: [],
+      isMetrics: false,
+      data: '',
+      enumerateDaysBetweenDates: [],
+      array_date: [],
+      array_occurence: []
     }
   },
-  mounted() {
-    this.initChart()
+  async mounted() {
+    await this.getMetrics()
+    await this.getOccurenceByDate()
+
+
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,12 +56,35 @@
     this.chart = null
   },
   methods: {
+    getOccurenceByDate() {
+    axios.get('/api/activity/occurenceByDate??page=1&count=10').then(async(res)=>{
+        let array = res.data.data
+        this.array_date = []
+        this.array_occurence = []
+
+        console.log("getOccurenceByDate")
+        console.log(res.data.data)
+        array.forEach(element => {
+            this.array_occurence.push(element.click)
+            this.array_date.push(moment(element.date).format("DD/MM/YYYY"))
+          })
+        this.initChart()
+      })
+    },
+    getMetrics(){
+      axios.get('/api/activity?page=1&count=10')
+      .then( async (res) => {
+        this.metricsFinal = res.data.data;
+        console.log(this.metricsFinal);
+        this.isMetrics = true;
+      })
+    },
     initChart() {
       this.chart = echarts.init(document.getElementById(this.id))
       this.chart.setOption(
     {
     title: {
-        text: 'Activity'
+        text: ''
     },
     tooltip : {
         trigger: 'axis',
@@ -59,7 +96,7 @@
         }
     },
     legend: {
-        data:['Articles','Associate Editor','Reviewer','Users']
+        data:['Total']
     },
     toolbox: {
         feature: {
@@ -76,7 +113,7 @@
         {
             type : 'category',
             boundaryGap : false,
-            data : ['01/01/2020','01/02/2020','01/03/2020','01/04/2020','01/05/2020','01/06/2020','01/07/2020']
+            data : this.array_date
         }
     ],
     yAxis : [
@@ -85,19 +122,19 @@
         }
     ],
     series : [
-        {
+        /*{
             name:'Articles',
             type:'line',
             stack: 'Total amount',
             areaStyle: {},
-            data:[220, 300, 191, 234, 290, 330, 310]
+            data:[220, 300, 191, 234, 290]
         },
         {
             name:'Associate Editor',
             type:'line',
             stack: 'Total amount',
             areaStyle: {},
-            data:[150, 232, 201, 154, 190, 330, 410]
+            data:[150, 232, 201, 154, 190]
         },
         {
             name:'Reviewer',
@@ -105,9 +142,9 @@
             stack: 'Total amount',
             areaStyle: {normal: {}},
             data:[320, 332, 301, 334, 390, 330, 320]
-        },
+        },*/
         {
-            name:'Users',
+            name:'Total',
             type:'line',
             stack: 'Total amount',
             label: {
@@ -117,7 +154,7 @@
                 }
             },
             areaStyle: {normal: {}},
-            data:[820, 932, 901, 934, 600, 1330, 1320]
+            data: this.array_occurence
         }
     ]
 }

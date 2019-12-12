@@ -26,6 +26,10 @@ module.exports = function(app) {
 	app.use('/api/auth', require('./auth'));
 	app.use('/api/invitations', require('./api/invitations'));
 
+	/* Token is not necessary for those parts*/
+	app.use('/api/requests', require('./api/request'));
+	app.use('/api/activity', require('./api/activity'));
+
 	app.use(function(req, res, next) {
 		console.log('Ommit Connection for:', req.originalUrl);
 		if (req.originalUrl.startsWith('/api/requests')) {
@@ -43,7 +47,7 @@ module.exports = function(app) {
 	app.use('/api/roles', require('./api/roles'));
 	app.use('/api/pictures', require('./api/picture'));
 	app.use('/api/history', require('./api/article/history'));
-	app.use('/api/requests', require('./api/request'));
+
 
 	// catch 404 and forward to error handler
 	app.use(function(req, res, next) {
