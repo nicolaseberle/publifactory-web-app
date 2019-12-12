@@ -885,6 +885,11 @@ export default {
     },
 
     uploadSectionFile(param){
+      this.formPost.keywords = []
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
       this.progress_status_pdf = 0
       this.pdfInter = window.setInterval(()=>{
         if (this.progress_status_pdf<100)
@@ -910,6 +915,7 @@ export default {
             }
             this.progress_status_pdf = 100
             this.dataUpload = true
+            clearInterval(this.pdfInter)
         })
       })
     },
