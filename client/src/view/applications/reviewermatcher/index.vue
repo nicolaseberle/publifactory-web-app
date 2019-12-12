@@ -3,11 +3,27 @@
     <div class="app-container">
       <div class="bandeau">ALPHA v0.3.3</div>
       <hgroup>
-        <h1>Search Reviewers</h1>
-        <p>The reviewer matcher helps you to find the best reviewers for your manuscrits</p>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+        </div>
       </hgroup>
 
-      <el-row :gutter='30' style='margin-top=80px;'>
+      <!-- popup message erreur -->
+      <el-dialog
+        title="Intern error"
+        :visible.sync="dialogVisibleError"
+        width="30%">
+        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
+        <span v-else>Request cancelled</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
         <div class='description-container'>
           <div class='description'>
@@ -32,7 +48,7 @@
           </div>
         </div>
         </el-col>
-      </el-row>
+      </el-row> -->
 
       <div>
       <h2>Load the article</h2>
@@ -196,7 +212,7 @@
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
-          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}s)</p>
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}/~{{this.onSeconds}}s)</p>
           <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
         </el-form-item>
 
@@ -346,7 +362,8 @@
             prop="fields">
             <template slot-scope="props">
               <div v-for="field in props.row.fields">
-                <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+                <p v-if="field == 'medicine1' || field == 'medicine2'">Medicine</p>
+                <p v-else>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
               </div>
             </template>
           </el-table-column>
@@ -463,6 +480,11 @@ import researcherCard from './researcher_card'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
 
+// Import JSON
+import cats_json from './json/cats.json'
+import assoc_cat_json from './json/assoc_cat.json'
+import time_cat_json from './json/time_cat.json'
+
 const CancelToken = axios.CancelToken;
 let cancel;
 
@@ -487,6 +509,8 @@ export default {
         // ,issn: ''
       },
       centerDialogVisible: false,
+      dialogVisibleError: false,
+      errorMessage: "",
       state_click: [],
       isExpanded: [],
       progress_status: 0,
@@ -542,474 +566,12 @@ export default {
       requestInfos: {},
       listMails: [],
       requestMails: {},
-      cats: [
-        {
-          value: "art_and_humanities",
-          label: "Art and Humanities",
-          disabled: false
-        },
-        {
-          value: "biology",
-          label: "Biology",
-          disabled: false
-        },
-        {
-          value: "business_and_economics",
-          label: "Business and Economics",
-          disabled: false
-        },
-        {
-          value: "chemistry",
-          label: "Chemistry",
-          disabled: false
-        },
-        {
-          value: "computer_science",
-          label: "Computer Science",
-          disabled: false
-        },
-        {
-          value: "earth_and_planetary_sciences",
-          label: "Earth and Planetary Sciences",
-          disabled: false
-        },
-        {
-          value: "engineering",
-          label: "Engineering",
-          disabled: false
-        },
-        {
-          value: "environmental_science",
-          label: "Environmental Science",
-          disabled: false
-        },
-        {
-          value: "health_profession",
-          label: "Health Profession",
-          disabled: false
-        },
-        {
-          value: "materials_science",
-          label: "Materials Science",
-          disabled: false
-        },
-        {
-          value: "mathematics",
-          label: "Mathematics",
-          disabled: false
-        },
-        {
-          value: "medicine",
-          label: "Medicine",
-          disabled: false
-        },
-        {
-          value: "neuroscience",
-          label: "Neuroscience",
-          disabled: false
-        },
-        {
-          value: "nursing",
-          label: "Nursing",
-          disabled: false
-        },
-        {
-          value: "physics",
-          label: "Physics",
-          disabled: false
-        },
-        {
-          value: "psychology",
-          label: "Psychology",
-          disabled: false
-        },
-        {
-          value: "sociology",
-          label: "Sociology",
-          disabled: false
-        }
-        // ,
-        // {
-        //   value: "multidisciplinary",
-        //   label: "Multidisciplinary",
-        //   disabled: false
-        // }
-      ],
-      assoc_cat: {
-        "art_and_humanities": [
-            "Archeology (arts and humanities)",
-            "Arts and Humanities",
-            "Classics",
-            "Conservation",
-            "History",
-            "History and Philosophy of Science",
-            "Issues, Ethics and Legal Aspects",
-            "Language and Linguistics",
-            "Linguistics and Language",
-            "Literature and Literary Theory",
-            "Museology",
-            "Music",
-            "Philosophy",
-            "Religious Studies",
-            "Visual Arts and Performing Arts"
-        ],
-        "biology": [
-            "Aging",
-            "Agricultural and Biological Sciences",
-            "Agronomy and Crop Science",
-            "Animal Science and Zoology",
-            "Applied Microbiology and Biotechnology",
-            "Aquatic Science",
-            "Behavioral Neuroscience",
-            "Biochemistry",
-            "Biochemistry, Genetics and Molecular Biology",
-            "Bioengineering",
-            "Biomaterials",
-            "Biomedical Engineering",
-            "Biophysics",
-            "Biotechnology",
-            "Cancer Research",
-            "Cell Biology",
-            "Clinical Biochemistry",
-            "Developmental Biology",
-            "Developmental Neuroscience",
-            "Drug Discovery",
-            "Ecology, Evolution, Behavior and Systematics",
-            "Food Animals",
-            "Food Science",
-            "Forestry",
-            "Genetics",
-            "Health, Toxicology and Mutagenesis",
-            "Horticulture",
-            "Immunology",
-            "Immunology and Microbiology",
-            "Insect Science",
-            "Microbiology",
-            "Molecular Biology",
-            "Parasitology",
-            "Pharmaceutical Science",
-            "Pharmacology",
-            "Pharmacology, Toxicology and Pharmaceutics",
-            "Pharmacy",
-            "Physiology",
-            "Plant Science",
-            "Small Animals",
-            "Soil Science",
-            "Structural Biology",
-            "Toxicology",
-            "Virology"
-        ],
-        "business_and_economics": [
-            "Accounting",
-            "Business and International Management",
-            "Business, Management and Accounting",
-            "Decision Sciences",
-            "Economics and Econometrics",
-            "Economics, Econometrics and Finance",
-            "Finance",
-            "Industrial Relations",
-            "Leadership and Management",
-            "Management of Technology and Innovation",
-            "Management Science and Operations Research",
-            "Management, Monitoring, Policy and Law",
-            "Marketing",
-            "Organizational Behavior and Human Resource Management",
-            "Strategy and Management",
-            "Tourism, Leisure and Hospitality Management"
-        ],
-        "computer_science": [
-            "Artificial Intelligence",
-            "Computational Mechanics",
-            "Computational Theory and Mathematics",
-            "Computer Graphics and Computer-Aided Design",
-            "Computer Networks and Communications",
-            "Computer Science",
-            "Computer Science Applications",
-            "Computer Vision and Pattern Recognition",
-            "Computers in Earth Sciences",
-            "Hardware and Architecture",
-            "Human-Computer Interaction",
-            "Information Systems",
-            "Information Systems and Management",
-            "Management Information Systems",
-            "Modeling and Simulation",
-            "Signal Processing",
-            "Software",
-            "Theoretical Computer Science"
-        ],
-        "chemistry": [
-            "Analytical Chemistry",
-            "Biochemistry",
-            "Biochemistry, Genetics and Molecular Biology",
-            "Catalysis",
-            "Chemical Engineering",
-            "Chemistry",
-            "Clinical Biochemistry",
-            "Colloid and Surface Chemistry",
-            "Electrochemistry",
-            "Environmental Chemistry",
-            "Filtration and Separation",
-            "Fluid Flow and Transfer Processes",
-            "Inorganic Chemistry",
-            "Materials Chemistry",
-            "Organic Chemistry",
-            "Physical and Theoretical Chemistry",
-            "Process Chemistry and Technology",
-            "Spectroscopy"
-        ],
-        "earth_and_planetary_sciences": [
-            "Atmospheric Science",
-            "Earth and Planetary Sciences",
-            "Earth-Surface Processes",
-            "Economic Geology",
-            "Geochemistry and Petrology",
-            "Geology",
-            "Geophysics",
-            "Geotechnical Engineering and Engineering Geology",
-            "Oceanography",
-            "Paleontology",
-            "Space and Planetary Science",
-            "Stratigraphy"
-        ],
-        "engineering": [
-            "Aerospace Engineering",
-            "Architecture",
-            "Automotive Engineering",
-            "Bioengineering",
-            "Biomedical Engineering",
-            "Building and Construction",
-            "Civil and Structural Engineering",
-            "Control and Systems Engineering",
-            "Electrical and Electronic Engineering",
-            "Engineering",
-            "Environmental Engineering",
-            "Filtration and Separation",
-            "Industrial and Manufacturing Engineering",
-            "Mechanical Engineering",
-            "Mechanics of Materials",
-            "Media Technology",
-            "Ocean Engineering",
-            "Safety, Risk, Reliability and Quality"
-        ],
-        "environmental_science": [
-            "Ecological Modeling",
-            "Ecology",
-            "Environmental Chemistry",
-            "Environmental Engineering",
-            "Environmental Science",
-            "Global and Planetary Change",
-            "Nature and Landscape Conservation",
-            "Pollution",
-            "Renewable Energy, Sustainability and the Environment",
-            "Waste Management and Disposal",
-            "Water Science and Technology"
-        ],
-        "health_profession": [
-            "Chiropractics",
-            "Complementary and Alternative Medicine",
-            "Emergency Medical Services",
-            "Health Information Management",
-            "Health Professions",
-            "Medical Assisting and Transcription",
-            "Medical Laboratory Technology",
-            "Medical Terminology",
-            "Occupational Therapy",
-            "Optometry",
-            "Pharmacy",
-            "Physical Therapy, Sports Therapy and Rehabilitation",
-            "Podiatry",
-            "Radiological and Ultrasound Technology",
-            "Respiratory Care",
-            "Speech and Hearing",
-            "Sports Science"
-        ],
-        "materials_science": [
-            "Biomaterials",
-            "Ceramics and Composites",
-            "Electronic, Optical and Magnetic Materials",
-            "Energy",
-            "Fuel Technology",
-            "Materials Chemistry",
-            "Materials Science",
-            "Mechanics of Materials",
-            "Metals and Alloys",
-            "Nanoscience and Nanotechnology",
-            "Polymers and Plastics",
-            "Surfaces, Coatings and Films"
-        ],
-        "mathematics": [
-            "Algebra and Number Theory",
-            "Analysis",
-            "Applied Mathematics",
-            "Computational Mathematics",
-            "Computational Theory and Mathematics",
-            "Control and Optimization",
-            "Discrete Mathematics and Combinatorics",
-            "Geometry and Topology",
-            "Logic",
-            "Mathematical Physics",
-            "Mathematics",
-            "Numerical Analysis",
-            "Statistics and Probability",
-            "Statistics, Probability and Uncertainty"
-        ],
-        "medicine": [
-            "Anatomy",
-            "Anesthesiology and Pain Medicine",
-            "Biochemistry (medical)",
-            "Biomedical Engineering",
-            "Cardiology and Cardiovascular Medicine",
-            "Chemical Health and Safety",
-            "Community and Home Care",
-            "Complementary and Manual Therapy",
-            "Critical Care and Intensive Care Medicine",
-            "Dental Hygiene",
-            "Dentistry",
-            "Dermatology",
-            "Drug Discovery",
-            "Drug Guides",
-            "Embryology",
-            "Emergency Medicine",
-            "Endocrinology",
-            "Epidemiology",
-            "Equine",
-            "Family Practice",
-            "Gastroenterology",
-            "Genetics (clinical)",
-            "Geriatrics and Gerontology",
-            "Gerontology",
-            "Health Informatics",
-            "Health Policy",
-            "Health, Toxicology and Mutagenesis",
-            "Hematology",
-            "Hepatology",
-            "Histology",
-            "Immunology and Allergy",
-            "Infectious Diseases",
-            "Internal Medicine",
-            "Medicine",
-            "Medicine (miscellaneous)",
-            "Microbiology (medical)",
-            "Molecular Medicine",
-            "Nephrology",
-            "Neurology (clinical)",
-            "Obstetrics and Gynecology",
-            "Oncology",
-            "Ophthalmology",
-            "Oral Surgery",
-            "Orthodontics",
-            "Orthopedics and Sports Medicine",
-            "Otorhinolaryngology",
-            "Pathology and Forensic Medicine",
-            "Pediatrics, Perinatology and Child Health",
-            "Periodontics",
-            "Pharmacology (medical)",
-            "Physiology (medical)",
-            "Psychiatry and Mental Health",
-            "Public Health, Environmental and Occupational Health",
-            "Pulmonary and Respiratory Medicine",
-            "Radiological and Ultrasound Technology",
-            "Radiology, Nuclear Medicine and Imaging",
-            "Rehabilitation",
-            "Reproductive Medicine",
-            "Reviews and References (medical)",
-            "Rheumatology",
-            "Surgery",
-            "Transplantation",
-            "Urology",
-            "Veterinary"
-        ],
-        "neuroscience": [
-            "Behavioral Neuroscience",
-            "Biological Psychiatry",
-            "Cellular and Molecular Neuroscience",
-            "Cognitive Neuroscience",
-            "Developmental Biology",
-            "Endocrine and Autonomic Systems",
-            "Neurology",
-            "Neuroscience",
-            "Sensory Systems"
-        ],
-        "nursing": [
-            "Advanced and Specialized Nursing",
-            "Assessment and Diagnosis",
-            "Care Planning",
-            "Community and Home Care",
-            "Critical Care Nursing",
-            "Emergency Nursing",
-            "Fundamentals and Skills",
-            "Gerontology",
-            "LPN and LVN",
-            "Maternity and Midwifery",
-            "Medical and Surgical Nursing",
-            "Nurse Assisting",
-            "Nursing",
-            "Nutrition and Dietetics",
-            "Oncology (nursing)",
-            "Pediatrics",
-            "Pharmacology (nursing)",
-            "Psychiatric Mental Health",
-            "Research and Theory",
-            "Review and Exam Preparation"
-        ],
-        "physics": [
-            "Acoustics and Ultrasonics",
-            "Astronomy and Astrophysics",
-            "Atomic and Molecular Physics, and Optics",
-            "Biophysics",
-            "Condensed Matter Physics",
-            "Energy Engineering and Power Technology",
-            "Geophysics",
-            "Instrumentation",
-            "Mathematical Physics",
-            "Nuclear and High Energy Physics",
-            "Nuclear Energy and Engineering",
-            "Physics and Astronomy",
-            "Radiation",
-            "Statistical and Nonlinear Physics",
-            "Surfaces and Interfaces"
-        ],
-        "psychology": [
-            "Applied Psychology",
-            "Clinical Psychology",
-            "Developmental and Educational Psychology",
-            "Experimental and Cognitive Psychology",
-            "Neuropsychology and Physiological Psychology",
-            "Psychology",
-            "Social Psychology"
-        ],
-        "sociology": [
-            "Anthropology",
-            "Archeology",
-            "Communication",
-            "Cultural Studies",
-            "Demography",
-            "Development",
-            "E-learning",
-            "Education",
-            "Gender Studies",
-            "Geography, Planning and Development",
-            "Health (social science)",
-            "Human Factors and Ergonomics",
-            "Law",
-            "Library and Information Sciences",
-            "Life-span and Life-course Studies",
-            "Political Science and International Relations",
-            "Public Administration",
-            "Safety Research",
-            "Social Psychology",
-            "Social Sciences",
-            "Social Work",
-            "Sociology and Political Science",
-            "Transportation",
-            "Urban Studies"
-        ],
-        "multidisciplinary": [
-            "Multidisciplinary"
-        ]
-      },
+      cats: cats_json,
+      assoc_cat: assoc_cat_json,
+      time_cat: time_cat_json,
       subcats: [],
       seconds: 0,
+      onSeconds: 0,
       interId: 0,
       pdfInter: 0,
       fileList:[],
@@ -1306,6 +868,22 @@ export default {
       console.log(this.formPost.sub_cat);
     },
 
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
+    },
+
     uploadSectionFile(param){
       this.progress_status_pdf = 0
       this.pdfInter = window.setInterval(()=>{
@@ -1324,8 +902,12 @@ export default {
             console.log(res.data[0])
             this.formPost.abstract = res.data[0].abstract
             this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
+            if (res.data[0].keywords) {
+              this.formPost.keywords = res.data[0].keywords
+            }
+            if (res.data[0].authors) {
+              this.formPost.authors = res.data[0].authors
+            }
             this.progress_status_pdf = 100
             this.dataUpload = true
         })
@@ -1341,6 +923,7 @@ export default {
           this.isLoading = true
           this.progress_status = 0
           this.seconds = 0
+          this.onSeconds = 0
           this.interId = window.setInterval(()=>{
             this.seconds += 1
           }, 1000)
@@ -1362,6 +945,12 @@ export default {
               phraseKey += this.formPost.fields[x][0].toUpperCase() + this.formPost.fields[x].replace(/_/gi, ' ').slice(1) + " "
             }
             phraseKey += "."
+          }
+
+          for (let x = 0; x<this.formPost.fields.length; x++){
+            if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
+              this.onSeconds = this.time_cat[this.formPost.fields[x]]
+            }
           }
 
           let abstractTotal = this.formPost.abstract
@@ -1398,6 +987,12 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
+              },
+              async (error) => {
+                this.dialogVisibleError = true;
+                this.errorMessage = error.message;
+                this.resetForm('formPost');
+                console.log("error ::", error);
               }
             )
           })
@@ -1408,21 +1003,6 @@ export default {
       });
     },
 
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.subcats = [];
-      this.cats.forEach(function(cat){
-        cat.disabled = false
-      });
-      this.load_var = false
-      this.isLoading = false
-      clearInterval(this.interId)
-      clearInterval(this.pdfInter)
-      this.dataUpload = false
-      this.progress_status_pdf = 0
-      this.fileList = []
-      cancel()
-    },
     updateMetrics(_fields, _title) {
       const formData = {fields: _fields, title: _title }
       console.log(formData)
@@ -1581,6 +1161,17 @@ hgroup {
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
+}
+
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
 }
 
 .el-tag  {

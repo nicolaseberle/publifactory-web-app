@@ -1,0 +1,87 @@
+[
+  {
+    "value": "art_and_humanities",
+    "label": "Art and Humanities",
+    "disabled": false
+  },
+  {
+    "value": "biology",
+    "label": "Biology",
+    "disabled": false
+  },
+  {
+    "value": "business_and_economics",
+    "label": "Business and Economics",
+    "disabled": false
+  },
+  {
+    "value": "chemistry",
+    "label": "Chemistry",
+    "disabled": false
+  },
+  {
+    "value": "computer_science",
+    "label": "Computer Science",
+    "disabled": false
+  },
+  {
+    "value": "earth_and_planetary_sciences",
+    "label": "Earth and Planetary Sciences",
+    "disabled": false
+  },
+  {
+    "value": "engineering",
+    "label": "Engineering",
+    "disabled": false
+  },
+  {
+    "value": "environmental_science",
+    "label": "Environmental Science",
+    "disabled": false
+  },
+  {
+    "value": "health_profession",
+    "label": "Health Profession",
+    "disabled": false
+  },
+  {
+    "value": "materials_science",
+    "label": "Materials Science",
+    "disabled": false
+  },
+  {
+    "value": "mathematics",
+    "label": "Mathematics",
+    "disabled": false
+  },
+  {
+    "value": "medicine",
+    "label": "Medicine",
+    "disabled": false
+  },
+  {
+    "value": "neuroscience",
+    "label": "Neuroscience",
+    "disabled": false
+  },
+  {
+    "value": "nursing",
+    "label": "Nursing",
+    "disabled": false
+  },
+  {
+    "value": "physics",
+    "label": "Physics",
+    "disabled": false
+  },
+  {
+    "value": "psychology",
+    "label": "Psychology",
+    "disabled": false
+  },
+  {
+    "value": "sociology",
+    "label": "Sociology",
+    "disabled": false
+  }
+]
