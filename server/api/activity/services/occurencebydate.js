@@ -9,19 +9,26 @@ function paginate(page = 1, count = 5) {
 async function list({ page = 1, count = 5, filters }) {
 	const response = { page, count };
 	let pipeline = [];
-	const sort = { $sort: { deadline: -1 } };
+	const sort = { $sort: { creationDate: -1 } };
 	pipeline.push(sort);
 	if (filters.title) {
 		pipeline.push({
 			$match: { title: { $regex: `^${filters.title}`, $options: 'i' } }
 		});
 	}
-	/*
-	if (filters.status) {
-		pipeline.push({
-			$match: { 'history.status': { $in: [filters.status] } }
-		});
-	}*/
+	pipeline.push({
+    $group: {
+        _id: {
+          $add: [
+           { $dayOfYear: "$creationDate"},
+           { $multiply:
+             [400, {$year: "$creationDate"}]
+           }
+        ]},
+        click: { $sum: 1 },
+        first: {$min: "$creationDate"}
+      }
+	});
 
 	pipeline.push(...paginate(page, count));
 	const list = await Request.aggregate(pipeline);

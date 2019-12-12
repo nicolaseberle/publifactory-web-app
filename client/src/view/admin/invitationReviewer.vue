@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class='app-container'>
     <el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
       <el-table
@@ -42,7 +42,7 @@
       </el-table>
 
     </el-row>
-{{metricsFinal}}
+
 
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
@@ -347,14 +347,6 @@ export default{
         })
       })
     },
-    getMetrics(){
-      axios.get('/api/activity?page=1&count=10')
-      .then( async (res) => {
-        this.metricsFinal = res.data.data;
-        console.log(this.metricsFinal);
-        this.isMetrics = true;
-      })
-    },
     actionHandleCommand(command) {
       if (command == "remove") {
         console.log(command);
@@ -399,5 +391,19 @@ tbody {
 .el-form-item__label {
   text-align: left;
 }
+.clearfix:before,
+  .clearfix:after {
+    background-color: white;
+    display: table;
+    content: "";
+  }
+  .clearfix:after {
+    clear: both
+  }
+
+  .clearfix, .el-card .el-card__header{
+    background-color: white;
+    font-size: 1.2rem;
+  }
 
 </style>

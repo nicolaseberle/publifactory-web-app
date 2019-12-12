@@ -7,9 +7,8 @@ const enumStatus = [
 
 const RequestSchema = new mongoose.Schema(
 	{
-		history: {
-			type: Array,
-			date: Date,
+
+			creationDate: { type: Date, default: Date.now },
 			title: {
 				type: String,
 				required: true
@@ -25,7 +24,6 @@ const RequestSchema = new mongoose.Schema(
 					values: enumStatus
 				}
 			}
-		}
 	},
 	{ timestamps: true }
 );

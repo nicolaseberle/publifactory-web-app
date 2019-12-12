@@ -4,6 +4,34 @@
       <el-col :span='4'>
         <el-card>
           <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
+            <svg-icon icon-class="search"/>
+              Total queries
+            </div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{metricsFinal.length}}</div>
+        </el-card>
+      </el-col>
+      <el-col :span='4'>
+        <el-card>
+          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
+            <svg-icon icon-class="guide"/>
+              Total invitations
+            </div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>0</div>
+        </el-card>
+      </el-col>
+    </el-row>
+    <el-row style='margin:20px 0px 20px 0px'>
+      <el-card>
+        <div slot="header" class="clearfix">
+          <span>Reviewer Search Engin Activity</span>
+        </div>
+        <activity-chart id='activity-chart'/>
+      </el-card>
+    </el-row>
+    <el-row :gutter='10'>
+      <el-col :span='4'>
+        <el-card>
+          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
             <svg-icon icon-class="user"/>
               Total Users
             </div>
@@ -55,11 +83,13 @@
         <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>1k</div>
       </el-card>
       </el-col>
-
     </el-row>
     <el-row style='margin-top:20px'>
       <el-card>
-        <chart/>
+        <div slot="header" class="clearfix">
+          <span>Platform activity</span>
+        </div>
+        <platform-chart id='platform-chart'/>
       </el-card>
     </el-row>
     <el-row style='margin-top:20px'>
@@ -78,22 +108,34 @@
 </template>
 <script>
   import locales from 'locales/article'
-  import chart from '../../components/Charts/echart/evolChart'
+  import axios from 'axios'
+  import activityChart from '../../components/Charts/echart/activityChart'
+  import platformChart from '../../components/Charts/echart/platformChart'
   import activityList from './activityList'
   export default {
   locales,
   data () {
     return {
+      metricsFinal: [],
+      isMetrics: false
     }
   },
   components: {
-    chart,
+    "platform-chart":platformChart,
+    "activity-chart":activityChart,
     activityList
   },
   methods: {
+    getMetrics(){
+      axios.get('/api/activity?page=1&count=10')
+      .then( async (res) => {
+        this.metricsFinal = res.data.data;
+        this.isMetrics = true;
+      })
+    },
   },
   mounted () {
-
+    this.getMetrics()
   }
 }
 </script>
@@ -107,7 +149,9 @@
   .clearfix:after {
     clear: both
   }
-
+  .el-card .el-card__header{
+    text-align: left;
+  }
   .clearfix, .el-card .el-card__header{
     background-color: white;
     font-size: 1.2rem;
