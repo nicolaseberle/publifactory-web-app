@@ -347,15 +347,14 @@
             </template>
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="Score"
             prop="score"
             width="100">
             <template slot-scope="props">
               <p>{{ props.row.score }}</p>
-              <!-- <p>Score (year) : {{ props.row.scorePond }}</p> -->
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column
             label="Fields"
