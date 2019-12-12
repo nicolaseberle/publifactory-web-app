@@ -1092,6 +1092,7 @@ export default {
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
       let res = ''
+      this.updateMetrics(this.formPost.fields,this.formPost.title)
       new Promise ((resolve,reject) => {
         axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
         .then( async (id) => {
