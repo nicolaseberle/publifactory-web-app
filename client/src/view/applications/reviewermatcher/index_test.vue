@@ -1194,6 +1194,24 @@ export default {
             this.formPost.authors.push(temp[x]);
           }
         }
+        else if (inputValueAut.includes("/")) {
+          let temp = inputValueAut.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("|")) {
+          let temp = inputValueAut.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes(";")) {
+          let temp = inputValueAut.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
         else {
           this.formPost.authors.push(inputValueAut);
         }
