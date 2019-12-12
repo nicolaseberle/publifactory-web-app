@@ -366,7 +366,6 @@ export default{
     }
   },
   async mounted() {
-    await this.getMetrics()
     await this.getRequests()
   }
 }
