@@ -1092,7 +1092,7 @@ export default {
       let formData = new FormData();
       formData.append("pdf_file", fileObject);
       let res = ''
-      this.updateMetrics(this.formPost.fields,this.formPost.title)
+
       new Promise ((resolve,reject) => {
         axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
         .then( async (id) => {
@@ -1360,6 +1360,7 @@ export default {
           abstractTotal = this.formPost.title + '. ' + abstractTotal
 
           let res = ''
+          this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
             axios.get(
               'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
