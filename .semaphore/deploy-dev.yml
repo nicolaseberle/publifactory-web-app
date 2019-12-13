@@ -7,7 +7,7 @@ agent:
 blocks:
   - name: Deploy to dev
     execution_time_limit:
-      hours: 2
+      hours: 1
     task:
       secrets:
         - name: gfile
