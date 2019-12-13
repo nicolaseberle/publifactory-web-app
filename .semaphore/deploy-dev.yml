@@ -35,5 +35,3 @@ blocks:
               sudo ./script_docker.sh start dev;
               chown -R collin_q:publifactory-team .;"
     dependencies: []
-execution_time_limit:
-  hours: 2
