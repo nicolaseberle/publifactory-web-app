@@ -35,7 +35,8 @@ export const constantRouterMap = [
 		path: '/auth-redirect',
 		component: () => import('../view/auth/authredirect'),
 		hidden: true
-	},/*
+	},
+	/*
 	{
 		path: '/services',
 		component: Layout_services,
@@ -60,13 +61,13 @@ export const constantRouterMap = [
 		props: route => ({ userId: route.query.userId })
 	},*/
 	{
-		path: '/services/reviewersearchengine',
+		path: '/services/reviewermatcher',
 		component: Layout_services,
-		redirect: 'reviewersearchengine',
+		redirect: 'services/reviewermatcher',
 		hidden: true,
 		children: [
 			{
-				path: '/services/reviewersearchengine',
+				path: '/services/reviewermatcher',
 				meta: {
 					skipAuth: true
 				},
