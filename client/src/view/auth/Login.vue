@@ -31,7 +31,7 @@
 
       <div class='register' style='margin:5px 0 10px 0; '>
         <!--<a href='/register' style="text-align:end">Create an account</a>-->
-        <p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>
+        <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
       </div>
 
       <el-form-item>
@@ -44,15 +44,16 @@
           <el-button class="login-button"    type="primary" native-type="submit" :loading="loading">{{$t('login.googleButton')}}</el-button>
       </el-form-item>
     -->
+    <!--
     <h2>or</h2>
     <el-row>
       <el-form-item>
         <el-row>
           <el-row>
           <el-button class="login-button" style=' background: #A6CE3A' :class="{error: loginError}" type="primary" :loading="loading" v-on:click="onOrcidSubmit()">
-            <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>
+            <svg-icon icon-class='ORCID_iD'  style='transform: scale(1.5);background-size: 40px 40px;color: white;font-size:1em;margin-right:3em'/>-->
             <!--<i class="ai ai-orcid ai-2x" style='color: white;font-size:1em;margin-right:3em'/>-->
-            {{$t('login.orcidButton')}}
+            <!--{{$t('login.orcidButton')}}
           </el-button>
         </el-row>
         <el-row>
@@ -62,7 +63,7 @@
           </el-button>
         </el-row>
 
-<!--
+
       <div class='logo'>
         <i class="ai ai-orcid ai-3x el-logo" style='color:#A6CE3A'/>
 
@@ -76,9 +77,9 @@
         </div>
         </div>
           <el-button class="login-button" circle   type="primary" native-type="submit" :loading="loading" style='background-color:#A6CE3A ; vertical-align: middle;' v-on:click="onOrcidSubmit()" ></el-button>-->
-        </el-row>
+      <!--  </el-row>
       </el-form-item>
-    </el-row>
+    </el-row>-->
 
     </el-form>
     <div class='register' style='float:right'>

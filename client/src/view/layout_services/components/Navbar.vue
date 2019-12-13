@@ -13,7 +13,7 @@
       </div>
       <div class='right-menu-item'>
         <router-link :to="{name: '/login'}">
-          <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain >Sign up</el-button>
+          <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain >Login</el-button>
         </router-link>
       </div>
     </div>
