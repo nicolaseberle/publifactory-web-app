@@ -32,5 +32,3 @@ blocks:
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
               sudo ./script_docker.sh start dev;"
     dependencies: []
-execution_time_limit:
-  hours: 2
