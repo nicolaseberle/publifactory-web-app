@@ -2,13 +2,26 @@
   <div class="dashboard-container">
     <div class="app-container">
       <div class="bandeau">ALPHA v0.3.3</div>
-      <el-row :gutter='50' >
-        <div class='head'>
-          <h1>Reviewer search engine</h1>
-          <h2>Getting the most relevant reviewers for your paper</h2>
+      <hgroup>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
         </div>
-      </el-row>
-
+      </hgroup>
+      <!-- popup message erreur -->
+      <el-dialog
+        title="Intern error"
+        :visible.sync="dialogVisibleError"
+        width="30%">
+        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
+        <span v-else>Request cancelled</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+      <!--
       <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
         <div class='description-container'>
@@ -34,7 +47,7 @@
           </div>
         </div>
         </el-col>
-      </el-row>
+      </el-row>-->
 
 
 
@@ -1152,15 +1165,7 @@ export default {
   padding: 0px 20px;
   margin: 0 auto;
 }
-.head{
-  text-align: center;
 
-}
-.head h2 {
-  font-family: 'DNLTPro-light-italic';
-  font-size: 1.3em;
-
-}
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
@@ -1178,44 +1183,28 @@ strong {
   display: block;
   margin-top: 5px;
 }
-.el-collapse-item{
-  padding-bottom: 20px;
-}
-.el-collapse-item__header{
-  font-family: 'DNLTPro-regular';
-  background-color: #f4f4f4;
-  font-size: 1.5em;
-  font-weight: 800;
 
+hgroup {
+  text-align: center;
+  margin-bottom: 40px;
 }
-.el-collapse-item__wrap{
-  background-color: #f4f4f4;
-
-}
-.el-collapse-item__content{
-  font-family: 'DNLTPro-regular';
-  font-size: 1rem;
-  background-color: #f4f4f4;
-}
-.el-collapse {
-    border-top: 1px solid #f4f4f4;
-    border-bottom: 1px solid #f4f4f4;
-}
-.description-container {
-  background-color: #f4f4f4;
-  margin-bottom: 30px;
-  border-radius:10px;
-}
-.description {
-  padding: 50px;
-  margin-top: 30px;
-}
-.description > p {
+  hgroup > p {
     margin: 0;
-}
+  }
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
+}
+
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
 }
 
 .el-tag  {
@@ -1268,6 +1257,10 @@ strong {
   margin-right: 10px;
 }
 
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
+
 .el-table__row td:nth-child(2) {
   padding: 0;
   text-align: left;
@@ -1299,6 +1292,41 @@ strong {
       background-color: #F56C6C;
     }
 
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
+    margin: 0;
+}
+
 .round {
   width: 13px;
   height: 13px;
@@ -1308,7 +1336,7 @@ strong {
   vertical-align: middle;
 }
 
-.el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6), .el-table__row td:nth-child(7) {
+.el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
 }
 
@@ -1349,6 +1377,10 @@ strong {
   margin: 16px 0;
 }
 
+.el-form .el-tag {
+  font-weight: bold
+}
+
 .el-pagination {
   padding: 10px 0!important;
 }
@@ -1356,6 +1388,10 @@ strong {
 .el-button+.el-button {
   margin: 0!important;
 }
+
+/* .el-popper[x-placement^=bottom] {
+  text-align: center!important;
+} */
 
 @media (max-width: 1280px) {
   .app-container {
@@ -1372,5 +1408,4 @@ strong {
     padding: 5px 7px;
   }
 }
-
 </style>
