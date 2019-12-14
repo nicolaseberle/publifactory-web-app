@@ -8,7 +8,7 @@
         </div>
         <div class="art">
           <strong>Products</strong>
-          <p><a href="/services">Reviewer Matcher</a></p>
+          <p><a href="/services/reviewermatcher">Reviewer Matcher</a></p>
           <p><a href="https://publifactory.co">Editorial Manager</a></p>
         </div>
         <div class="art">

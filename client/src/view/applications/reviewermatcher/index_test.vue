@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.3.3</div>
+      <div class="bandeau">ALPHA v0.3.4</div>
       <el-row :gutter='50' >
         <div class='head'>
           <h1>Reviewer search engine</h1>

@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.3.3</div>
+      <div class="bandeau">ALPHA v0.3.4</div>
       <hgroup>
         <h1>Reviewer search engine</h1>
         <h2>Getting the most relevant reviewers for your paper</h2>
@@ -256,13 +256,13 @@
                 <el-form-item prop="mail">
                   <el-input v-model="formMini.mail" placeholder="example@mail.com" size="mini"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <!--<el-form-item>
                   <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
-                </el-form-item>
+                </el-form-item>-->
               </el-form>
               <el-button slot="reference">Get mail list</el-button>
             </el-popover>
-            <el-button @click="exportListJson()">Export list (json)</el-button>
+            <!--<el-button @click="exportListJson()">Export list (json)</el-button>-->
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
@@ -285,22 +285,7 @@
           <el-table-column type="expand" width="1">
             <template slot-scope="props">
               <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
-
-                <!--
-                <strong>Most pertinents works :</strong>
-                <ul>
-                  <li v-for="article in props.row.article">
-                    {{ article.title }}
-                    <ul>
-                      <li>Year : {{ article.year }}</li>
-                      <li>Score : {{ article.score }}</li>
-                      <li>{{ article.co_auth }}</li>
-                      <li v-if='article.doi' >Doi : <a :href="article.doi" target="new">{{ article.doi }}</a></li>
-                      <li v-else > Doi : Unknown</li>
-                    </ul>
-                  </li>
-                </ul>-->
-                <researcherCard :author="props.row"/>
+                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)"/>
               </div>
               <article v-if="state_click[props.$index] == 2">
                 <strong>Contacts :</strong>
@@ -475,7 +460,7 @@
 
 <script>
 import axios from 'axios'
-import researcherCard from './researcher_card'
+import researcherCard from './researcher_card_test'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
 
@@ -528,7 +513,8 @@ export default {
         keywords: [],
         authors: [],
         fields: [],
-        sub_cat: []
+        sub_cat: [],
+        listPertinence: {}
       },
       rules: {
         abstract: [
@@ -575,7 +561,7 @@ export default {
       pdfInter: 0,
       fileList:[],
       activeNames: "",
-      dataUpload: false
+      dataUpload: false,
     }
   },
   methods: {
@@ -1036,6 +1022,8 @@ export default {
                 this.isExpanded = []
                 this.seconds = 0
                 clearInterval(this.interId)
+                this.listPertinence = {"abstract": this.formPost.abstract, "nb_suggestion": res.data.length, "ratio": 0, "list_failed": []}
+                console.log(this.listPertinence);
                 var anchor = document.querySelector("#scroll_anchor");
                 //var anchor = this.$refs.refTable;
                 const sleep = (milliseconds) => {
@@ -1147,11 +1135,52 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-    },
-    validateRow(index, rows) {
+    deleteRow(index, rows, row) {
+      this.$refs.refTable.toggleRowExpansion(row);
+      this.isExpanded[index] = false;
+      this.state_click[index] = 0;
 
+      this.listPertinence.list_failed[index] = {"title": row.article[0].title, "abstract": row.article[0].abstract};
+      console.log(row);
+
+      this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+      console.log("before", this.listPertinence);
+      let temp = JSON.stringify(this.listPertinence)
+      let today = new Date();
+      let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+      console.log(token);
+      new Promise ((resolve,reject) => {
+        axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+        .then( async (res) => {
+          console.log("after", res.data);
+        })
+      })
+    },
+    validateRow(index, rows, row) {
+      if (typeof this.listPertinence.list_failed[index] != 'undefined'){
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+
+        this.listPertinence.list_failed.splice(index, 1);
+
+        this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+        console.log("before", this.listPertinence);
+        let temp = JSON.stringify(this.listPertinence)
+        let today = new Date();
+        let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+        console.log(token);
+        new Promise ((resolve,reject) => {
+          axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+          .then( async (res) => {
+            console.log("after", res.data);
+          })
+        })
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
     },
     handleEdit(index, row) {
       console.log(index, row);
