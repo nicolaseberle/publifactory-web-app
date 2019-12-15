@@ -4,11 +4,12 @@
           <div class="header">
               <h1>Term Of Use</h1>
               <h2>Publifactory Privacy & Terms Overview</h2>
-              <div class='version'>Last Modified: 12th November 2019</div>
-
-              <p>All use of Publifactory web pages located within <i> app.publifactory.com </i>is subject to the terms and conditions set forth below (“Terms”), provided however that additional terms of use may apply with respect to certain PubliFactory websites, as specified on each such website. Any use of such web pages constitutes the user’s agreement to abide by the Terms. We may amend the Terms at any time by posting the amended terms on this site.</p>
-              <p>Below you will find the full Privacy Notice, Cookie Policy, License & Site Access, Trademark, Copyright, Electronic Communications for the Publifactory services</p>
-
+              <div class='version'>Last modified: 12 Novembre 2019 </div>
+              <div class="subcontent">
+                <p>R.C.S. PARIS n°840 422 158  </p>
+                <p>181 rue de Charenton, Paris 75012, France</p>
+                <p>contact@publifactory.co</p>
+              </div>
           </div>
       </el-row>
       <el-row>
@@ -16,67 +17,198 @@
             <el-collapse v-model="activeNames">
               <el-collapse-item name="1">
                 <template slot="title">
-                  <h2>Privacy Notice</h2>
+                  <h2>Purpose</h2>
                 </template>
-                <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='version'>Last modified: 12 Novembre 2019</div>
                 <div class='subcontent'>
-                Please note that Publifactory's Privacy Policy is reviewed periodically. Publifactory reserves the right to modify its Privacy Policy at any time without notice. Any changes to the Privacy Policy will be posted on this page and will become effective on the date of posting. We encourage you to periodically review this page for the latest information on our privacy practices.</p>
+                <p>Publifactory (hereinafter "<strong>Publifactory</strong>") offers its users (hereinafter "Users") a service to suggest manuscript reviewers and to put them in contact with the user based on the data (hereinafter "Data") provided by the user through various operations on the Data, such as cleaning, correction, comparison, enrichment, organization of the Data.
+The <strong>services</strong> offered by Publifactory (hereinafter the "<strong>Services</strong>") are accessible via the website <a href='https://app.publifactory.co'>https://app.publifactory.co</a> (hereinafter the "Site").
+The purpose of these general terms and conditions is to define the terms and conditions of use of the <strong>Services</strong> offered on the Site and to define the rights and obligations of the parties in this context.
+They are accessible and printable at any time by a direct link at the bottom of the page of the Site.
+They may be supplemented, where applicable, by conditions of use specific to certain <strong>Services</strong>, which supplement these general conditions and, in the event of contradiction, prevail over them.
+</p>
                 </div>
               </el-collapse-item>
               <el-collapse-item name="2">
                 <template slot="title">
-                  <h2>Cookie Policy</h2>
+                  <h2>Accès au site et aux Services</h2>
                 </template>
-                <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='version'>Last modified: 12 Novembre 2019</div>
                 <div class='subcontent'>
-                <p>
-                  We use “cookies” to collect information and improve Publifactory. A cookie is a small data file that we transfer to your device. We may use “persistent cookies” to save your registration ID and login password for future logins to Publifactory. We may use “session ID cookies” to enable certain features of Publifactory, to better understand how you interact with it and to monitor aggregate usage and web traffic routing. You can instruct your browser, by changing its options, to stop accepting cookies or to prompt you before accepting a cookie from the websites you visit. If you do not accept cookies, however, you may not be able to use all aspects of Publifactory.
-
-                  We also collect some information (ourselves or using third party services, including Google Analytics) using logging and cookies, such as IP address, which can sometimes be correlated with personal data. We use this information for the above purposes and to monitor and analyse use of Publifactory, for Publifactory's technical administration, to increase its functionality and user-friendliness, and to verify users have the authorisation needed to process their requests.
-
-                  More information on data privacy in respect of Google Analytics is available at <a href='https://www.google.co.uk/intl/en/analytics/privacyoverview.html'>https://www.google.co.uk/intl/en/analytics/privacyoverview.html</a> and details about how to opt out can be found at <a href='https://www.google.com/intl/en/policies/privacy/partners'>https://www.google.com/intl/en/policies/privacy/partners</a>.
-
-                </p>
+                <p>The Site and Services are intended exclusively for professionals in the context of their research or publishing activities.</p>
+                <p>In this context, the <strong>Services</strong> are thus accessible, subject to the restrictions provided for on the Site:</p>
+                <ul>
+                  <li>‍to any natural person having the power or authority to enter into commitments under these general terms and conditions. A natural person who does not have full legal capacity may only access the Site and Services with the consent of his legal representative</li>
+                  <li>to any legal person acting through a natural person who has the legal capacity to enter into contracts in the name and on behalf of the legal person</li>
+                </ul>
                 </div>
-              </el-collapse-item><!--
+              </el-collapse-item>
               <el-collapse-item name="3">
                 <template slot="title">
-                  <h2>General Terms</h2>
+                  <h2>Acceptance of the general terms and conditions</h2>
                 </template>
-                <div class='version'>Last Modified: 12th November 2019</div>
+                <div class='version'>Last modified: 12 Novembre 2019</div>
                 <div class='subcontent'>
-                Misuse of service
-                <p>Users must not misuse the Publons service. Misuse of the Publons service includes (but is not limited to):
+                <p>The acceptance of these general terms and conditions is evidenced by a checkbox in the registration form or when sending an invitation to review an article. This acceptance can only be full and complete. Any membership subject to reservation is considered null and void. The User who does not agree to be bound by these general conditions must not use the <strong>Services</strong>.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item name="4">
+                <template slot="title">
+                  <h2>Registration on the Site</h2>
+                </template>
+                <div class='version'>Last modified: 12 Novembre 2019</div>
+                <div class='subcontent'>
+                <p>The use of the <strong>Services</strong> Proofreader Search Service does not require registration on the site, however the user acknowledges that he/she has read these terms of use.</p>
+                <h3>To use the Invitation Services, the User must:</h3>
+                <ul>
+                  <li>or fill in the registration form available on request by email <a href='contac@publifactory.co' >contac@publifactory.co</a></li>
+                  <li>or by sending an invitation to a reviewer to review an article</li>
+                </ul>
+                <p>Registration automatically entails the opening of an account in the name of the User (hereinafter the "Account") which allows him to manage his use of the <strong>Services</strong> in a form and according to the technical means that Publifactory considers most appropriate to render said <strong>Services</strong>.</p>
+                <p>The User warrants that all information provided by him/her in the registration form or through the third party sites referred to above is accurate, up-to-date and sincere and is not misleading. </p>
+                <p>He undertakes to update this information in his Account in the event of changes, so that it always corresponds to the above-mentioned criteria. </p>
+                <p>The User is informed and accepts that the information entered for the purpose of creating or updating his Account is proof of his identity. The information entered by the User is binding as soon as it is validated. </p>
+                <h3>The User can access his Account at any time after logging in with his login and password.</h3>
+                <p>The User undertakes to use the <strong>Services</strong> personally and not to allow any third party to use them in his place or on his behalf, unless he bears full responsibility for them, and is also responsible for maintaining the confidentiality of his identifier and password, any access to the Site using them being deemed to have been made by the User. The latter must immediately contact Publifactory at the contact details mentioned herein if he notices that his Account has been used without his knowledge. It acknowledges Publifactory's right to take all appropriate measures in such cases.</p>
+                </div>
+              </el-collapse-item>
 
-                Submitting content that is inaccurate, untruthful or known not to be your own genuine opinion;
-                Submitting content which is unlawful, defamatory, libellous, abusive, discriminatory or obscene;
-                Impersonating any person or entity;
-                Misrepresenting your affiliation with any person or entity;
-                Undertaking activity using the Publons service with the purpose of solely raising your own profile at the expense of sincerely-added, constructive and valuable content or actions.
-                Searching for reviewers or editors and contacting them outside of our official and trusted channels.
-                </p>
+               <el-collapse-item name="5">
+                 <template slot="title">
+                   <h2>Description of the Services</h2>
+                 </template>
+                 <div class='version'>Last modified: 12 Novembre 2019</div>
+                 <div class='subcontent'>
+                 <p>Publifactory offers a service to search for proofreaders and to be put in contact with them from the data transmitted by the user, through various operations on the data, such as cleaning, correction, analysis, enrichment. </p>
+                 <h3>Le site propose 3 types de service différent:</h3>
+                 <ul>
+                   <li>A data extraction service: the User deposits a PDF file on the Site (hereinafter the "File"). Publifactory uses the File to extract content information used for processing purposes in order to extract the most relevant reviewers from the database.
+                   <li>A proofreader search service: The user from the transmitted File or manually entered information makes a proofreader search request. Publifactory uses this information extracted from the File or the information entered manually to match its database to provide the User with the best proofreaders.</li>
+                   <li>A service for sending invitations to specific reviewers: the User can use a form to send a request for an invitation to review a paper by integrating the abstract of the paper into the email. This invitation service should not be used for commercial purposes. </li>
+                 </ul>
+
+                 <p>The <strong>Services</strong> are detailed on the Site, in a form and according to the functionalities and technical means that Publifactory considers most appropriate. </p>
+                 <h3>To carry out the Services, Publifactory offers 2 (two) offers (hereinafter the "Offers"):</h3>
+                 <ul>
+                   <li>An offer to retrieve a list of reviewers as a file (.csv)</li>
+                   <li>An offer to send an invitation to reviewers by email. The user can choose to send an invitation to a reviewer to review an article. </li>
+                 </ul>
+                 </div>
+               </el-collapse-item>
+              <el-collapse-item name="6">
+                <template slot="title">
+                  <h2>Convention of proof</h2>
+                </template>
+                <div class='version'>Last modified: 12 Novembre 2019</div>
+                <div class='subcontent'>
+                  <h3>The User expressly acknowledges and accepts:</h3>
+                  <ul>‍
+                     <li> that the data collected on the Site and Publifactory's computer equipment are proof of the reality of the operations carried out hereunder </li>
+                     <li> that these data constitute the main mode of proof accepted between the parties, in particular for the calculation of the sums due to Publifactory.</li>
+                    </ul>
                 </div>
               </el-collapse-item>
-              <el-collapse-item  name="4">
-                <template slot="title">
-                  <h2>Trademark</h2>
-                </template>
-                <div class='version'>Last Modified: 12th November 2019</div>
-                <div class='subcontent'>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
-                </div>
-              </el-collapse-item>
-              <el-collapse-item  name="5">
-                <template slot="title">
-                  <h2>Copyright</h2>
-                </template>
-                <div class='version'>Last Modified: 12th November 2019</div>
-                <div class='subcontent'>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae ultricies metus. Maecenas et eros dolor. Fusce ac tellus magna. Aenean porttitor condimentum felis vitae condimentum. Suspendisse potenti. Duis tempus ante enim, eget placerat diam varius at. Suspendisse pellentesque, sapien ultricies pulvinar tincidunt, ante justo dictum leo, id interdum nibh dui nec metus. Nunc lectus augue, semper eu iaculis sed, semper id nisi. In id aliquet tellus, sodales mattis urna. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin sed est molestie odio ornare varius eget sed tortor. Pellentesque et enim sit amet erat accumsan interdum. Praesent vel hendrerit eros. Sed euismod maximus malesuada. Maecenas congue massa et velit placerat, in pulvinar felis viverra.</p>
-              </div>
-            </el-collapse-item>-->
+               <el-collapse-item name="7">
+                 <template slot="title">
+                   <h2>Obligations of the User</h2>
+                 </template>
+                 <div class='version'>Last modified: 12 Novembre 2019</div>
+                 <div class='subcontent'>
+                   <p>Without prejudice to the other obligations provided for herein, the User undertakes to comply with the following obligations.</p>
+                   <ul>‍
+                     <li> The User undertakes, in his use of the <strong>Services</strong>, to comply with the laws and regulations in force and not to infringe the rights of third parties or public order. </li>
+                     <li>The User acknowledges that he/she has read on the Site the characteristics and constraints, in particular technical ones, of all the <strong>Services</strong>. He is solely responsible for his use of the <strong>Services</strong>.</li>
+                     <li>The User undertakes to make strictly personal use of the <strong>Services</strong>. He therefore refrains from assigning, conceding or transferring all or part of his rights or obligations hereunder to a third party in any way whatsoever. </li>
+                     <li>The User undertakes to provide Publifactory with all the information necessary for the proper performance of the <strong>Services</strong>. More generally, the User undertakes to cooperate actively with Publifactory in order to ensure the proper execution of the present contract. </li>
+                     <li>The User acknowledges that the <strong>Services</strong> offer an additional, non-alternative solution for processing, correcting and updating his Data and that this solution cannot replace the other means available to the User to achieve the same objective. </li>
+                     <li> The User is informed and accepts that the implementation of <strong>Services</strong> requires that he/she be connected to the Internet and that the quality of <strong>Services</strong> depends directly on this connection, for which he/she is solely responsible. </li>
+                    </ul>
+                 </div>
+               </el-collapse-item>
+
+                <el-collapse-item name="8">
+                  <template slot="title">
+                    <h2>User Warranty</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>The User guarantees Publifactory against any complaints, claims, actions and/or claims whatsoever that Publifactory may suffer as a result of the User's breach of any of its obligations or warranties under these general conditions.
+                    <p>It undertakes to compensate Publifactory for any prejudice it may suffer and to pay it all costs, charges and/or sentences it may have to bear as a result. </p>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="10">
+                  <template slot="title">
+                    <h2>Publifactory's intellectual property</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>The systems, software, structures, infrastructures, databases and content of all kinds (texts, images, visuals, style, layout, logos, trademarks, databases, etc.) operated by Publifactory within the Site are protected by all intellectual property rights or rights of database producers in force. Any disassembly, decompilation, decryption, extraction, reuse, copying and more generally, any act of reproduction, representation, distribution and use of any of these elements, in whole or in part, without the authorization of Publifactory are strictly prohibited and may be the subject of legal proceedings. </p>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="10.5">
+                  <template slot="title">
+                    <h2>Links and third party sites</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>Publifactory can under no circumstances be held responsible for the technical availability of websites or mobile applications operated by third parties (including any partners) to which the User may access through the Site. Access to the article pages on the publishers' websites via DOIs is not guaranteed by Publifactory. </p>
+                    <p>Publifactory does not assume any responsibility for the content, products and/or <strong>Services</strong> available on such third-party sites and mobile applications, which are governed by their own terms of use. </p>
+                    <p>Publifactory is also not responsible for transactions between the User and any advertiser, professional or merchant (including its possible partners) to whom the User may be directed through the Site and may under no circumstances be a party to any disputes whatsoever with these third parties concerning in particular the delivery of products and/or <strong>Services</strong>, guarantees, declarations and other obligations whatsoever to which these third parties are bound. </p>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="11">
+                  <template slot="title">
+                    <h2>Commercial references</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>The User expressly authorises Publifactory to quote it and, where applicable, to use the reproduction of its trademark or logo as commercial references, in particular during events or demonstrations, in its commercial documents and on its website, in any form whatsoever.</p>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="12">
+                  <template slot="title">
+                    <h2>Amendments to the Regulations</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <ul>
+                      <li>Publifactory reserves the right to modify these general conditions at any time. </li>
+                      <li>The Registered User will be informed of these changes by any useful means at least 1 (one) before their entry into force</li>
+                      <li>The amended terms and conditions shall apply as of the renewal of this Subscription following their entry into force. </li>
+                      <li>If he does not accept the modified general conditions, he must unsubscribe from the <strong>Services</strong> as provided for in the article "Duration of the <strong>Services</strong>, Termination".</li>
+                      <li>Any User who uses the <strong>Services</strong> after the entry into force of the amended general terms and conditions is deemed to have accepted these modifications. </li>
+                    </ul>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="13">
+                  <template slot="title">
+                    <h2>Langue</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>In the event of a translation of these general terms and conditions into one or more languages, the language of interpretation shall be French in the event of a contradiction or dispute as to the meaning of a term or provision.</p>
+                  </div>
+                </el-collapse-item>
+
+                <el-collapse-item name="14">
+                  <template slot="title">
+                    <h2>Applicable law and jurisdiction</h2>
+                  </template>
+                  <div class='version'>Last modified: 12 Novembre 2019</div>
+                  <div class='subcontent'>
+                    <p>In the event of a dispute concerning the validity, interpretation and/or execution of these general terms and conditions, the parties agree that the courts of Paris shall have exclusive jurisdiction to rule on them, unless otherwise required by mandatory procedural rules.</p>
+                  </div>
+                </el-collapse-item>
+                <el-collapse-item name="15">
+                  <template slot="title">
+                    <h2>Entry into force</h2>
+                  </template>
+                  <div class='subcontent'>
+                    <p>These general conditions came into force on 12 November 2019.</p>
+                  </div>
+                </el-collapse-item>
             </el-collapse>
-            <h2></h2>
+
           </div>
       </el-row>
     </div>
