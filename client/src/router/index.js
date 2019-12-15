@@ -153,19 +153,19 @@ export const constantRouterMap = [
 		meta: { title: 'board', icon: 'appsbutton', noCache: true },
 		children: [
 			{
-				path: '/dashboard/article',
+				path: '/article',
 				name: 'my_articles',
 				meta: { title: 'my_articles', icon: 'edit', noCache: true },
 				component: () => import('../view/dashboard/index.vue')
 			},
 			{
-				path: '/dashboard/journal',
+				path: '/journal',
 				name: 'my_journals',
 				meta: { title: 'my_journals', icon: 'book', noCache: true },
 				component: () => import('../view/journals/index.vue')
 			},
 			{
-				path: '/dashboard/data',
+				path: '/data',
 				name: 'my_data',
 				meta: { title: 'my_data', icon: 'database', noCache: true },
 				component: () => import('../view/data/index.vue')
