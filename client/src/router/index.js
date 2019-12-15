@@ -36,20 +36,24 @@ export const constantRouterMap = [
 		component: () => import('../view/auth/authredirect'),
 		hidden: true
 	},
-	/*
 	{
-		path: '/services',
+		path: '/services/reviewermatcher',
+		redirect: '/',
+		hidden: true
+	},
+	{
+		path: '',
 		component: Layout_services,
-		redirect: 'services',
+		redirect: '',
 		hidden: true,
 		children: [
 			{
-				path: '/services',
+				path: '/',
 				meta: {
 					skipAuth: true
 				},
 				component: resolve => {
-					import('../view/applications/reviewermatcher/index.vue').then(
+					import('../view/applications/reviewermatcher/index_.vue').then(
 						resolve
 					);
 				}
@@ -59,7 +63,7 @@ export const constantRouterMap = [
 			skipAuth: true
 		},
 		props: route => ({ userId: route.query.userId })
-	},*/
+	},/*
 	{
 		path: '',
 		component: Layout_services,
@@ -82,7 +86,7 @@ export const constantRouterMap = [
 			skipAuth: true
 		},
 		props: route => ({ userId: route.query.userId })
-	},
+	},*/
 	{
 		path:
 			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
@@ -319,7 +323,7 @@ export const constantRouterMap = [
 					skipAuth: true
 				},
 				component: resolve => {
-					import('../view/cgu/index_v1.vue').then(resolve);
+					import('../view/legal/index.vue').then(resolve);
 				}
 			}
 		],

@@ -2,12 +2,15 @@
   <div class="dashboard-container">
     <div class="app-container">
       <div class="bandeau">ALPHA v0.3.4</div>
-      <el-row :gutter='50' >
-        <div class='head'>
-          <h1>Reviewer search engine</h1>
-          <h2>Getting the most relevant reviewers for your paper</h2>
+      <hgroup>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
         </div>
       </hgroup>
+
       <!-- popup message erreur -->
       <el-dialog
         title="Intern error"
@@ -19,8 +22,8 @@
           <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
         </span>
       </el-dialog>
-      <!--
-      <el-row :gutter='30' style='margin-top=80px;'>
+
+      <!-- <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
         <div class='description-container'>
           <div class='description'>
@@ -45,16 +48,15 @@
           </div>
         </div>
         </el-col>
-      </el-row>-->
+      </el-row> -->
 
+      <div>
+      <h2>Load the article</h2>
+      <p>Insert your publication informations (title, authors, abstract or keywords)</p>
+      <p>You can also upload the pdf to extract the different fields </p>
 
-
-
-        <h2>Load the article</h2>
-        <p>Insert your publication informations (title, authors, abstract or keywords)</p>
-        <p>You can also upload the pdf to extract the different fields </p>
-        <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
-      <el-row :gutter='30' style='margin-top:30px'>
+      <el-row :gutter='30' style='margin-top=80px;'>
+      <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
       <el-col :span='15'>
       <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
 
@@ -62,7 +64,130 @@
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
+        <!-- Ajout authors -->
+        <el-form-item label="Authors" prop="authors">
+          <el-tag
+            :key="aut"
+            v-for="aut in formPost.authors"
+            closable
+            effect="dark"
+            :disable-transitions="false"
+            @close="handleCloseAut(aut)">
+            {{aut}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisibleAut"
+            v-model="inputValueAut"
+            ref="saveAutInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirmAut"
+            @blur="handleInputConfirmAut"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
+        </el-form-item>
+
+        <!-- Ajout fields -->
+        <el-form-item label="Fields" prop="fields">
+          <el-tag
+            :key="fie"
+            v-for="fie in formPost.fields"
+            closable
+            :disable-transitions="false"
+            type="info"
+            effect="dark"
+            @close="handleCloseFie(fie)">
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
+          </el-tag>
+          <el-select
+            class="button-new-fie"
+            v-if="inputVisibleFie"
+            v-model="inputValueFie"
+            ref="saveFieInput"
+            placeholder="Select"
+            @change="handleInputConfirmFie"
+            size="mini">
+            <el-option
+              v-for="item in cats"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
+        </el-form-item>
+
+        <!-- Ajout sub_cat -->
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="sub"
+            v-for="sub in formPost.sub_cat"
+            closable
+            type="info"
+            :disable-transitions="false"
+            @close="handleCloseSub(sub)">
+            {{sub}}
+          </el-tag>
+          <el-select
+            class="button-new-sub"
+            v-if="inputVisibleSub"
+            v-model="inputValueSub"
+            ref="saveSubInput"
+            placeholder="Select"
+            @change="handleInputConfirmSub"
+            size="mini">
+            <el-option-group
+              v-for="group in subcats"
+              :key="group.value"
+              :label="group.value">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+        </el-form-item>
+
+        <!-- Ajout Abstract -->
+        <el-form-item label="Abstract" prop="abstract">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 10, maxRows: 30}"
+            placeholder="You have to input enter only english abstract"
+            v-model="formPost.abstract" @change="replaceChariot">
+          </el-input>
+        </el-form-item>
+
         <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -84,39 +209,6 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
         </el-form-item>
 
-        <!-- Ajout authors -->
-        <el-form-item label="Authors" prop="authors">
-          <el-tag
-            :key="aut"
-            v-for="aut in formPost.authors"
-            closable
-            :disable-transitions="false"
-            @close="handleCloseAut(aut)">
-            {{aut}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisibleAut"
-            v-model="inputValueAut"
-            ref="saveAutInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirmAut"
-            @blur="handleInputConfirmAut"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
-        </el-form-item>
-
-
-        <el-form-item label="Abstract" prop="abstract">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 10, maxRows: 30}"
-            placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract" @change="replaceChariot">
-          </el-input>
-        </el-form-item>
-
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
@@ -126,41 +218,26 @@
 
       </el-form>
       </el-col>
-      <el-col :span='1'>
-        <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
-      </el-col>
-      <el-col :span='8'>
-        <el-upload
-        class="upload-demo"
-        drag
-        :on-change="uploadChange"
-        :file-list="fileList"
-        action=""
-        :http-request="uploadSectionFile">
-        <i class="el-icon-upload"></i>
-        <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
-        <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
-      </el-upload>
-      <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
-      </el-col>
-<!--
+
         <el-col :span='1'>
           <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
-        <el-col :span='11'>
+        <el-col :span='8'>
           <el-upload
           class="upload-demo"
           drag
+          :on-change="uploadChange"
+          :file-list="fileList"
           action=""
           :http-request="uploadSectionFile">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
-            <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
-          </el-upload>
-          <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
+          <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
+        </el-upload>
+        <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
         </el-col>
-      -->
       </el-row>
+      </div>
 
 
 
@@ -168,14 +245,36 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <!-- <el-button @click="send_list_pertinence()" type="success" plain>Send the list</el-button> -->
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
-            <el-button @click="exportListJson()">Export list (json)</el-button>
+            <el-popover
+              placement="top"
+              width="330">
+              <p>To get the mail list, please enter your email</p>
+              <el-form :inline="true" :model="formMini" :rules="rulesMini" ref="formMini" class="demo-form-inline">
+                <el-form-item prop="mail">
+                  <el-input v-model="formMini.mail" placeholder="example@mail.com" size="mini"></el-input>
+                </el-form-item>
+                <!--<el-form-item>
+                  <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
+                </el-form-item>-->
+              </el-form>
+              <el-button slot="reference">Get mail list</el-button>
+            </el-popover>
+            <!--<el-button @click="exportListJson()">Export list (json)</el-button>-->
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -207,8 +306,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="280"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -226,7 +324,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -240,9 +338,19 @@
             width="100">
             <template slot-scope="props">
               <p>{{ props.row.score }}</p>
-              <p>Score (year) : {{ props.row.scorePond }}</p>
             </template>
           </el-table-column> -->
+
+          <el-table-column
+            label="Fields"
+            prop="fields">
+            <template slot-scope="props">
+              <div v-for="field in props.row.fields">
+                <p v-if="field == 'medicine1' || field == 'medicine2'">Medicine</p>
+                <p v-else>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
+            </template>
+          </el-table-column>
 
           <el-table-column
             label="Citations"
@@ -254,7 +362,8 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
@@ -268,7 +377,7 @@
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -289,22 +398,53 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
               </el-button>
-              <el-button v-else
+<!--              <el-popover
+                ref="popcheck"
+                placement="top"
+                trigger="hover"
+                content="The author matches correctly">
+              </el-popover>
+              <el-button
                 type="success"
-                icon="el-icon-message"
+                plain
+                icon="el-icon-check"
                 circle
-                disabled>
+                @click.native.prevent="validateRow(scope.$index, tableData)"
+                v-popover:popcheck/>
+              <el-popover
+                ref="popdel"
+                placement="top"
+                trigger="hover"
+                content="The author does not match">
+              </el-popover>
+              <el-button
+                type="info"
+                plain
+                icon="el-icon-close"
+                circle
+                @click.native.prevent="deleteRow(scope.$index, tableData)"
+                v-popover:popdel>
               </el-button>
+-->
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -322,6 +462,7 @@
 import axios from 'axios'
 import researcherCard from './researcher_card_test'
 import requestView from './requestView'
+import { mapGetters } from 'vuex'
 
 // Import JSON
 import cats_json from './json/cats.json'
@@ -333,6 +474,11 @@ let cancel;
 
 export default {
   components: {researcherCard,requestView},
+  computed: {
+    ...mapGetters([
+      'loggedIn'
+    ])
+  },
   data () {
     return {
       formMail: {
@@ -347,15 +493,27 @@ export default {
         // ,issn: ''
       },
       centerDialogVisible: false,
+      dialogVisibleError: false,
+      errorMessage: "",
       state_click: [],
       isExpanded: [],
       progress_status: 0,
       progress_status_pdf: 0,
+      formMini: {
+        mail: ''
+      },
+      rulesMini: {
+        abstract: [
+          {required: true, message: 'Please enter your email', trigger: 'blur'}
+        ]
+      },
       formPost: {
         abstract: '',
         title: '',
         keywords: [],
         authors: [],
+        fields: [],
+        sub_cat: [],
         listPertinence: {}
       },
       rules: {
@@ -366,22 +524,33 @@ export default {
           {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
         ],
         title: [
-          {required: true, message: 'Please enter the title of the article', trigger: 'blur'},
-          {min: 3, message: 'Length should be at least 3', trigger: 'blur'}
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+        ],
+        fields: [
+          {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
+      inputVisibleFie: false,
+      inputVisibleSub: false,
       inputValue: '',
       inputValueAut: '',
+      inputValueFie: '',
+      inputValueSub: '',
       load_var: false,
       id: '',
       rowInfos: {},
       requestInfos: {},
-      activeNames: "",
+      listMails: [],
+      requestMails: {},
       cats: cats_json,
       assoc_cat: assoc_cat_json,
       time_cat: time_cat_json,
@@ -391,8 +560,8 @@ export default {
       interId: 0,
       pdfInter: 0,
       fileList:[],
-      progress_status_pdf: 0,
-      dataUpload: false
+      activeNames: "",
+      dataUpload: false,
     }
   },
   methods: {
@@ -400,12 +569,33 @@ export default {
       this.centerDialogVisible = new_val
     },
     replaceChariot () {
-      // console.log(this.formPost.abstract);
       let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
       this.formPost.abstract = temp
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -500,38 +690,8 @@ export default {
       ])
     },
 
-    uploadChange(file, fileList){
-      this.fileList = fileList.slice(-1);
-    },
-    uploadSectionFile(param){
-      this.progress_status_pdf = 0
-      this.pdfInter = window.setInterval(()=>{
-        if (this.progress_status_pdf<100)
-          this.progress_status_pdf = this.progress_status_pdf +1
-      }, 500);
-      let fileObject = param.file;
-      let formData = new FormData();
-      formData.append("pdf_file", fileObject);
-      let res = ''
-
-      new Promise ((resolve,reject) => {
-        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
-        .then( async (id) => {
-            console.log(id);
-            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
-            console.log(res.data[0])
-            this.formPost.abstract = res.data[0].abstract
-            this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
-            this.progress_status_pdf = 100
-            this.dataUpload = true
-        })
-      })
-    },
-
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
       let exportFileDefaultName = 'list_reviewer.json';
@@ -543,11 +703,11 @@ export default {
     },
 
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
 
-      let keys = Object.keys(this.tableData[0]);
+      let keys = Object.keys(this.tempData[0]);
 
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -555,7 +715,7 @@ export default {
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
 
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -667,31 +827,49 @@ export default {
       this.inputValueAut = '';
     },
 
-    uploadSectionFile(param){
-      this.progress_status_pdf = 0
-      window.setInterval(()=>{
-        if (this.progress_status_pdf<100)
-          this.progress_status_pdf = this.progress_status_pdf +1
-      }, 500);
-      let fileObject = param.file;
-      let formData = new FormData();
-      formData.append("pdf_file", fileObject);
-      let res = ''
-      new Promise ((resolve,reject) => {
-        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
-        .then( async (id) => {
-            console.log(id);
-            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
-            console.log(res.data[0])
-            this.formPost.abstract = res.data[0].abstract
-            this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
-            this.progress_status_pdf = 100
-        })
-      //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
-      })
+    //Ajout field
+    handleCloseFie(fie) {
+      this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
+      this.cats.forEach(function(cat){
+        if (cat.value == fie){
+          cat.disabled = false
+        }
+      });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
     },
+    showInputFie() {
+      this.inputVisibleFie = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmFie() {
+      let inputValueFie = this.inputValueFie;
+      if (inputValueFie) {
+        this.formPost.fields.push(inputValueFie);
+        this.cats.forEach(function(cat){
+          if (cat.value == inputValueFie){
+            cat.disabled = true
+          }
+        });
+        let temp = [];
+        this.assoc_cat[inputValueFie].forEach(function(cat){
+          temp.push({"value": cat, "disabled": false})
+        })
+        this.subcats.push({
+          "value": inputValueFie,
+          "options": temp
+        })
+      }
+      this.inputVisibleFie = false;
+      this.inputValueFie = '';
+    },
+
 
     //Ajout subcat
     handleCloseSub(sub) {
@@ -727,38 +905,56 @@ export default {
       console.log(this.formPost.sub_cat);
     },
 
-    // uploadSectionFile(param){
-    //   this.progress_status_pdf = 0
-    //   window.setInterval(()=>{
-    //     if (this.progress_status_pdf<100)
-    //       this.progress_status_pdf = this.progress_status_pdf +1
-    //   }, 500);
-    //   let fileObject = param.file;
-    //   let formData = new FormData();
-    //   formData.append("pdf_file", fileObject);
-    //   let res = ''
-    //   new Promise ((resolve,reject) => {
-    //     axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
-    //     .then( async (id) => {
-    //         console.log(id);
-    //         resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
-    //         console.log(res.data[0])
-    //         this.formPost.abstract = res.data[0].abstract
-    //         this.formPost.title = res.data[0].title
-    //         this.formPost.keywords = res.data[0].keywords
-    //         this.formPost.authors = res.data[0].authors
-    //         this.progress_status_pdf = 100
-    //     })
-    //   //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
-    //   })
-    // },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
+    },
 
-    updateMetrics(_fields, _title) {
-      const formData = {fields: _fields, title: _title }
-      console.log(formData)
-      axios.post('/api/activity/create', formData)
-      .then( res => {console.log(res)
+    uploadSectionFile(param){
+      this.formPost.keywords = []
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.progress_status_pdf = 0
+      this.pdfInter = window.setInterval(()=>{
+        if (this.progress_status_pdf<100)
+          this.progress_status_pdf = this.progress_status_pdf +1
+      }, 500);
+      let fileObject = param.file;
+      let formData = new FormData();
+      formData.append("pdf_file", fileObject);
+      let res = ''
+      new Promise ((resolve,reject) => {
+        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+        .then( async (id) => {
+            console.log(id);
+            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
+            console.log(res.data[0])
+            this.formPost.abstract = res.data[0].abstract
+            this.formPost.title = res.data[0].title
+            if (res.data[0].keywords) {
+              this.formPost.keywords = res.data[0].keywords
+            }
+            if (res.data[0].authors) {
+              this.formPost.authors = res.data[0].authors
+            }
+            this.progress_status_pdf = 100
+            this.dataUpload = true
+            clearInterval(this.pdfInter)
         })
+      })
     },
 
     async onSubmit (formName) {
@@ -767,18 +963,20 @@ export default {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
-          this.second = 0
+          this.seconds = 0
           this.onSeconds = 0
           this.interId = window.setInterval(()=>{
             this.seconds += 1
           }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
-          }, 250);
+              this.progress_status += 1
+          }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+          this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
 
           let phraseKey = ""
           if (this.formPost.keywords.length > 0){
@@ -805,17 +1003,25 @@ export default {
           let res = ''
           this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-            .then( async (id) => {
-                console.log(id);
-
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
+                console.log(ids);
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
+                this.load_var = false
                 this.state_click = []
                 this.isExpanded = []
+                this.seconds = 0
+                clearInterval(this.interId)
                 this.listPertinence = {"abstract": this.formPost.abstract, "nb_suggestion": res.data.length, "ratio": 0, "list_failed": []}
                 console.log(this.listPertinence);
                 var anchor = document.querySelector("#scroll_anchor");
@@ -826,7 +1032,12 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
-                this.load_var = false
+              },
+              async (error) => {
+                this.dialogVisibleError = true;
+                this.errorMessage = error.message;
+                this.resetForm('formPost');
+                console.log("error ::", error);
               }
             )
           })
@@ -837,40 +1048,31 @@ export default {
       });
     },
 
-    send_list_pertinence() {
-      // this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
-      // console.log("before", this.listPertinence);
-      // let temp = JSON.stringify(this.listPertinence)
-      // let today = new Date();
-      // let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
-      // console.log(token);
-      // new Promise ((resolve,reject) => {
-      //   axios.get('http://localhost:5000/api/add_list_pertinence?data=' + temp + '&token=' + token)
-      //   .then( async (res) => {
-      //     console.log("after", res.data);
-      //   })
-      // })
+    updateMetrics(_fields, _title) {
+      const formData = {fields: _fields, title: _title }
+      console.log(formData)
+      axios.post('/api/activity/create', formData)
+      .then( res => {console.log(res)
+        })
     },
-
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.subcats = [];
-      this.cats.forEach(function(cat){
-        cat.disabled = false
-      });
-      this.load_var = false
-      this.isLoading = false
-      clearInterval(this.interId)
-      clearInterval(this.pdfInter)
-      this.dataUpload = false
-      this.progress_status_pdf = 0
-      this.fileList = []
-      cancel()
+    getMailList() {
+      for (let x=0; x<10; x++) {
+        this.listMails.push({
+          "id": this.tableData[x].original_id,
+          "name": this.tableData[x].name,
+          "mail": ""
+        });
+      };
+      this.requestMails = {
+        "title": this.formPost.title,
+        "mail_publisher": this.formMini.mail,
+        "list": this.listMails
+      }
+      console.log(this.requestMails);
     },
 
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
 
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
@@ -907,21 +1109,29 @@ export default {
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
 
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
-      if(this.isExpanded[index] === false || this.isExpanded[index] == null){
-        this.isExpanded[index] = true;
-        this.state_click[index] = 3;
-      }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
-        this.$refs.refTable.toggleRowExpansion(row);
-        this.isExpanded[index] = true;
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
         this.state_click[index] = 0;
       }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
-        this.state_click[index] = 3;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
@@ -978,8 +1188,13 @@ export default {
     handleDelete(index, row) {
       console.log(index, row);
     },
-    handleChange(){
-      console.log('yay');
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.display = 5
+      }
+      else {
+        this.display = 3
+      }
     }
   }
 }
@@ -1078,7 +1293,7 @@ hgroup {
 
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
 
@@ -1101,11 +1316,11 @@ hgroup {
 
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -1246,4 +1461,5 @@ hgroup {
     padding: 5px 7px;
   }
 }
+
 </style>
