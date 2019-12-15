@@ -86,16 +86,19 @@
     }
   },
   created() {
+
+  },
+  async mounted () {
+    if (this.roles.includes('admin')) {
+      this.currentRole = 'adminDashboard'
+      this.visibleDiagFirstConnexion = false
+    }
     if (this.roles.includes('editor')) {
       this.currentRole = 'editorDashboard'
       this.visibleDiagFirstConnexion = false
     }
     if (this.roles.includes('user')) {
       this.currentRole = 'userDashboard'
-      this.visibleDiagFirstConnexion = false
-    }
-    if (this.roles.includes('admin')) {
-      this.currentRole = 'adminDashboard'
       this.visibleDiagFirstConnexion = false
     }
     // a guest account has only one role : [guest]
@@ -106,8 +109,7 @@
     if(this.sidebar.opened == false){
       this.toggleSideBar()
     }
-  },
-  async mounted () {
+
     await axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
     }).then(response => {
