@@ -8,7 +8,7 @@
               <div class="subcontent">
                 <p>R.C.S. PARIS n°840 422 158  </p>
                 <p>181 rue de Charenton, Paris 75012, France</p>
-                <p>contact@publifactory.co</p>
+                <p><a href='contact@publifactory.co'>contact@publifactory.co</a></p>
               </div>
           </div>
       </el-row>
@@ -242,7 +242,7 @@ export default{
   max-width: 1140px;
 }
 
-.content{margin-bottom:100px;}
+.content{margin-bottom:100px;text-align: justify;}
 
 .header{
   text-align: center;
@@ -257,19 +257,19 @@ export default{
 }
 
 .subcontent{
-  text-align: left;
-
+  text-align: justify;
+  font-size: 1rem;
 }
+
 .subcontent h2{font-family: 'DNLTPro-bold';font-size:1.2rem;}
-.subcontent h3{font-family: 'DNLTPro-bold';font-size:1.0rem;}
-.subcontent p{text-align:left;}
+.subcontent h3{font-family: 'DNLTPro-bold';font-size:1.2rem;}
+.subcontent p{
+  text-align: justify;
+}
 
 .version {
   font-family: 'DNLTPro-light-italic';
   font-size: 1rem;
   text-align:left;
-}
-.subcontent{
-  font-size: 1rem;
 }
 </style>
