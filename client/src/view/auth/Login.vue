@@ -126,7 +126,11 @@ export default {
       loginError: false
     }
   },
+  mounted () {
+    console.log("mounted login page")
+  },
   created () {
+    console.log("created login page")
     if (this.$route.query.userId)
       this.onCreation()
     if (this.$route.query.redirect) {
@@ -200,7 +204,7 @@ export default {
             password: this.form.password
           }).then((data) => {
             this.loading = false
-            this.$router.push(this.$route.query.redirect || '/')
+            this.$router.push(this.$route.query.redirect || '/dashboard/home')
           }).catch((err) => {
             this.$message({
               title: this.$t('message.error'),

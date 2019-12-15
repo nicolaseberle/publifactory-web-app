@@ -5,13 +5,31 @@
       <div class='logo'><a href='/'>PubliFactory</a></div>
     </div>
     <div class="m-right-menu">
-      <div class='right-menu-item'>
+      <div style='vertical-align:middle'  class='right-menu-item'>
          <el-link :underline="false" style='font-size:16px' href='http://publifactory.co/'><span>Product</span></el-link>
       </div>
       <div class='right-menu-item'>
          <el-link :underline="false"  style='font-size:16px' @click='centerDialogVisible = true'><span>Contact</span></el-link>
       </div>
-      <div class='right-menu-item'>
+      <div class='right-menu-item' v-show="loggedIn">
+         <el-link :underline="false"  style='font-size:16px' @click='goToDashboard'><span>Dashboard</span></el-link>
+      </div>
+      <el-dropdown v-show="loggedIn" style='vertical-align:middle' class="right-menu-item" trigger="click">
+        <div class="avatar-wrapper">
+          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <i class="el-icon-caret-bottom"/>
+        </div>
+        <el-dropdown-menu slot="dropdown">
+          <!--<router-link to="/">-->
+            <el-dropdown-item @click='goToDashboard'>
+              {{ $t('navbar.dashboard') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="doLogout">
+              {{$t('navbar.logout')}}
+            </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <div class='right-menu-item' v-show="!loggedIn">
         <router-link :to="{name: '/login'}">
           <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain >Login</el-button>
         </router-link>
@@ -84,12 +102,30 @@ export default {
         this.$router.push('/settings')
     },
     goToDashboard () {
-      this.$router.push(this.$route.query.redirect || '/')
-    }
+      this.$router.push(this.$route.query.redirect || '/dashboard/home')
+    },
+
   }
 }
 </script>
 <style>
 .m-navbar{
 }
+.avatar-wrapper {
+  cursor: pointer;
+  margin-top: 5px;
+  position: relative;}
+
+.avatar-wrapper .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+.avatar-wrapper  .el-icon-caret-bottom {
+    position: absolute;
+    right: -20px;
+    top: 25px;
+    font-size: 12px;
+  }
+
 </style>
