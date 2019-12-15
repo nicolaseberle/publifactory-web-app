@@ -39,12 +39,12 @@
     <el-form-item label="Option">
       <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
-    <el-form-item label="CGU / RGPD" prop="cgu">
-      <el-checkbox v-model="formMail.cgu">
+    <el-form-item label="CGU" prop="type">
+      <el-checkbox v-model="formMail.cgu" name="type">
         I accept the
-        <el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">
-          <span>CGU</span>
-        </el-tooltip>
+        <!--<el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">-->
+          <a><router-link :to="'/cgu_publifactory_v1'">CGU</router-link></a>
+        <!--</el-tooltip>-->
       </el-checkbox>
     </el-form-item>
     <el-form-item>
@@ -95,6 +95,9 @@ export default {
           {required: true, message: 'You need to enter your name', trigger: 'blur'}
         ],
         cgu: [
+          {required: true, message: 'You need to accept the CGU', trigger: 'blur'}
+        ],
+        type: [
           {required: true, message: 'You need to accept the CGU', trigger: 'blur'}
         ]
         // ,issn: [
