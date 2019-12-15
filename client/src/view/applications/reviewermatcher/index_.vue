@@ -1,0 +1,1465 @@
+<template>
+  <div class="dashboard-container">
+    <div class="app-container">
+      <div class="bandeau">ALPHA v0.3.4</div>
+      <hgroup>
+        <h1>Reviewer search engine</h1>
+        <h2>Getting the most relevant reviewers for your paper</h2>
+        <div style="display:flex; justify-content:space-between">
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+        </div>
+      </hgroup>
+
+      <!-- popup message erreur -->
+      <el-dialog
+        title="Intern error"
+        :visible.sync="dialogVisibleError"
+        width="30%">
+        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
+        <span v-else>Request cancelled</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
+      <!-- <el-row :gutter='30' style='margin-top=80px;'>
+        <el-col :span='15'>
+        <div class='description-container'>
+          <div class='description'>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="What is it?" name="1">
+                <div>
+                  <p>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="How does it work ?" name="2">
+                <div>
+                  <p>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+                </div>
+              </el-collapse-item>
+              <el-collapse-item title="Why a relevance test ?" name="3">
+                <div>
+                  <p><b><u>We need you to check the relevance of the search engine outputs.</u></b> When you click on an suggested author, you will see the most relevant article of this author. In the bottom right corner, you can validate or invalidate this match. The verified matches will be used to robustify the model. </p>
+                  <p><b>Warning:</b> the conflict of interest is not completely operational</p>
+                </div>
+              </el-collapse-item>
+            </el-collapse>
+          </div>
+        </div>
+        </el-col>
+      </el-row> -->
+
+      <div>
+      <h2>Load the article</h2>
+      <p>Insert your publication informations (title, authors, abstract or keywords)</p>
+      <p>You can also upload the pdf to extract the different fields </p>
+
+      <el-row :gutter='30' style='margin-top=80px;'>
+      <el-tag type="warning" v-if="dataUpload" style="margin-bottom:28px;">Please check the information from the PDF extractor, it can be wrong or uncomplete</el-tag>
+      <el-col :span='15'>
+      <el-form  label-width="140px" :model="formPost" :rules="rules" ref="formPost" style='padding-bottom:20px;'>
+
+        <el-form-item label="Title" prop="title">
+          <el-input v-model="formPost.title"></el-input>
+        </el-form-item>
+
+        <!-- Ajout authors -->
+        <el-form-item label="Authors" prop="authors">
+          <el-tag
+            :key="aut"
+            v-for="aut in formPost.authors"
+            closable
+            effect="dark"
+            :disable-transitions="false"
+            @close="handleCloseAut(aut)">
+            {{aut}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisibleAut"
+            v-model="inputValueAut"
+            ref="saveAutInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirmAut"
+            @blur="handleInputConfirmAut"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
+        </el-form-item>
+
+        <!-- Ajout fields -->
+        <el-form-item label="Fields" prop="fields">
+          <el-tag
+            :key="fie"
+            v-for="fie in formPost.fields"
+            closable
+            :disable-transitions="false"
+            type="info"
+            effect="dark"
+            @close="handleCloseFie(fie)">
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
+          </el-tag>
+          <el-select
+            class="button-new-fie"
+            v-if="inputVisibleFie"
+            v-model="inputValueFie"
+            ref="saveFieInput"
+            placeholder="Select"
+            @change="handleInputConfirmFie"
+            size="mini">
+            <el-option
+              v-for="item in cats"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
+        </el-form-item>
+
+        <!-- Ajout sub_cat -->
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="sub"
+            v-for="sub in formPost.sub_cat"
+            closable
+            type="info"
+            :disable-transitions="false"
+            @close="handleCloseSub(sub)">
+            {{sub}}
+          </el-tag>
+          <el-select
+            class="button-new-sub"
+            v-if="inputVisibleSub"
+            v-model="inputValueSub"
+            ref="saveSubInput"
+            placeholder="Select"
+            @change="handleInputConfirmSub"
+            size="mini">
+            <el-option-group
+              v-for="group in subcats"
+              :key="group.value"
+              :label="group.value">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+        </el-form-item>
+
+        <!-- Ajout Abstract -->
+        <el-form-item label="Abstract" prop="abstract">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 10, maxRows: 30}"
+            placeholder="You have to input enter only english abstract"
+            v-model="formPost.abstract" @change="replaceChariot">
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="tag"
+            v-for="tag in formPost.keywords"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
+        </el-form-item>
+
+        <el-form-item class="flex_items">
+          <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
+          <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
+          <p v-if="isLoading" style="margin-left: 10px; line-height:15px; text-align: justify;">Please wait while processing.. It can be a bit long. ({{this.seconds}}/~{{this.onSeconds}}s)</p>
+          <el-button @click="resetForm('formPost')" class="button_tab" style="margin-left:10px!important">Reset</el-button>
+        </el-form-item>
+
+      </el-form>
+      </el-col>
+
+        <el-col :span='1'>
+          <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
+        </el-col>
+        <el-col :span='8'>
+          <el-upload
+          class="upload-demo"
+          drag
+          :on-change="uploadChange"
+          :file-list="fileList"
+          action=""
+          :http-request="uploadSectionFile">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">Drop your pdf file here or <em>click to upload</em></div>
+          <div class="el-upload__text"><strong>Powered by GROBID</strong></div>
+        </el-upload>
+        <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status_pdf" style="width:100%;margin-top:16px;"></el-progress>
+        </el-col>
+      </el-row>
+      </div>
+
+
+
+
+      <div id="scroll_anchor">
+      <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
+        <h2>Suggestion of Reviewers</h2>
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
+          <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
+          <div>
+            <el-popover
+              placement="top"
+              width="330">
+              <p>To get the mail list, please enter your email</p>
+              <el-form :inline="true" :model="formMini" :rules="rulesMini" ref="formMini" class="demo-form-inline">
+                <el-form-item prop="mail">
+                  <el-input v-model="formMini.mail" placeholder="example@mail.com" size="mini"></el-input>
+                </el-form-item>
+                <!--<el-form-item>
+                  <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
+                </el-form-item>-->
+              </el-form>
+              <el-button slot="reference">Get mail list</el-button>
+            </el-popover>
+            <!--<el-button @click="exportListJson()">Export list (json)</el-button>-->
+            <el-button @click="exportListCsv()">Export list (csv)</el-button>
+          </div>
+        </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
+        <el-table
+          ref="refTable"
+          row-key="id"
+          highlight-current-row
+          :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+          @cell-click="displayInfos"
+          style="width: 100%">
+          <el-table-column type="expand" width="1">
+            <template slot-scope="props">
+              <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
+                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)"/>
+              </div>
+              <article v-if="state_click[props.$index] == 2">
+                <strong>Contacts :</strong>
+                <ul>
+                  <li v-if="props.row.contact.length == 0">Unknown</li>
+                  <li v-else v-for="contact in props.row.contact">
+                    <span v-for="(v,i,count) in contact">{{i}} : {{v}}
+                      <span v-show="count<(Object.keys(contact).length-1)">, </span>
+                    </span>
+                  </li>
+                </ul>
+              </article>
+            </template>
+
+
+          </el-table-column>
+
+          <el-table-column
+            label="Authors"
+            :render-header="info_caption"
+            width="220">
+            <template slot-scope="props">
+                <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
+                <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
+                <div v-if="props.row.verification == 0" class="line_verif c_grey"></div>
+                <strong class="align">{{ props.row.name}}</strong>
+                <p v-if="props.row.id.length > 10">
+                  <img src="../../../assets/images/logo-orcid.png" alt="logo orcid" class="little_icon">{{ props.row.id }}
+                </p>
+                <p v-else>
+                  <img src="../../../assets/images/logo-semscho.png" alt="logo semantic scholar" class="little_icon">{{ props.row.id }}
+                </p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="Affiliation"
+            prop="affiliation"
+            width="180">
+            <template slot-scope="props">
+              <p v-if="props.row.affiliation.length == 0">Unknown</p>
+              <p v-else>{{ props.row.affiliation }}</p>
+              <p v-if="props.row.country != 'N/A'">({{ props.row.country[0] }})</p>
+            </template>
+          </el-table-column>
+
+          <!-- <el-table-column
+            label="Score"
+            prop="score"
+            width="100">
+            <template slot-scope="props">
+              <p>{{ props.row.score }}</p>
+            </template>
+          </el-table-column> -->
+
+          <el-table-column
+            label="Fields"
+            prop="fields">
+            <template slot-scope="props">
+              <div v-for="field in props.row.fields">
+                <p v-if="field == 'medicine1' || field == 'medicine2'">Medicine</p>
+                <p v-else>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="Citations"
+            prop="citations"
+            width="100">
+            <template slot-scope="props">
+              <p>{{ props.row.citations }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="CoI"
+            :render-header="info_caption_coi"
+            prop="conflit">
+            <template slot-scope="props">
+                <div v-if="props.row.conflit == 0" class="round c_green"></div>
+                <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
+                <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
+                <div v-else class="round c_grey"></div>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="Actions"
+            width="140">
+            <template slot-scope="scope">
+              <el-popover
+                ref="popdoc"
+                placement="top"
+                trigger="hover"
+                content="Most pertinents works">
+              </el-popover>
+              <el-button
+                type="primary"
+                icon="el-icon-document"
+                circle
+                @click="displayInfosA(scope.$index, scope.row)"
+                v-popover:popdoc>
+              </el-button>
+              <el-popover
+                ref="popcon"
+                placement="top"
+                trigger="hover"
+                content="Send a request">
+              </el-popover>
+              <el-button
+                type="success"
+                icon="el-icon-message"
+                circle
+                @click="displayInfosB(scope.$index, scope.row)"
+                v-popover:popcon>
+              </el-button>
+<!--              <el-popover
+                ref="popcheck"
+                placement="top"
+                trigger="hover"
+                content="The author matches correctly">
+              </el-popover>
+              <el-button
+                type="success"
+                plain
+                icon="el-icon-check"
+                circle
+                @click.native.prevent="validateRow(scope.$index, tableData)"
+                v-popover:popcheck/>
+              <el-popover
+                ref="popdel"
+                placement="top"
+                trigger="hover"
+                content="The author does not match">
+              </el-popover>
+              <el-button
+                type="info"
+                plain
+                icon="el-icon-close"
+                circle
+                @click.native.prevent="deleteRow(scope.$index, tableData)"
+                v-popover:popdel>
+              </el-button>
+-->
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
+      </el-row>
+    </div>
+    </div>
+    <el-dialog
+      title="Send a Request to Review"
+      :visible.sync="centerDialogVisible"
+      width="75%">
+      <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
+
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+import researcherCard from './researcher_card_test'
+import requestView from './requestView'
+import { mapGetters } from 'vuex'
+
+// Import JSON
+import cats_json from './json/cats.json'
+import assoc_cat_json from './json/assoc_cat.json'
+import time_cat_json from './json/time_cat.json'
+
+const CancelToken = axios.CancelToken;
+let cancel;
+
+export default {
+  components: {researcherCard,requestView},
+  computed: {
+    ...mapGetters([
+      'loggedIn'
+    ])
+  },
+  data () {
+    return {
+      formMail: {
+        object: '',
+        mailDest: '',
+        name: '',
+        journal: '',
+        message: '',
+        deadline: '',
+        relaunch: '2x1month',
+        cgu:false
+        // ,issn: ''
+      },
+      centerDialogVisible: false,
+      dialogVisibleError: false,
+      errorMessage: "",
+      state_click: [],
+      isExpanded: [],
+      progress_status: 0,
+      progress_status_pdf: 0,
+      formMini: {
+        mail: ''
+      },
+      rulesMini: {
+        abstract: [
+          {required: true, message: 'Please enter your email', trigger: 'blur'}
+        ]
+      },
+      formPost: {
+        abstract: '',
+        title: '',
+        keywords: [],
+        authors: [],
+        fields: [],
+        sub_cat: [],
+        listPertinence: {}
+      },
+      rules: {
+        abstract: [
+          {required: true, message: 'Please enter the abstract of the article', trigger: 'blur'}
+        ],
+        authors: [
+          {required: true, message: 'Please enter at least the author of the article', trigger: 'blur'}
+        ],
+        title: [
+          {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+        ],
+        fields: [
+          {required: true, message: 'Please enter at least one field', trigger: 'blur'}
+        ]
+      },
+      tempData: [{}],
+      tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
+      isData: false,
+      isLoading: false,
+      search: '',
+      inputVisible: false,
+      inputVisibleAut: false,
+      inputVisibleFie: false,
+      inputVisibleSub: false,
+      inputValue: '',
+      inputValueAut: '',
+      inputValueFie: '',
+      inputValueSub: '',
+      load_var: false,
+      id: '',
+      rowInfos: {},
+      requestInfos: {},
+      listMails: [],
+      requestMails: {},
+      cats: cats_json,
+      assoc_cat: assoc_cat_json,
+      time_cat: time_cat_json,
+      subcats: [],
+      seconds: 0,
+      onSeconds: 0,
+      interId: 0,
+      pdfInter: 0,
+      fileList:[],
+      activeNames: "",
+      dataUpload: false,
+    }
+  },
+  methods: {
+    closeDialogBox (new_val) {
+      this.centerDialogVisible = new_val
+    },
+    replaceChariot () {
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
+    },
+    format(value){
+      return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    sendRequestRev(formMail){
+      this.$refs[formMail].validate((valid) => {
+        if (valid) {
+          this.requestInfos["title"] = this.formPost["title"]
+          this.requestInfos["abstract"] = this.formPost["abstract"]
+          this.requestInfos["rev_id"] = this.rowInfos["id"]
+          this.requestInfos["rev_name"] = this.rowInfos["name"]
+          this.requestInfos["deadline"] = this.formMail["deadline"]
+          this.requestInfos["pub_mail"] = this.formMail["mailDest"]
+          this.requestInfos["pub_journal"] = this.formMail["journal"]
+          this.requestInfos["pub_name"] = this.formMail["name"]
+
+          new Promise ((resolve,reject) => {
+            axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
+            .then( async (res) => {
+              if (res) {
+                this.requestInfos["rev_mail"] = res['data'][0]["_source"]["mail"]
+              }
+              else {
+                this.requestInfos["rev_mail"] = ""
+              }
+              this.centerDialogVisible = false;
+              console.log(this.requestInfos);
+            })
+          })
+        }
+      })
+    },
+    info_caption(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              title: "Caption",
+              // width: "200",
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", [
+                h("span", {style: "color:#30B08F;"}, "Green"),
+                " : The author is referenced in ORCID"
+              ]),
+              h("p", [
+                h("span", {style: "color:orange;"}, "Orange"),
+                " : The author is referenced in ORCID but can have namesake problem"
+              ]),
+              h("p", [
+                h("span", {style: "color:#A5A9AD;"}, "Grey"),
+                " : The author isn't referenced in ORCID"
+              ]),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
+
+    exportListJson() {
+      let dataStr = JSON.stringify(this.tempData);
+      let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
+      let exportFileDefaultName = 'list_reviewer.json';
+
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    },
+
+    exportListCsv() {
+      if(this.tempData.length == 0) {
+        return '';
+      }
+
+      let keys = Object.keys(this.tempData[0]);
+
+      let columnDelimiter = ',';
+      let lineDelimiter = '\n';
+
+      let csvColumnHeader = keys.join(columnDelimiter);
+      let csvStr = csvColumnHeader + lineDelimiter;
+
+      this.tempData.forEach(item => {
+          keys.forEach((key, index) => {
+              if( (index > 0) && (index < keys.length-1) ) {
+                  csvStr += columnDelimiter;
+              }
+              csvStr += item[key];
+          });
+          csvStr += lineDelimiter;
+      });
+
+      csvStr = encodeURIComponent(csvStr);
+      let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+
+      let exportFileDefaultName = 'list_reviewer.csv';
+
+      let linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    },
+
+    handleClose(tag) {
+      this.formPost.keywords.splice(this.formPost.keywords.indexOf(tag), 1);
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    handleInputConfirm() {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        if (inputValue.includes(",")) {
+          let temp = inputValue.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes("/")) {
+          let temp = inputValue.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes("|")) {
+          let temp = inputValue.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else if (inputValue.includes(";")) {
+          let temp = inputValue.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.keywords.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.keywords.push(inputValue);
+        }
+      }
+      this.inputVisible = false;
+      this.inputValue = '';
+    },
+
+    //Ajout authors
+    handleCloseAut(aut) {
+      this.formPost.authors.splice(this.formPost.authors.indexOf(aut), 1);
+    },
+    showInputAut() {
+      this.inputVisibleAut = true;
+      this.$nextTick(_ => {
+        this.$refs.saveAutInput.$refs.input.focus();
+      });
+    },
+    handleInputConfirmAut() {
+      let inputValueAut = this.inputValueAut;
+      if (inputValueAut) {
+        if (inputValueAut.includes(",")) {
+          let temp = inputValueAut.split(",")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("/")) {
+          let temp = inputValueAut.split("/")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes("|")) {
+          let temp = inputValueAut.split("|")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else if (inputValueAut.includes(";")) {
+          let temp = inputValueAut.split(";")
+          for (let x=0; x<temp.length; x++) {
+            this.formPost.authors.push(temp[x]);
+          }
+        }
+        else {
+          this.formPost.authors.push(inputValueAut);
+        }
+      }
+      this.inputVisibleAut = false;
+      this.inputValueAut = '';
+    },
+
+    //Ajout field
+    handleCloseFie(fie) {
+      this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
+      this.cats.forEach(function(cat){
+        if (cat.value == fie){
+          cat.disabled = false
+        }
+      });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
+    },
+    showInputFie() {
+      this.inputVisibleFie = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmFie() {
+      let inputValueFie = this.inputValueFie;
+      if (inputValueFie) {
+        this.formPost.fields.push(inputValueFie);
+        this.cats.forEach(function(cat){
+          if (cat.value == inputValueFie){
+            cat.disabled = true
+          }
+        });
+        let temp = [];
+        this.assoc_cat[inputValueFie].forEach(function(cat){
+          temp.push({"value": cat, "disabled": false})
+        })
+        this.subcats.push({
+          "value": inputValueFie,
+          "options": temp
+        })
+      }
+      this.inputVisibleFie = false;
+      this.inputValueFie = '';
+    },
+
+
+    //Ajout subcat
+    handleCloseSub(sub) {
+      this.formPost.sub_cat.splice(this.formPost.sub_cat.indexOf(sub), 1);
+      this.subcats.forEach(function(group){
+        group.options.forEach(function(cat){
+          if (cat.value == sub){
+            cat.disabled = false
+          }
+        })
+      });
+    },
+    showInputSub() {
+      this.inputVisibleSub = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmSub() {
+      let inputValueSub = this.inputValueSub;
+      if (inputValueSub) {
+        this.formPost.sub_cat.push(inputValueSub);
+        this.subcats.forEach(function(group){
+          group.options.forEach(function(cat){
+            if (cat.value == inputValueSub){
+              cat.disabled = true
+            }
+          })
+        });
+      }
+      this.inputVisibleSub = false;
+      this.inputValueSub = '';
+      console.log(this.formPost.sub_cat);
+    },
+
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.load_var = false
+      this.isLoading = false
+      clearInterval(this.interId)
+      clearInterval(this.pdfInter)
+      this.dataUpload = false
+      this.progress_status_pdf = 0
+      this.fileList = []
+      cancel()
+    },
+
+    uploadSectionFile(param){
+      this.formPost.keywords = []
+      this.subcats = [];
+      this.cats.forEach(function(cat){
+        cat.disabled = false
+      });
+      this.progress_status_pdf = 0
+      this.pdfInter = window.setInterval(()=>{
+        if (this.progress_status_pdf<100)
+          this.progress_status_pdf = this.progress_status_pdf +1
+      }, 500);
+      let fileObject = param.file;
+      let formData = new FormData();
+      formData.append("pdf_file", fileObject);
+      let res = ''
+      new Promise ((resolve,reject) => {
+        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
+        .then( async (id) => {
+            console.log(id);
+            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
+            console.log(res.data[0])
+            this.formPost.abstract = res.data[0].abstract
+            this.formPost.title = res.data[0].title
+            if (res.data[0].keywords) {
+              this.formPost.keywords = res.data[0].keywords
+            }
+            if (res.data[0].authors) {
+              this.formPost.authors = res.data[0].authors
+            }
+            this.progress_status_pdf = 100
+            this.dataUpload = true
+            clearInterval(this.pdfInter)
+        })
+      })
+    },
+
+    async onSubmit (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log("onSubmit :: start");
+          this.load_var = true
+          this.isData = false
+          this.isLoading = true
+          this.progress_status = 0
+          this.seconds = 0
+          this.onSeconds = 0
+          this.interId = window.setInterval(()=>{
+            this.seconds += 1
+          }, 1000)
+          window.setInterval(()=>{
+            if (this.progress_status<100)
+              this.progress_status += 1
+          }, 1000);
+          this.formPost.abstract = this.formPost.abstract.replace('&',' ');
+          this.formPost.abstract = this.formPost.abstract.replace('/',' ');
+          this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
+
+          let phraseKey = ""
+          if (this.formPost.keywords.length > 0){
+            for (let x = 0; x<this.formPost.keywords.length; x++){
+              phraseKey += this.formPost.keywords[x] + " "
+            }
+            phraseKey += "are a part of "
+            for (let x = 0; x<this.formPost.fields.length; x++){
+              phraseKey += this.formPost.fields[x][0].toUpperCase() + this.formPost.fields[x].replace(/_/gi, ' ').slice(1) + " "
+            }
+            phraseKey += "."
+          }
+
+          for (let x = 0; x<this.formPost.fields.length; x++){
+            if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
+              this.onSeconds = this.time_cat[this.formPost.fields[x]]
+            }
+          }
+
+          let abstractTotal = this.formPost.abstract
+          abstractTotal += phraseKey
+          abstractTotal = this.formPost.title + '. ' + abstractTotal
+
+          let res = ''
+          this.updateMetrics(this.formPost.fields,this.formPost.title)
+          new Promise ((resolve,reject) => {
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
+                console.log(ids);
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
+                console.log("onSubmit :: " , res)
+                this.progress_status = 100
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
+                this.isData = true
+                this.isLoading = false
+                this.load_var = false
+                this.state_click = []
+                this.isExpanded = []
+                this.seconds = 0
+                clearInterval(this.interId)
+                this.listPertinence = {"abstract": this.formPost.abstract, "nb_suggestion": res.data.length, "ratio": 0, "list_failed": []}
+                console.log(this.listPertinence);
+                var anchor = document.querySelector("#scroll_anchor");
+                //var anchor = this.$refs.refTable;
+                const sleep = (milliseconds) => {
+                  return new Promise(resolve => setTimeout(resolve, milliseconds))
+                };
+                sleep(100).then(() => {
+                  anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
+                })
+              },
+              async (error) => {
+                this.dialogVisibleError = true;
+                this.errorMessage = error.message;
+                this.resetForm('formPost');
+                console.log("error ::", error);
+              }
+            )
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+
+    updateMetrics(_fields, _title) {
+      const formData = {fields: _fields, title: _title }
+      console.log(formData)
+      axios.post('/api/activity/create', formData)
+      .then( res => {console.log(res)
+        })
+    },
+    getMailList() {
+      for (let x=0; x<10; x++) {
+        this.listMails.push({
+          "id": this.tableData[x].original_id,
+          "name": this.tableData[x].name,
+          "mail": ""
+        });
+      };
+      this.requestMails = {
+        "title": this.formPost.title,
+        "mail_publisher": this.formMini.mail,
+        "list": this.listMails
+      }
+      console.log(this.requestMails);
+    },
+
+    displayInfos(row) {
+      let index = parseInt(this.tableData.indexOf(row))
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+    },
+
+    displayInfosA(index, row) {
+      // console.log("index: ", this.isExpanded[index], this.state_click[index]);
+    },
+
+    displayInfosB(index, row) {
+      this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
+      this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
+      this.formMail.cgu = false
+      this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
+
+      this.centerDialogVisible = true
+
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+    },
+    deleteRow(index, rows, row) {
+      this.$refs.refTable.toggleRowExpansion(row);
+      this.isExpanded[index] = false;
+      this.state_click[index] = 0;
+
+      this.listPertinence.list_failed[index] = {"title": row.article[0].title, "abstract": row.article[0].abstract};
+      console.log(row);
+
+      this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+      console.log("before", this.listPertinence);
+      let temp = JSON.stringify(this.listPertinence)
+      let today = new Date();
+      let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+      console.log(token);
+      new Promise ((resolve,reject) => {
+        axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+        .then( async (res) => {
+          console.log("after", res.data);
+        })
+      })
+    },
+    validateRow(index, rows, row) {
+      if (typeof this.listPertinence.list_failed[index] != 'undefined'){
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+
+        this.listPertinence.list_failed.splice(index, 1);
+
+        this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+        console.log("before", this.listPertinence);
+        let temp = JSON.stringify(this.listPertinence)
+        let today = new Date();
+        let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+        console.log(token);
+        new Promise ((resolve,reject) => {
+          axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+          .then( async (res) => {
+            console.log("after", res.data);
+          })
+        })
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+    },
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.display = 5
+      }
+      else {
+        this.display = 3
+      }
+    }
+  }
+}
+</script>
+<style>
+
+.bandeau {
+  position: fixed;
+  top: 30px;
+  right: -45px;
+  background-color: #E6A23C;
+  color: white;
+  padding: 0px 40px;
+  transform: rotate(45deg);
+  font-weight: bold;
+  z-index: 1000;
+}
+
+.app-container {
+  max-width: 1140px;
+  padding: 0px 20px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'DNLTPro-bold';
+  text-align: center;
+}
+
+h2 {
+  font-family: 'DNLTPro-bold';
+}
+
+p {
+  font-family: 'DNLTPro-regular';
+}
+
+strong {
+  display: block;
+  margin-top: 5px;
+}
+
+hgroup {
+  text-align: center;
+  margin-bottom: 40px;
+}
+  hgroup > p {
+    margin: 0;
+  }
+
+#scroll_anchor {
+  border-top: 1px solid lightgray;
+}
+
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
+}
+
+.el-tag  {
+    margin-right: 10px
+  }
+.el-tag + .el-tag {
+    margin-right: 10px
+  }
+  .button-new-tag {
+    height: 32px;
+    line-height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .input-new-tag {
+    width: 90px;
+    margin-left: 10px;
+    vertical-align: bottom;
+  }
+
+/* .el-icon-arrow-right:before {
+  content:"";
+  display: none;
+} */
+
+  .el-table__expand-icon {
+    display: none;
+  }
+
+.align {
+  display: inline-block;
+}
+
+.flex_items > .el-form-item__content {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.progress_bar {
+  width: 100%;
+  margin: 0 20px;
+}
+
+.little_icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
+
+.el-table__row td:nth-child(2) {
+  padding: 0;
+  text-align: left;
+}
+  .el-table__row td:nth-child(2) > .cell {
+    position: relative;
+    padding: 10px 20px!important;
+  }
+    .line_verif {
+      position: absolute;
+      top: 5%;
+      left: 0;
+      width: 3px;
+      height: 90%;
+    }
+    .c_green {
+      background-color: #30B08F;
+    }
+
+    .c_orange {
+      background-color: orange;
+    }
+
+    .c_grey {
+      background-color: #A5A9AD;
+    }
+
+    .c_red {
+      background-color: #F56C6C;
+    }
+
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
+    margin: 0;
+}
+
+.round {
+  width: 13px;
+  height: 13px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
+  text-align: center;
+}
+
+.el-upload {
+  width: 100%;
+}
+  .el-upload-dragger {
+    width: 100%;
+    height: 160px;
+  }
+
+.el-form-item__label {
+  text-align: left;
+}
+
+.input-new-tag {
+  height: 100%;
+  margin: 0;
+}
+
+.el-table__expanded-cell[class*=cell] {
+  padding: 20px!important;
+}
+  .el-table__expanded-cell[class*=cell] > article {
+    padding-left: 30px;
+    border-left: 1px solid lightgrey;
+  }
+
+.el-progress-bar__outer, .el-progress-bar__inner {
+  border-radius: 4px;
+}
+
+.el-table .cell {
+  padding: 0 20px!important;
+}
+
+.el-upload-dragger .el-icon-upload {
+  margin: 16px 0;
+}
+
+.el-form .el-tag {
+  font-weight: bold
+}
+
+.el-pagination {
+  padding: 10px 0!important;
+}
+
+.el-button+.el-button {
+  margin: 0!important;
+}
+
+/* .el-popper[x-placement^=bottom] {
+  text-align: center!important;
+} */
+
+@media (max-width: 1280px) {
+  .app-container {
+    max-width: 1020px;
+  }
+
+  .el-col-1 {
+    padding: 0!important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .button_tab {
+    padding: 5px 7px;
+  }
+}
+
+</style>

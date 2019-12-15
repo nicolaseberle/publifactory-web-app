@@ -53,7 +53,7 @@ export const constantRouterMap = [
 					skipAuth: true
 				},
 				component: resolve => {
-					import('../view/applications/reviewermatcher/index.vue').then(
+					import('../view/applications/reviewermatcher/index_.vue').then(
 						resolve
 					);
 				}
