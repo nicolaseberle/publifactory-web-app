@@ -1,5 +1,5 @@
 const { Request } = require('../model');
-const sendEmailReviewer = require('./send-email-reviewer');
+// const sendEmailReviewer = require('./send-email-reviewer');
 const Email = require('../../email/email.controller');
 
 async function create({ reviewer, editor, ...request }) {
@@ -14,9 +14,9 @@ async function create({ reviewer, editor, ...request }) {
 	});
 
 	await newRequest.save();
-	if (newRequest.reviewer.email) {
+	/*if (newRequest.reviewer.email) {
 		sendEmailReviewer(newRequest);
-	}
+	}*/
 	return newRequest;
 }
 
