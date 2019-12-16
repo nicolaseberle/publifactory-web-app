@@ -1,12 +1,10 @@
-const serviceUpdate = require('../services/update');
+const serviceRemind = require("../services/remind");
 
 async function remind(req, res, next) {
 	try {
 		if (!req.params.requestId)
-			throw { code: 422, message: 'Missing parameters.' };
-		const response = await serviceUpdate(req.params.requestId, {
-			status: 'remind'
-		});
+			throw { code: 422, message: "Missing parameters." };
+		const response = await serviceRemind(req.params.requestId);
 		res
 			.status(200)
 			.json(response)
