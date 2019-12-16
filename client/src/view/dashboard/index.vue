@@ -86,9 +86,6 @@
     }
   },
   created() {
-
-  },
-  async mounted () {
     if (this.roles.includes('admin')) {
       this.currentRole = 'adminDashboard'
       this.visibleDiagFirstConnexion = false
@@ -109,7 +106,8 @@
     if(this.sidebar.opened == false){
       this.toggleSideBar()
     }
-
+  },
+  async mounted () {
     await axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
     }).then(response => {

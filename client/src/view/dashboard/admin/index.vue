@@ -1,17 +1,10 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
-      <el-row :gutter="20">
-        <el-col :span='6'>
-          <el-button-group>
-          <el-button round v-on:click="createArticle()">Create Article</el-button>
-          <el-button round v-on:click="importArticle()">Import</el-button>
-        </el-button-group>
-        </el-col>
-      </el-row>
       <div class='dashboard-tab'>
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
+        
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">
@@ -93,6 +86,7 @@
   </el-tabs>
   </div>
   </div>
+
 </content-module>
 <!--
 <el-dialog :title="Titre" :visible.sync="formVisible">
@@ -110,12 +104,13 @@
 </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex'
-  import DataTable from '../../../components/DataTable'
-  import locales from '../../../locales/article'
-  import axios from 'axios'
+import { mapGetters } from 'vuex'
+import DataTable from '../../../components/DataTable'
+import locales from '../../../locales/article'
+import axios from 'axios'
+import accessComponent from '../../../components/AccessComponent'
 
-  const debug = require('debug')('frontend')
+const debug = require('debug')('frontend')
 var uuidv4 = require('uuid/v4');
 
 export default {
@@ -155,11 +150,11 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-        debug(tab, event);
+        console.log(tab, event);
     },
-    fetch (current = 1) {
+    async fetch (current = 1) {
       // this.$refs.articles.query(articleRes, current, { search: this.search }).then(list => {
-      axios.get('/api/articles/', {
+      await axios.get('/api/articles/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles
@@ -238,9 +233,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
       this.fetch()
-    })
   }
 }
 </script>

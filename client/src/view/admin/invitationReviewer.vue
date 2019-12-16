@@ -10,7 +10,7 @@
         <el-table-column type="expand" width="20">
           <template slot-scope="props">
             <el-form ref="formList" :model="formList" label-width="120px">
-              <el-form-item v-bind:key="item" v-for="item in props.row.list" label="temp">
+              <el-form-item v-bind:key="item._id" v-for="item in props.row.list" label="temp">
                 <p slot="label"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+item.id">{{item.name}} ({{item.id}})</a></p>
                 <el-input v-model="item.mail" size="mini"></el-input>
               </el-form-item>
@@ -51,7 +51,8 @@
       highlight-current-row
       :data="dataFinal"
       style="width: 100%"
-      height="500">
+      height="500"
+      @row-click="setSelectedRow">
 
       <el-table-column type="expand" width="20">
         <template slot-scope="props">
@@ -173,6 +174,7 @@ export default{
           label: 'Once every 2 month'
         }
       ],
+      selectedRow: '',
       relance: [],
       dataFinal: [],
       isData: false,
@@ -327,6 +329,9 @@ export default{
     }
   },
   methods: {
+    setSelectedRow (row, event, column) {
+        this.selectedRow = row
+    },
     changeMail(id, mail){
       console.log(id);
       console.log(mail);
@@ -347,9 +352,18 @@ export default{
         })
       })
     },
+    removeRequest(id){
+      new Promise ((resolve,reject) => {
+        axios.delete('/api/requests/' + id)
+        .then( async (res) => {
+          await this.getRequests()
+        })
+      })
+    },
     actionHandleCommand(command) {
       if (command == "remove") {
         console.log(command);
+        this.removeRequest(this.selectedRow._id)
       }
       else if (command == "accept") {
         console.log(command);
