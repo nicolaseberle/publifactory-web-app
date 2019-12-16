@@ -1,6 +1,6 @@
-const { Request } = require('../model/');
-const sendEmailReviewer = require('./send-email-reviewer');
-const sendEmailEditor = require('./send-email-editor');
+const { Request } = require("../model/");
+const sendEmailEditor = require("./send-email-editor");
+const { emailEditorTemplate } = require("../../../config/emailing");
 
 function getRawStatus(history) {
 	return history.reduce((acc, request) => [...acc, request.status], []);
@@ -8,14 +8,14 @@ function getRawStatus(history) {
 
 function getRemindCount(history) {
 	return history.reduce((acc, request) => {
-		return request.status === 'remind' ? (acc += 1) : acc;
+		return request.status === "remind" ? (acc += 1) : acc;
 	}, 0);
 }
 
 // todo move status update here =>
 function updateStatus(request, status) {
 	const rawStatus = getRawStatus(request.history);
-	if (rawStatus.includes('done')) throw new Error('REQUEST_ALREADY_DONE');
+	if (rawStatus.includes("done")) throw new Error("REQUEST_ALREADY_DONE");
 	request.history.push({
 		status,
 		date: new Date().toUTCString()
@@ -24,39 +24,29 @@ function updateStatus(request, status) {
 	if (remindCount >= request.remindMax) {
 		request.history.push(
 			{
-				status: 'rejected',
+				status: "rejected",
 				date: new Date().toUTCString()
 			},
-			{ status: 'done', data: new Date().toUTCString() }
+			{ status: "done", data: new Date().toUTCString() }
 		);
 	}
 	request.remindCount = remindCount;
 	if (
-		status === 'accepted' ||
-		status === 'rejected' ||
-		status === 'outfield' ||
-		status === 'unsubscribed'
+		status === "accepted" ||
+		status === "rejected" ||
+		status === "outfield" ||
+		status === "unsubscribed"
 	) {
 		request.history.push({
-			status: 'done',
+			status: "done",
 			data: new Date().toUTCString()
 		});
 	}
 }
 
-function shouldSendEmailReviewer(oldRequest, incomingRequest, status) {
-	if (status === 'remind') {
-		sendEmailReviewer(oldRequest._id);
-		return;
-	}
-	if (!incomingRequest.reviewer.email) return;
-	if (oldRequest.reviewer.email === incomingRequest.reviewer.email) return;
-	sendEmailReviewer(oldRequest._id);
-}
-
 async function update(requestId, { reviewer, editor, status, ...request }) {
 	const updatedRequest = await Request.findById(requestId);
-	if (!updatedRequest) throw new Error('REQUEST_NOT_FOUND');
+	if (!updatedRequest) throw new Error("REQUEST_NOT_FOUND");
 
 	if (status) {
 		updateStatus(updatedRequest, status);
@@ -74,16 +64,18 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 		{ $set: mergedRequest },
 		{ runValidators: true }
 	);
-	// Should send an email if a new email was added or remind as status
-	shouldSendEmailReviewer(updatedRequest, mergedRequest, status);
 
 	// send an email to the editor if the status === accept/rejected/outfield
 	if (
-		(status && status === 'accepted') ||
-		status === 'rejected' ||
-		status === 'outfield'
+		(status && status === "accepted") ||
+		status === "rejected" ||
+		status === "outfield"
 	)
-		sendEmailEditor(updatedRequest._id);
+		sendEmailEditor(
+			updatedRequest._id,
+			"A reviewer ansewered your request for an article",
+			emailEditorTemplate.answer(updatedRequest, status)
+		);
 	return mergedRequest;
 }
 
