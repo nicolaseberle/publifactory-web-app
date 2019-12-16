@@ -6,11 +6,11 @@ function getRawStatus(history) {
 	return history.reduce((acc, request) => [...acc, request.status], []);
 }
 
-function getRemindCount(history) {
-	return history.reduce((acc, request) => {
-		return request.status === "remind" ? (acc += 1) : acc;
-	}, 0);
-}
+// function getRemindCount(history) {
+// 	return history.reduce((acc, request) => {
+// 		return request.status === "remind" ? (acc += 1) : acc;
+// 	}, 0);
+// }
 
 // todo move status update here =>
 function updateStatus(request, status) {
@@ -20,17 +20,17 @@ function updateStatus(request, status) {
 		status,
 		date: new Date().toUTCString()
 	});
-	const remindCount = getRemindCount(request.history);
-	if (remindCount >= request.remindMax) {
-		request.history.push(
-			{
-				status: "rejected",
-				date: new Date().toUTCString()
-			},
-			{ status: "done", data: new Date().toUTCString() }
-		);
-	}
-	request.remindCount = remindCount;
+	// const remindCount = getRemindCount(request.history);
+	// if (remindCount >= request.remindMax) {
+	// 	request.history.push(
+	// 		{
+	// 			status: "rejected",
+	// 			date: new Date().toUTCString()
+	// 		},
+	// 		{ status: "done", data: new Date().toUTCString() }
+	// 	);
+	// }
+	// request.remindCount = remindCount;
 	if (
 		status === "accepted" ||
 		status === "rejected" ||
