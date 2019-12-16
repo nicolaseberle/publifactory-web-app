@@ -6,6 +6,10 @@ async function remind(requestId) {
 	if (!request) throw new Error("REQUEST_NOT_FOUND");
 	request.remindCount += 1;
 	sendEmailReviewer(requestId);
+	request.history.push({
+		status: "remind",
+		date: new Date().toUTCString()
+	});
 	await request.save();
 	return request;
 }
