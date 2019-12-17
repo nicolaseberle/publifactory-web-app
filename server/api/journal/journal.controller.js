@@ -267,7 +267,7 @@ module.exports.addToPreprint = async (req, res, next) => {
 			.json(article)
 			.end();
 	} catch (error) {
-		console.log('addToPreprint', error);
+		console.log(error);
 		return next(error);
 	}
 };
@@ -278,7 +278,6 @@ module.exports.submitArticle = async (req, res, next) => {
 			throw { code: 422, message: 'BAD_PARAMETERS' };
 		}
 		const article = await Article.findById(req.params.articleId);
-		console.log(article.status);
 		if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
 		if (article.status !== 'preprint' && article.status !== 'draft') {
 			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
@@ -322,7 +321,7 @@ module.exports.submitArticle = async (req, res, next) => {
 			.json(article)
 			.end();
 	} catch (error) {
-		console.log('submitArticle', error);
+		console.log(error);
 		return next(error);
 	}
 };
@@ -334,7 +333,6 @@ module.exports.answerSubmission = async (req, res, next) => {
 		}
 		const article = await Article.findById(req.params.articleId);
 		const journal = await Journal.findById(req.params.journalId);
-		console.log(article.status);
 		if (!article) {
 			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
 		}
@@ -426,7 +424,7 @@ module.exports.inviteToSubmit = async (req, res, next) => {
 			.json({ url: `/api/journals/submit/ask/${journal._id}/${article._id}/` })
 			.end();
 	} catch (error) {
-		console.log('invitetosubmit ERROR:', error);
+		console.log(error);
 		return next(error);
 	}
 };
@@ -445,14 +443,9 @@ module.exports.answerInvitationSubmission = async (req, res, next) => {
 			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
 		}
 		if (
-      !article.authors.find(author => {
-        console.log(
-					author.toString(),
-					req.decoded._id,
-					author.toString() === req.decoded._id
-				);
-        return author.author.toString() === req.decoded._id
-      })
+			!article.authors.find(author => {
+				return author.author.toString() === req.decoded._id;
+			})
 		) {
 			throw { code: 403, message: 'ARTICLE_FORBIDEN_OPERATION' };
 		}
