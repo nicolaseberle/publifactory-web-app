@@ -489,7 +489,8 @@ export default {
         message: '',
         deadline: '',
         relaunch: '2x1month',
-        cgu:false
+        cgu: false,
+        type: [],
         // ,issn: ''
       },
       centerDialogVisible: false,

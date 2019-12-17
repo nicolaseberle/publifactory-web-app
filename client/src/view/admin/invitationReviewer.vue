@@ -10,7 +10,7 @@
         <el-table-column type="expand" width="20">
           <template slot-scope="props">
             <el-form ref="formList" :model="formList" label-width="120px">
-              <el-form-item v-for="item in props.row.list" label="temp">
+              <el-form-item v-bind:key="item._id" v-for="item in props.row.list" label="temp">
                 <p slot="label"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+item.id">{{item.name}} ({{item.id}})</a></p>
                 <el-input v-model="item.mail" size="mini"></el-input>
               </el-form-item>
@@ -51,7 +51,8 @@
       highlight-current-row
       :data="dataTest"
       style="width: 100%"
-      height="500">
+      height="500"
+      @row-click="setSelectedRow">
 
       <el-table-column type="expand" width="20">
         <template slot-scope="props">
@@ -89,7 +90,7 @@
           <el-table-column
             label="Name"
             prop="rev_id"
-            width="190">
+            width="160">
             <template slot-scope="props">
               <!-- <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p> -->
               <el-tooltip class="item" effect="dark" placement="top">
@@ -102,17 +103,19 @@
             label="Mail"
             prop="rev_mail">
             <template slot-scope="props">
-              <el-input
-                size="mini"
-                placeholder=""
-                v-model="props.row.reviewer.rev_mail"
-                v-on:change.native="changeMail(props.row.reviewer.rev_id, props.row.reviewer.rev_mail)">
-              </el-input>
+              <el-form :inline="true" class="demo-form-inline">
+                <el-form-item>
+                  <el-input v-model="props.row.reviewer.email" size="mini"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" size="mini" @click="changeMail(props.row.reviewer.semanticScholarId, props.row.reviewer.email)">Save</el-button>
+                </el-form-item>
+              </el-form>
             </template>
           </el-table-column>
         </el-table-column>
 
-        <el-table-column
+        <!--<el-table-column
           label="Deadline"
           prop="date">
           <template slot-scope="props">
@@ -126,6 +129,11 @@
               </el-option>
             </el-select>
           </template>
+        </el-table-column>-->
+        <el-table-column class-name="status-col" label="Status" width="120">
+          <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
+            <el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column
           label="Actions"
@@ -138,11 +146,12 @@
                 </el-button>
               </div>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item  command="remove">Remove</el-dropdown-item>
+                <el-dropdown-item  command="send">Send</el-dropdown-item>
                 <el-dropdown-item  command="accept">Accept</el-dropdown-item>
                 <el-dropdown-item  command="decline">Decline</el-dropdown-item>
                 <el-dropdown-item  command="relaunch">Relaunch</el-dropdown-item>
-                <el-dropdown-item  command="unsubscribe">Unsubscribe</el-dropdown-item>
+                <el-dropdown-item  command="unsubscribe"  style='color:red'>Unsubscribe</el-dropdown-item>
+                <el-dropdown-item  command="remove" style='color:red'>Remove</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -155,6 +164,24 @@
 <script>
 import locales from 'locales/article'
 import axios from 'axios'
+
+
+export function requestStatusFilter (status) {
+  const statusMap = {
+    pending: 'pending',
+  	bademail : 'bademail',
+  	sent :'sent',
+  	remind: 'remind',
+  	read : 'read',
+  	accepted: 'accepted',
+  	rejected: 'rejected',
+  	outfield : 'outfield',
+  	unsubscribed: 'unsubscribed',
+  	done: 'done'
+  }
+  return statusMap[status]
+}
+
 export default{
   data () {
     return {
@@ -173,6 +200,7 @@ export default{
           label: 'Once every 2 month'
         }
       ],
+      selectedRow: '',
       relance: [],
       dataFinal: [],
       isData: false,
@@ -327,11 +355,17 @@ export default{
     }
   },
   methods: {
+    setSelectedRow (row, event, column) {
+        this.selectedRow = row
+    },
     changeMail(id, mail){
-      console.log(id);
-      console.log(mail);
       new Promise ((resolve,reject) => {
-        axios.get('https://service.publifactory.co/api/update_mail?id=' + id + '&mail=' + mail)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+        const requestId = this.selectedRow._id
+        const body = {
+          "reviewer":{"email": mail},
+        };
+        //axios.get('https://service.publifactory.co/api/update_mail?id=' + id + '&mail=' + mail)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
+        axios.patch('/api/requests/' + requestId, body )
         .then( async (res) => {
           console.log(res.data);
         })
@@ -340,9 +374,30 @@ export default{
     fetchRequests() {
       // this.dataTest = []
     },
+    removeRequest(id){
+      new Promise ((resolve,reject) => {
+        axios.delete('/api/requests/' + id)
+        .then( async (res) => {
+          await this.getRequests()
+        })
+      })
+    },
+    sendRequest(id){
+      new Promise ((resolve,reject) => {
+        axios.post('/api/requests/remind/' + id)
+        .then( async (res) => {
+          await this.getRequests()
+        })
+      })
+    },
     actionHandleCommand(command) {
-      if (command == "remove") {
+      if (command == "send") {
         console.log(command);
+        this.sendRequest(this.selectedRow._id)
+      }
+      else if (command == "remove") {
+        console.log(command);
+        this.removeRequest(this.selectedRow._id)
       }
       else if (command == "accept") {
         console.log(command);

@@ -1,25 +1,26 @@
-const { email, backend } = require('../../../config');
+const { email, backend } = require("../../../config");
 
 const frontUrl = email.rootHTML;
 const backUrl =
-	process.env.NODE_ENV === 'development'
+	process.env.NODE_ENV === "development"
 		? `http://localhost:${backend.port}`
 		: `https://${backend.ip}:${backend.port}`;
+//  <h4 style="padding-bottom: 5px;">You were invited to review an Article: </h4>
+//		<h4> <em>${request.title}</em></h4>
 
 const redirect = request => `
-  <div>
-    <div>${request.content}</div>
-  </div>
-  <div style="text-align: center;">
-    <h4 style="padding-bottom: 5px;">You were invited to review an Article: </h4>
-      <h4> <em>${request.title}</em></h4>
+  <div style="text-align: center;
+							margin: 0 100px;">
+	<div style="padding-bottom: 5px;">${request.content}</div>
   <div style="
     padding: 10px 20px 10px 20px;
     border: 0.5px solid #C0C0C0;
     background-color: #F8F8F8;
+		text-align:justify;
   ">
-    <h4>${request.abstract}</h4>
+    <h4>Abstract: ${request.abstract}</h4>
   </div>
+	<div style="padding: 20px;">Reviewing deadline: ${request.deadline}</div>
   <div>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
@@ -67,7 +68,7 @@ const redirect = request => `
   </div>
   <div>
      <h6>© Copyright 2018 <a
-      href='http://publifactory.co'
+      href='https://app.publifactory.co'
       target='_blank'
       rel='noopener noreferrer'
       data-auth='NotApplicable'
@@ -79,60 +80,6 @@ const redirect = request => `
   </div>
 `;
 
-function formatDate(date, request) {
-	return `${new Date(date).toLocaleString()}`;
-}
-
-const editor = (request, status) =>
-	`
-  <div>
-    <div>
-      <p><strong>${request.reviewer.name} ${
-		reviewerAnswer[status]
-	}</strong> to review the <strong><em>${
-		request.title
-	}'s</em></strong> article this ${formatDate(
-		request.history.slice(-2, -1)[0].date,
-		request
-	)}.
-    </p>
-      ${
-				status === 'outfield'
-					? ''
-					: `
-					<p>
-						You can reach him at this address:
-						<strong>${request.reviewer.email}</strong>
-					</p>
-				`
-			}
-    </div>
-    <div style="border-top: 1px solid #cccccc; text-align: center;">
-
-      <h6>© Copyright 2018 <a
-      href='http://publifactory.co'
-      target='_blank'
-      rel='noopener noreferrer'
-      data-auth='NotApplicable'
-      style='font-size:12px; line-height:18px; color:#666666; font-weight:bold'
-    >
-      Publifactory</a>, All Rights Reserved.</h6>
-      <a href='https://app.publifactory.co'> <img widht="25px" height="32px" src="${backUrl}/api/requests/logo/"></a>
-    </div>
-  </div>
-`;
-
-const accepted = `accepted`;
-const rejected = `rejected`;
-const outfield = `doesn't have the right skills`;
-
-const reviewerAnswer = {
-	accepted,
-	rejected,
-	outfield
-};
-
 module.exports = {
-	redirect,
-	editor
+	redirect
 };

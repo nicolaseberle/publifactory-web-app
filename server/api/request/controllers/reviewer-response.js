@@ -1,5 +1,4 @@
-const serviceUpdate = require('../services/update');
-const { emailReviewerTemplate } = require('../../../config/emailing/');
+const serviceUpdate = require("../services/update");
 
 async function reviewerReponse(req, res, next) {
 	try {
