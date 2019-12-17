@@ -23,7 +23,7 @@ async function list({ page = 1, count = 5, filters }) {
 		});
 	}*/
 
-	pipeline.push(...paginate(page, count));
+	//pipeline.push(...paginate(page, count));
 	const list = await Request.aggregate(pipeline);
 	return { ...response, data: list };
 }

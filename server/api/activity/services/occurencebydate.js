@@ -9,8 +9,7 @@ function paginate(page = 1, count = 5) {
 async function list({ page = 1, count = 5, filters }) {
 	const response = { page, count };
 	let pipeline = [];
-	const sort = { $sort: { creationDate: -1 } };
-	pipeline.push(sort);
+
 	if (filters.title) {
 		pipeline.push({
 			$match: { title: { $regex: `^${filters.title}`, $options: 'i' } }
@@ -19,18 +18,18 @@ async function list({ page = 1, count = 5, filters }) {
 	pipeline.push({
     $group: {
         _id: {
-          $add: [
-           { $dayOfYear: "$creationDate"},
-           { $multiply:
-             [400, {$year: "$creationDate"}]
-           }
-        ]},
+					month: { $month: "$creationDate" },
+        	day: { $dayOfMonth: "$creationDate" },
+        	year: { $year: "$creationDate" }
+				},
         click: { $sum: 1 },
-        first: {$min: "$creationDate"}
+        date: { $min: "$creationDate" }
       }
-	});
+	})
+	const sort = { $sort: { date: 1 } };
+	pipeline.push(sort);
 
-	pipeline.push(...paginate(page, count));
+	//pipeline.push(...paginate(page, count));
 	const list = await Request.aggregate(pipeline);
 	return { ...response, data: list };
 }
