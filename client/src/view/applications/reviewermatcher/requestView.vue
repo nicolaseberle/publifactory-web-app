@@ -40,12 +40,15 @@
       <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
     <el-form-item label="CGU" prop="type">
-      <el-checkbox v-model="formMail.cgu" name="type">
-        I accept the
+      <el-checkbox-group v-model="formMail.type">
+      <el-checkbox label="I accept the CGU" name="type"></el-checkbox>
+    </el-checkbox-group>
+      <!--<el-checkbox v-model="formMail.cgu" name='type'>-->
+      <!--  I accept the-->
         <!--<el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">-->
-          <a><router-link :to="'/cgu_publifactory_v1'">CGU</router-link></a>
+          <!--<a><router-link :to="'/cgu_publifactory_v1'">CGU</router-link></a>-->
         <!--</el-tooltip>-->
-      </el-checkbox>
+      <!--</el-checkbox>-->
     </el-form-item>
     <el-form-item>
       <el-button v-on:click="$emit('close')">Cancel</el-button>
@@ -60,6 +63,7 @@ export default {
   props: ['formPost','formMail','rowInfos'],
   data() {
     return {
+      confirmationOfSending : false,
       requestInfos: {},
       options: [{
           value: '1x1week',
@@ -94,11 +98,8 @@ export default {
         name: [
           {required: true, message: 'You need to enter your name', trigger: 'blur'}
         ],
-        cgu: [
-          {required: true, message: 'You need to accept the CGU', trigger: 'blur'}
-        ],
         type: [
-          {required: true, message: 'You need to accept the CGU', trigger: 'blur'}
+          {type: 'array', required: true, message: 'You need to accept the CGU', trigger: 'blur'}
         ]
         // ,issn: [
         //   {required: true, message: 'You need to enter the issn of your journal', trigger: 'blur'}
@@ -108,7 +109,45 @@ export default {
     }
   },
   methods: {
+    async addRequest (dataJson){
+      const response = await axios({
+        method: 'post',
+        url: '/api/requests',
+        validateStatus: undefined,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: dataJson
+      });
+      if (response.status !== 200) {
+        console.log("Failed")
+      } else {
+        console.log(response)
+      }
+    },
+    updateDataJson (){
+      let dataJson = {
+        "title": this.requestInfos["title"],
+        "abstract": this.requestInfos["abstract"],
+        "deadline": this.requestInfos["deadline"].toUTCString(),
+        "object": this.requestInfos["object"],
+        "content": this.requestInfos["content"],
+        "remind": this.requestInfos["remind"],
+        "reviewer":  {
+          "semanticScholarId": this.requestInfos["rev_id"],
+          "email": this.requestInfos["rev_mail"],
+          "name": this.requestInfos["rev_name"]
+        },
+        "editor": {
+          "name": this.requestInfos["pub_name"],
+          "email": this.requestInfos["pub_mail"],
+          "journal": this.requestInfos["pub_journal"]
+        }
+      }
+      return dataJson
+    },
     sendRequestRev(formMail){
+      this.confirmationOfSending = false
       this.$refs[formMail].validate((valid) => {
         if (valid) {
           this.requestInfos["title"] = this.formPost["title"]
@@ -133,50 +172,34 @@ export default {
               else {
                 this.requestInfos["rev_mail"] = ""
               }
-              this.$emit('close');
-              console.log(this.requestInfos);
+              this.$confirm('Are you sure to invite this reviewer ?', 'Confirmation', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                type: 'success'
+              }).then(() => {
+                this.$emit('close');
+                let dataJson = this.updateDataJson ()
+                this.confirmationOfSending = true
+                this.addRequest(dataJson)
+                this.$message({
+                  type: 'success',
+                  message: 'Invitation sent'
+                });
+              }).catch(() => {
+                this.confirmationOfSending = false
+                this.$emit('close');
+                this.$message({
+                  type: 'info',
+                  message: 'Invitation canceled'
+                });
+
+              });
+
             })
           })
 
-          async function addRequest(dataJson){
-            const response = await axios({
-              method: 'post',
-              url: '/api/requests',
-              validateStatus: undefined,
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              data: dataJson
-            });
-            if (response.status !== 200) {
-              console.log("Failed")
-            } else {
-              console.log(response)
-            }
-          }
 
-          let dataJson = {
-            "title": this.requestInfos["title"],
-            "abstract": this.requestInfos["abstract"],
-            "deadline": this.requestInfos["deadline"].toUTCString(),
-            "object": this.requestInfos["object"],
-            "content": this.requestInfos["content"],
-            "remind": this.requestInfos["remind"],
-            "reviewer":  {
-              "semanticScholarId": this.requestInfos["rev_id"],
-              "email": this.requestInfos["rev_mail"],
-              // "email": "quentin.collin@example.com",
-              // "email": "vincent.schuck@orange.fr",
-              "name": this.requestInfos["rev_name"]
-            },
-            "editor": {
-              "name": this.requestInfos["pub_name"],
-              "email": this.requestInfos["pub_mail"],
-              "journal": this.requestInfos["pub_journal"]
-            }
-          }
 
-          addRequest(dataJson)
         }
       })
     }

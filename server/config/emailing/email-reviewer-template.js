@@ -5,21 +5,22 @@ const backUrl =
 	process.env.NODE_ENV === "development"
 		? `http://localhost:${backend.port}`
 		: `https://${backend.ip}:${backend.port}`;
+//  <h4 style="padding-bottom: 5px;">You were invited to review an Article: </h4>
+//		<h4> <em>${request.title}</em></h4>
 
 const redirect = request => `
-  <div>
-    <div>${request.content}</div>
-  </div>
-  <div style="text-align: center;">
-    <h4 style="padding-bottom: 5px;">You were invited to review an Article: </h4>
-      <h4> <em>${request.title}</em></h4>
+  <div style="text-align: center;
+							margin: 0 100px;">
+	<div style="padding-bottom: 5px;">${request.content}</div>
   <div style="
     padding: 10px 20px 10px 20px;
     border: 0.5px solid #C0C0C0;
     background-color: #F8F8F8;
+		text-align:justify;
   ">
-    <h4>${request.abstract}</h4>
+    <h4>Abstract: ${request.abstract}</h4>
   </div>
+	<div style="padding: 20px;">Reviewing deadline: ${request.deadline}</div>
   <div>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
     <tr>
@@ -67,7 +68,7 @@ const redirect = request => `
   </div>
   <div>
      <h6>© Copyright 2018 <a
-      href='http://publifactory.co'
+      href='https://app.publifactory.co'
       target='_blank'
       rel='noopener noreferrer'
       data-auth='NotApplicable'
