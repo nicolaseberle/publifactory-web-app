@@ -86,6 +86,7 @@
     }
   },
   created() {
+    console.log("enter in created")
     if (this.roles.includes('admin')) {
       this.currentRole = 'adminDashboard'
       this.visibleDiagFirstConnexion = false
@@ -106,6 +107,7 @@
     if(this.sidebar.opened == false){
       this.toggleSideBar()
     }
+    console.log("out of created")
   },
   async mounted () {
     await axios.get('/api/users/me',{headers: {
