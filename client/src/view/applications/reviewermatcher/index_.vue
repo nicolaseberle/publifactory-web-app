@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.3.4</div>
+      <div class="bandeau">ALPHA v0.3.5</div>
       <hgroup>
         <h1>Reviewer search engine</h1>
         <h2>Getting the most relevant reviewers for your paper</h2>
