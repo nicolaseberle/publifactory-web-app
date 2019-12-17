@@ -7,7 +7,7 @@
             <svg-icon icon-class="search"/>
               Total queries
             </div>
-          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{metricsFinal.length}}</div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{nbTotalRequest}}</div>
         </el-card>
       </el-col>
       <el-col :span='4'>
@@ -93,13 +93,23 @@
       </el-card>
     </el-row>
     <el-row style='margin-top:20px'>
-        <el-col :span='8'>
+        <!--<el-col :span='8'>
           <el-card>
             <div slot="header" class="clearfix">
               <span>Recent Activity</span>
             </div>
             <div>
               <activityList/>
+            </div>
+          </el-card>
+        </el-col>-->
+        <el-col :span='24'>
+          <el-card>
+            <div slot="header" class="clearfix">
+              <span>Recent Requests</span>
+            </div>
+            <div>
+              <requestList :data='metricsFinal'/>
             </div>
           </el-card>
         </el-col>
@@ -112,20 +122,29 @@
   import activityChart from '../../components/Charts/echart/activityChart'
   import platformChart from '../../components/Charts/echart/platformChart'
   import activityList from './activityList'
+  import requestList from './requestList'
   export default {
   locales,
   data () {
     return {
       metricsFinal: [],
-      isMetrics: false
+      isMetrics: false,
+      nbTotalRequest: 0
     }
   },
   components: {
     "platform-chart":platformChart,
     "activity-chart":activityChart,
-    activityList
+    activityList,
+    requestList
   },
   methods: {
+    getTotalRequest () {
+      axios.get('/api/totalRequest')
+      .then( async (res) => {
+        this.nbTotalRequest = res.data.data;
+      })
+    },
     getMetrics(){
       axios.get('/api/activity?page=1&count=10')
       .then( async (res) => {
