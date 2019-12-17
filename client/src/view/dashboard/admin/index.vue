@@ -4,7 +4,7 @@
       <div class='dashboard-tab'>
       <div style='margin-top:20px;z-index:1000;'>
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        
+
       <el-tab-pane label="All" name="first">
       <data-table ref="articles" @page-change="fetch">
         <el-table :data="articles" fit highlight-current-row style="width: 100%">

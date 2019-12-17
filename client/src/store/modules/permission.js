@@ -53,7 +53,7 @@ const permission = {
         const { roles } = data
         let accessedRouters
         if (roles.includes('admin')) {
-          accessedRouters = constantRouterMap
+          accessedRouters = filterAsyncRouter(constantRouterMap, roles)
         } else {
           accessedRouters = filterAsyncRouter(constantRouterMap, roles)
         }

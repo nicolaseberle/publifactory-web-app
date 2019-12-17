@@ -9,29 +9,23 @@ function paginate(page = 1, count = 5) {
 async function list({ page = 1, count = 5, filters }) {
 	const response = { page, count };
 	let pipeline = [];
-
+	const sort = { $sort: { deadline: -1 } };
+	pipeline.push(sort);
 	if (filters.title) {
 		pipeline.push({
 			$match: { title: { $regex: `^${filters.title}`, $options: 'i' } }
 		});
 	}
-	pipeline.push({
-    $group: {
-        _id: {
-					month: { $month: "$creationDate" },
-        	day: { $dayOfMonth: "$creationDate" },
-        	year: { $year: "$creationDate" }
-				},
-        click: { $sum: 1 },
-        date: { $min: "$creationDate" }
-      }
-	})
-	const sort = { $sort: { date: 1 } };
-	pipeline.push(sort);
+	/*
+	if (filters.status) {
+		pipeline.push({
+			$match: { 'history.status': { $in: [filters.status] } }
+		});
+	}*/
 
 	//pipeline.push(...paginate(page, count));
 	const list = await Request.aggregate(pipeline);
-	return { ...response, data: list };
+	return { ...response, data: list.length };
 }
 
 module.exports = list;

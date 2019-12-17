@@ -257,7 +257,7 @@ export const constantRouterMap = [
 	{
 		path: '/admin',
 		component: Layout,
-		redirect: 'admin',
+		redirect: 'admin/activity',
 		// hidden: true,
 		meta: {
 			title: 'Admin',
@@ -309,10 +309,6 @@ export const constantRouterMap = [
 					roles: ['admin']
 				},
 				component: () => import('../view/admin/invitationReviewer.vue')
-			},
-			{
-				path: 'admin',
-				component: () => import('../view/admin/Activity.vue')
 			}
 		]
 	},
