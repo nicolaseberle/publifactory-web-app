@@ -44,11 +44,17 @@ const DEFAULT_LIMIT = 10;
 exports.getArticles = async function(req, res, next) {
 	const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
 	const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
+	let options = { deleted: false, published: true };
+	if (req.query.status) {
+		options = { deleted: false, published: true, status: req.query.status };
+	}
 	try {
-		const articles = await Article.paginate(
-			{ deleted: false, published: true },
-			{ page, limit, populate: 'authors.author reviewers', lean: true }
-		);
+		const articles = await Article.paginate(options, {
+			page,
+			limit,
+			populate: 'authors.author reviewers',
+			lean: true
+		});
 		renameObjectProperty(articles, 'docs', 'articles');
 		return res.json(articles);
 	} catch (err) {
@@ -303,7 +309,7 @@ module.exports.removeAuthorOfArticle = async function(req, res, next) {
  *  - abstract, the abstract of the new article
  *  - arr_content, the blocks and content of the new article
  *  - content, the LaTeX content of the new article
- *  - status, the status of the new article (Draft by default)
+ *  - status, the status of the new article (draft by default)
  *  - published, a boolean value to know if the new article is public or private
  * @memberof module:controllers/articles
  * @param {Object} req - Express request object
@@ -367,15 +373,20 @@ module.exports.createArticle = async function(req, res, next) {
 module.exports.changeStatus = async function(req, res, next) {
 	try {
 		const query = { _id: req.params.id };
-		let status;
-		if (req.params.status === 'review') status = { status: 'Reviewing' };
-		else if (req.params.status === 'submit') status = { status: 'Submited' };
-		else status = { status: 'Published' };
-		const toReplace = { $set: status };
-		await Article.updateOne(query, toReplace, function(err, data) {
-			if (err) throw err;
+		const article = await Article.findById(req.params.id, {
+			_id: false,
+			authors: true
 		});
-		res.status(201).json({ success: true });
+		const isLead = article.authors.filter(
+			author =>
+				author.author.toString() === req.decoded._id &&
+				author.rank === 1 &&
+				author.role === 'Lead'
+		);
+		if (!isLead) throw { code: 400, message: 'ARTICLE_AUTHOR_NEED_LEAD' };
+		const status = { status: req.params.status };
+		await Article.updateOne(query, { $set: status });
+		res.status(200).json({ success: true });
 	} catch (e) {
 		next(e);
 	}

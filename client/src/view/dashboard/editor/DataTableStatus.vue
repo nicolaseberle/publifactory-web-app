@@ -186,8 +186,6 @@ export default {
     actionHistoricalActions() {},
     actionGetReferee() {},
     actionSurvey() {},
-
-    deleteArticle() {},
     fetchArticles() {
       axios
         .get('/api/articles/', {
@@ -196,7 +194,7 @@ export default {
         .then(list => {
           if (this.desiredstatus === 'All')
             this.articles = list.data.articles.filter(
-              d => d.status !== 'Draft'
+              d => d.status !== 'draft'
             );
           else
             this.articles = list.data.articles.filter(
@@ -218,6 +216,7 @@ export default {
       this.formVisible = false;
     },
     saveForm() {
+      console.log('SAVE FORM=============');
       this.$refs.form.validate(valid => {
         if (valid) {
           articleRes
@@ -241,25 +240,6 @@ export default {
             });
         }
       });
-    },
-    deleteArticle(article) {
-      this.$confirm(
-        `This action will remove the selected article: ${article.title} forever, still going on?`,
-        this.$t('confirm.title'),
-        {
-          type: 'warning'
-        }
-      )
-        .then(() => {
-          articleRes.delete({ _id: article._id }).then(() => {
-            this.$message({
-              type: 'success',
-              message: this.$t('message.removed')
-            });
-            this.fetchArticles();
-          });
-        })
-        .catch(() => {});
     }
   },
   mounted() {

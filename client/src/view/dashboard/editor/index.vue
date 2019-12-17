@@ -1,15 +1,6 @@
 <template>
   <div class="app-container">
     <content-module name="articles">
-      <!--
-      <el-row :gutter="20">
-        <el-col :span='6'>
-          <el-button-group>
-            <el-button round v-on:click="createArticle()">Create Article</el-button>
-            <el-button round v-on:click="importArticle()">Import</el-button>
-          </el-button-group>
-        </el-col>
-      </el-row>-->
       <div class="dashboard-tab">
         <div style="margin-top:20px;z-index:1000;">
           <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -70,32 +61,11 @@
           :idarticle="selectedArticleId"
           v-on:close="flagAddReviewer = false"
         />
-        <!--<span slot="footer" class="dialog-footer">
-      <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
-      <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
-        </span>-->
       </el-dialog>
       <el-dialog title="Add Associate Editor" :visible.sync="flagAddAE" width="70%">
         <addAE v-if="flagAddAE" :idarticle="selectedArticleId" v-on:close="flagAddAE = false" />
-        <!--<span slot="footer" class="dialog-footer">
-      <el-button v-on:click="flagAddReviewer=false" round>Cancel</el-button>
-      <el-button type="primary" v-on:click="flagAddReviewer = false" round>Validate</el-button>
-        </span>-->
       </el-dialog>
     </content-module>
-
-    <!--
-<el-dialog :title="Titre" :visible.sync="formVisible">
-  <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-      <el-form-item :label="$t('article.title')">
-        <el-input v-model="temp.title"/>
-      </el-form-item>
-  </el-form>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="closeCreationDialog()" round>Cancel</el-button>
-    <el-button type="primary" @click="dialogPvVisible = false" round>Validate</el-button>
-  </span>
-    </el-dialog>-->
   </div>
 </template>
 <script>
@@ -141,7 +111,6 @@ export default {
         ]
       },
       notifications: { review: 0, submited: 0, published: 0 },
-      formVisible: false,
       articles: [
         {
           id: '',
@@ -173,7 +142,7 @@ export default {
           headers: { Authorization: `Bearer ${this.accessToken}` }
         })
         .then(list => {
-          this.articles = list.data.articles.filter(d => d.status !== 'Draft');
+          this.articles = list.data.articles.filter(d => d.status !== 'draft');
           this.articles.forEach(el => {
             if (el.status === 'Submited') {
               this.notifications.submited++;
@@ -190,24 +159,17 @@ export default {
           console.error(err);
         });
     },
-    closeCreationDialog() {
-      this.formVisible = false;
-    },
     handleClick(tab, event) {
       console.log(tab, event);
     },
     assignReviewer(selectedArticleId) {
+      console.log('assign reviewer');
       this.flagAddReviewer = true;
       this.selectedArticleId = selectedArticleId;
     },
     assignAE(selectedArticleId) {
       this.flagAddAE = true;
       this.selectedArticleId = selectedArticleId;
-    },
-    cancelForm() {
-      this.form.title = '';
-      this.form.abstract = '';
-      this.formVisible = false;
     }
   },
   mounted() {

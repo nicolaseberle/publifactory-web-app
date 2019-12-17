@@ -65,6 +65,15 @@ module.exports = class Email {
 		};
 	}
 
+	sendInvitationToSubmitArticle(journal, template) {
+		this.transporter.sendMail({
+			from: '"PubliFactory" <publifactory.noreply@gmail.com>',
+			to: this.email,
+			subject: `You have been invited to submit your article to the ${journal.title}'s journal`,
+			html: template
+		});
+	}
+
 	sendEmailRequestEditor(request, template) {
 		this.transporter.sendMail({
 			from: '"PubliFactory" <publifactory.noreply@gmail.com>',

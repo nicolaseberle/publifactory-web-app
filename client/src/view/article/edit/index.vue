@@ -78,7 +78,7 @@
         <el-col :span="6">
           <el-button-group>
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved !== 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbSolved !== 0"
               alt="Number of comments"
               type="info"
               size="medium"
@@ -89,7 +89,7 @@
               {{commentStateVector.nbComment}}
             </el-button>
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbSolved == 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbSolved == 0"
               alt="Number of resolved reviews"
               type="success"
               size="medium"
@@ -98,7 +98,7 @@
               round
             >{{commentStateVector.nbResolved}}</el-button>
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning !== 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbWarning !== 0"
               alt="Number of minor reviews"
               type="warning"
               size="medium"
@@ -107,7 +107,7 @@
               round
             >{{commentStateVector.nbWarning}}</el-button>
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbWarning == 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbWarning == 0"
               alt="Number of minor reviews"
               type
               size="medium"
@@ -117,7 +117,7 @@
             >{{commentStateVector.nbWarning}}</el-button>
 
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger !== 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbDanger !== 0"
               alt="Number of major reviews"
               type="danger"
               size="medium"
@@ -126,7 +126,7 @@
               round
             >{{commentStateVector.nbDanger}}</el-button>
             <el-button
-              v-if="this.articleInfo.status === 'Submited' && commentStateVector.nbDanger == 0"
+              v-if="this.articleInfo.status === 'submit' && commentStateVector.nbDanger == 0"
               alt="Number of major reviews"
               type
               size="medium"
@@ -144,14 +144,15 @@
               <!--<el-button type="" v-on:click="handleDownload()" round icon='el-icon-download' ></el-button>-->
               <el-button type v-on:click="handleDownload()" size="medium" round>Download</el-button>
               <el-button
-                v-if="  this.articleInfo.status === 'Draft' "
+                :disabled="!isLead"
+                v-if="this.articleInfo.status === 'draft' || this.articleInfo.status === 'preprint'"
                 type
-                @click="visibleDialogSubmProcess=true"
+                @click="visibleSubmitDialog=true"
                 size="medium"
                 round
               >Submit your article</el-button>
               <el-button
-                v-if="  this.articleInfo.status === 'Submited' "
+                v-if="  this.articleInfo.status === 'submit' "
                 type
                 @click="changeStatus()"
                 round
@@ -159,7 +160,7 @@
                 disabled
               >Submitted</el-button>
               <el-button
-                v-if="  this.articleInfo.status === 'Reviewing' "
+                v-if="  this.articleInfo.status === 'review' "
                 type
                 @click="changeStatus()"
                 round
@@ -173,7 +174,7 @@
       <el-row>
         <el-col :span="24">
           <el-alert
-            v-if="  this.articleInfo.status === 'Submited' "
+            v-if="  this.articleInfo.status === 'submit' "
             title="Article Submitted"
             type="success"
             description="The article is being processed by the publisher. A notification will be sent to you to keep you informed of the evolution of the peer-reviewing."
@@ -191,80 +192,13 @@
         v-on:changecomment="onChangeComment"
       />
     </div>
-    <el-dialog title="Submission process" :visible.sync="visibleDialogSubmProcess" width="50%">
-      <el-alert title="You are about to submit your article" type="warning" show-icon></el-alert>
-      <el-form style="text-align:left">
-        <el-row style="margin-top:20px">
-          <el-form-item
-            label="Have you uploaded your article to a preprint server?"
-            label-width="200px"
-          >
-            <el-col :span="10" :offset="1">
-              <el-radio v-model="formSubmArticle.preprint" label="yes">Yes</el-radio>
-              <el-radio v-model="formSubmArticle.preprint" label="no">No</el-radio>
-            </el-col>
-            <el-col :span="12">
-              <el-input
-                placeholder="Please enter the DOI"
-                v-model="formSubmArticle.doi"
-                :disabled="formSubmArticle.preprint === 'no'"
-              >
-                <template slot="prepend">DOI</template>
-              </el-input>
-            </el-col>
-          </el-form-item>
-        </el-row>
-        <el-row style="margin-top:10px">
-          <el-form-item
-            label="Would you like us to handle the request for a DOI?"
-            label-width="200px"
-            :disabled="formSubmArticle.preprint === 'yes'"
-          >
-            <el-col :span="10" :offset="1">
-              <el-radio
-                v-model="formSubmArticle.wishDOI"
-                label="yes"
-                :disabled="formSubmArticle.preprint === 'yes'"
-              >Yes</el-radio>
-              <el-radio
-                v-model="formSubmArticle.wishDOI"
-                label="no"
-                :disabled="formSubmArticle.preprint === 'yes'"
-              >No</el-radio>
-            </el-col>
-          </el-form-item>
-        </el-row>
-        <el-row style="margin-top:10px">
-          <el-form-item label="Which Peer reviewing do you want?" label-width="200px">
-            <el-col :span="23" :offset="1">
-              <el-radio v-model="formSubmArticle.options" label="classic">Classic peer-reviewing</el-radio>
-            </el-col>
-            <el-col :span="23" :offset="1">
-              <el-radio v-model="formSubmArticle.options" label="open">Open peer-reviewing</el-radio>
-            </el-col>
-          </el-form-item>
-        </el-row>
-        <el-row style="margin-top:10px">
-          <el-form-item label="Journal" label-width="200px">
-            <el-col :span="23" :offset="1">
-              <el-select
-                v-model="formSubmArticle.journal"
-                placeholder="Please select the journal"
-                style="width:100%"
-              >
-                <div v-for="journal in journalList">
-                  <el-option :label="journal.title" :value="journal._id"></el-option>
-                </div>
-              </el-select>
-            </el-col>
-          </el-form-item>
-        </el-row>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visibleDialogSubmProcess = false">Cancel</el-button>
-        <el-button type="primary" @click="onSubmit()">Submit</el-button>
-      </span>
-    </el-dialog>
+    <submit-dialog
+      :status="articleInfo.status"
+      v-on:onSubmit="onSubmit"
+      v-if="visibleSubmitDialog"
+      :show-dialog.sync="visibleSubmitDialog"
+    ></submit-dialog>
+
     <el-dialog title="Insert data" :visible.sync="importDialogVisible" width="80%" top="0">
       <ImportData :socket="socket" ref="importDataDialog"></ImportData>
     </el-dialog>
@@ -279,7 +213,7 @@ import ImportData from '../../../components/ImportData/index';
 import axios from 'axios';
 import wsShareDBClient from '../../../utils/js/ws-sharedb-client/';
 import io from 'socket.io-client';
-
+import submitDialog from './components/submit-dialog';
 const printJS = require('print-js');
 
 export default {
@@ -288,7 +222,8 @@ export default {
     ImportData,
     lightEditorComponent,
     markdownEditorComponent,
-    latexEditorComponent
+    latexEditorComponent,
+    submitDialog
   },
   data() {
     return {
@@ -299,23 +234,19 @@ export default {
       editorType: false,
       id: '',
       importDialogVisible: false,
-      articleInfo: {},
-      visibleDialogSubmProcess: false,
+      articleInfo: {
+        status: ''
+      },
       commentStateVector: {
         nbComment: 0,
         nbWarning: 0,
         nbDanger: 0,
         nbSolved: 0
       },
-      formSubmArticle: {
-        journal: '',
-        options: 'open',
-        preprint: 'no',
-        wishDOI: 'yes'
-      },
-      journalList: [], //[{name:'PCI 1',_id:'#lsmdkfsdj'},{name:'PCI 2',_id:'#mlqskdlmqd'}]
       socket: '',
-      wssdb: ''
+      wssdb: '',
+      visibleSubmitDialog: false,
+      isLead: false
     };
   },
 
@@ -325,7 +256,18 @@ export default {
   created() {
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
-    this.getStatus();
+    this.getStatus().then(() => {
+      console.log('####', this.articleInfo.authors);
+      this.isLead = this.articleInfo.authors.reduce((acc, author) => {
+        if (
+          this.userId === author.author._id &&
+          author.rank === 1 &&
+          author.role === 'Lead'
+        )
+          return true;
+        return acc;
+      }, false);
+    });
 
     const socketOptions = {
       transports: ['polling'],
@@ -345,15 +287,13 @@ export default {
     this.socket.close();
   },
   async mounted() {
-    this.journalList = await this.getJournalList();
-
     /**
      * Socket instructions from API
      */
 
     this.socket.on('MODIFY_STATUS', () => {
-      this.getStatus();
-      this.$router.push('/');
+      // this.getStatus();
+      // this.$router.push('/');
     });
 
     this.socket.on('MODIFY_VERSION', data => {
@@ -492,71 +432,36 @@ export default {
         }
       }
     },
-    onSubmit() {
-      // formSubmArticle.options
-      // formSubmArticle.preprint
-      // formSubmArticle.wishDOI
-      // formSubmArticle.journal
-      this.changeStatus();
+    async onSubmit(form) {
+      if (form.journal === '') return;
+      // this.socket.emit('UPDATE_STATUS', {});
+      if (form.journal === 'preprint') {
+        const response = await axios.post(
+          `/api/journals/preprint/${this.id}`,
+          {},
+          { headers: { Authorization: `Bearer ${this.accessToken}` } }
+        );
+        this.articleInfo = response.data;
+      } else {
+        const response = await axios.post(
+          `/api/journals/submit/${form.journal}/${this.id}`,
+          {},
+          { headers: { Authorization: `Bearer ${this.accessToken}` } }
+        );
+        this.articleInfo = response.data;
+      }
+      // this.$router.push(this.$route.query.redirect || '/');
       this.sendNotificationByMail();
-      this.visibleDialogSubmProcess = false;
     },
     async getStatus() {
-      this.articleInfo = await new Promise((resolve, reject) => {
-        axios
-          .get('/api/articles/' + this.id, {
-            headers: { Authorization: 'Bearer ' + this.accessToken }
-          })
-          .then(data => resolve(data.data))
-          .catch(err => reject(err));
+      const response = await axios.get('/api/articles/' + this.id, {
+        headers: { Authorization: 'Bearer ' + this.accessToken }
       });
+      this.articleInfo = response.data;
     },
 
     onChangeComment(commentStateVector) {
       this.commentStateVector = commentStateVector;
-    },
-    async changeStatus() {
-      this.articleInfo = await new Promise((resolve, reject) => {
-        axios
-          .get('/api/articles/' + this.id, {
-            headers: { Authorization: 'Bearer ' + this.accessToken }
-          })
-          .then(data => resolve(data.data))
-          .catch(err => reject(err));
-      });
-      this.socket.emit('UPDATE_STATUS', {});
-      let nextStatus = '';
-      if (this.articleInfo.status === 'Submited') nextStatus = 'review';
-      else if (this.articleInfo.status === 'Reviewing') nextStatus = 'publish';
-      else if (this.articleInfo.status === 'Draft') {
-        nextStatus = 'submit';
-        console.log(
-          'changeStatus :: submit :: in :: ',
-          this.formSubmArticle.journal
-        );
-        await axios.post(
-          `/api/journals/${this.formSubmArticle.journal}/${this.id}`,
-          {},
-          { headers: { Authorization: `Bearer ${this.accessToken}` } }
-        );
-      }
-      await axios.patch(
-        `/api/articles/${this.id}/${nextStatus}`,
-        {},
-        { headers: { Authorization: `Bearer ${this.accessToken}` } }
-      );
-      this.$router.push(this.$route.query.redirect || '/');
-    },
-    async getJournalList() {
-      try {
-        const response = await axios.get('/api/journals/', {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
-        });
-        console.log(response.data.journals);
-        return response.data.journals;
-      } catch (e) {
-        throw e;
-      }
     },
     sendNotificationByMail() {
       //send a notification to authors

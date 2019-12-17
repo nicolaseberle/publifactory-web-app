@@ -11,6 +11,27 @@ const router = express.Router();
 
 router.post('/', journalController.createJournal);
 router.get('/:id?', journalController.getJournals);
+
+router.post('/preprint/:articleId', journalController.addToPreprint);
+router.post('/submit/:journalId/:articleId', journalController.submitArticle);
+router.post(
+	'/submit/:journalId/:articleId/:answer(accept|reject)',
+	journalController.answerSubmission
+);
+router.post(
+	'/submit/ask/:journalId/:articleId/',
+	journalController.inviteToSubmit
+);
+router.post(
+	'/submit/ask/:journalId/:articleId/:answer(accept|reject)',
+	journalController.answerInvitationSubmission
+);
+
+router.post(
+	'/review/:journalId/:articleId/:answer(accept|reject|revision)',
+	journalController.validateReview
+);
+
 router.post('/:id/:id_article', journalController.addArticleToJournal);
 router.delete(
 	'/:id/article/:id_article',

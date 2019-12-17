@@ -59,7 +59,7 @@ describe('[ARTICLE]', function () {
       title: 'My Test',
       content: 'TestTest',
       abstract: 'An abstract for test',
-      status: 'Draft',
+      status: 'draft',
       published: false,
       arr_content: [{
         title: 'Title Section',
@@ -86,7 +86,7 @@ describe('[ARTICLE]', function () {
       title: 'My Test',
       content: 'TestTest',
       abstract: 'An abstract for test',
-      status: 'Draft',
+      status: 'draft',
       published: false,
     };
     requester.post('/api/articles')
@@ -207,7 +207,7 @@ describe('[ARTICLE]', function () {
       title: 'My changed test',
       content: 'TestTest',
       abstract: 'An abstract for test',
-      status: 'Draft',
+      status: 'draft',
       published: false,
       arr_content: [{
         title: 'Title Section',
@@ -235,7 +235,7 @@ describe('[ARTICLE]', function () {
       title: 'My changed test',
       content: 'TestTest',
       abstract: 'An abstract for test',
-      status: 'Draft',
+      status: 'draft',
       published: false,
       tags: ['test']
     };

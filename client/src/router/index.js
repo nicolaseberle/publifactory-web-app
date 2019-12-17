@@ -93,6 +93,12 @@ export const constantRouterMap = [
 		}
 	},
 	{
+		path: '/submissionInvitation/:journalId/:articleId/:status(accept|reject)',
+		component: resolve => {
+			import('../view/submission-invitation/').then(resolve);
+		}
+	},
+	{
 		path: '/summarize',
 		component: Layout_services,
 		redirect: 'summarize',

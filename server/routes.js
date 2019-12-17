@@ -27,7 +27,6 @@ module.exports = function(app) {
 	app.use('/api/invitations', require('./api/invitations'));
 
 	app.use(function(req, res, next) {
-		console.log('Ommit Connection for:', req.originalUrl);
 		if (req.originalUrl.startsWith('/api/requests')) {
 			return next();
 		}

@@ -173,7 +173,7 @@ export default {
       const newArticle = {
           title: String('Article title'),
           abstract:  String('abstract'),
-          status: 'Draft',
+          status: 'draft',
           arr_content: [{
                           name:"titre_1",
                           title:"Titre 1",

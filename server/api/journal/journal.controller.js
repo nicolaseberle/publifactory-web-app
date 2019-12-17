@@ -8,18 +8,21 @@ const RolesJournal = require('../roles/journal/roles.journal.model');
 const RolesArticle = require('../roles/article/roles.article.model');
 const Invitation = require('../invitations/invitations.model');
 const Email = require('../email/email.controller');
-
 const shortid = require('shortid');
 const configEmail = require('../../../config.js').email;
-
+const userService = require('../user/services');
+const serviceRole = require('../roles/services');
+const {
+	emailArticleSubmissionInvitationTemplate
+} = require('../../config/emailing');
 /**
  * Get list of articles
  * restriction: 'admin'
  */
 
-//const Category = require('../category/category.model');
+// const Category = require('../category/category.model');
 
-//const ArticleValidator = require('./article.validator');
+// const ArticleValidator = require('./article.validator');
 
 /* HELPERS */
 const renameObjectProperty = require('../../helpers/renameObjectProperty');
@@ -57,7 +60,7 @@ exports.getJournals = async (req, res, next) => {
 			);
 			renameObjectProperty(journals, 'docs', 'journals');
 		} else {
-			//console.log(JSON.stringify("findJournalById", null, "\t"))
+			// console.log(JSON.stringify("findJournalById", null, "\t"))
 			journals = await Journal.findById(req.params.id)
 				.populate('users')
 				.populate('content.reference')
@@ -90,8 +93,9 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
 			req.body.status === undefined
-		)
+		) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		const title = req.body.title;
 		const abstract = req.body.abstract;
 		const status = req.body.status;
@@ -122,9 +126,9 @@ module.exports.findJournalByIdAndUpdate = async (req, res, next) => {
  */
 module.exports.createJournal = async (req, res, next) => {
 	try {
-		//req.check(ArticleValidator.checkArticleData);
-		//const validationResult = await req.getValidationResult();
-		/*if (!validationResult.isEmpty()) {
+		// req.check(ArticleValidator.checkArticleData);
+		// const validationResult = await req.getValidationResult();
+		/* if (!validationResult.isEmpty()) {
       return res.status(400).json({ errors: validationResult.array() });
     }*/
 
@@ -133,8 +137,9 @@ module.exports.createJournal = async (req, res, next) => {
 			req.body.abstract === undefined ||
 			req.body.status === undefined ||
 			req.body.tags === undefined
-		)
+		) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		const title = req.body.title.trim();
 		const abstract = req.body.abstract.trim();
 		const tags = req.body.tags;
@@ -148,6 +153,7 @@ module.exports.createJournal = async (req, res, next) => {
 			right: 'editor'
 		}).save();
 		res.status(201).json({ success: true, journal: journal });
+		userService.addRole(req.decoded._id, 'editor');
 	} catch (err) {
 		next(err);
 	}
@@ -170,6 +176,7 @@ module.exports.deleteJournal = async (req, res, next) => {
 		await Journal.findOneAndRemove(query);
 		await RolesJournal.deleteMany({ id_journal: req.params.id });
 		res.status(204).json({ success: true });
+		userService.removeRole(req.decoded._id, 'editor');
 	} catch (e) {
 		next(e);
 	}
@@ -190,19 +197,21 @@ module.exports.deleteJournal = async (req, res, next) => {
  */
 module.exports.addArticleToJournal = async (req, res, next) => {
 	try {
-		console.log('SUBMIT=>,add article journal=>', req.params, req.body);
-		if (req.params.id_article === undefined)
+		if (req.params.id_article === undefined) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		let query = { id_journal: req.params.id, right: 'editor' };
 		const journalInfo = await RolesJournal.find(query);
-		if (journalInfo.length === 0)
+		if (journalInfo.length === 0) {
 			throw { code: 404, message: 'Journals not found.' };
-		for (let i = 0, len = journalInfo.length; i < len; ++i)
+		}
+		for (let i = 0, len = journalInfo.length; i < len; ++i) {
 			new RolesArticle({
 				id_user: journalInfo[i].id_user,
 				id_article: req.params.id_article,
 				right: 'editor'
 			}).save();
+		}
 		query = { _id: req.params.id };
 		const toAdd = {
 			$push: { content: { published: false, reference: req.params.id_article } }
@@ -216,6 +225,325 @@ module.exports.addArticleToJournal = async (req, res, next) => {
 		res.json({ success: true });
 	} catch (e) {
 		next(e);
+	}
+};
+
+module.exports.addToPreprint = async (req, res, next) => {
+	try {
+		if (!req.params.articleId) throw { code: 422, message: 'BAD_PARAMETERS' };
+		let preprintCollection = await Journal.findOne({
+			title: 'Preprint Collection'
+		});
+		// create preprint collection for all preprint article
+		if (!preprintCollection) {
+			preprintCollection = new Journal({
+				title: 'Preprint Collection',
+				abstract: "Collection for preprint's article",
+				status: 'public',
+				tags: ['preprint', 'pre-print']
+			});
+		}
+		const article = await Article.findById(req.params.articleId);
+		if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		if (article.status !== 'draft') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		if (
+			preprintCollection.content.find(
+				article => article.reference.toString() === req.params.articleId
+			)
+		) {
+			throw { code: 400, message: 'JOURNAL_ARTICLE_ALREADY_IN_COLLECTION' };
+		}
+		preprintCollection.content.push({
+			published: false,
+			reference: req.params.articleId
+		});
+		article.status = 'preprint';
+		await article.save();
+		await preprintCollection.save();
+		return res
+			.status(200)
+			.json(article)
+			.end();
+	} catch (error) {
+		console.log('addToPreprint', error);
+		return next(error);
+	}
+};
+
+module.exports.submitArticle = async (req, res, next) => {
+	try {
+		if (!req.params.articleId || !req.params.journalId) {
+			throw { code: 422, message: 'BAD_PARAMETERS' };
+		}
+		const article = await Article.findById(req.params.articleId);
+		console.log(article.status);
+		if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		if (article.status !== 'preprint' && article.status !== 'draft') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		article.status = 'submit';
+		const journal = await Journal.findById(req.params.journalId);
+		if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
+		const isLead = article.authors.reduce((acc, author) => {
+			if (
+				req.decoded._id === author.author.toString() &&
+				author.rank === 1 &&
+				author.role === 'Lead'
+			) {
+				return true;
+			}
+			return acc;
+		}, false);
+		if (!isLead) {
+			throw { code: 403, message: 'AUTHOR_NOT_LEAD' };
+		}
+		journal.content.push({
+			published: false,
+			reference: req.params.articleId
+		});
+		const journalRoles = await serviceRole.journalGetRoles({
+			journalId: req.params.journalId,
+			right: 'editor'
+		});
+		journalRoles.map(
+			async journal =>
+				await serviceRole.articleAddRole(
+					journal.id_user,
+					req.params.articleId,
+					'editor'
+				)
+		);
+		await article.save();
+		await journal.save();
+		return res
+			.status(200)
+			.json(article)
+			.end();
+	} catch (error) {
+		console.log('submitArticle', error);
+		return next(error);
+	}
+};
+
+module.exports.answerSubmission = async (req, res, next) => {
+	try {
+		if (!req.params.journalId || !req.params.articleId || !req.params.answer) {
+			throw { code: 422, message: 'BAD_PARAMETERS' };
+		}
+		const article = await Article.findById(req.params.articleId);
+		const journal = await Journal.findById(req.params.journalId);
+		console.log(article.status);
+		if (!article) {
+			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		}
+		if (!journal) {
+			if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
+		}
+		if (article.status !== 'submit') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		const userRole = await serviceRole.articleGetRole({
+			articleId: req.params.articleId,
+			userId: req.decoded._id,
+			right: 'editor'
+		});
+		// Check if the query come from an editor
+		if (!userRole) throw { code: 403, message: 'JOURNAL_FORBIDEN_OPERATION' };
+		if (req.params.answer === 'accept') {
+			article.status = 'review';
+			if (
+				!journal.content.find(
+					article => article.reference === req.params.articleId
+				)
+			) {
+				journal.content.push({
+					published: false,
+					reference: req.params.articleId
+				});
+			}
+		} else {
+			article.status = 'preprint';
+			journal.content = journal.content.filter(
+				journal => journal.reference !== req.params.journalId
+			);
+			// remove editor role on the article:
+			journal.users.map(user => {
+				serviceRole.articleRemoveRole({
+					userId: user,
+					articleId: req.params.articleId,
+					right: 'editor'
+				});
+			});
+		}
+		await article.save();
+		await journal.save();
+		return res
+			.status(200)
+			.json(article)
+			.end();
+	} catch (error) {
+		console.log('error', error);
+		return next(error);
+	}
+};
+
+module.exports.inviteToSubmit = async (req, res, next) => {
+	try {
+		const article = await Article.findById(req.params.articleId)
+			.populate('authors.author')
+			.exec();
+		const journal = await Journal.findById(req.params.journalId);
+		if (!article) {
+			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		}
+		if (!journal) {
+			if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
+		}
+		if (article.status !== 'preprint') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		// Check if the user can invite:
+		const isUserEditor = journal.users.filter(
+			user => user.toString() === req.decoded._id
+		);
+		if (!isUserEditor) {
+			throw { code: 403, message: 'JOURNAL_FORBIDEN_INVITATION' };
+		}
+
+		const authorsEmail = article.authors.reduce((acc, author) => {
+			return [...acc, author.author.email];
+		}, []);
+		const email = new Email(authorsEmail);
+		email.sendInvitationToSubmitArticle(
+			journal,
+			emailArticleSubmissionInvitationTemplate(article, journal)
+		);
+
+		return res
+			.status(200)
+			.json({ url: `/api/journals/submit/ask/${journal._id}/${article._id}/` })
+			.end();
+	} catch (error) {
+		console.log('invitetosubmit ERROR:', error);
+		return next(error);
+	}
+};
+
+module.exports.answerInvitationSubmission = async (req, res, next) => {
+	try {
+		const article = await await Article.findById(req.params.articleId);
+		const journal = await Journal.findById(req.params.journalId);
+		if (!article) {
+			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		}
+		if (!journal) {
+			if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
+		}
+		if (article.status !== 'preprint') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		if (
+      !article.authors.find(author => {
+        console.log(
+					author.toString(),
+					req.decoded._id,
+					author.toString() === req.decoded._id
+				);
+        return author.author.toString() === req.decoded._id
+      })
+		) {
+			throw { code: 403, message: 'ARTICLE_FORBIDEN_OPERATION' };
+		}
+		if (req.params.answer === 'accept') {
+			article.status = 'review';
+			if (
+				!journal.content.find(
+					article => article.reference === req.params.articleId
+				)
+			) {
+				journal.content.push({
+					published: false,
+					reference: req.params.articleId
+				});
+			}
+			const journalRoles = await serviceRole.journalGetRoles({
+				journalId: req.params.journalId,
+				right: 'editor'
+			});
+			journalRoles.map(
+				async journal =>
+					await serviceRole.articleAddRole(
+						journal.id_user,
+						req.params.articleId,
+						'editor'
+					)
+			);
+		} else {
+			// For now keep as it is
+		}
+		await article.save();
+		await journal.save();
+		return res
+			.status(200)
+			.json()
+			.end();
+	} catch (error) {
+		return next(error);
+	}
+};
+
+module.exports.validateReview = async (req, res, next) => {
+	try {
+		const article = await await Article.findById(req.params.articleId);
+		const journal = await Journal.findById(req.params.journalId);
+		if (!article) {
+			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		}
+		if (!journal) {
+			if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
+		}
+		if (article.status !== 'preprint') {
+			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
+		}
+		switch (req.params.answer) {
+			case 'accept':
+				article.status = 'publish';
+				article.published = true;
+				journal.content = journal.content.map(article => {
+					if (article.reference.toString() === req.params.articleId) {
+						return { ...article, published: true };
+					}
+					return article;
+				});
+				break;
+			case 'reject':
+				article.status = 'preprint';
+				journal.content = journal.content.filter(
+					journal => journal.reference !== req.params.journalId
+				);
+				// remove editor role on the article:
+				journal.users.map(user => {
+					serviceRole.articleRemoveRole({
+						userId: user,
+						articleId: req.params.articleId,
+						right: 'editor'
+					});
+				});
+				break;
+			case 'revision':
+				article.status = 'revision';
+				// what's next?
+				break;
+			default:
+				throw { code: 400, message: 'JOURNAL_BAD_REQUEST' };
+		}
+		await journal.save();
+		await article.save();
+		return res.status(200).end();
+	} catch (error) {
+		return next(error);
 	}
 };
 
@@ -314,18 +642,19 @@ module.exports.inviteUser = async (req, res, next) => {
 			req.body.msg === undefined ||
 			req.body.to === undefined ||
 			req.body.name === undefined
-		)
+		) {
 			throw { code: 422, message: 'Missing parameters.' };
-		let senderId = req.body.link,
-			senderMsg = req.body.msg,
-			receiverEmail = req.body.to,
-			senderName = req.body.name,
-			newLink = shortid.generate();
-		//to avoid '-' in the link
+		}
+		const senderId = req.body.link;
+		const senderMsg = req.body.msg;
+		const receiverEmail = req.body.to;
+		const senderName = req.body.name;
+		let newLink = shortid.generate();
+		// to avoid '-' in the link
 		while (newLink.indexOf('-') >= 0) {
 			newLink = shortid.generate();
 		}
-		let current = new Date().toISOString();
+		const current = new Date().toISOString();
 		const newInvitation = new Invitation({
 			created_at: current,
 			updated_at: current,
@@ -339,7 +668,7 @@ module.exports.inviteUser = async (req, res, next) => {
 			if (error) {
 				return console.log(error);
 			} else {
-				//we send the email to invite the new author to access
+				// we send the email to invite the new author to access
 				const mail = new Email(receiverEmail);
 				const clientUrl = `${configEmail.rootHTML}/invite/${senderId}-${newLink}?redirect=${req.params.id}`;
 				if (req.params.right === 'user') {
@@ -353,6 +682,7 @@ module.exports.inviteUser = async (req, res, next) => {
 						req.body.lastname = 'None';
 						userInfo = await UserController.createGuest(req, res, next);
 					}
+					userService.addRole(userInfo._id, 'associate_editor');
 					const role = new RolesJournal({
 						id_user: userInfo._id,
 						id_journal: req.params.id,
@@ -380,8 +710,8 @@ module.exports.inviteUser = async (req, res, next) => {
  */
 module.exports.followJournal = async (req, res, next) => {
 	try {
-		let instruction,
-			query = { id_journal: req.params.id, id_user: req.decoded._id };
+		let instruction;
+		let query = { id_journal: req.params.id, id_user: req.decoded._id };
 		const roleInfo = await RolesJournal.findOne(query).exec();
 		if (roleInfo === null) {
 			instruction = { $push: { users: req.decoded._id } };
@@ -413,8 +743,9 @@ module.exports.followJournal = async (req, res, next) => {
  */
 module.exports.addAssociateEditor = async (req, res, next) => {
 	try {
-		if (req.body.associate_editor === undefined)
+		if (req.body.associate_editor === undefined) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		const user = await UserModel.findOne({
 			email: req.body.associate_editor.email
 		}).exec();
@@ -427,6 +758,7 @@ module.exports.addAssociateEditor = async (req, res, next) => {
 			id_journal: req.params.id,
 			right: 'associate_editor'
 		}).save();
+		userService.addRole(user._id, 'associate_editor');
 		res.json({ success: true, user: newAE });
 	} catch (e) {
 		next(e);
@@ -445,18 +777,20 @@ module.exports.addAssociateEditor = async (req, res, next) => {
  */
 module.exports.removeAssociateEditor = async (req, res, next) => {
 	try {
-		if (req.body.associate_editor_id === undefined)
+		if (req.body.associate_editor_id === undefined) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		const user = await UserModel.findOne({
 			_id: req.body.associate_editor_id
 		}).exec();
 		let query = { _id: req.params.id };
-		//we keep the user in journal.user matrix
+		// we keep the user in journal.user matrix
 		const toRemove = { $pull: { users: user._id } };
 		await Journal.findOneAndUpdate(query, toRemove);
 		query = { id_user: user._id, id_journal: req.params.id };
 		await RolesJournal.findOneAndRemove(query);
 		res.json({ success: true });
+		userService.removeRole(user._id, 'associate_editor');
 	} catch (e) {
 		next(e);
 	}
@@ -473,8 +807,9 @@ module.exports.removeAssociateEditor = async (req, res, next) => {
  */
 module.exports.updateTags = async (req, res, next) => {
 	try {
-		if (req.body.tags === undefined)
+		if (req.body.tags === undefined) {
 			throw { code: 422, message: 'Missing parameters.' };
+		}
 		const query = { _id: req.params.id };
 		const toReplace = { $set: { tags: req.body.tags } };
 		await Journal.findOneAndUpdate(query, toReplace);
@@ -500,7 +835,7 @@ module.exports.userFollowedJournals = async (req, res, next) => {
 			.populate('id_journal')
 			.exec();
 		console.log(result);
-		/*var arr2 = []
+		/* var arr2 = []
     await result.forEach(async (item)=>{
       var journals =  Journal.findById(item.id_journal)
       console.log(journals)

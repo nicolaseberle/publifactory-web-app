@@ -43,7 +43,7 @@ export function toThousandFilter (num) {
 export function statusFilter (status) {
   const statusMap = {
     Published: 'success',
-    Draft: 'info',
+    draft: 'info',
     Reviewing: 'warning',
     Deleted: 'danger',
     Rejected: 'danger'

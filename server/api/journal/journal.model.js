@@ -6,6 +6,11 @@ const Schema = mongoose.Schema;
 
 const JournalSchema = new Schema({
 	creationDate: { type: Date, default: Date.now },
+	type: {
+		type: String,
+		enum: ['journal', 'pool', 'collection'],
+		default: 'journal'
+	},
 	title: {
 		type: String,
 		required: true
