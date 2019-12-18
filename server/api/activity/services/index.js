@@ -1,7 +1,7 @@
 const create = require('./service');
 const list = require('./list');
-const occurenceByDate = require('../services/occurencebydate');
-const totalRequest = require('../services/totalRequest');
+const occurenceByDate = require('./occurencebydate');
+const totalRequest = require('./totalRequest');
 
 module.exports = {
 	create,

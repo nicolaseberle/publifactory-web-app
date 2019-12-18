@@ -28,6 +28,7 @@
         <activity-chart id='activity-chart'/>
       </el-card>
     </el-row>
+    <!--
     <el-row :gutter='10'>
       <el-col :span='4'>
         <el-card>
@@ -91,7 +92,7 @@
         </div>
         <platform-chart id='platform-chart'/>
       </el-card>
-    </el-row>
+    </el-row>-->
     <el-row style='margin-top:20px'>
         <!--<el-col :span='8'>
           <el-card>
@@ -140,10 +141,10 @@
   },
   methods: {
     getTotalRequest () {
-      axios.get('/api/totalRequest')
+      axios.get('/api/activity/totalRequest')
       .then( async (res) => {
         this.nbTotalRequest = res.data.data;
-      })
+      }).catch((e)=>{console.log(e)})
     },
     getMetrics(){
       axios.get('/api/activity?page=1&count=10')
@@ -154,6 +155,7 @@
     },
   },
   mounted () {
+    this.getTotalRequest()
     this.getMetrics()
   }
 }
