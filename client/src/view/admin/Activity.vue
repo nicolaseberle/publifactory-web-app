@@ -142,7 +142,7 @@
   },
   methods: {
     getTotalInvitation () {
-      axios.get('/api/request/totalRequest')
+      axios.get('/api/requests/totalRequest')
       .then( async (res) => {
         this.nbTotalInvitation = res.data.data;
       }).catch((e)=>{console.log(e)})
