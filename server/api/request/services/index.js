@@ -4,6 +4,7 @@ const remove = require('./remove');
 const read = require('./read');
 const list = require('./list');
 const remind = require('./remind');
+const totalRequest = require('./totalRequest');
 
 module.exports = {
 	create,
@@ -11,5 +12,6 @@ module.exports = {
 	remove,
 	read,
 	list,
-	remind
+	remind,
+	totalRequest
 };

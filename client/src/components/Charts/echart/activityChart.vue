@@ -59,12 +59,9 @@
     getOccurenceByDate() {
     axios.get('/api/activity/occurenceByDate??page=1&count=10').then(async(res)=>{
         let array = res.data.data
-        console.log(array)
         this.array_date = []
         this.array_occurence = []
 
-        console.log("getOccurenceByDate")
-        console.log(res.data.data)
         array.forEach(element => {
             this.array_occurence.push(element.click)
             this.array_date.push(moment(element.date).format("DD/MM/YYYY"))

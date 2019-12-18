@@ -16,7 +16,7 @@
             <svg-icon icon-class="guide"/>
               Total invitations
             </div>
-          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>0</div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{nbTotalInvitation}}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -28,6 +28,7 @@
         <activity-chart id='activity-chart'/>
       </el-card>
     </el-row>
+    <!--
     <el-row :gutter='10'>
       <el-col :span='4'>
         <el-card>
@@ -91,7 +92,7 @@
         </div>
         <platform-chart id='platform-chart'/>
       </el-card>
-    </el-row>
+    </el-row>-->
     <el-row style='margin-top:20px'>
         <!--<el-col :span='8'>
           <el-card>
@@ -109,7 +110,7 @@
               <span>Recent Requests</span>
             </div>
             <div>
-              <requestList :data='metricsFinal'/>
+              <requestList :listinvitation='listInvitation'/>
             </div>
           </el-card>
         </el-col>
@@ -127,9 +128,10 @@
   locales,
   data () {
     return {
-      metricsFinal: [],
+      listInvitation: [],
       isMetrics: false,
-      nbTotalRequest: 0
+      nbTotalRequest: 0,
+      nbTotalInvitation: 0
     }
   },
   components: {
@@ -139,22 +141,30 @@
     requestList
   },
   methods: {
+    getTotalInvitation () {
+      axios.get('/api/requests/totalRequest')
+      .then( async (res) => {
+        this.nbTotalInvitation = res.data.data;
+      }).catch((e)=>{console.log(e)})
+    },
     getTotalRequest () {
-      axios.get('/api/totalRequest')
+      axios.get('/api/activity/totalRequest')
       .then( async (res) => {
         this.nbTotalRequest = res.data.data;
-      })
+      }).catch((e)=>{console.log(e)})
     },
-    getMetrics(){
+    getInvitations(){
       axios.get('/api/activity?page=1&count=10')
       .then( async (res) => {
-        this.metricsFinal = res.data.data;
+        this.listInvitation = res.data.data;
         this.isMetrics = true;
       })
     },
   },
   mounted () {
-    this.getMetrics()
+    this.getTotalRequest()
+    this.getTotalInvitation()
+    this.getInvitations()
   }
 }
 </script>

@@ -225,7 +225,7 @@ export const constantRouterMap = [
 
 				component: () =>
 					import('../view/applications/reviewermatcher/index.vue')
-			},
+			},/*
 			{
 				path: 'summarize',
 				name: 'summarize_text',
@@ -235,19 +235,8 @@ export const constantRouterMap = [
 					noCache: true,
 					skipAuth: true
 				},
-
 				component: () => import('../view/applications/summarize/index.vue')
-			},
-			{
-				path: 'preprintsearch',
-				name: 'preprint_search',
-				meta: {
-					title: 'preprint_search',
-					icon: 'search',
-					noCache: true
-				},
-				component: () => import('../view/applications/preprintsearch/index.vue')
-			},
+			},*/
 			{
 				path: 'applications',
 				component: () => import('../view/applications/index.vue')
