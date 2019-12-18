@@ -16,7 +16,7 @@
             <svg-icon icon-class="guide"/>
               Total invitations
             </div>
-          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>0</div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{nbTotalInvitation}}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -130,7 +130,8 @@
     return {
       metricsFinal: [],
       isMetrics: false,
-      nbTotalRequest: 0
+      nbTotalRequest: 0,
+      nbTotalInvitation: 0
     }
   },
   components: {
@@ -140,6 +141,12 @@
     requestList
   },
   methods: {
+    getTotalInvitation () {
+      axios.get('/api/request/totalRequest')
+      .then( async (res) => {
+        this.nbTotalInvitation = res.data.data;
+      }).catch((e)=>{console.log(e)})
+    },
     getTotalRequest () {
       axios.get('/api/activity/totalRequest')
       .then( async (res) => {
@@ -156,6 +163,7 @@
   },
   mounted () {
     this.getTotalRequest()
+    this.getTotalInvitation()
     this.getMetrics()
   }
 }
