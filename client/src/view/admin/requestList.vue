@@ -1,9 +1,9 @@
 <template>
 <div class="app-container">
   <div class="components-container-dashboard">
-    <content-module name="data">
-      <data-table ref="data">
-        <el-table :data="data" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
+    <content-module name="listinvitation">
+      <data-table ref="listinvitation">
+        <el-table :data="listinvitation" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
           <el-table-column class-name="date-col" width="140px" label="Date">
             <template slot-scope="scope">
               <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
@@ -38,10 +38,13 @@ import locales from '../../locales/users'
 export default {
   locales,
   name: 'requestList',
-  props:["data"],
+  props:["listinvitation"],
   components: {DataTable},
   data () {
-    return {}
+    return {
+      selectedRow: '',
+      selectedUserId: ''
+    }
   },
   created () {
 

@@ -110,7 +110,7 @@
               <span>Recent Requests</span>
             </div>
             <div>
-              <requestList :data='metricsFinal'/>
+              <requestList :listinvitation='listInvitation'/>
             </div>
           </el-card>
         </el-col>
@@ -128,7 +128,7 @@
   locales,
   data () {
     return {
-      metricsFinal: [],
+      listInvitation: [],
       isMetrics: false,
       nbTotalRequest: 0,
       nbTotalInvitation: 0
@@ -153,10 +153,10 @@
         this.nbTotalRequest = res.data.data;
       }).catch((e)=>{console.log(e)})
     },
-    getMetrics(){
+    getInvitations(){
       axios.get('/api/activity?page=1&count=10')
       .then( async (res) => {
-        this.metricsFinal = res.data.data;
+        this.listInvitation = res.data.data;
         this.isMetrics = true;
       })
     },
@@ -164,7 +164,7 @@
   mounted () {
     this.getTotalRequest()
     this.getTotalInvitation()
-    this.getMetrics()
+    this.getInvitations()
   }
 }
 </script>
