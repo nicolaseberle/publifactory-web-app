@@ -287,7 +287,7 @@
               <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
                 <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)"/>
               </div>
-              <article v-if="state_click[props.$index] == 2">
+              <!--<article v-if="state_click[props.$index] == 2">
                 <strong>Contacts :</strong>
                 <ul>
                   <li v-if="props.row.contact.length == 0">Unknown</li>
@@ -297,7 +297,7 @@
                     </span>
                   </li>
                 </ul>
-              </article>
+              </article>-->
             </template>
 
 
@@ -1414,10 +1414,10 @@ hgroup {
 .el-table__expanded-cell[class*=cell] {
   padding: 20px!important;
 }
-  .el-table__expanded-cell[class*=cell] > article {
+  /*.el-table__expanded-cell[class*=cell] > article {
     padding-left: 30px;
     border-left: 1px solid lightgrey;
-  }
+  }*/
 
 .el-progress-bar__outer, .el-progress-bar__inner {
   border-radius: 4px;
