@@ -34,13 +34,15 @@
                     Published: <a class='very-dark-gray-link' style="cursor:text;">{{ article.year }}</a>
                     , IN: <a class='very-dark-gray-link' style="cursor:text;">{{ article.journal }}</a>
                     </p>
-                    <p class='publication-list-item-journal-published-copy' style="display:block; margin-bottom:5px;" v-if='article.doi'>
+                  </div>
+                  <div v-if='article.doi'>
+                    <p class='publication-list-item-journal-published-copy' style="display:block; margin-bottom:5px;">
                       DOI: <a class='very-dark-gray-link' target="new" :href="article.doi">{{ article.doi }}</a>
                     </p>
                   </div>
                   <div v-else >
-                    <p class='publication-list-item-journal-published-copy'>
-                    DOI:<a class='very-dark-gray-link'> Unknown</a>
+                    <p class='publication-list-item-journal-published-copy' style="display:block; margin-bottom:5px;">
+                      DOI: <a class='very-dark-gray-link'> Unknown</a>
                     </p>
                   </div>
                   <div v-if='article.inCitations'>
