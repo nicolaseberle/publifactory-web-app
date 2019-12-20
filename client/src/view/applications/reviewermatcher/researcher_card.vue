@@ -1,7 +1,7 @@
 <template >
   <div>
       <div class='paginated-list-item publication-list-item'>
-      <article v-for="article in author.article" class="container">
+      <div v-for="article in author.article" class="container article-container">
             <div class='publication-list-item-details'>
               <div class='publication-list-item-title-publication margin-bottom-sm'>
                 <a :href="article.doi" class='publication-list-item-title very-dark-gray-link'>
@@ -51,7 +51,7 @@
                 </div>
               </div>
             </div>
-      </article>
+      </div>
     </div>
   </div>
 </template>
@@ -162,7 +162,7 @@ a.very-dark-gray-link {
     text-align: right;
     margin-top: -45px;
 }
-article {
+.article-container {
   margin-bottom: 15px!important;
   padding-left: 30px;
   border-left: 1px solid lightgrey;

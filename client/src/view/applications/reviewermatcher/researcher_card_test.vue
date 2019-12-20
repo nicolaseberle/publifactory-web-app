@@ -1,35 +1,40 @@
 <template >
   <div>
       <div class='paginated-list-item publication-list-item'>
-      <article v-for="article in author.article" class="container">
-            <div class='publication-list-item-details'>
-              <div class='publication-list-item-title-publication margin-bottom-sm'>
-                <a :href="article.doi" class='publication-list-item-title very-dark-gray-link'>
-                  {{ article.title }}
-                </a>
-              </div>
-              <div>
-                <div class='publication-list-item-journal-copy'>
-                  <p class='publication-list-item-journal-published-copy'>
-                    <el-tooltip class="item" effect="dark" :content="article.abstract" placement="right">
-                      <a class='very-dark-gray-link'>View abstract</a>
-                    </el-tooltip>
-                  </p>
-                  <!-- <p class='publication-list-item-journal-published-copy'>
-                  Role:  <a class='very-dark-gray-link'>{{ article.co_auth }}</a>
-                  </p> -->
-                  <p class='publication-list-item-journal-published-copy' style="display:inline">
-                  Authors:  <a v-for="(auth, index) in author.list_auth" style="display:inline">
-                      <strong v-if="author.pos == index" style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></strong>
-                      <span v-else style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></span>
-                    </a>
-                  </p>
-                  <p class='publication-list-item-journal-published-copy'>
-                  Published: <a class='very-dark-gray-link'>{{ article.year }}</a>
-                  , IN: <a class='very-dark-gray-link' v-if='article.journal'>{{ article.journal }}</a><a class='very-dark-gray-link' v-else>Unknown</a>
-                  </p>
-                  <div v-if='article.doi'>
-                    <p class='publication-list-item-journal-published-copy'>
+        <div v-for="article in author.article" class="container article-container">
+              <div class='publication-list-item-details'>
+                <div class='publication-list-item-title-publication margin-bottom-sm'>
+                  <a class='publication-list-item-title very-dark-gray-link' style="font-size:18px!important; cursor:text; line-height:20px;">
+                    {{ article.title }}
+                  </a>
+                </div>
+                <div>
+                  <div class='publication-list-item-journal-copy'>
+                    <div v-if='article.fields && article.fields != "-1"' style="display:flex; justify-content:start; margin:10px 0;">
+                      <el-tooltip class="item" effect="light" placement="top" v-bind:key="field" v-for="field in article.fields">
+                        <div slot="content">
+                          <ul style="list-style-type:none; padding-left:0;">
+                            <li v-for="cat in article.sub_cat" v-if="assoc_cat[field].map(function(x){ return x.toLowerCase()}).includes(cat.toLowerCase())">
+                              {{ cat[0].toUpperCase() + cat.replace(/_/gi, ' ').slice(1) }}
+                            </li>
+                          </ul>
+                        </div>
+                        <el-tag size="small" style="margin-bottom:5px">
+                          {{ field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1) }}
+                        </el-tag>
+                      </el-tooltip>
+                    </div>
+                    <p class='publication-list-item-journal-published-copy' style="display:inline-block; margin-bottom:5px;">
+                    Authors: <a v-for="(auth, index) in author.list_auth" style="display:inline; cursor:text;">
+                        <strong v-if="author.pos == index" style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></strong>
+                        <span v-else style="display:inline">{{ auth.name }}<span v-if="index < author.list_auth.length -1">, </span></span>
+                      </a>
+                    </p>
+                    <p class='publication-list-item-journal-published-copy' style="display:block; margin-bottom:5px;" v-if='article.journal'>
+                    Published: <a class='very-dark-gray-link' style="cursor:text;">{{ article.year }}</a>
+                    , IN: <a class='very-dark-gray-link' style="cursor:text;">{{ article.journal }}</a>
+                    </p>
+                    <p class='publication-list-item-journal-published-copy' style="display:block; margin-bottom:5px;" v-if='article.doi'>
                       DOI: <a class='very-dark-gray-link' target="new" :href="article.doi">{{ article.doi }}</a>
                     </p>
                   </div>
@@ -50,8 +55,7 @@
                   </div>
                 </div>
               </div>
-            </div>
-      </article>
+        </div>
       <div class='pertinence'>
         <p>Pertinence:
           <span v-if="typeof list.list_failed[index] != 'undefined'" style="color:#F56C6C">No</span>
@@ -212,7 +216,7 @@ a.very-dark-gray-link {
     text-align: right;
     margin-top: -45px;
 }
-article {
+.article-container {
   margin-bottom: 15px!important;
   padding-left: 30px;
   border-left: 1px solid lightgrey;
