@@ -155,9 +155,13 @@ export default {
           this.requestInfos["rev_id"] = this.rowInfos["id"]
           this.requestInfos["rev_name"] = this.rowInfos["name"]
           this.requestInfos["deadline"] = this.formMail["deadline"]
+          this.requestInfos["object"] = this.formMail["object"]
+          this.requestInfos["remind"] = this.formMail["relaunch"]
+          this.requestInfos["content"] = this.formMail["message"]
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
+          console.log(this.requestInfos);
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
