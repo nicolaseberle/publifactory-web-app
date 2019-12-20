@@ -184,6 +184,8 @@ case "$command" in
     ;;
   stop)
     echo -ne '########                  (33%)\r'
+    save_data
+    echo -ne '##############            (66%)\r'
     stop
     echo -ne '########################  (100%)\r'
     execution_time
