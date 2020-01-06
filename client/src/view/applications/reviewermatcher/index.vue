@@ -463,12 +463,15 @@ import axios from 'axios'
 import researcherCard from './researcher_card_test'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
+
 // Import JSON
 import cats_json from './json/cats.json'
 import assoc_cat_json from './json/assoc_cat.json'
 import time_cat_json from './json/time_cat.json'
+
 const CancelToken = axios.CancelToken;
 let cancel;
+
 export default {
   components: {researcherCard,requestView},
   computed: {
@@ -605,6 +608,7 @@ export default {
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
+
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
             .then( async (res) => {
@@ -659,6 +663,7 @@ export default {
         )
       ])
     },
+
     info_caption_coi(h, { column, $index }) {
       return h("span", [
         column.label,
@@ -684,24 +689,32 @@ export default {
         )
       ])
     },
+
     exportListJson() {
       let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+
       let exportFileDefaultName = 'list_reviewer.json';
+
       let linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
     },
+
     exportListCsv() {
       if(this.tempData.length == 0) {
         return '';
       }
+
       let keys = Object.keys(this.tempData[0]);
+
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
+
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
+
       this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
@@ -711,23 +724,29 @@ export default {
           });
           csvStr += lineDelimiter;
       });
+
       csvStr = encodeURIComponent(csvStr);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+
       let exportFileDefaultName = 'list_reviewer.csv';
+
       let linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
     },
+
     handleClose(tag) {
       this.formPost.keywords.splice(this.formPost.keywords.indexOf(tag), 1);
     },
+
     showInput() {
       this.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
+
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
@@ -762,6 +781,7 @@ export default {
       this.inputVisible = false;
       this.inputValue = '';
     },
+
     //Ajout authors
     handleCloseAut(aut) {
       this.formPost.authors.splice(this.formPost.authors.indexOf(aut), 1);
@@ -806,6 +826,7 @@ export default {
       this.inputVisibleAut = false;
       this.inputValueAut = '';
     },
+
     //Ajout field
     handleCloseFie(fie) {
       this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
@@ -814,6 +835,7 @@ export default {
           cat.disabled = false
         }
       });
+
       for (let x=0; x<this.subcats.length; x++) {
         if (this.subcats[x].value == fie) {
           this.subcats.splice(x, 1)
@@ -847,6 +869,8 @@ export default {
       this.inputVisibleFie = false;
       this.inputValueFie = '';
     },
+
+
     //Ajout subcat
     handleCloseSub(sub) {
       this.formPost.sub_cat.splice(this.formPost.sub_cat.indexOf(sub), 1);
@@ -880,6 +904,7 @@ export default {
       this.inputValueSub = '';
       console.log(this.formPost.sub_cat);
     },
+
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.subcats = [];
@@ -895,6 +920,7 @@ export default {
       this.fileList = []
       cancel()
     },
+
     uploadSectionFile(param){
       this.formPost.keywords = []
       this.subcats = [];
@@ -930,6 +956,7 @@ export default {
         })
       })
     },
+
     async onSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -950,6 +977,7 @@ export default {
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
+
           let phraseKey = ""
           if (this.formPost.keywords.length > 0){
             for (let x = 0; x<this.formPost.keywords.length; x++){
@@ -961,14 +989,17 @@ export default {
             }
             phraseKey += "."
           }
+
           for (let x = 0; x<this.formPost.fields.length; x++){
             if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
               this.onSeconds = this.time_cat[this.formPost.fields[x]]
             }
           }
+
           let abstractTotal = this.formPost.abstract
           abstractTotal += phraseKey
           abstractTotal = this.formPost.title + '. ' + abstractTotal
+
           let res = ''
           this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
@@ -1016,6 +1047,7 @@ export default {
         }
       });
     },
+
     updateMetrics(_fields, _title) {
       const formData = {fields: _fields, title: _title }
       console.log(formData)
@@ -1038,8 +1070,10 @@ export default {
       }
       console.log(this.requestMails);
     },
+
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
+
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -1064,15 +1098,19 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
+
     displayInfosA(index, row) {
       // console.log("index: ", this.isExpanded[index], this.state_click[index]);
     },
+
     displayInfosB(index, row) {
       this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
       this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
+
       this.centerDialogVisible = true
+
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -1101,8 +1139,10 @@ export default {
       this.$refs.refTable.toggleRowExpansion(row);
       this.isExpanded[index] = false;
       this.state_click[index] = 0;
+
       this.listPertinence.list_failed[index] = {"title": row.article[0].title, "abstract": row.article[0].abstract};
       console.log(row);
+
       this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
       console.log("before", this.listPertinence);
       let temp = JSON.stringify(this.listPertinence)
@@ -1121,7 +1161,9 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;
         this.state_click[index] = 0;
+
         this.listPertinence.list_failed.splice(index, 1);
+
         this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
         console.log("before", this.listPertinence);
         let temp = JSON.stringify(this.listPertinence)
@@ -1158,6 +1200,7 @@ export default {
 }
 </script>
 <style>
+
 .bandeau {
   position: fixed;
   top: 30px;
@@ -1169,25 +1212,31 @@ export default {
   font-weight: bold;
   z-index: 1000;
 }
+
 .app-container {
   max-width: 1140px;
   padding: 0px 20px;
   margin: 0 auto;
 }
+
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
 }
+
 h2 {
   font-family: 'DNLTPro-bold';
 }
+
 p {
   font-family: 'DNLTPro-regular';
 }
+
 strong {
   display: block;
   margin-top: 5px;
 }
+
 hgroup {
   text-align: center;
   margin-bottom: 40px;
@@ -1195,9 +1244,11 @@ hgroup {
   hgroup > p {
     margin: 0;
   }
+
 #scroll_anchor {
   border-top: 1px solid lightgray;
 }
+
 .text_block {
   text-align:justify;
   line-height: 24px;
@@ -1208,6 +1259,7 @@ hgroup {
   padding: 5px 15px 10px 15px;
   background-color: #f1f1f1;
 }
+
 .el-tag  {
     margin-right: 10px
   }
@@ -1225,25 +1277,31 @@ hgroup {
     margin-left: 10px;
     vertical-align: bottom;
   }
+
 /* .el-icon-arrow-right:before {
   content:"";
   display: none;
 } */
+
   .el-table__expand-icon {
     display: none;
   }
+
 .align {
   display: inline-block;
 }
+
 .flex_items > .el-form-item__content {
   display: flex;
   justify-content: left;
   align-items: center;
 }
+
 .progress_bar {
   width: 100%;
   margin: 0 20px;
 }
+
 .little_icon {
   width: 18px;
   height: 18px;
@@ -1251,9 +1309,11 @@ hgroup {
   vertical-align: middle;
   margin-right: 10px;
 }
+
 .el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
   text-align: center;
 }
+
 .el-table__row td:nth-child(2) {
   padding: 0;
   text-align: left;
@@ -1272,15 +1332,19 @@ hgroup {
     .c_green {
       background-color: #30B08F;
     }
+
     .c_orange {
       background-color: orange;
     }
+
     .c_grey {
       background-color: #A5A9AD;
     }
+
     .c_red {
       background-color: #F56C6C;
     }
+
 .el-collapse-item{
   padding-bottom: 20px;
 }
@@ -1289,9 +1353,11 @@ hgroup {
   background-color: #f4f4f4;
   font-size: 1.5em;
   font-weight: 800;
+
 }
 .el-collapse-item__wrap{
   background-color: #f4f4f4;
+
 }
 .el-collapse-item__content{
   font-family: 'DNLTPro-regular';
@@ -1313,6 +1379,7 @@ hgroup {
 .description > p {
     margin: 0;
 }
+
 .round {
   width: 13px;
   height: 13px;
@@ -1321,9 +1388,11 @@ hgroup {
   margin-right: 5px;
   vertical-align: middle;
 }
+
 .el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
 }
+
 .el-upload {
   width: 100%;
 }
@@ -1331,13 +1400,16 @@ hgroup {
     width: 100%;
     height: 160px;
   }
+
 .el-form-item__label {
   text-align: left;
 }
+
 .input-new-tag {
   height: 100%;
   margin: 0;
 }
+
 .el-table__expanded-cell[class*=cell] {
   padding: 20px!important;
 }
@@ -1345,38 +1417,49 @@ hgroup {
     padding-left: 30px;
     border-left: 1px solid lightgrey;
   }
+
 .el-progress-bar__outer, .el-progress-bar__inner {
   border-radius: 4px;
 }
+
 .el-table .cell {
   padding: 0 20px!important;
 }
+
 .el-upload-dragger .el-icon-upload {
   margin: 16px 0;
 }
+
 .el-form .el-tag {
   font-weight: bold
 }
+
 .el-pagination {
   padding: 10px 0!important;
 }
+
 .el-button+.el-button {
   margin: 0!important;
 }
+
 /* .el-popper[x-placement^=bottom] {
   text-align: center!important;
 } */
+
 @media (max-width: 1280px) {
   .app-container {
     max-width: 1020px;
   }
+
   .el-col-1 {
     padding: 0!important;
   }
 }
+
 @media (max-width: 1024px) {
   .button_tab {
     padding: 5px 7px;
   }
 }
+
 </style>
