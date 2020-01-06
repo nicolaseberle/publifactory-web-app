@@ -64,7 +64,130 @@
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
+        <!-- Ajout authors -->
+        <el-form-item label="Authors" prop="authors">
+          <el-tag
+            :key="aut"
+            v-for="aut in formPost.authors"
+            closable
+            effect="dark"
+            :disable-transitions="false"
+            @close="handleCloseAut(aut)">
+            {{aut}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisibleAut"
+            v-model="inputValueAut"
+            ref="saveAutInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirmAut"
+            @blur="handleInputConfirmAut"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
+        </el-form-item>
+
+        <!-- Ajout fields -->
+        <el-form-item label="Fields" prop="fields">
+          <el-tag
+            :key="fie"
+            v-for="fie in formPost.fields"
+            closable
+            :disable-transitions="false"
+            type="info"
+            effect="dark"
+            @close="handleCloseFie(fie)">
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
+          </el-tag>
+          <el-select
+            class="button-new-fie"
+            v-if="inputVisibleFie"
+            v-model="inputValueFie"
+            ref="saveFieInput"
+            placeholder="Select"
+            @change="handleInputConfirmFie"
+            size="mini">
+            <el-option
+              v-for="item in cats"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
+        </el-form-item>
+
+        <!-- Ajout sub_cat -->
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="sub"
+            v-for="sub in formPost.sub_cat"
+            closable
+            type="info"
+            :disable-transitions="false"
+            @close="handleCloseSub(sub)">
+            {{sub}}
+          </el-tag>
+          <el-select
+            class="button-new-sub"
+            v-if="inputVisibleSub"
+            v-model="inputValueSub"
+            ref="saveSubInput"
+            placeholder="Select"
+            @change="handleInputConfirmSub"
+            size="mini">
+            <el-option-group
+              v-for="group in subcats"
+              :key="group.value"
+              :label="group.value">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+        </el-form-item>
+
+        <!-- Ajout Abstract -->
+        <el-form-item label="Abstract" prop="abstract">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 10, maxRows: 30}"
+            placeholder="You have to input enter only english abstract"
+            v-model="formPost.abstract" @change="replaceChariot">
+          </el-input>
+        </el-form-item>
+
         <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
           <el-tag
             :key="tag"
             v-for="tag in formPost.keywords"
@@ -86,39 +209,6 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
         </el-form-item>
 
-        <!-- Ajout authors -->
-        <el-form-item label="Authors" prop="authors">
-          <el-tag
-            :key="aut"
-            v-for="aut in formPost.authors"
-            closable
-            :disable-transitions="false"
-            @close="handleCloseAut(aut)">
-            {{aut}}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisibleAut"
-            v-model="inputValueAut"
-            ref="saveAutInput"
-            size="mini"
-            @keyup.enter.native="handleInputConfirmAut"
-            @blur="handleInputConfirmAut"
-          >
-          </el-input>
-          <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
-        </el-form-item>
-
-
-        <el-form-item label="Abstract" prop="abstract">
-          <el-input
-            type="textarea"
-            :autosize="{ minRows: 10, maxRows: 30}"
-            placeholder="You have to input enter only english abstract"
-            v-model="formPost.abstract">
-          </el-input>
-        </el-form-item>
-
         <el-form-item class="flex_items">
           <el-button type="info" @click="onSubmit('formPost')" :loading="load_var" class="button_tab">Search</el-button>
           <!-- <el-progress :text-inside="true" :stroke-width="26" :percentage="progress_status" :format="format" class="progress_bar"></el-progress> -->
@@ -132,10 +222,12 @@
         <el-col :span='1'>
           <div style='text-align:center; vertical-align:middle; height:100px;'><p style="margin:5px 0;">or</p></div>
         </el-col>
-        <el-col :span='11'>
+        <el-col :span='8'>
           <el-upload
           class="upload-demo"
           drag
+          :on-change="uploadChange"
+          :file-list="fileList"
           action=""
           :http-request="uploadSectionFile">
           <i class="el-icon-upload"></i>
@@ -153,7 +245,7 @@
       <div id="scroll_anchor">
       <el-row v-if='isData' style='padding-top:20px; margin-bottom: 100px;'>
         <h2>Suggestion of Reviewers</h2>
-        <div style="margin:20px 0; display:flex; justify-content: space-between; align-items: center;">
+        <div style="margin:20px 0 10px; display:flex; justify-content: space-between; align-items: center;">
           <el-tag type="warning">Warning : You can have multiple authors with the same affiliation</el-tag>
           <div>
             <el-popover
@@ -174,6 +266,15 @@
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -205,8 +306,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="280"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -224,7 +324,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -262,20 +362,22 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
                 <div v-else-if="props.row.conflit > 0 && props.row.conflit <= 1" class="round c_orange"></div>
                 <div v-else-if="props.row.conflit > 1" class="round c_red"></div>
                 <div v-else class="round c_grey"></div>
-                <p style="display:inline-block;">{{ props.row.conflit }}</p>
+                <p v-if="props.row.conflit < 0" style="display:inline-block;">N/A</p>
+                <p v-else style="display:inline-block;">{{ props.row.conflit }}</p>
             </template>
           </el-table-column>
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -296,18 +398,12 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
-              </el-button>
-              <el-button v-else
-                type="success"
-                icon="el-icon-message"
-                circle
-                disabled>
               </el-button>
 <!--              <el-popover
                 ref="popcheck"
@@ -340,6 +436,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -358,15 +463,12 @@ import axios from 'axios'
 import researcherCard from './researcher_card_test'
 import requestView from './requestView'
 import { mapGetters } from 'vuex'
-
 // Import JSON
 import cats_json from './json/cats.json'
 import assoc_cat_json from './json/assoc_cat.json'
 import time_cat_json from './json/time_cat.json'
-
 const CancelToken = axios.CancelToken;
 let cancel;
-
 export default {
   components: {researcherCard,requestView},
   computed: {
@@ -420,15 +522,26 @@ export default {
         ],
         title: [
           {required: true, message: 'Please enter the title of the article', trigger: 'blur'}
+        ],
+        fields: [
+          {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
+      inputVisibleFie: false,
+      inputVisibleSub: false,
       inputValue: '',
       inputValueAut: '',
+      inputValueFie: '',
+      inputValueSub: '',
       load_var: false,
       id: '',
       rowInfos: {},
@@ -452,8 +565,34 @@ export default {
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
     },
+    replaceChariot () {
+      let temp = this.formPost.abstract.replace(/\n|\r|(\n\r)/g,' ');
+      this.formPost.abstract = temp
+    },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    uploadChange(file, fileList){
+      this.fileList = fileList.slice(-1);
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -466,7 +605,6 @@ export default {
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
-
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
             .then( async (res) => {
@@ -521,33 +659,50 @@ export default {
         )
       ])
     },
-
+    info_caption_coi(h, { column, $index }) {
+      return h("span", [
+        column.label,
+        " ",
+        h(
+          "el-popover",
+          {
+            props: {
+              trigger: "hover"
+              }
+          },
+          [
+              h("p", " Conflict of Interest"),
+              h(
+                  "i",
+                  {
+                    slot: "reference",
+                    class: "el-icon-info"
+                  },
+                  ""
+                )
+          ]
+        )
+      ])
+    },
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
       let exportFileDefaultName = 'list_reviewer.json';
-
       let linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
     },
-
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
-
-      let keys = Object.keys(this.tableData[0]);
-
+      let keys = Object.keys(this.tempData[0]);
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
-
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
-
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -556,29 +711,23 @@ export default {
           });
           csvStr += lineDelimiter;
       });
-
       csvStr = encodeURIComponent(csvStr);
       let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
-
       let exportFileDefaultName = 'list_reviewer.csv';
-
       let linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
     },
-
     handleClose(tag) {
       this.formPost.keywords.splice(this.formPost.keywords.indexOf(tag), 1);
     },
-
     showInput() {
       this.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
-
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
@@ -613,7 +762,6 @@ export default {
       this.inputVisible = false;
       this.inputValue = '';
     },
-
     //Ajout authors
     handleCloseAut(aut) {
       this.formPost.authors.splice(this.formPost.authors.indexOf(aut), 1);
@@ -658,7 +806,6 @@ export default {
       this.inputVisibleAut = false;
       this.inputValueAut = '';
     },
-
     //Ajout field
     handleCloseFie(fie) {
       this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
@@ -667,7 +814,6 @@ export default {
           cat.disabled = false
         }
       });
-
       for (let x=0; x<this.subcats.length; x++) {
         if (this.subcats[x].value == fie) {
           this.subcats.splice(x, 1)
@@ -701,8 +847,6 @@ export default {
       this.inputVisibleFie = false;
       this.inputValueFie = '';
     },
-
-
     //Ajout subcat
     handleCloseSub(sub) {
       this.formPost.sub_cat.splice(this.formPost.sub_cat.indexOf(sub), 1);
@@ -736,7 +880,6 @@ export default {
       this.inputValueSub = '';
       console.log(this.formPost.sub_cat);
     },
-
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.subcats = [];
@@ -752,7 +895,6 @@ export default {
       this.fileList = []
       cancel()
     },
-
     uploadSectionFile(param){
       this.formPost.keywords = []
       this.subcats = [];
@@ -786,16 +928,15 @@ export default {
             this.dataUpload = true
             clearInterval(this.pdfInter)
         })
-      //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
       })
     },
-
     async onSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
           this.seconds = 0
           this.onSeconds = 0
@@ -804,12 +945,11 @@ export default {
           }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
-          }, 250);
+              this.progress_status += 1
+          }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
           this.formPost.abstract = this.formPost.abstract.replace(/ *\([^)]*\) */g,' ');
-
           let phraseKey = ""
           if (this.formPost.keywords.length > 0){
             for (let x = 0; x<this.formPost.keywords.length; x++){
@@ -821,29 +961,32 @@ export default {
             }
             phraseKey += "."
           }
-
           for (let x = 0; x<this.formPost.fields.length; x++){
             if (this.time_cat[this.formPost.fields[x]] > this.onSeconds) {
               this.onSeconds = this.time_cat[this.formPost.fields[x]]
             }
           }
-
           let abstractTotal = this.formPost.abstract
           abstractTotal += phraseKey
           abstractTotal = this.formPost.title + '. ' + abstractTotal
-
           let res = ''
           this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-            .then( async (id) => {
-                console.log(id);
-
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
+                console.log(ids);
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 50)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
+                this.load_var = false
                 this.state_click = []
                 this.isExpanded = []
                 this.seconds = 0
@@ -873,7 +1016,6 @@ export default {
         }
       });
     },
-
     updateMetrics(_fields, _title) {
       const formData = {fields: _fields, title: _title }
       console.log(formData)
@@ -896,11 +1038,8 @@ export default {
       }
       console.log(this.requestMails);
     },
-
     displayInfos(row) {
       let index = parseInt(this.tableData.indexOf(row))
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-
       this.$refs.refTable.toggleRowExpansion(row)
       if(this.isExpanded[index] === true && this.state_click[index] == 0){
         this.isExpanded[index] = false;
@@ -925,32 +1064,36 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
-
     displayInfosA(index, row) {
       // console.log("index: ", this.isExpanded[index], this.state_click[index]);
     },
-
     displayInfosB(index, row) {
       this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
       this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
       this.formMail.cgu = false
       this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
-
-      // console.log("displayInfosB :: ", this.isExpanded[index], this.state_click[index])
-      this.$refs.refTable.toggleRowExpansion(row);
       this.centerDialogVisible = true
-      if(this.isExpanded[index] === false || this.isExpanded[index] == null){
-        this.isExpanded[index] = true;
-        this.state_click[index] = 3;
-      }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
-        this.$refs.refTable.toggleRowExpansion(row);
-        this.isExpanded[index] = true;
+      this.$refs.refTable.toggleRowExpansion(row)
+      if(this.isExpanded[index] === true && this.state_click[index] == 0){
+        this.isExpanded[index] = false;
         this.state_click[index] = 0;
       }
-      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+      else if(this.isExpanded[index] === false || this.isExpanded[index] == null){
         this.isExpanded[index] = true;
-        this.state_click[index] = 3;
+        this.state_click[index] = 1;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 1) {
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 2) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 1;
+        this.$refs.refTable.toggleRowExpansion(row);
+      }
+      else if (this.isExpanded[index] === true && this.state_click[index] == 3) {
+        this.isExpanded[index] = true;
+        this.state_click[index] = 2;
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
@@ -958,10 +1101,8 @@ export default {
       this.$refs.refTable.toggleRowExpansion(row);
       this.isExpanded[index] = false;
       this.state_click[index] = 0;
-
       this.listPertinence.list_failed[index] = {"title": row.article[0].title, "abstract": row.article[0].abstract};
       console.log(row);
-
       this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
       console.log("before", this.listPertinence);
       let temp = JSON.stringify(this.listPertinence)
@@ -980,9 +1121,7 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;
         this.state_click[index] = 0;
-
         this.listPertinence.list_failed.splice(index, 1);
-
         this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
         console.log("before", this.listPertinence);
         let temp = JSON.stringify(this.listPertinence)
@@ -1006,12 +1145,19 @@ export default {
     },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.display = 5
+      }
+      else {
+        this.display = 3
+      }
     }
   }
 }
 </script>
 <style>
-
 .bandeau {
   position: fixed;
   top: 30px;
@@ -1023,31 +1169,25 @@ export default {
   font-weight: bold;
   z-index: 1000;
 }
-
 .app-container {
   max-width: 1140px;
   padding: 0px 20px;
   margin: 0 auto;
 }
-
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
 }
-
 h2 {
   font-family: 'DNLTPro-bold';
 }
-
 p {
   font-family: 'DNLTPro-regular';
 }
-
 strong {
   display: block;
   margin-top: 5px;
 }
-
 hgroup {
   text-align: center;
   margin-bottom: 40px;
@@ -1055,11 +1195,9 @@ hgroup {
   hgroup > p {
     margin: 0;
   }
-
 #scroll_anchor {
   border-top: 1px solid lightgray;
 }
-
 .text_block {
   text-align:justify;
   line-height: 24px;
@@ -1070,7 +1208,6 @@ hgroup {
   padding: 5px 15px 10px 15px;
   background-color: #f1f1f1;
 }
-
 .el-tag  {
     margin-right: 10px
   }
@@ -1088,31 +1225,25 @@ hgroup {
     margin-left: 10px;
     vertical-align: bottom;
   }
-
 /* .el-icon-arrow-right:before {
   content:"";
   display: none;
 } */
-
   .el-table__expand-icon {
     display: none;
   }
-
 .align {
   display: inline-block;
 }
-
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
-
 .progress_bar {
   width: 100%;
   margin: 0 20px;
 }
-
 .little_icon {
   width: 18px;
   height: 18px;
@@ -1120,15 +1251,16 @@ hgroup {
   vertical-align: middle;
   margin-right: 10px;
 }
-
-
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -1140,19 +1272,15 @@ hgroup {
     .c_green {
       background-color: #30B08F;
     }
-
     .c_orange {
       background-color: orange;
     }
-
     .c_grey {
       background-color: #A5A9AD;
     }
-
     .c_red {
       background-color: #F56C6C;
     }
-
 .el-collapse-item{
   padding-bottom: 20px;
 }
@@ -1161,11 +1289,9 @@ hgroup {
   background-color: #f4f4f4;
   font-size: 1.5em;
   font-weight: 800;
-
 }
 .el-collapse-item__wrap{
   background-color: #f4f4f4;
-
 }
 .el-collapse-item__content{
   font-family: 'DNLTPro-regular';
@@ -1187,7 +1313,6 @@ hgroup {
 .description > p {
     margin: 0;
 }
-
 .round {
   width: 13px;
   height: 13px;
@@ -1196,11 +1321,9 @@ hgroup {
   margin-right: 5px;
   vertical-align: middle;
 }
-
 .el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
   text-align: center;
 }
-
 .el-upload {
   width: 100%;
 }
@@ -1208,16 +1331,13 @@ hgroup {
     width: 100%;
     height: 160px;
   }
-
 .el-form-item__label {
   text-align: left;
 }
-
 .input-new-tag {
   height: 100%;
   margin: 0;
 }
-
 .el-table__expanded-cell[class*=cell] {
   padding: 20px!important;
 }
@@ -1225,37 +1345,38 @@ hgroup {
     padding-left: 30px;
     border-left: 1px solid lightgrey;
   }
-
 .el-progress-bar__outer, .el-progress-bar__inner {
   border-radius: 4px;
 }
-
 .el-table .cell {
   padding: 0 20px!important;
 }
-
 .el-upload-dragger .el-icon-upload {
   margin: 16px 0;
 }
-
-.el-popper[x-placement^=bottom] {
-  text-align: center!important;
+.el-form .el-tag {
+  font-weight: bold
 }
-
+.el-pagination {
+  padding: 10px 0!important;
+}
+.el-button+.el-button {
+  margin: 0!important;
+}
+/* .el-popper[x-placement^=bottom] {
+  text-align: center!important;
+} */
 @media (max-width: 1280px) {
   .app-container {
     max-width: 1020px;
   }
-
   .el-col-1 {
     padding: 0!important;
   }
 }
-
 @media (max-width: 1024px) {
   .button_tab {
     padding: 5px 7px;
   }
 }
-
 </style>

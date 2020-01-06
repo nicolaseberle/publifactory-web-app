@@ -43,7 +43,7 @@
     :visible.sync="centerDialogVisible"
     width="30%"
     center>
-    <span>You can contact us: contact@publifactory.co </span>
+    <span>You can contact us: contact@publifactory.co</span>
     <span slot="footer" class="dialog-footer">
       <el-button @click="centerDialogVisible = false">Cancel</el-button>
       <el-button type="primary" @click="centerDialogVisible = false">Ok</el-button>

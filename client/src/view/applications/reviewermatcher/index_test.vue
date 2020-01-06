@@ -7,19 +7,8 @@
           <h1>Reviewer search engine</h1>
           <h2>Getting the most relevant reviewers for your paper</h2>
         </div>
-      </hgroup>
-      <!-- popup message erreur -->
-      <el-dialog
-        title="Intern error"
-        :visible.sync="dialogVisibleError"
-        width="30%">
-        <span v-if="errorMessage">{{ errorMessage }}<br>Sorry for the problem, please try again.</span>
-        <span v-else>Request cancelled</span>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
-        </span>
-      </el-dialog>
-      <!--
+      </el-row>
+
       <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
         <div class='description-container'>
@@ -45,7 +34,7 @@
           </div>
         </div>
         </el-col>
-      </el-row>-->
+      </el-row>
 
 
 
@@ -90,6 +79,7 @@
             :key="aut"
             v-for="aut in formPost.authors"
             closable
+            effect="dark"
             :disable-transitions="false"
             @close="handleCloseAut(aut)">
             {{aut}}
@@ -107,7 +97,87 @@
           <el-button v-else class="button-new-tag" size="small" @click="showInputAut">+ New Author</el-button>
         </el-form-item>
 
+        <!-- Ajout fields -->
+        <el-form-item label="Fields" prop="fields">
+          <el-tag
+            :key="fie"
+            v-for="fie in formPost.fields"
+            closable
+            :disable-transitions="false"
+            type="info"
+            effect="dark"
+            @close="handleCloseFie(fie)">
+            {{fie[0].toUpperCase() + fie.replace(/_/gi, ' ').slice(1)}}
+          </el-tag>
+          <el-select
+            class="button-new-fie"
+            v-if="inputVisibleFie"
+            v-model="inputValueFie"
+            ref="saveFieInput"
+            placeholder="Select"
+            @change="handleInputConfirmFie"
+            size="mini">
+            <el-option
+              v-for="item in cats"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              :disabled="item.disabled">
+            </el-option>
+          </el-select>
+          <el-button
+            v-else-if="formPost.fields.length < 2"
+            class="button-new-fie"
+            size="small"
+            @click="showInputFie">+ New Field
+          </el-button>
+        </el-form-item>
 
+        <!-- Ajout sub_cat -->
+        <el-form-item label="SubCategories" prop="sub_cat">
+          <span slot="label">
+            SubCategories
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="sub"
+            v-for="sub in formPost.sub_cat"
+            closable
+            type="info"
+            :disable-transitions="false"
+            @close="handleCloseSub(sub)">
+            {{sub}}
+          </el-tag>
+          <el-select
+            class="button-new-sub"
+            v-if="inputVisibleSub"
+            v-model="inputValueSub"
+            ref="saveSubInput"
+            placeholder="Select"
+            @change="handleInputConfirmSub"
+            size="mini">
+            <el-option-group
+              v-for="group in subcats"
+              :key="group.value"
+              :label="group.value">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-option-group>
+          </el-select>
+          <el-button v-else-if="formPost.sub_cat.length < 5" class="button-new-sub" size="small" @click="showInputSub">+ New Sub-Category</el-button>
+        </el-form-item>
+
+        <!-- Ajout Abstract -->
         <el-form-item label="Abstract" prop="abstract">
           <el-input
             type="textarea"
@@ -115,6 +185,37 @@
             placeholder="You have to input enter only english abstract"
             v-model="formPost.abstract" @change="replaceChariot">
           </el-input>
+        </el-form-item>
+
+        <el-form-item label="Keywords" prop="keywords">
+          <span slot="label">
+            Keywords
+            <el-popover
+              placement="right"
+              trigger="hover"
+              content="Not mandatory but can improve results">
+              <i class="el-icon-info" slot="reference"></i>
+            </el-popover>
+          </span>
+          <el-tag
+            :key="tag"
+            v-for="tag in formPost.keywords"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
         </el-form-item>
 
         <el-form-item class="flex_items">
@@ -176,6 +277,15 @@
             <el-button @click="exportListCsv()">Export list (csv)</el-button>
           </div>
         </div>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="20"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
         <el-table
           ref="refTable"
           row-key="id"
@@ -207,8 +317,7 @@
           <el-table-column
             label="Authors"
             :render-header="info_caption"
-            width="280"
-            fixed>
+            width="220">
             <template slot-scope="props">
                 <div v-if="props.row.verification == 2" class="line_verif c_green"></div>
                 <div v-if="props.row.verification == 1" class="line_verif c_orange"></div>
@@ -226,7 +335,7 @@
           <el-table-column
             label="Affiliation"
             prop="affiliation"
-            width="220">
+            width="180">
             <template slot-scope="props">
               <p v-if="props.row.affiliation.length == 0">Unknown</p>
               <p v-else>{{ props.row.affiliation }}</p>
@@ -234,15 +343,15 @@
             </template>
           </el-table-column>
 
-          <!-- <el-table-column
-            label="Score"
-            prop="score"
-            width="100">
+          <el-table-column
+            label="Fields"
+            prop="fields">
             <template slot-scope="props">
-              <p>{{ props.row.score }}</p>
-              <p>Score (year) : {{ props.row.scorePond }}</p>
+              <div v-for="field in props.row.fields">
+                <p>{{field[0].toUpperCase() + field.replace(/_/gi, ' ').slice(1)}}</p>
+              </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
 
           <el-table-column
             label="Citations"
@@ -254,7 +363,8 @@
           </el-table-column>
 
           <el-table-column
-            label="Conflict of interest"
+            label="CoI"
+            :render-header="info_caption_coi"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
@@ -268,7 +378,7 @@
 
           <el-table-column
             label="Actions"
-            width="160">
+            width="140">
             <template slot-scope="scope">
               <el-popover
                 ref="popdoc"
@@ -289,14 +399,7 @@
                 trigger="hover"
                 content="Send a request">
               </el-popover>
-              <el-button v-if="scope.row.contact.length > 0"
-                type="success"
-                icon="el-icon-message"
-                circle
-                @click="displayInfosB(scope.$index, scope.row)"
-                v-popover:popcon>
-              </el-button>
-              <el-button v-else
+              <el-button
                 type="success"
                 icon="el-icon-message"
                 circle
@@ -305,6 +408,15 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="20"
+          @prev-click="paginPrev"
+          @next-click="paginNext"
+          @current-change="paginChange"
+          :current-page.sync="currentPage">
+        </el-pagination>
       </el-row>
     </div>
     </div>
@@ -356,6 +468,8 @@ export default {
         title: '',
         keywords: [],
         authors: [],
+        fields: [],
+        sub_cat: [],
         listPertinence: {}
       },
       rules: {
@@ -368,15 +482,26 @@ export default {
         title: [
           {required: true, message: 'Please enter the title of the article', trigger: 'blur'},
           {min: 3, message: 'Length should be at least 3', trigger: 'blur'}
+        ],
+        fields: [
+          {required: true, message: 'Please enter at least one field', trigger: 'blur'}
         ]
       },
+      tempData: [{}],
       tableData: [{}],
+      pagin: 0,
+      currentPage: 1,
       isData: false,
+      isLoading: false,
       search: '',
       inputVisible: false,
       inputVisibleAut: false,
+      inputVisibleFie: false,
+      inputVisibleSub: false,
       inputValue: '',
       inputValueAut: '',
+      inputValueFie: '',
+      inputValueSub: '',
       load_var: false,
       id: '',
       rowInfos: {},
@@ -406,6 +531,25 @@ export default {
     },
     format(value){
       return value === 100 ? '50000000 articles browsed': `${value*500000} articles browsed`;
+    },
+    paginPrev(){
+      this.pagin -= 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginNext(){
+      this.pagin += 10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
+    },
+    paginChange(val){
+      this.currentPage = val;
+      this.pagin = val*10
+      this.tableData = this.tempData.slice(this.pagin-10, this.pagin)
+      this.state_click = []
+      this.isExpanded = []
     },
     sendRequestRev(formMail){
       this.$refs[formMail].validate((valid) => {
@@ -531,7 +675,7 @@ export default {
     },
 
     exportListJson() {
-      let dataStr = JSON.stringify(this.tableData);
+      let dataStr = JSON.stringify(this.tempData);
       let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
       let exportFileDefaultName = 'list_reviewer.json';
@@ -543,11 +687,11 @@ export default {
     },
 
     exportListCsv() {
-      if(this.tableData.length == 0) {
+      if(this.tempData.length == 0) {
         return '';
       }
 
-      let keys = Object.keys(this.tableData[0]);
+      let keys = Object.keys(this.tempData[0]);
 
       let columnDelimiter = ',';
       let lineDelimiter = '\n';
@@ -555,7 +699,7 @@ export default {
       let csvColumnHeader = keys.join(columnDelimiter);
       let csvStr = csvColumnHeader + lineDelimiter;
 
-      this.tableData.forEach(item => {
+      this.tempData.forEach(item => {
           keys.forEach((key, index) => {
               if( (index > 0) && (index < keys.length-1) ) {
                   csvStr += columnDelimiter;
@@ -667,30 +811,48 @@ export default {
       this.inputValueAut = '';
     },
 
-    uploadSectionFile(param){
-      this.progress_status_pdf = 0
-      window.setInterval(()=>{
-        if (this.progress_status_pdf<100)
-          this.progress_status_pdf = this.progress_status_pdf +1
-      }, 500);
-      let fileObject = param.file;
-      let formData = new FormData();
-      formData.append("pdf_file", fileObject);
-      let res = ''
-      new Promise ((resolve,reject) => {
-        axios.post('https://service.publifactory.co/api/extract_infos_pdf', formData, { headers: { 'Content-Type': 'multipart/form-data',"Accept": 'application/json', } })
-        .then( async (id) => {
-            console.log(id);
-            resolve(res = await axios.get('https://service.publifactory.co/api/results_pdf/' + id.data))
-            console.log(res.data[0])
-            this.formPost.abstract = res.data[0].abstract
-            this.formPost.title = res.data[0].title
-            this.formPost.keywords = res.data[0].keywords
-            this.formPost.authors = res.data[0].authors
-            this.progress_status_pdf = 100
+    //Ajout field
+    handleCloseFie(fie) {
+      this.formPost.fields.splice(this.formPost.fields.indexOf(fie), 1);
+      this.cats.forEach(function(cat){
+        if (cat.value == fie){
+          cat.disabled = false
+        }
+      });
+
+      for (let x=0; x<this.subcats.length; x++) {
+        if (this.subcats[x].value == fie) {
+          this.subcats.splice(x, 1)
+        }
+      }
+    },
+    showInputFie() {
+      this.inputVisibleFie = true;
+      // this.$nextTick(_ => {
+      //   this.$refs.saveFieInput.$refs.input.focus();
+      // });
+    },
+    handleInputConfirmFie() {
+      let inputValueFie = this.inputValueFie;
+      if (inputValueFie) {
+        this.formPost.fields.push(inputValueFie);
+        this.cats.forEach(function(cat){
+          if (cat.value == inputValueFie){
+            cat.disabled = true
+          }
+        });
+        let temp = [];
+        this.assoc_cat[inputValueFie].forEach(function(cat){
+          temp.push({"value": cat, "disabled": false})
         })
-      //axios.get('http://35.241.170.253:5000/api/extract_infos_pdf?pdf_file='+fileObj.buffer).then((res)=>console.log("uploadSectionFile :: " , res))
-      })
+        this.subcats.push({
+          "value": inputValueFie,
+          "options": temp
+        })
+      }
+      this.inputVisibleFie = false;
+      this.inputValueFie = '';
+      console.log(this.formPost);
     },
 
     //Ajout subcat
@@ -767,6 +929,7 @@ export default {
           console.log("onSubmit :: start");
           this.load_var = true
           this.isData = false
+          this.isLoading = true
           this.progress_status = 0
           this.second = 0
           this.onSeconds = 0
@@ -775,8 +938,8 @@ export default {
           }, 1000)
           window.setInterval(()=>{
             if (this.progress_status<100)
-              this.progress_status = this.progress_status +1
-          }, 250);
+              this.progress_status += 1
+          }, 1000);
           this.formPost.abstract = this.formPost.abstract.replace('&',' ');
           this.formPost.abstract = this.formPost.abstract.replace('/',' ');
 
@@ -805,21 +968,30 @@ export default {
           let res = ''
           this.updateMetrics(this.formPost.fields,this.formPost.title)
           new Promise ((resolve,reject) => {
-            axios.get('https://service.publifactory.co/api/request_reviewer?abstract=' + this.formPost.abstract + '&authors=' + this.formPost.authors)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-            .then( async (id) => {
-                console.log(id);
-
-                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev/' + id.data))
+            axios.get(
+              'https://service.publifactory.co/api/request_reviewer_multi_cits?abstract=' + abstractTotal + '&authors=' + this.formPost.authors + '&fields=' + this.formPost.fields + '&sub_cat=' + this.formPost.sub_cat,
+              {cancelToken: new CancelToken(function executor(c) {cancel = c;})
+            }).then( async (ids) => {
+                console.log(ids);
+                resolve(res = await axios.get('https://service.publifactory.co/api/results_rev_multi_cits/' + ids.data))
                 console.log("onSubmit :: " , res)
                 this.progress_status = 100
-                this.tableData = res.data
+                this.tempData = res.data.slice(0, 20)
+                this.pagin = 10
+                this.currentPage = 1;
+                this.tableData = this.tempData.slice(0, this.pagin)
                 this.isData = true
+                this.isLoading = false
+                this.load_var = false
+                this.seconds = 0
                 this.state_click = []
                 this.isExpanded = []
+
+                clearInterval(this.interId)
                 this.listPertinence = {"abstract": this.formPost.abstract, "nb_suggestion": res.data.length, "ratio": 0, "list_failed": []}
                 console.log(this.listPertinence);
                 var anchor = document.querySelector("#scroll_anchor");
-                //var anchor = this.$refs.refTable;
+
                 const sleep = (milliseconds) => {
                   return new Promise(resolve => setTimeout(resolve, milliseconds))
                 };
@@ -1003,7 +1175,15 @@ export default {
   padding: 0px 20px;
   margin: 0 auto;
 }
+.head{
+  text-align: center;
 
+}
+.head h2 {
+  font-family: 'DNLTPro-light-italic';
+  font-size: 1.3em;
+
+}
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
@@ -1021,14 +1201,44 @@ strong {
   display: block;
   margin-top: 5px;
 }
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
 
 hgroup {
   text-align: center;
   margin-bottom: 40px;
 }
-  hgroup > p {
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+  margin-top: 30px;
+}
+.description > p {
     margin: 0;
-  }
+}
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
@@ -1078,7 +1288,7 @@ hgroup {
 
 .flex_items > .el-form-item__content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
 }
 
@@ -1101,11 +1311,11 @@ hgroup {
 
 .el-table__row td:nth-child(2) {
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
   .el-table__row td:nth-child(2) > .cell {
     position: relative;
-    padding: 0 20px;
+    padding: 10px 20px!important;
   }
     .line_verif {
       position: absolute;
@@ -1174,7 +1384,7 @@ hgroup {
   vertical-align: middle;
 }
 
-.el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6) {
+.el-table__row td:nth-child(3), .el-table__row td:nth-child(4), .el-table__row td:nth-child(5), .el-table__row td:nth-child(6), .el-table__row td:nth-child(7) {
   text-align: center;
 }
 
@@ -1246,4 +1456,5 @@ hgroup {
     padding: 5px 7px;
   }
 }
+
 </style>
