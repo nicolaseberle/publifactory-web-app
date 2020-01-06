@@ -17,11 +17,34 @@
       <el-input v-model="formMail.object"></el-input>
     </el-form-item>
     <el-form-item label="Message" prop="message">
-      <el-input
+      <!--<el-input
         type="textarea"
         :autosize="{ minRows: 10, maxRows: 30}"
         v-model="formMail.message">
-      </el-input>
+      </el-input>-->
+      <div v-bind:id="idEditor">
+        <span class="p-span" v-html="formMail.message"></span>
+      </div>
+      <div v-bind:id="idToolBar" style="z-index=1000;">
+        <span class="ql-formats">
+          <button class="ql-bold"></button>
+          <button class="ql-italic"></button>
+          <button class="ql-underline"></button>
+          <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-blockquote"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-list" value="bullet"></button>
+          <button class="ql-indent" value="-1"></button>
+          <button class="ql-indent" value="+1"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link"></button>
+          <!--<input  class="ql-input" name="title" type="text"></input>-->
+        </span>
+      </div>
     </el-form-item>
     <el-form-item label="Review due by" prop="deadline">
         <el-date-picker type="date" placeholder="Deadline" v-model="formMail.deadline"></el-date-picker>
@@ -59,10 +82,20 @@
 </template>
 <script>
 import axios from 'axios'
+import "quill";
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+
+var Quill = require("quill");
+
 export default {
   props: ['formPost','formMail','rowInfos'],
   data() {
     return {
+      editor: {},
+      idEditor: this.setIdEditor(),
+      idToolBar: this.setIdToolBar(),
       confirmationOfSending : false,
       requestInfos: {},
       options: [{
@@ -108,6 +141,19 @@ export default {
       receiveCopy: false,
     }
   },
+  mounted () {
+    var quill = new Quill("#" + this.idEditor, {
+      modules: {
+        toolbar: "#" + this.idToolBar
+      },
+      theme: "snow"
+    });
+    this.editor = quill;
+    this.editor.root.innerHTML = this.formMail.message;
+    this.editor.on("text-change", (delta, oldDelta, source) => {
+      this.formMail.message = this.editor.root.innerHTML
+    })
+  },
   methods: {
     async addRequest (dataJson){
       const response = await axios({
@@ -146,6 +192,16 @@ export default {
       }
       return dataJson
     },
+    setIdEditor() {
+      return (
+        "editor-container"
+      );
+    },
+    setIdToolBar() {
+      return (
+        "toolbar-container"
+      );
+    },
     sendRequestRev(formMail){
       this.confirmationOfSending = false
       this.$refs[formMail].validate((valid) => {
@@ -157,10 +213,13 @@ export default {
           this.requestInfos["deadline"] = this.formMail["deadline"]
           this.requestInfos["object"] = this.formMail["object"]
           this.requestInfos["remind"] = this.formMail["relaunch"]
-          this.requestInfos["content"] = this.formMail["message"]
+          this.requestInfos["content"] = "<p class='h2'>Invitation to review in <i>" + this.formMail["journal"] + "</i></p>"  + this.formMail["message"]
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
+
+
+
           console.log(this.requestInfos);
 
           new Promise ((resolve,reject) => {

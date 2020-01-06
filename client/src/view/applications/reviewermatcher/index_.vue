@@ -1106,9 +1106,13 @@ export default {
 
     displayInfosB(index, row) {
       this.rowInfos = {'row': row, 'id': row["original_id"], 'name': row["name"]}
-      this.formMail.object = 'Request to review - ' + this.formPost.title + ' - Publifactory'
+      this.formMail.object = 'Request to review - ' + this.formPost.title
       this.formMail.cgu = false
-      this.formMail.message = 'Dear Dr ' + this.rowInfos.name + '\r\n\r\nI would like to invite you to review the article \"' + this.formPost.title + '\" \r\n\r\nAbstract : ' + this.formPost.abstract
+      //'<p>Dear Dr ' + this.rowInfos.name + '</p><br><p>I would like to invite you to review the article \"' + this.formPost.title + '</p><br><p>Abstract : ' + this.formPost.abstract + '</p>'
+
+      this.formMail.message ="<p class='justify'>Dear " + this.rowInfos.name + ",</p><br>" +
+      "<p class='justify'>I would like to invite you to review the article: <b>" + this.formPost.title + "</b></p><br>" +
+      "<p class='justify'><strong>Abstract:</strong> " + this.formPost.abstract + "</p>"
 
       this.centerDialogVisible = true
 
