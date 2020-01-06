@@ -1112,7 +1112,7 @@ export default {
 
       this.formMail.message ="<p class='justify'>Dear " + this.rowInfos.name + ",</p><br>" +
       "<p class='justify'>I would like to invite you to review the article: <b>" + this.formPost.title + "</b></p><br>" +
-      "<p class='justify'><strong>Abstract:</strong> " + this.formPost.abstract + "</p>"
+      "<p class='justify'><strong>Abstract:</strong> " + this.formPost.abstract + "</p><br><p>Regards,</p>"
 
       this.centerDialogVisible = true
 

@@ -377,7 +377,7 @@ img.img-responsive {
     		<table class="outer-table">
     			<tr>
     				<td class="header">
-    					<p><a href="index.html#">Click to view this email in your browser</a></p>
+    					<p><a href="https://app.publifactory.co">Click to view this email in your browser</a></p>
     				</td>
     			</tr> <!--- End Header -->
             </table> <!--- End Outer Table -->

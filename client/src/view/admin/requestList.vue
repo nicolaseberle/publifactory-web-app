@@ -2,11 +2,11 @@
 <div class="app-container">
   <div class="components-container-dashboard">
     <content-module name="listinvitation">
-      <data-table ref="listinvitation">
+      <data-table ref="listinvitation" :page="page" @page-change="nextPage">
         <el-table :data="listinvitation" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
-          <el-table-column class-name="date-col" width="140px" label="Date">
+          <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="scope">
-              <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
+              <span>{{ scope.row.creationDate | moment("DD/MM/YYYY, h:mm:ss a") }}</span>
             </template>
           </el-table-column>
           <el-table-column property="title" label="Title"  min-width="200"></el-table-column>
@@ -32,27 +32,35 @@
 </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import DataTable from '../../components/DataTable'
 import locales from '../../locales/users'
+import axios from 'axios'
 
 export default {
   locales,
   name: 'requestList',
-  props:["listinvitation"],
   components: {DataTable},
   data () {
     return {
+      listinvitation: [],
       selectedRow: '',
-      selectedUserId: ''
+      selectedUserId: '',
+      page:{current: 1,total:0}
     }
   },
   created () {
 
   },
   mounted () {
-
+    this.getTotalRequest()
+    this.getInvitations(1)
   },
   methods:{
+    nextPage(val){
+      this.page.current = val
+      this.getInvitations(this.page.current)
+    },
     actionHandleCommand (action) {
       if(action=='nothing'){
       }else if(action=='remove'){
@@ -62,6 +70,20 @@ export default {
         this.selectedRow = row
         this.selectedUserId = row._id
     },
+    getTotalRequest () {
+      axios.get('/api/activity/totalRequest')
+      .then( async (res) => {
+        this.page.total = res.data.data;
+      }).catch((e)=>{console.log(e)})
+    },
+    getInvitations(page = 1){
+      axios.get('/api/activity?page='+page+'&count=20')
+      .then( async (res) => {
+        this.listinvitation = res.data.data;
+
+      })
+    }
+
   }
 }
 </script>
