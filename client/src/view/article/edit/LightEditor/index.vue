@@ -1085,6 +1085,3 @@ export default {
 }
 
 </style>
-<!--<style>
-@import "/node_modules/zotero-publications/lib/scss/zotero-publications.scss";
-</style>-->
