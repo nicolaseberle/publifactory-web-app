@@ -136,6 +136,7 @@
               message: err.message || this.$t('register.authFail'),
               type: 'error'
             })
+            this.loading = false
             this.loginError = true
             setTimeout(() => {
               this.loginError = false

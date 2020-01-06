@@ -51,6 +51,28 @@
           <el-input v-model="formPost.title"></el-input>
         </el-form-item>
 
+        <el-form-item label="Keywords" prop="keywords">
+          <el-tag
+            :key="tag"
+            v-for="tag in formPost.keywords"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)">
+            {{tag}}
+          </el-tag>
+          <el-input
+            class="input-new-tag"
+            v-if="inputVisible"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="mini"
+            @keyup.enter.native="handleInputConfirm"
+            @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Keyword</el-button>
+        </el-form-item>
+
         <!-- Ajout authors -->
         <el-form-item label="Authors" prop="authors">
           <el-tag
@@ -976,6 +998,7 @@ export default {
                 sleep(100).then(() => {
                   anchor.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 })
+                this.load_var = false
               }
             )
           })
@@ -1187,6 +1210,9 @@ strong {
   font-size: 1.5em;
   font-weight: 800;
 
+hgroup {
+  text-align: center;
+  margin-bottom: 40px;
 }
 .el-collapse-item__wrap{
   background-color: #f4f4f4;
@@ -1216,6 +1242,17 @@ strong {
 
 #scroll_anchor {
   border-top: 1px solid lightgray;
+}
+
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 5px 15px 10px 15px;
+  background-color: #f1f1f1;
 }
 
 .el-tag  {
@@ -1268,6 +1305,10 @@ strong {
   margin-right: 10px;
 }
 
+.el-table__row td:nth-child(7), .el-table__row td:nth-child(8) {
+  text-align: center;
+}
+
 .el-table__row td:nth-child(2) {
   padding: 0;
   text-align: left;
@@ -1298,6 +1339,41 @@ strong {
     .c_red {
       background-color: #F56C6C;
     }
+
+.el-collapse-item{
+  padding-bottom: 20px;
+}
+.el-collapse-item__header{
+  font-family: 'DNLTPro-regular';
+  background-color: #f4f4f4;
+  font-size: 1.5em;
+  font-weight: 800;
+
+}
+.el-collapse-item__wrap{
+  background-color: #f4f4f4;
+
+}
+.el-collapse-item__content{
+  font-family: 'DNLTPro-regular';
+  font-size: 1rem;
+  background-color: #f4f4f4;
+}
+.el-collapse {
+    border-top: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+}
+.description-container {
+  background-color: #f4f4f4;
+  margin-bottom: 30px;
+  border-radius:10px;
+}
+.description {
+  padding: 50px;
+}
+.description > p {
+    margin: 0;
+}
 
 .round {
   width: 13px;
@@ -1349,6 +1425,10 @@ strong {
   margin: 16px 0;
 }
 
+.el-form .el-tag {
+  font-weight: bold
+}
+
 .el-pagination {
   padding: 10px 0!important;
 }
@@ -1356,6 +1436,10 @@ strong {
 .el-button+.el-button {
   margin: 0!important;
 }
+
+/* .el-popper[x-placement^=bottom] {
+  text-align: center!important;
+} */
 
 @media (max-width: 1280px) {
   .app-container {

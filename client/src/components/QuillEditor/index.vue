@@ -50,7 +50,9 @@
           </button>
           <button v-bind:id="idButtonComment">
             <svg-icon icon-class="comment-black" />
+            <!--<i class="ai ai-zotero ai-1x"></i>-->
           </button>
+          <!--<input  class="ql-input" name="title" type="text"></input>-->
         </span>
       </div>
       <div class="questions" v-show="showCitation" v-bind:id="idZotero">
@@ -69,6 +71,7 @@
               <el-col class="question-span" :span="22">
                 <v-autocomplete
                   :items="items"
+                  v-model="item"
                   :get-label="getLabel"
                   :component-item="template"
                   @update-items="updateItems"

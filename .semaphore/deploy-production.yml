@@ -30,5 +30,5 @@ blocks:
               git reset --hard origin/master;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git;
               sudo ./script_docker.sh start prod;
-              chown -R collin_q:publifactory-team .;"
+              sudo chown -R collin_q:publifactory-team .;"
     dependencies: []

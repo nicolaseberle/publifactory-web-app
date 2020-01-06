@@ -279,8 +279,10 @@
   import addCollaborator from '../../../../components/Collaborator'
   import InsertFigure from '../../../../components/InsertFigure/index'
   import richText from 'rich-text'
+  //import Zotero from '../../../../utils/zotero/include.js'
 var Quill = require('quill');
 var uuidv4 = require('uuid/v4');
+// var Zotero = require('libzotero');
 
 const defaultForm = {
   status: 'draft',
@@ -354,6 +356,7 @@ export default {
   },
   data() {
     return {
+      // shareDoc: null,
       flagActivity: true,
       listConnectedUsers: Array,
       references: [],
@@ -362,6 +365,7 @@ export default {
       newTag : '',
       cursors : Object,
       uuid_comment: '',
+      zoteroitems: [],
       editidfigure: 0,
       poseditfigure: [0, 0, 0],
       postForm: {},
@@ -774,6 +778,9 @@ export default {
     },
     applyAbstractEdit (editor, delta, source,key,subkey,subsubkey) {
       this.postForm.abstract = editor.root.innerHTML;
+      this.socket.emit('ABSTRACT_EDIT', {
+        content: this.postForm.abstract
+      });
       if (this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(async () => {
         this.save(this.$event)
