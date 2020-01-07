@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.3.5</div>
+      <div class="bandeau">ALPHA v0.3.6</div>
       <hgroup>
         <h1>Reviewer search engine</h1>
         <h2>Getting the most relevant reviewers for your paper</h2>
@@ -260,10 +260,10 @@
                   <el-button type="primary" size="mini" @click="getMailList()">Send</el-button>
                 </el-form-item>-->
               </el-form>
-              <el-button slot="reference">Get mail list</el-button>
+              <el-button slot="reference" disabled>Get mail list</el-button>
             </el-popover>
             <!--<el-button @click="exportListJson()">Export list (json)</el-button>-->
-            <el-button @click="exportListCsv()">Export list (csv)</el-button>
+            <el-button @click="exportListCsv()" disabled>Export list (csv)</el-button>
           </div>
         </div>
         <el-pagination
@@ -362,8 +362,7 @@
           </el-table-column>
 
           <el-table-column
-            label="CoI"
-            :render-header="info_caption_coi"
+            label="Conflict of Interest"
             prop="conflit">
             <template slot-scope="props">
                 <div v-if="props.row.conflit == 0" class="round c_green"></div>
