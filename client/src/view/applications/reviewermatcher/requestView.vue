@@ -22,15 +22,11 @@
         :autosize="{ minRows: 10, maxRows: 30}"
         v-model="formMail.message">
       </el-input>-->
-      <div v-bind:id="idEditor">
-        <span class="p-span" v-html="formMail.message"></span>
-      </div>
       <div v-bind:id="idToolBar" style="z-index=1000;">
         <span class="ql-formats">
           <button class="ql-bold"></button>
           <button class="ql-italic"></button>
           <button class="ql-underline"></button>
-          <button class="ql-strike"></button>
         </span>
         <span class="ql-formats">
           <button class="ql-blockquote"></button>
@@ -45,10 +41,15 @@
           <!--<input  class="ql-input" name="title" type="text"></input>-->
         </span>
       </div>
+      <div v-bind:id="idEditor">
+        <span class="p-span" v-html="formMail.message"></span>
+      </div>
+
     </el-form-item>
     <el-form-item label="Review due by" prop="deadline">
         <el-date-picker type="date" placeholder="Deadline" v-model="formMail.deadline"></el-date-picker>
     </el-form-item>
+    <!--
     <el-form-item label="Relaunch" prop="relaunch">
       <el-select v-model="formMail.relaunch">
         <el-option
@@ -59,6 +60,7 @@
         </el-option>
       </el-select>
     </el-form-item>
+  -->
     <el-form-item label="Option">
       <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
