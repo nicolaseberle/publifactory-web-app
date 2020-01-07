@@ -2,9 +2,9 @@ const { email, backend } = require("../../../config");
 
 const frontUrl = email.rootHTML;
 const backUrl =
-	process.env.NODE_ENV === "development"
-		? `http://localhost:${backend.port}`
-		: `https://${backend.ip}`;
+	process.env.NODE_ENV === 'production'
+		? `https://${backend.ip}`
+		:`http://localhost:${backend.port}`;
 
 const redirect = request => `
 <!DOCTYPE html>
