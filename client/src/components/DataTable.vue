@@ -30,16 +30,13 @@
     full: {
       type: Boolean,
       default: true
-    }
+    },
+    page: Object
   },
   data () {
     return {
       pending: false,
-      page: {
-        current: 1,
-        limit: 0,
-        total: 0
-      }
+
     }
   },
   computed: {
