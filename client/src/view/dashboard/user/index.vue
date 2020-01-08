@@ -11,7 +11,7 @@
         </el-button-group>
         </el-col>
       </el-row>
-      <data-table ref="articles" @page-change="fetchMyArticles" >
+      <data-table ref="articles" :page="page" @page-change="nextPage" >
         <el-table :data="articles" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
@@ -105,6 +105,7 @@ export default {
   locales,
   data () {
     return {
+      page: {current : 1,total:0,limit:10},
       diagAccessCompVisible: false,
       selectedRow: '',
       selectedArticleId: '',
@@ -137,6 +138,10 @@ export default {
     accessComponent
   },
   methods: {
+    nextPage(val){
+      this.page.current = val
+      this.fetchMyArticles(this.page.current)
+    },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
         this.selectedArticleId = row.id
@@ -159,11 +164,13 @@ export default {
         console.error(err)
       })
     },
-    async fetchMyArticles () {
-      await axios.get(`/api/articles/mine`, {
+    async fetchMyArticles (page=1) {
+      await axios.get('/api/articles/mine?page='+page+'&limit=10', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.articles = list.data.articles
+        this.page.total = list.data.total  
+        console.log("Nb articles : ",this.page.total)
       }).catch(err => {
         console.error(err)
       })

@@ -23,4 +23,4 @@ export const refresh_token = read(STORE_KEY_REFRESH_TOKEN) || '' // eslint-disab
 export const sidebar = read(STORE_KEY_CONFIG_SIDEBAR) || 'open' // eslint-disable-line
 //
 export const lang = read(STORE_KEY_CONFIG_LANG) || navigator.language || 'en'
-export const pageLimit = +read(STORE_KEY_CONFIG_PAGE_LIMIT) || 20
+export const pageLimit = +read(STORE_KEY_CONFIG_PAGE_LIMIT) || 10

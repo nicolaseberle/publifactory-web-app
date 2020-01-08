@@ -2,7 +2,7 @@
   <div class="app-container" v-show="loggedIn">
     <div class="components-container-dashboard">
       <content-module name="users">
-        <data-table ref="users">
+        <data-table ref="users" :page="listQuery.page">
           <div slot="toolbar">
             <el-button type="primary" icon="plus" @click.native="createUser" round>{{$t('operation.create')}}</el-button>
           </div>

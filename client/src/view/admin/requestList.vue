@@ -77,7 +77,7 @@ export default {
       }).catch((e)=>{console.log(e)})
     },
     getInvitations(page = 1){
-      axios.get('/api/activity?page='+page+'&count=20')
+      axios.get('/api/activity?page='+page+'&count=10')
       .then( async (res) => {
         this.listinvitation = res.data.data;
 
