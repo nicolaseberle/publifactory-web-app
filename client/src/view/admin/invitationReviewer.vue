@@ -1,6 +1,6 @@
 <template>
   <div class='app-container'>
-    <el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
+    <!--<el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
       <el-table
       ref="listAllMail"
@@ -41,7 +41,7 @@
 
       </el-table>
 
-    </el-row>
+    </el-row>-->
 
 
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
