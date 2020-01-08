@@ -1,8 +1,8 @@
-version: '3.3'
+version: "3.3"
 services:
   whale:
     image: docker/whalesay
-    command: ['cowsay', 'Containers are deployed !']
+    command: ["cowsay", "Containers are deployed !"]
 
   api:
     restart: always
@@ -13,17 +13,17 @@ services:
       - ./:/src/app
       - /src/app/node_modules
     ports:
-      - '4000:4000'
+      - "4000:4000"
     links:
       - mongo
     depends_on:
       - mongo
     environment:
       WAIT_HOSTS: mongo:27017
-      NODE_ENV: development
+      NODE_ENV: production
       BASE_MONGO: mongo
-      ROOT_APP: 'http://dev.publifactory.co'
-      DOCKER: 'true'
+      ROOT_APP: "http://dev.publifactory.co"
+      DOCKER: "true"
     networks:
       - backend
       - frontend
@@ -32,7 +32,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - '27017:27017'
+      - "27017:27017"
     networks:
       - backend
     depends_on:
@@ -41,7 +41,7 @@ services:
   client_dev:
     restart: always
     ports:
-      - '9001:9001'
+      - "9001:9001"
     build:
       context: ./
       dockerfile: client.dev.dockerfile
@@ -72,8 +72,8 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     depends_on:
       - mongo
     links:
