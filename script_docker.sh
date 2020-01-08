@@ -110,6 +110,7 @@ start () {
 
 stop () {
   debug "Stopping every container and networks.\n"
+  save_data
   sudo docker-compose down
   debug "Docker stopped every container !"
   debug "Verifying if the container are not still running...\n"
