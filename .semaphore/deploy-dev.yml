@@ -24,6 +24,7 @@ blocks:
             - export LANG=C.UTF-8
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
+            - sudo docker rmi $(sudo docker images -f 'dangling=true' -q)
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
