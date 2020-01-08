@@ -66,7 +66,7 @@ up_database () {
   sudo docker-compose up -d mongo
   debug 'Populating database'
   # shellcheck disable=SC2046
-  sudo cat ${CWD}/database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
+  sudo cat ${CWD}/database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --drop --preserveUUID --archive'
   echo -ne '#################         (80%)\r'
 }
 
@@ -137,12 +137,12 @@ stop () {
 }
 
 make_test () {
-  sudo apt-get install -y nodejs
-  sudo docker-compose build mongo
+  # sudo apt-get install -y nodejs
+  # sudo docker-compose build mongo
   up_database
-  npm install --silent
-  npm test
-  stop
+  # npm install --silent
+  # npm test
+  # stop
 }
 
 save_data () {
