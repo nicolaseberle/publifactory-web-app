@@ -1,5 +1,6 @@
-const { backend } = require("../../../config");
+const { email, backend } = require("../../../config");
 
+const frontUrl = email.rootHTML;
 const backUrl =
 	process.env.NODE_ENV === "production"
 		? `https://${backend.ip}`

@@ -15,6 +15,7 @@ async function create(req, res, next) {
 			.json(response)
 			.end();
 	} catch (error) {
+		//console.log(error);
 		next(error);
 	}
 }
