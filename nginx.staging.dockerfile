@@ -15,7 +15,7 @@ RUN mkdir -p /etc/nginx/snippets/
 RUN rm -rf /etc/nginx/conf.d/*
 
 # Copy all the files necessary to dump nginx server
-COPY ./nginx/publifactory-nginx-dev.conf /etc/nginx/conf.d/publifactory-nginx-frontend-dev.conf
+COPY ./nginx/publifactory-nginx-staging.conf /etc/nginx/conf.d/publifactory-nginx-frontend-staging.conf
 COPY --from=build-front-stage /src/dist /usr/share/nginx/html
 
 # Expose the port 80 for HTTP and port 443 for HTTPS

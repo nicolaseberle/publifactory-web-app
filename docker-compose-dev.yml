@@ -20,7 +20,7 @@ services:
       - mongo
     environment:
       WAIT_HOSTS: mongo:27017
-      NODE_ENV: development
+      NODE_ENV: staging
       BASE_MONGO: mongo
       ROOT_APP: "http://dev.publifactory.co"
       DOCKER: "true"
@@ -50,7 +50,7 @@ services:
       - /src/app/node_modules
     environment:
       - PORT=9001
-      - NODE_ENV=development
+      - NODE_ENV=staging
       - BASE_API=api
       - SITE_IP="34.89.179.162"
     depends_on:

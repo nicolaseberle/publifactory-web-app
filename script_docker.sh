@@ -16,7 +16,7 @@ options=$2
 export BASE_MONGO=localhost
 export BASE_API=localhost
 
-if [[ ${options} = "dev" ]];
+if [[ ${options} = "staging" ]];
 then
   export ROOT_APP="https://dev.publifactory.co/"
 else
@@ -48,9 +48,9 @@ print_help () {
 build_container () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
-  if [[ ${options} = "dev" ]];
+  if [[ ${options} = "staging" ]];
   then
-    sudo docker-compose -f docker-compose-dev.yml build
+    sudo docker-compose -f docker-compose-staging.yml build
   else
     sudo docker-compose build
   fi
@@ -95,7 +95,7 @@ start () {
     sudo docker-compose up --no-deps -d nginx
     debug "Up Certbot\n"
     sudo docker-compose up  --no-deps -d certbot
-  elif [[ ${options} = "dev" ]];
+  elif [[ ${options} = "staging" ]];
   then
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
