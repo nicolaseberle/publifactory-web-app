@@ -13,7 +13,7 @@ async function create(req, res, next) {
 		const response = await serviceCreate(req.body);
 
 		// case of user not logged in =>
-		if (!(req.body.token || req.params.token || req.headers["authorization"])) {
+		if (!req.decoded) {
 			const { maxInvitation } = req.cookies;
 			if (!maxInvitation) {
 				res.cookie("maxInvitation", "0", {
