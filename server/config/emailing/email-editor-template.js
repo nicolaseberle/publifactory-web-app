@@ -446,7 +446,7 @@ img.img-responsive {
 									reviewerAnswer[status]
 								}</strong> to review the <strong><em>${
 									request.title
-								}'s</em></strong> article this ${formatDate(
+								}'s</em></strong> article : ${formatDate(
 									request.history.slice(-2, -1)[0].date
 								)}.
 									</p>
@@ -454,6 +454,7 @@ img.img-responsive {
 											status === "outfield"
 												? ""
 												: `
+												<br>
 												<p>
 													You can reach him at this address:
 													<strong>${request.reviewer.email}</strong>
@@ -465,7 +466,7 @@ img.img-responsive {
     						</tr>
                 <tr>
                   <td class="inner-td">
-                    <p class="justify">Reviewing deadline: 20/12/2019</p>
+                    <p class="justify">Reviewing deadline: ${request.deadline}</p>
                   </td>
                 </tr>
     					</table>
