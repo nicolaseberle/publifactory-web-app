@@ -219,10 +219,7 @@ export default {
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
-
-
-
-          console.log(this.requestInfos);
+          this.requestInfos["receiveCopy"] = this.receiveCopy
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
