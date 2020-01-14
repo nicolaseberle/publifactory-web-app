@@ -61,9 +61,11 @@
       </el-select>
     </el-form-item>
   -->
+  <!--
     <el-form-item label="Option">
       <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
     </el-form-item>
+  -->
     <el-form-item label="CGU" prop="type">
       <el-checkbox-group v-model="formMail.type">
       <el-checkbox label="I accept the CGU" name="type"></el-checkbox>
@@ -219,10 +221,7 @@ export default {
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
           this.requestInfos["pub_name"] = this.formMail["name"]
-
-
-
-          console.log(this.requestInfos);
+          this.requestInfos["receiveCopy"] = this.receiveCopy
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
