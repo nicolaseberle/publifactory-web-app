@@ -8,7 +8,6 @@ function optionalAuthentication(req, res, next) {
 	if (unparsedToken) {
 		const regExp = /Bearer (.*?)$/;
 		const token = regExp.exec(unparsedToken)[1];
-		// const decoded =
 		try {
 			const decoded = jwt.verify(token, config.secrets.session);
 			req.decoded = decoded;
