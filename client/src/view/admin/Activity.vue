@@ -19,6 +19,15 @@
           <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{nbTotalInvitation}}</div>
         </el-card>
       </el-col>
+      <el-col :span='4'>
+        <el-card>
+          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
+            <svg-icon icon-class="user"/>
+              Total users
+            </div>
+          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>{{nbTotalUsers}}</div>
+        </el-card>
+      </el-col>
     </el-row>
     <el-row style='margin:20px 0px 20px 0px'>
       <el-card>
@@ -124,12 +133,14 @@
   import platformChart from '../../components/Charts/echart/platformChart'
   import activityList from './activityList'
   import requestList from './requestList'
+  import { mapGetters } from 'vuex'
   export default {
   locales,
   data () {
     return {
       nbTotalRequest: 0,
       nbTotalInvitation: 0,
+      nbTotalUsers: 0,
       currentPage: 1
     }
   },
@@ -138,6 +149,13 @@
     "activity-chart":activityChart,
     activityList,
     requestList
+  },
+  computed: {
+    ...mapGetters([
+      'userId',
+      'accessToken',
+      'loggedIn'
+    ])
   },
   methods: {
     getTotalInvitation () {
@@ -152,10 +170,19 @@
         this.nbTotalRequest = res.data.data;
       }).catch((e)=>{console.log(e)})
     },
+    getUsers () {
+      axios.get('/api/users/', {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       }).then(response => {
+        this.nbTotalUsers = response.data.page.total
+
+        })
+    },
   },
   mounted () {
     this.getTotalRequest()
     this.getTotalInvitation()
+    this.getUsers()
   }
 }
 </script>
