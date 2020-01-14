@@ -1,5 +1,11 @@
 const serviceCreate = require("../services/create");
 
+const cookieConfig = {
+	// httpOnly: true,
+	// secure: true,
+	maxAge: 31536000
+};
+
 async function create(req, res, next) {
 	try {
 		if (
@@ -19,11 +25,7 @@ async function create(req, res, next) {
 			if (!maxInvitation) {
 				return res
 					.status(200)
-					.cookie("maxInvitation", "1", {
-						httpOnly: true,
-						// secure: true,
-						maxAge: 31536000
-					})
+					.cookie("maxInvitation", "1", cookieConfig)
 					.json({ ...response, invitationNumber: 1 })
 					.end();
 			} else if (parseInt(maxInvitation, 10) >= 10) {
@@ -35,17 +37,14 @@ async function create(req, res, next) {
 				const invitationNumber = parseInt(maxInvitation, 10) + 1;
 				return res
 					.status(200)
-					.cookie("maxInvitation", invitationNumber, {
-						httpOnly: true,
-						// secure: true,
-						maxAge: 31536000
-					})
+					.cookie("maxInvitation", invitationNumber, cookieConfig)
 					.json({ ...response, invitationNumber })
 					.end();
 			}
 		}
 		return res
 			.status(200)
+			.clearCookie("maxInvitation", { ...cookieConfig, path: "/" })
 			.json(response)
 			.end();
 	} catch (error) {

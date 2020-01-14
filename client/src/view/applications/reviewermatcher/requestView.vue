@@ -266,7 +266,11 @@ export default {
 		showPromptUserDisconnected() {
 			const createElement = this.$createElement;
 			const maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-			console.log(maxInvitation, typeof maxInvitation);
+			console.log(
+				maxInvitation,
+				typeof maxInvitation,
+				this.$cookie.get("maxInvitation")
+			);
 			this.$msgbox({
 				title: "Are you sure to invite this reviewer ?",
 				message: createElement(freePlanStatusBar, {
