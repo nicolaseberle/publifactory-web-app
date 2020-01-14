@@ -1,10 +1,17 @@
 const serviceCreate = require("../services/create");
 
-const cookieConfig = {
-	httpOnly: true,
-	// secure: true,
-	maxAge: 31536000
-};
+const cookieConfig =
+	process.env.NODE_ENV === "development"
+		? {
+				// httpOnly: true,
+				// secure: true,
+				maxAge: 31536000
+		  }
+		: {
+				httpOnly: true,
+				// secure: true,
+				maxAge: 31536000
+		  };
 
 async function create(req, res, next) {
 	try {
