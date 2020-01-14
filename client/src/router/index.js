@@ -111,14 +111,21 @@ export const constantRouterMap = [
     props: route => ({ userId: route.query.userId })
   },
   {
-    path:
-			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
-    component: resolve => {
-			import('../view/request/').then(resolve)
-    },
-    meta: {
-      skipAuth: true
-    }
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+        name: 'answer',
+        meta: {
+          skipAuth: true
+        },
+        component: resolve => {
+          import('../view/request/').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '/summarize',
