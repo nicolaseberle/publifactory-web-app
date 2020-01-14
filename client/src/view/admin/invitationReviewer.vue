@@ -64,7 +64,11 @@
           </el-steps>
         </template>
       </el-table-column>
-
+      <el-table-column class-name="date-col" width="180px" label="Date">
+        <template slot-scope="props">
+          <span>{{ props.row.history[0].date | moment("DD/MM/YYYY, h:mm a") }}</span>
+        </template>
+      </el-table-column>
         <el-table-column
           label="Title"
           prop="title"
@@ -77,7 +81,7 @@
         <el-table-column
           label="Publisher"
           prop="edi_name"
-          width="180">
+          width="120">
           <template slot-scope="props">
             <el-tooltip class="item" effect="dark" placement="top">
               <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
@@ -138,7 +142,7 @@
         <el-table-column
           label="Actions"
           prop="actions"
-          width="120">
+          width="100">
           <template slot-scope="props">
             <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
               <div>
