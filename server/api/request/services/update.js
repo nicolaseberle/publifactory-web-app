@@ -73,7 +73,7 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 	)
 		sendEmailEditor(
 			updatedRequest._id,
-			"A reviewer ansewered your request for an article",
+			"A reviewer accepted to review your article",
 			emailEditorTemplate.answer(updatedRequest, status)
 		);
 	return mergedRequest;
