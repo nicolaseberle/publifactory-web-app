@@ -1,13 +1,14 @@
 const express = require("express");
 const controllers = require("./controllers");
 const router = express.Router();
+const middlewares = require("./middlewares");
 
 // Base route: '/api/requests'
 
 router.get("/", controllers.list);
-router.get('/totalRequest', controllers.totalRequest);
+router.get("/totalRequest", controllers.totalRequest);
 router.get("/logo", controllers.logo);
-router.post("/", controllers.create);
+router.post("/", middlewares.optionalAuthentication, controllers.create);
 router.get("/:requestId", controllers.read);
 router.patch("/:requestId", controllers.update);
 router.delete("/:requestId", controllers.remove);
