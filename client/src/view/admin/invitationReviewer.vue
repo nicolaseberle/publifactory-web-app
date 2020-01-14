@@ -57,14 +57,18 @@
       <el-table-column type="expand" width="20">
         <template slot-scope="props">
           <el-steps>
-            <el-step v-bind:key="req" v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date"></el-step>
+            <el-step v-bind:key="req" v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date | moment('DD/MM/YYYY, h:mm a')"></el-step>
             <el-step v-else-if="req.status == 'accept'" title="status" status="success" :description="req.status"></el-step>
             <el-step v-else-if="req.status == 'decline'" title="status" status="error" :description="req.status"></el-step>
             <el-step v-if="Object.values(props.row.history[props.row.history.length -1]).indexOf('decline') && Object.values(props.row.history[props.row.history.length -1]).indexOf('accept')" title="status" status="wait" description="pending"></el-step>
           </el-steps>
         </template>
       </el-table-column>
-
+      <el-table-column class-name="date-col" width="180px" label="Date">
+        <template slot-scope="props">
+          <span>{{ props.row.history[0].date | moment("DD/MM/YYYY, h:mm a") }}</span>
+        </template>
+      </el-table-column>
         <el-table-column
           label="Title"
           prop="title"
@@ -77,7 +81,7 @@
         <el-table-column
           label="Publisher"
           prop="edi_name"
-          width="180">
+          width="120">
           <template slot-scope="props">
             <el-tooltip class="item" effect="dark" placement="top">
               <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
@@ -138,7 +142,7 @@
         <el-table-column
           label="Actions"
           prop="actions"
-          width="120">
+          width="100">
           <template slot-scope="props">
             <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
               <div>
@@ -206,152 +210,8 @@ export default{
       isData: false,
       metricsFinal: [],
       isMetrics: false,
-      dataTest: [
-        {
-          "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
-          "abstract": "abstract1",
-          "deadline": "12-12-2019",
-          "objet": "test",
-          "content": "blablablalbal",
-          "remind": "1x2month",
-          "reviewer": {
-            "rev_id": "46485613",
-            "rev_name": "Vincent Schuck",
-            "rev_mail": ""
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          },
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "07-12-2019",
-            }
-          ]
-        },
-        {
-          "title": "titre1",
-          "abstract": "abstract1",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "07-12-2019",
-            }
-          ],
-          "deadline": "12-12-2019",
-          "reviewer": {
-            "rev_id": "46485614",
-            "rev_name": "Pierre Schuck",
-            "rev_mail": ""
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          }
-        },
-        {
-          "title": "titre2",
-          "abstract": "abstract2",
-          "deadline": "12-12-2019",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Read",
-              "date": "06-12-2019",
-            },
-            {
-              "status": "Decline",
-              "date": "08-12-2019",
-            }
-          ],
-          "reviewer": {
-            "rev_id": "46485615",
-            "rev_name": "Jean Michel",
-            "rev_mail": "jm@example.com"
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          }
-        }
-      ],
-      listAllMail: [
-        {
-          "title": "titre1",
-          "mail_publisher": "publi@mail.com",
-          "list": [
-            {
-              "id": "123456",
-              "name": "blabla1",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123457",
-              "name": "blabla2",
-              "mail": ""
-            },
-            {
-              "id": "123458",
-              "name": "blabla3",
-              "mail": ""
-            },
-            {
-              "id": "123459",
-              "name": "blabla4",
-              "mail": ""
-            },
-            {
-              "id": "123451",
-              "name": "blabla5",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123452",
-              "name": "blabla6",
-              "mail": ""
-            },
-            {
-              "id": "123453",
-              "name": "blabla7",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123454",
-              "name": "blabla8",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123455",
-              "name": "blabla9",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123450",
-              "name": "blabla0",
-              "mail": ""
-            }
-          ]
-        }
-      ]
+      dataTest: [],
+      listAllMail: []
     }
   },
   methods: {
@@ -408,15 +268,19 @@ export default{
       }
       else if (command == "accept") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "decline") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "relaunch") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "unsubscribe") {
         console.log(command);
+        console.log("no action");
       }
     }
   },

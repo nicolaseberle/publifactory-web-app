@@ -6,7 +6,7 @@
         <el-table :data="listinvitation" @row-click="setSelectedRow" fit highlight-current-row style="width: 100%">
           <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="scope">
-              <span>{{ scope.row.creationDate | moment("DD/MM/YYYY, h:mm:ss a") }}</span>
+              <span>{{ scope.row.creationDate | moment("DD/MM/YYYY, h:mm a") }}</span>
             </template>
           </el-table-column>
           <el-table-column property="title" label="Title"  min-width="200"></el-table-column>

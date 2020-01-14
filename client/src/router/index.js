@@ -322,7 +322,7 @@ export const constantRouterMap = [
         path: 'invitationReviewer',
         name: 'Invitation Reviewer',
         meta: {
-          title: 'Invation Reviewer',
+          title: 'Invitation Reviewer',
           icon: 'guide 2',
           noCache: true,
           roles: ['admin']
