@@ -29,13 +29,23 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row style='margin:20px 0px 20px 0px'>
-      <el-card>
-        <div slot="header" class="clearfix">
-          <span>Reviewer Search Engin Activity</span>
-        </div>
-        <activity-chart id='activity-chart'/>
-      </el-card>
+    <el-row style='margin:20px 0px 20px 0px' :gutter='10'>
+      <el-col :span='12'>
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span>Reviewer Search Engin Activity</span>
+          </div>
+          <activity-chart id='activity-chart'/>
+        </el-card>
+      </el-col>
+      <el-col :span='12'>
+        <el-card>
+          <div slot="header" class="clearfix">
+            <span>Invitation Activity</span>
+          </div>
+          <invitation-chart id='invitation-chart'/>
+        </el-card>
+      </el-col>
     </el-row>
     <!--
     <el-row :gutter='10'>
@@ -130,6 +140,7 @@
   import locales from 'locales/article'
   import axios from 'axios'
   import activityChart from '../../components/Charts/echart/activityChart'
+  import invitationChart from '../../components/Charts/echart/invitationChart'
   import platformChart from '../../components/Charts/echart/platformChart'
   import activityList from './activityList'
   import requestList from './requestList'
@@ -146,6 +157,7 @@
   },
   components: {
     "platform-chart":platformChart,
+    "invitation-chart":invitationChart,
     "activity-chart":activityChart,
     activityList,
     requestList
