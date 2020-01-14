@@ -6,12 +6,12 @@
 			<div>
 				<div class="free-plan-content">
 					<span>Requests</span>
-					<span>{{ this.invitatioNumber }} / 10</span>
+					<span>{{ this.maxInvitation }} / 10</span>
 				</div>
 				<el-progress
 					:show-text="false"
 					:stroke-width="strokeWidth"
-					:percentage="this.invitatioNumber * 10"
+					:percentage="this.maxInvitation * 10"
 					type="line"
 					status="exception"
 				>
@@ -47,7 +47,7 @@ export default {
 	// },
 	data() {
 		return {
-			invitatioNumber: this.maxInvitation
+			// invitatioNumber: this.maxInvitation
 		};
 	},
 	methods: {
