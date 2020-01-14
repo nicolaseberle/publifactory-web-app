@@ -15,23 +15,33 @@ async function create(req, res, next) {
 		// case of user not logged in =>
 		if (!req.decoded) {
 			const { maxInvitation } = req.cookies;
+			// case of no cookie
 			if (!maxInvitation) {
-				res.cookie("maxInvitation", "0", {
-					httpOnly: true,
-					secure: true,
-					maxAge: 31536000
-				});
+				return res
+					.status(200)
+					.cookie("maxInvitation", "1", {
+						httpOnly: true,
+						// secure: true,
+						maxAge: 31536000
+					})
+					.json({ ...response, invitationNumber: 1 })
+					.end();
 			} else if (parseInt(maxInvitation, 10) >= 10) {
 				return res
 					.status(403)
 					.json({ success: false, message: "MAX_INVITATION_NUMBER" })
 					.end();
 			} else {
-				res.cookie("maxInvitation", parseInt(maxInvitation, 10) + 1, {
-					httpOnly: true,
-					secure: true,
-					maxAge: 31536000
-				});
+				const invitationNumber = parseInt(maxInvitation, 10) + 1;
+				return res
+					.status(200)
+					.cookie("maxInvitation", invitationNumber, {
+						httpOnly: true,
+						// secure: true,
+						maxAge: 31536000
+					})
+					.json({ ...response, invitationNumber })
+					.end();
 			}
 		}
 		return res

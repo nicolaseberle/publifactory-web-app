@@ -1,55 +1,64 @@
 <template>
-  <div>
-  <el-form label-width="200px" :model="formMail" :rules="mailRules" ref="formMail" style='text-align :left; padding-bottom:20px;'>
-    <el-form-item label="Your email" prop="mailDest">
-      <el-input v-model="formMail.mailDest"></el-input>
-    </el-form-item>
-    <el-form-item label="Your name" prop="name">
-      <el-input v-model="formMail.name"></el-input>
-    </el-form-item>
-    <el-form-item label="Journal requesting the reviewing" prop="journal">
-      <el-input v-model="formMail.journal"></el-input>
-    </el-form-item>
-    <!-- <el-form-item label="Journal issn" prop="issn">
+	<div>
+		<el-form
+			label-width="200px"
+			:model="formMail"
+			:rules="mailRules"
+			ref="formMail"
+			style="text-align :left; padding-bottom:20px;"
+		>
+			<el-form-item label="Your email" prop="mailDest">
+				<el-input v-model="formMail.mailDest"></el-input>
+			</el-form-item>
+			<el-form-item label="Your name" prop="name">
+				<el-input v-model="formMail.name"></el-input>
+			</el-form-item>
+			<el-form-item label="Journal requesting the reviewing" prop="journal">
+				<el-input v-model="formMail.journal"></el-input>
+			</el-form-item>
+			<!-- <el-form-item label="Journal issn" prop="issn">
       <el-input v-model="formMail.issn"></el-input>
     </el-form-item> -->
-    <el-form-item label="Object" prop="object">
-      <el-input v-model="formMail.object"></el-input>
-    </el-form-item>
-    <el-form-item label="Message" prop="message">
-      <!--<el-input
+			<el-form-item label="Object" prop="object">
+				<el-input v-model="formMail.object"></el-input>
+			</el-form-item>
+			<el-form-item label="Message" prop="message">
+				<!--<el-input
         type="textarea"
         :autosize="{ minRows: 10, maxRows: 30}"
         v-model="formMail.message">
       </el-input>-->
-      <div v-bind:id="idToolBar" style="z-index=1000;">
-        <span class="ql-formats">
-          <button class="ql-bold"></button>
-          <button class="ql-italic"></button>
-          <button class="ql-underline"></button>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-blockquote"></button>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-list" value="bullet"></button>
-          <button class="ql-indent" value="-1"></button>
-          <button class="ql-indent" value="+1"></button>
-        </span>
-        <span class="ql-formats">
-          <button class="ql-link"></button>
-          <!--<input  class="ql-input" name="title" type="text"></input>-->
-        </span>
-      </div>
-      <div v-bind:id="idEditor">
-        <span class="p-span" v-html="formMail.message"></span>
-      </div>
-
-    </el-form-item>
-    <el-form-item label="Review due by" prop="deadline">
-        <el-date-picker type="date" placeholder="Deadline" v-model="formMail.deadline"></el-date-picker>
-    </el-form-item>
-    <!--
+				<div v-bind:id="idToolBar" style="z-index=1000;">
+					<span class="ql-formats">
+						<button class="ql-bold"></button>
+						<button class="ql-italic"></button>
+						<button class="ql-underline"></button>
+					</span>
+					<span class="ql-formats">
+						<button class="ql-blockquote"></button>
+					</span>
+					<span class="ql-formats">
+						<button class="ql-list" value="bullet"></button>
+						<button class="ql-indent" value="-1"></button>
+						<button class="ql-indent" value="+1"></button>
+					</span>
+					<span class="ql-formats">
+						<button class="ql-link"></button>
+						<!--<input  class="ql-input" name="title" type="text"></input>-->
+					</span>
+				</div>
+				<div v-bind:id="idEditor">
+					<span class="p-span" v-html="formMail.message"></span>
+				</div>
+			</el-form-item>
+			<el-form-item label="Review due by" prop="deadline">
+				<el-date-picker
+					type="date"
+					placeholder="Deadline"
+					v-model="formMail.deadline"
+				></el-date-picker>
+			</el-form-item>
+			<!--
     <el-form-item label="Relaunch" prop="relaunch">
       <el-select v-model="formMail.relaunch">
         <el-option
@@ -85,11 +94,13 @@
 </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "axios";
 import "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
+import freePlanStatusBar from "./components/free-plan-status-bar";
+import { mapGetters } from "vuex";
 
 var Quill = require("quill");
 
@@ -258,11 +269,28 @@ export default {
             })
           })
 
-
-
-        }
-      })
-    }
-  }
-}
+					console.log(this.requestInfos);
+					new Promise((resolve, reject) => {
+						axios
+							.get(
+								"https://service.publifactory.co/api/get_mail_id?id=" +
+									this.requestInfos.rev_id
+							)
+							.then(async res => {
+								if (res) {
+									this.requestInfos["rev_mail"] =
+										res["data"][0]["_source"]["mail"];
+								} else {
+									this.requestInfos["rev_mail"] = "";
+								}
+								this.loggedIn
+									? this.showPromptUserConnected()
+									: this.showPromptUserDisconnected();
+							});
+					});
+				}
+			});
+		}
+	}
+};
 </script>
