@@ -14,9 +14,8 @@ async function create(req, res, next) {
 
 		// case of user not logged in =>
 		if (!req.decoded) {
-			console.log("DISCONNECTED && COOKI", req.cookies);
 			const { maxInvitation } = req.cookies;
-			// case of no-cookies
+			// case of no cookie
 			if (!maxInvitation) {
 				return res
 					.status(200)
