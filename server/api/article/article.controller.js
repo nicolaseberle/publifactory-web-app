@@ -1,36 +1,36 @@
-'use strict';
+'use strict'
 
-var User = require('../user/user.model');
-var Article = require('./article.model');
-const RolesArticle = require('../roles/article/roles.article.model');
-var Data = require('../data/data.model');
-const Journal = require('../journal/journal.model');
-const RolesJournal = require('../roles/journal/roles.journal.model');
+var User = require('../user/user.model')
+var Article = require('./article.model')
+const RolesArticle = require('../roles/article/roles.article.model')
+var Data = require('../data/data.model')
+const Journal = require('../journal/journal.model')
+const RolesJournal = require('../roles/journal/roles.journal.model')
 
-var config = require('../../../config').backend;
-var jwt = require('jsonwebtoken');
-var paging = require('../paging');
+var config = require('../../../config').backend
+var jwt = require('jsonwebtoken')
+var paging = require('../paging')
 
-var fs = require('fs');
+var fs = require('fs')
 
-var validationError = function(res, err) {
-	return res.status(422).json(err);
-};
+var validationError = function (res, err) {
+  return res.status(422).json(err)
+}
 
 /**
  * Get list of articles
  * restriction: 'admin'
  */
 
-//const Category = require('../category/category.model');
+// const Category = require('../category/category.model');
 
-//const ArticleValidator = require('./article.validator');
+// const ArticleValidator = require('./article.validator');
 
 /* HELPERS */
-const renameObjectProperty = require('../../helpers/renameObjectProperty');
+const renameObjectProperty = require('../../helpers/renameObjectProperty')
 
-const DEFAULT_PAGE_OFFSET = 1;
-const DEFAULT_LIMIT = 10;
+const DEFAULT_PAGE_OFFSET = 1
+const DEFAULT_LIMIT = 10
 
 /**
  * @function getArticles
@@ -41,26 +41,26 @@ const DEFAULT_LIMIT = 10;
  * @param {Function} next - Express next middleware function
  * @return {Promise<*>}
  */
-exports.getArticles = async function(req, res, next) {
-	const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
-	const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
-	let options = { deleted: false, published: true };
-	if (req.query.status) {
-		options = { deleted: false, published: true, status: req.query.status };
-	}
-	try {
-		const articles = await Article.paginate(options, {
-			page,
-			limit,
-			populate: 'authors.author reviewers',
-			lean: true
-		});
-		renameObjectProperty(articles, 'docs', 'articles');
-		return res.json(articles);
-	} catch (err) {
-		next(err);
-	}
-};
+exports.getArticles = async function (req, res, next) {
+  const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET
+  const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT
+  let options = { deleted: false, published: true }
+  if (req.query.status) {
+    options = { deleted: false, published: true, status: req.query.status }
+  }
+  try {
+    const articles = await Article.paginate(options, {
+      page,
+      limit,
+      populate: 'authors.author reviewers',
+      lean: true
+    })
+    renameObjectProperty(articles, 'docs', 'articles')
+    return res.json(articles)
+  } catch (err) {
+    next(err)
+  }
+}
 
 /**
  * @function getMyArticles
@@ -71,25 +71,25 @@ exports.getArticles = async function(req, res, next) {
  * @param {Function} next - Express next middleware function
  * @return {Promise<*>}
  */
-exports.getMyArticles = async function(req, res, next) {
-	const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET;
-	const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT;
-	try {
-		const articles = await Article.paginate(
-			{
-				$or: [
-					{ 'authors.author': req.decoded._id },
-					{ reviewers: req.decoded._id }
-				]
-			},
-			{ page, limit, populate: 'authors.author reviewers', lean: true }
-		);
-		renameObjectProperty(articles, 'docs', 'articles');
-		return res.status(200).json(articles);
-	} catch (err) {
-		return next(err);
-	}
-};
+exports.getMyArticles = async function (req, res, next) {
+  const page = parseInt(req.query.page, 10) || DEFAULT_PAGE_OFFSET
+  const limit = parseInt(req.query.limit, 10) || DEFAULT_LIMIT
+  try {
+    const articles = await Article.paginate(
+      {
+        $or: [
+          { 'authors.author': req.decoded._id },
+          { reviewers: req.decoded._id }
+        ]
+      },
+      { page, limit, populate: 'authors.author reviewers', lean: true }
+    )
+    renameObjectProperty(articles, 'docs', 'articles')
+    return res.status(200).json(articles)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 /**
  * @function findArticleById
@@ -101,17 +101,17 @@ exports.getMyArticles = async function(req, res, next) {
  * @param {Function} next - Express next middleware function
  * @return {Promise<*>}
  */
-module.exports.findArticleById = async function(req, res, next) {
-	try {
-		const article = await Article.findById(req.params.id)
-			.populate('authors.author reviewers')
-			.lean();
-		if (!article) return res.sendStatus(404);
-		return res.status(200).json(article);
-	} catch (err) {
-		next(err);
-	}
-};
+module.exports.findArticleById = async function (req, res, next) {
+  try {
+    const article = await Article.findById(req.params.id)
+      .populate('authors.author reviewers')
+      .lean()
+    if (!article) return res.sendStatus(404)
+    return res.status(200).json(article)
+  } catch (err) {
+    next(err)
+  }
+}
 
 /**
  * @function findArticleBySlugAndUpdate
@@ -129,36 +129,37 @@ module.exports.findArticleById = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findArticleByIdAndUpdate = async function(req, res, next) {
-	try {
-		if (
-			req.body.title === undefined ||
+module.exports.findArticleByIdAndUpdate = async function (req, res, next) {
+  try {
+    if (
+      req.body.title === undefined ||
 			req.body.abstract === undefined ||
 			req.body.arr_content === undefined ||
 			req.body.content === undefined ||
 			req.body.status === undefined ||
 			req.body.published === undefined ||
 			req.body.tags === undefined
-		)
-			throw { code: 422, message: 'Missing parameters.' };
-		const title = req.body.title.trim();
-		const abstract = req.body.abstract;
-		const content = req.body.content;
-		const arr_content = req.body.arr_content;
-		const tags = req.body.tags;
-		const published = req.body.published;
-		const article = await Article.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $set: { title, abstract, content, arr_content, tags, published } },
-			{ new: true }
-		);
-		if (!article) return res.sendStatus(404);
-		return res.json(article);
-	} catch (err) {
-		console.log(err);
-		return next(err);
-	}
-};
+    ) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const title = req.body.title.trim()
+    const abstract = req.body.abstract
+    const content = req.body.content
+    const arr_content = req.body.arr_content
+    const tags = req.body.tags
+    const published = req.body.published
+    const article = await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { title, abstract, content, arr_content, tags, published }},
+      { new: true }
+    )
+    if (!article) return res.sendStatus(404)
+    return res.json(article)
+  } catch (err) {
+    console.log(err)
+    return next(err)
+  }
+}
 
 /**
  * @function findArticlebyIdAndUpdateReferences
@@ -167,29 +168,30 @@ module.exports.findArticleByIdAndUpdate = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.findArticlebyIdAndUpdateReferences = async function(
-	req,
-	res,
-	next
+module.exports.findArticlebyIdAndUpdateReferences = async function (
+  req,
+  res,
+  next
 ) {
-	try {
-		if (req.body.references === undefined)
-			throw { code: 422, message: 'Missing parameters.' };
-		const references = req.body.references;
-		console.log(references);
-		const article = await Article.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $set: { references } }
-		);
-		console.log('Update=>', article.references);
-		if (!article) return res.sendStatus(404);
+  try {
+    if (req.body.references === undefined) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const references = req.body.references
+    console.log(references)
+    const article = await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { references }}
+    )
+    console.log('Update=>', article.references)
+    if (!article) return res.sendStatus(404)
 
-		return res.json(article);
-	} catch (err) {
-		console.log('ERR:', err);
-		return next(err);
-	}
-};
+    return res.json(article)
+  } catch (err) {
+    console.log('ERR:', err)
+    return next(err)
+  }
+}
 
 /**
  * @function deleteArticle
@@ -200,14 +202,14 @@ module.exports.findArticlebyIdAndUpdateReferences = async function(
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.deleteArticle = async function(req, res, next) {
-	try {
-		Article.findOneAndRemove({ _id: req.params.id }).exec();
-		res.sendStatus(204);
-	} catch (err) {
-		return next(err);
-	}
-};
+module.exports.deleteArticle = async function (req, res, next) {
+  try {
+    Article.findOneAndRemove({ _id: req.params.id }).exec()
+    res.sendStatus(204)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 /**
  * @function updateAuthorOfArticle
@@ -218,22 +220,23 @@ module.exports.deleteArticle = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.updateAuthorOfArticle = async function(req, res, next) {
-	try {
-		if (req.body.authors === undefined)
-			throw { code: 422, message: 'Missing parameters.' };
-		const authors = req.body.authors;
-		const article = await Article.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $set: { authors } },
-			{ new: true }
-		);
-		if (!article) return res.sendStatus(404);
-		return res.json(article);
-	} catch (err) {
-		return next(err);
-	}
-};
+module.exports.updateAuthorOfArticle = async function (req, res, next) {
+  try {
+    if (req.body.authors === undefined) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const authors = req.body.authors
+    const article = await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { authors }},
+      { new: true }
+    )
+    if (!article) return res.sendStatus(404)
+    return res.json(article)
+  } catch (err) {
+    return next(err)
+  }
+}
 
 /**
  * @function addAuthorOfArticle
@@ -247,32 +250,33 @@ module.exports.updateAuthorOfArticle = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.addAuthorOfArticle = async function(req, res, next) {
-	try {
-		if (req.body.author === undefined)
-			throw { code: 422, message: 'Missing parameters.' };
-		const author = await User.findOne({ email: req.body.author.email }).exec();
-		const newAuthor = {
-			_id: author._id,
-			rank: req.body.author.rank,
-			role: req.body.author.role,
-			author: author
-		};
-		await Article.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $push: { authors: newAuthor } },
-			{ new: true }
-		);
-		new RolesArticle({
-			id_user: author._id,
-			id_article: req.params.id,
-			right: 'author'
-		}).save();
-		return res.status(201).json({ success: true });
-	} catch (err) {
-		return next(err);
-	}
-};
+module.exports.addAuthorOfArticle = async function (req, res, next) {
+  try {
+    if (req.body.author === undefined) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const author = await User.findOne({ email: req.body.author.email }).exec()
+    const newAuthor = {
+      _id: author._id,
+      rank: req.body.author.rank,
+      role: req.body.author.role,
+      author: author
+    }
+    await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $push: { authors: newAuthor }},
+      { new: true }
+    )
+    new RolesArticle({
+      id_user: author._id,
+      id_article: req.params.id,
+      right: 'author'
+    }).save()
+    return res.status(201).json({ success: true })
+  } catch (err) {
+    return next(err)
+  }
+}
 
 /**
  * @function addAuthorOfArticle
@@ -283,23 +287,24 @@ module.exports.addAuthorOfArticle = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.removeAuthorOfArticle = async function(req, res, next) {
-	try {
-		if (req.body.authorId === undefined)
-			throw { code: 422, message: 'Missing parameters.' };
-		await Article.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $pull: { authors: { _id: req.body.authorId } } },
-			{ multi: false }
-		);
-		const query = { id_user: req.body.authorId, id_article: req.params.id };
-		const toReplace = { $set: { right: 'guest' } };
-		await RolesArticle.updateOne(query, toReplace);
-		res.status(204);
-	} catch (err) {
-		next(err);
-	}
-};
+module.exports.removeAuthorOfArticle = async function (req, res, next) {
+  try {
+    if (req.body.authorId === undefined) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    await Article.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull: { authors: { _id: req.body.authorId }}},
+      { multi: false }
+    )
+    const query = { id_user: req.body.authorId, id_article: req.params.id }
+    const toReplace = { $set: { right: 'guest' }}
+    await RolesArticle.updateOne(query, toReplace)
+    res.status(204)
+  } catch (err) {
+    next(err)
+  }
+}
 
 /**
  * @function createArticle
@@ -316,49 +321,50 @@ module.exports.removeAuthorOfArticle = async function(req, res, next) {
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
-module.exports.createArticle = async function(req, res, next) {
-	try {
-		if (
-			req.body.title === undefined ||
+module.exports.createArticle = async function (req, res, next) {
+  try {
+    if (
+      req.body.title === undefined ||
 			req.body.abstract === undefined ||
 			req.body.arr_content === undefined ||
 			req.body.content === undefined ||
 			req.body.status === undefined ||
 			req.body.published === undefined
-		)
-			throw { code: 422, message: 'Missing parameters.' };
-		const title = req.body.title.trim();
-		const abstract = req.body.abstract.trim();
-		const arr_content = req.body.arr_content;
-		const content = req.body.content;
-		const status = req.body.status;
-		const published = req.body.published;
+    ) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const title = req.body.title.trim()
+    const abstract = req.body.abstract.trim()
+    const arr_content = req.body.arr_content
+    const content = req.body.content
+    const status = req.body.status
+    const published = req.body.published
 
-		const newArticle = new Article({
-			title,
-			abstract,
-			content,
-			arr_content,
-			status,
-			published
-		});
-		const author = await User.findById(req.decoded._id).exec();
-		// console.log(JSON.stringify(author, null, "\t"));
-		newArticle.authors[0] = { rank: 1, role: 'Lead', author: author };
-		const article = await newArticle.save();
-		new RolesArticle({
-			id_user: req.decoded._id,
-			id_article: article._id,
-			right: 'author'
-		}).save();
+    const newArticle = new Article({
+      title,
+      abstract,
+      content,
+      arr_content,
+      status,
+      published
+    })
+    const author = await User.findById(req.decoded._id).exec()
+    // console.log(JSON.stringify(author, null, "\t"));
+    newArticle.authors[0] = { rank: 1, role: 'Lead', author: author }
+    const article = await newArticle.save()
+    new RolesArticle({
+      id_user: req.decoded._id,
+      id_article: article._id,
+      right: 'author'
+    }).save()
 
-		// console.log(JSON.stringify(article._id, null, "\t"));
+    // console.log(JSON.stringify(article._id, null, "\t"));
 
-		res.status(201).json(article._id);
-	} catch (err) {
-		next(err);
-	}
-};
+    res.status(201).json(article._id)
+  } catch (err) {
+    next(err)
+  }
+}
 
 /**
  * @function changeStatus
@@ -370,27 +376,27 @@ module.exports.createArticle = async function(req, res, next) {
  * @param next
  * @return {Promise<void>}
  */
-module.exports.changeStatus = async function(req, res, next) {
-	try {
-		const query = { _id: req.params.id };
-		const article = await Article.findById(req.params.id, {
-			_id: false,
-			authors: true
-		});
-		const isLead = article.authors.filter(
-			author =>
-				author.author.toString() === req.decoded._id &&
+module.exports.changeStatus = async function (req, res, next) {
+  try {
+    const query = { _id: req.params.id }
+    const article = await Article.findById(req.params.id, {
+      _id: false,
+      authors: true
+    })
+    const isLead = article.authors.filter(
+      author =>
+        author.author.toString() === req.decoded._id &&
 				author.rank === 1 &&
 				author.role === 'Lead'
-		);
-		if (!isLead) throw { code: 400, message: 'ARTICLE_AUTHOR_NEED_LEAD' };
-		const status = { status: req.params.status };
-		await Article.updateOne(query, { $set: status });
-		res.status(200).json({ success: true });
-	} catch (e) {
-		next(e);
-	}
-};
+    )
+    if (!isLead) throw { code: 400, message: 'ARTICLE_AUTHOR_NEED_LEAD' }
+    const status = { status: req.params.status }
+    await Article.updateOne(query, { $set: status })
+    res.status(200).json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}
 
 /**
  * @function updateAuthorRights
@@ -401,18 +407,19 @@ module.exports.changeStatus = async function(req, res, next) {
  * @param next
  * @return {Promise<void>}
  */
-module.exports.updateAuthorRights = async function(req, res, next) {
-	try {
-		if (req.body.newAuthors === undefined)
-			throw { code: 422, message: 'Missing parameters.' };
-		const query = { _id: req.params.id };
-		const toReplace = { $set: { authors: req.body.newAuthors } };
-		await Article.updateOne(query, toReplace);
-		res.status(201).json({ success: true });
-	} catch (e) {
-		next(e);
-	}
-};
+module.exports.updateAuthorRights = async function (req, res, next) {
+  try {
+    if (req.body.newAuthors === undefined) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const query = { _id: req.params.id }
+    const toReplace = { $set: { authors: req.body.newAuthors }}
+    await Article.updateOne(query, toReplace)
+    res.status(201).json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}
 
 /**
  * @function addReviewer
@@ -423,25 +430,26 @@ module.exports.updateAuthorRights = async function(req, res, next) {
  * @param next
  * @return {Promise<void>}
  */
-module.exports.addReviewer = async function(req, res, next) {
-	try {
-		if (req.body.reviewer === undefined)
-			throw { success: false, message: 'Missing parameters in body field.' };
-		const user = await User.findOne({ email: req.body.reviewer.email }).exec();
-		const query = { _id: req.params.id };
-		const toAdd = { $push: { reviewers: user._id } };
-		const options = { new: true };
-		await Article.findOneAndUpdate(query, toAdd, options);
-		new RolesArticle({
-			id_user: user._id,
-			id_article: req.params.id,
-			right: 'reviewer'
-		}).save();
-		res.json({ success: true });
-	} catch (e) {
-		next(e);
-	}
-};
+module.exports.addReviewer = async function (req, res, next) {
+  try {
+    if (req.body.reviewer === undefined) {
+      throw { success: false, message: 'Missing parameters in body field.' }
+    }
+    const user = await User.findOne({ email: req.body.reviewer.email }).exec()
+    const query = { _id: req.params.id }
+    const toAdd = { $push: { reviewers: user._id }}
+    const options = { new: true }
+    await Article.findOneAndUpdate(query, toAdd, options)
+    new RolesArticle({
+      id_user: user._id,
+      id_article: req.params.id,
+      right: 'reviewer'
+    }).save()
+    res.json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}
 
 /**
  * @function addAssociateEditor
@@ -452,23 +460,24 @@ module.exports.addReviewer = async function(req, res, next) {
  * @param next
  * @return {Promise<void>}
  */
-module.exports.addAssociateEditor = async function(req, res, next) {
-	try {
-		if (req.body.associate_editors === undefined)
-			throw { success: false, message: 'Missing parameters in body field.' };
-		const user = await User.findOne({
-			email: req.body.associate_editors.email
-		}).exec();
-		new RolesArticle({
-			id_user: user._id,
-			id_article: req.params.id,
-			right: 'associate_editor'
-		}).save();
-		res.json({ success: true });
-	} catch (e) {
-		next(e);
-	}
-};
+module.exports.addAssociateEditor = async function (req, res, next) {
+  try {
+    if (req.body.associate_editors === undefined) {
+      throw { success: false, message: 'Missing parameters in body field.' }
+    }
+    const user = await User.findOne({
+      email: req.body.associate_editors.email
+    }).exec()
+    new RolesArticle({
+      id_user: user._id,
+      id_article: req.params.id,
+      right: 'associate_editor'
+    }).save()
+    res.json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}
 
 /**
  * @function createVersion
@@ -484,34 +493,35 @@ module.exports.addAssociateEditor = async function(req, res, next) {
  * @param next
  * @return {Promise<void>}
  */
-module.exports.createVersion = async function(req, res, next) {
-	try {
-		if (
-			req.body.name === undefined ||
+module.exports.createVersion = async function (req, res, next) {
+  try {
+    if (
+      req.body.name === undefined ||
 			req.body.title === undefined ||
 			req.body.abstract === undefined ||
 			req.body.arr_content === undefined
-		)
-			throw { code: 422, message: 'Missing parameters.' };
-		const newVersion = {
-			name: req.body.name,
-			title: req.body.title,
-			abstract: req.body.abstract,
-			arr_content: req.body.arr_content,
-			date: new Date()
-		};
-		const query = {
-			_id: req.params.id
-		};
-		const toPush = {
-			$push: { version: newVersion }
-		};
-		const options = {
-			new: true
-		};
-		await Article.findOneAndUpdate(query, toPush, options).exec();
-		res.status(201).json({ success: true });
-	} catch (e) {
-		next(e);
-	}
-};
+    ) {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
+    const newVersion = {
+      name: req.body.name,
+      title: req.body.title,
+      abstract: req.body.abstract,
+      arr_content: req.body.arr_content,
+      date: new Date()
+    }
+    const query = {
+      _id: req.params.id
+    }
+    const toPush = {
+      $push: { version: newVersion }
+    }
+    const options = {
+      new: true
+    }
+    await Article.findOneAndUpdate(query, toPush, options).exec()
+    res.status(201).json({ success: true })
+  } catch (e) {
+    next(e)
+  }
+}

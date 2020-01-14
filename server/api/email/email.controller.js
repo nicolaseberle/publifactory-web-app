@@ -74,6 +74,15 @@ module.exports = class Email {
 		});
 	}
 
+	sendEmail(subject, template) {
+		this.transporter.sendMail({
+			from: '"PubliFactory" <publifactory.noreply@gmail.com>',
+			to: this.email,
+			subject,
+			html: template
+		});
+	}
+
 	sendEmailRequestEditor(request, template) {
 		this.transporter.sendMail({
 			from: '"PubliFactory" <publifactory.noreply@gmail.com>',

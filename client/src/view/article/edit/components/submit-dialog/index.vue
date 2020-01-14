@@ -127,6 +127,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$emit('onSubmit', this.form);
+          this.$emit('update:showDialog', false);
         } else {
           return false;
         }

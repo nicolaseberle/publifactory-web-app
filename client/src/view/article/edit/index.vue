@@ -437,20 +437,21 @@ export default {
       // this.socket.emit('UPDATE_STATUS', {});
       if (form.journal === 'preprint') {
         const response = await axios.post(
-          `/api/journals/preprint/${this.id}`,
+          `/api/publish-workflow/preprint/${this.id}`,
           {},
           { headers: { Authorization: `Bearer ${this.accessToken}` } }
         );
         this.articleInfo = response.data;
       } else {
         const response = await axios.post(
-          `/api/journals/submit/${form.journal}/${this.id}`,
+          `/api/publish-workflow/submit/${form.journal}/${this.id}`,
           {},
           { headers: { Authorization: `Bearer ${this.accessToken}` } }
         );
         this.articleInfo = response.data;
       }
-      // this.$router.push(this.$route.query.redirect || '/');
+      this.$router.push(this.$route.query.redirect || '/');
+
       this.sendNotificationByMail();
     },
     async getStatus() {

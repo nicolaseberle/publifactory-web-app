@@ -1,6 +1,7 @@
 <template>
   <div>
     <p>{{call}} {{status}}</p>
+    <p>Not implemented</p>
   </div>
 </template>
 <script>
@@ -8,11 +9,10 @@ import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'SubmissionInvitation',
+  name: 'invitationReview',
   data() {
     return {
       articleId: '',
-      journalId: '',
       status: '',
       call: ''
     };
@@ -20,13 +20,18 @@ export default {
   computed: {
     ...mapGetters(['userId', 'accessToken'])
   },
+  async mounted() {
+    if (!this.userId || !this.accessToken) {
+      // create guessAccount then => UI
+    } else {
+    }
+  },
   async created() {
     this.status = this.$route.params.status;
     this.articleId = this.$route.params.articleId;
-    this.journalId = this.$route.params.journalId;
     const response = await axios({
       method: 'post',
-      url: `/api/journals/submit/ask/${this.journalId}/${this.articleId}/${this.status}`,
+      url: `/api/publish-workflow/author/${this.articleId}/${this.status}`,
       validateStatus: undefined,
       headers: {
         Authorization: `Bearer ${this.accessToken}`

@@ -6,8 +6,8 @@ async function articleAddRole(userId, articleId, right) {
 		id_article: articleId,
 		right
 	});
-	console.log('adding roles', roleArticle);
 	await roleArticle.save();
+	return roleArticle;
 }
 
 module.exports = articleAddRole;

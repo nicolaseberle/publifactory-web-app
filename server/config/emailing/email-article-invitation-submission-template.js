@@ -20,14 +20,14 @@ const emailArticleSubmissionInvitation = (article, journal) => `
 												<td bgcolor="#57a957"
 														style="margin: 20px; padding: 12px 26px 12px 26px; border-radius:4px"
 														align="center">
-														<a href="${frontUrl}/submissionInvitation/${journal._id}/${article._id}/accept"
+														<a href="${frontUrl}/invitationSubmission/${journal._id}/${article._id}/accept"
 															style="font-family: 'Arial', sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; text-align: center">
 																Submit
 														</a>
 														<td bgcolor="#ca3535"
 														style="padding: 12px 26px 12px 26px; border-radius:4px"
 														align="center">
-														<a href="${frontUrl}/submissionInvitation/${journal._id}/${article._id}/reject"
+														<a href="${frontUrl}/invitationSubmission/${journal._id}/${article._id}/reject"
 															style="font-family: 'Arial', sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; text-align: center">
 																Reject
 														</a>

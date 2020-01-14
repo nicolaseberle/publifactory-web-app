@@ -27,12 +27,12 @@ const ArticleSchema = new Schema({
 	arr_content: [
 		{
 			title: String,
-			content: String, //deprecated
-			path_figure: String, //deprecated // migrate url path for shiny
+			content: String, // deprecated
+			path_figure: String, // deprecated // migrate url path for shiny
 			display: {
 				type: Boolean,
 				default: true
-			}, //deprecated
+			}, // deprecated
 			block: [
 				[
 					{
@@ -50,7 +50,7 @@ const ArticleSchema = new Schema({
 						},
 						nbEdit: {
 							type: Number,
-							default: 0 //need it to refresh figures after editing
+							default: 0 // need it to refresh figures after editing
 						}
 					}
 				]
@@ -70,7 +70,7 @@ const ArticleSchema = new Schema({
 		type: Boolean,
 		required: true,
 		default: false
-	}, //deprecated
+	}, // deprecated
 	status: {
 		type: String,
 		required: true,
@@ -159,12 +159,12 @@ const ArticleSchema = new Schema({
 			arr_content: [
 				{
 					title: String,
-					content: String, //deprecated
-					path_figure: String, //deprecated // migrate url path for shiny
+					content: String, // deprecated
+					path_figure: String, // deprecated // migrate url path for shiny
 					display: {
 						type: Boolean,
 						default: true
-					}, //deprecated
+					}, // deprecated
 					block: [
 						[
 							{
@@ -182,7 +182,7 @@ const ArticleSchema = new Schema({
 								},
 								nbEdit: {
 									type: Number,
-									default: 0 //need it to refresh figures after editing
+									default: 0 // need it to refresh figures after editing
 								}
 							}
 						]
@@ -195,7 +195,11 @@ const ArticleSchema = new Schema({
 				default: new Date()
 			}
 		}
-	]
+	],
+	reviewDriveBy: {
+		type: String,
+		enum: ['author', 'editor']
+	}
 });
 
 ArticleSchema.plugin(mongooseDelete, { deletedAt: true });
