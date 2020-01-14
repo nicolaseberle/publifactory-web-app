@@ -1,7 +1,7 @@
 const serviceCreate = require("../services/create");
 
 const cookieConfig = {
-	// httpOnly: true,
+	httpOnly: true,
 	// secure: true,
 	maxAge: 31536000
 };
