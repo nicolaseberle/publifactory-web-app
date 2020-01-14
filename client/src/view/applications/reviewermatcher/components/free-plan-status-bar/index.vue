@@ -11,7 +11,7 @@
 				<el-progress
 					:show-text="false"
 					:stroke-width="strokeWidth"
-					:percentage="10"
+					:percentage="this.invitatioNumber * 10"
 					type="line"
 					status="exception"
 				>
