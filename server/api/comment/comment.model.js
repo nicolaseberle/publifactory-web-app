@@ -79,6 +79,7 @@ CommentSchema.pre('findOne', autoPopulateChildComment)
 	.pre('find', autoPopulateChildComment)
 	.pre('findOne', autoPopulateUser)
 	.pre('find', autoPopulateUser);
+
 /**
  * @class Comment
  */

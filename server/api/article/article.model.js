@@ -123,12 +123,25 @@ const ArticleSchema = new Schema({
 			ref: 'User'
 		}
 	],
+	// Will be deleted and replaced by reviews below
 	comments: [
 		{
 			type: Schema.Types.ObjectId,
 			ref: 'Comment'
 		}
 	],
+	reviews: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Review'
+		}
+	],
+	// globalReviews: [
+	// 	{
+	// 		type: Schema.Types.ObjectId,
+	// 		ref: 'GlobalReview'
+	// 	}
+	// ],
 	tags: [
 		{
 			type: String
