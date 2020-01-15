@@ -8,7 +8,7 @@
 				<p><b>Free Plan</b></p>
 				<div class="free-plan-content" style='font-size:11px'>
 					<span>Requests</span>
-					<span>{{ this.maxInvitation }} / 10</span>
+					<span>{{ this.invitationNumber }} / 10</span>
 				</div>
 				<el-progress
 					:show-text="false"

@@ -90,7 +90,7 @@
 				<el-button v-on:click="$emit('close')">Cancel</el-button>
 				<el-button type="primary" @click="sendRequestRev('formMail')" style="margin-left:10px!important"
 					>Send</el-button>
-					<quotaRequestBox :maxInvitation='maxInvitation'/>
+					<quotaRequestBox :maxInvitation='maxInvitation' :remainingDay="30"/>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -118,6 +118,7 @@ export default {
 			confirmationOfSending: false,
 			requestInfos: {},
 			dialogVisible: false,
+			maxInvitation: 0,
 			options: [
 				{
 					value: "1x1week",
@@ -209,9 +210,12 @@ export default {
 		this.editor.on("text-change", (delta, oldDelta, source) => {
 			this.formMail.message = this.editor.root.innerHTML;
 		});
-		// console.log("===>", document, document.cookie);
-		console.log(this.$cookie);
-		console.log(this.$cookie.get("maxInvitation"));
+		this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		if (Number.isNaN(this.maxInvitation)) {
+			this.$cookie.set("maxInvitation",0);
+			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		}
+		console.log(this.maxInvitation)
 	},
 	methods: {
 		async addRequest(dataJson) {
@@ -268,12 +272,12 @@ export default {
 		},
 		showPromptUserDisconnected() {
 			const createElement = this.$createElement;
-			const maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-			console.log(
-				maxInvitation,
-				typeof maxInvitation,
+			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+			/*console.log(
+				this.maxInvitation,
+				typeof this.maxInvitation,
 				this.$cookie.get("maxInvitation")
-			);
+			);*/
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -285,7 +289,7 @@ export default {
 			/*this.$msgbox({
 				title: "Confirmation",
 				message: createElement(freePlanStatusBar, {
-					props: { maxInvitation }
+					props: { this.maxInvitation }
 				}),
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -363,6 +367,5 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
-	margin-left: 40px;
 }
 </style>
