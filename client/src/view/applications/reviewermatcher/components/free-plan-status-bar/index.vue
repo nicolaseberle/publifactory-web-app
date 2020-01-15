@@ -11,7 +11,7 @@
 				<el-progress
 					:show-text="false"
 					:stroke-width="strokeWidth"
-					:percentage="this.maxInvitation * 10"
+					:percentage="computedPercentage"
 					type="line"
 					status="exception"
 				>
@@ -42,17 +42,20 @@ export default {
 			type: Number
 		}
 	},
-	// computed: {
-	// 	...mapGetters(["loggedIn"])
-	// },
 	data() {
 		return {
-			// invitatioNumber: this.maxInvitation
+			computedPercentage: 0
 		};
 	},
 	methods: {
 		upgrade() {
 			this.$emit("onUpgrade");
+		}
+	},
+	watch: {
+		maxInvitation: function(val) {
+			this.computedPercentage = val * 10;
+			console.log("==>", val, this.computedPercentage);
 		}
 	},
 	created() {
