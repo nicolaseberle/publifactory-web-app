@@ -968,19 +968,19 @@ img.img-responsive {
               border-spacing: 20px 30px;" border="0" cellspacing="0" cellpadding="0" align="center">
                   <tr>
                           <td>
-                          <a href="${frontUrl}/requests/${request._id}/accepted" class="btn-valid"
+                          <a  class="btn-valid"
                             style="font-family: 'Arial', sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; text-align: center">
                               Accept
                           </a>
                           </td>
                           <td>
-                          <a href="${frontUrl}/requests/${request._id}/rejected" class="btn-dismiss"
+                          <a  class="btn-dismiss"
                             style="font-family: 'Arial', sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; text-align: center">
                               Reject
                           </a>
                           </td>
                           <td>
-                          <a href="${frontUrl}/requests/${request._id}/outfield" class="btn-unvalaible"
+                          <a 
                             style="font-family: 'Arial', sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; display: inline-block; text-align: center">
                               Not my field
                           </a>
