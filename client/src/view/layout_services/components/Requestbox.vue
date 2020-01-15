@@ -2,10 +2,10 @@
 	<!-- <div v-if="!loggedIn" class="free-plan-container"> -->
 	<div class="free-plan-container">
 		<!--<p class="free-plan-align-center-title"><strong>Free Plan</strong></p>-->
-		<p><el-button type="success"  size="mini" icon="el-icon-check" circle></el-button> Are you sure to invite this reviewer ?</p>
+
 		<div>
 			<div class="free-plan-box">
-				<p><b>Free Plan</b></p>
+				<span><b>Free Plan</b></span>
 				<div class="free-plan-content" style='font-size:11px'>
 					<span>Requests</span>
 					<span>{{ this.maxInvitation }} / 10</span>
@@ -23,17 +23,18 @@
 				</div>
 			</div>
 		</div>
-		<!--
-		<div class="free-plan-button-container">
-			<el-button @click="upgrade" type="danger" :disabled="true"
-				>Upgrade</el-button
+
+		<div class="free-plan-button-container-footer">
+			<el-button @click="upgrade" type="danger"
+				>Upgrade my plan</el-button
 			>
-		</div>-->
+		</div>
 	</div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+
 
 // To get cookies : this.$cookie.get("maxInvitation");
 
@@ -74,19 +75,17 @@ export default {
 .free-plan-container {
 	display: flex;
 	flex-direction: column;
+	width:240px;
+	line-height: 16px;
 }
 
-.free-plan-align-center-title {
-	align-self: center;
-	margin: 4px;
-}
 
-.free-plan-button-container {
-	align-self: center;
-	padding: 10px 5px 5px 5px;
+.free-plan-button-container-footer {
+	text-align: right;
+	padding: 5px 5px 20px 5px;
 }
 .free-plan-box{
-	padding: 10px 5px 3px 5px;
+	padding: 5px 5px 3px 5px;
 }
 .free-plan-content {
 	display: flex;

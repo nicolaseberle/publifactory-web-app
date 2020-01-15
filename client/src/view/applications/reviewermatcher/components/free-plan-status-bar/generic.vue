@@ -2,10 +2,8 @@
 	<!-- <div v-if="!loggedIn" class="free-plan-container"> -->
 	<div class="free-plan-container">
 		<!--<p class="free-plan-align-center-title"><strong>Free Plan</strong></p>-->
-		<p><el-button type="success"  size="mini" icon="el-icon-check" circle></el-button> Are you sure to invite this reviewer ?</p>
 		<div>
 			<div class="free-plan-box">
-				<p><b>Free Plan</b></p>
 				<div class="free-plan-content" style='font-size:11px'>
 					<span>Requests</span>
 					<span>{{ this.maxInvitation }} / 10</span>
@@ -38,7 +36,7 @@ import { mapGetters } from "vuex";
 // To get cookies : this.$cookie.get("maxInvitation");
 
 export default {
-	name: "freePlanStatusBar",
+	name: "quotaRequestBox",
 	props: {
 		strokeWidth: {
 			type: Number,
@@ -74,6 +72,9 @@ export default {
 .free-plan-container {
 	display: flex;
 	flex-direction: column;
+	line-height: 16px;
+	width: 100%;
+	margin-left:40px;
 }
 
 .free-plan-align-center-title {
@@ -83,14 +84,14 @@ export default {
 
 .free-plan-button-container {
 	align-self: center;
-	padding: 10px 5px 5px 5px;
+	padding: 5px 5px 5px 5px;
 }
 .free-plan-box{
-	padding: 10px 5px 3px 5px;
+	padding: 5px 5px 3px 5px;
 }
 .free-plan-content {
 	display: flex;
 	justify-content: space-between;
-	padding: 10px 0px 5px 0px;
+	padding: 5px 0px 5px 0px;
 }
 </style>
