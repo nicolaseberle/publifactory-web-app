@@ -86,11 +86,11 @@
 				<!--</el-tooltip>-->
 				<!--</el-checkbox>-->
 			</el-form-item>
-			<el-form-item>
+			<el-form-item class="flex_items">
 				<el-button v-on:click="$emit('close')">Cancel</el-button>
-				<el-button type="primary" @click="sendRequestRev('formMail')"
-					>Send</el-button
-				>
+				<el-button type="primary" @click="sendRequestRev('formMail')" style="margin-left:10px!important"
+					>Send</el-button>
+					<quotaRequestBox :maxInvitation='maxInvitation'/>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -102,12 +102,14 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import freePlanStatusBar from "./components/free-plan-status-bar";
+import quotaRequestBox from "./components/free-plan-status-bar/generic";
 import { mapGetters } from "vuex";
 
 var Quill = require("quill");
 
 export default {
 	props: ["formPost", "formMail", "rowInfos"],
+	components:{freePlanStatusBar,quotaRequestBox},
 	data() {
 		return {
 			editor: {},
@@ -115,6 +117,7 @@ export default {
 			idToolBar: this.setIdToolBar(),
 			confirmationOfSending: false,
 			requestInfos: {},
+			dialogVisible: false,
 			options: [
 				{
 					value: "1x1week",
@@ -271,8 +274,16 @@ export default {
 				typeof maxInvitation,
 				this.$cookie.get("maxInvitation")
 			);
-			this.$msgbox({
-				title: "Are you sure to invite this reviewer ?",
+			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
+				confirmButtonText: "OK",
+				cancelButtonText: "Cancel",
+				type: "success"
+			})
+				.then(this.handlePromptSuccess)
+				.catch(this.handlePromptFailure);
+
+			/*this.$msgbox({
+				title: "Confirmation",
 				message: createElement(freePlanStatusBar, {
 					props: { maxInvitation }
 				}),
@@ -282,6 +293,8 @@ export default {
 			})
 				.then(this.handlePromptSuccess)
 				.catch(this.handlePromptFailure);
+				*/
+
 		},
 		handlePromptSuccess() {
 			this.$emit("close");
@@ -345,3 +358,11 @@ export default {
 	}
 };
 </script>
+<style>
+.flex_items > .el-form-item__content {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+	margin-left: 40px;
+}
+</style>

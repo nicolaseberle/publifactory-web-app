@@ -206,6 +206,12 @@ export const constantRouterMap = [
         component: () => import('../view/data/index.vue')
       },
       {
+        path: '/invitation',
+        name: 'my_invitation',
+        meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
+        component: () => import('../view/invitation/index.vue')
+      },
+      {
         path: 'settings',
         hidden: true,
         component: () => import('../view/settings/index.vue')
