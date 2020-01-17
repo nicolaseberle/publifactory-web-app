@@ -9,7 +9,7 @@ function paginate(page = 1, count = 5) {
 async function list({ page = 1, count = 5, filters }) {
 	const response = { page, count };
 	let pipeline = [];
-	const sort = { $sort: { deadline: -1 } };
+	const sort = { $sort: { creationDate: -1 } };
 	pipeline.push(sort);
 	if (filters.title) {
 		pipeline.push({
