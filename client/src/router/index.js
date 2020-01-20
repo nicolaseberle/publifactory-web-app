@@ -198,13 +198,13 @@ export const constantRouterMap = [
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
         component: () => import('../view/journals/index.vue')
-      },
+      },/*
       {
         path: '/data',
         name: 'my_data',
         meta: { title: 'my_data', icon: 'database', noCache: true },
         component: () => import('../view/data/index.vue')
-      },
+      },*/
       {
         path: '/invitation',
         name: 'my_invitation',
