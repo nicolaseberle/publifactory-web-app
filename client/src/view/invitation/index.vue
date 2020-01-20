@@ -7,7 +7,7 @@
       highlight-current-row
       :data="mylistrequest"
       style="width: 100%"
-      height="500"
+      stripe
       @row-click="setSelectedRow">
       <el-table-column class-name="date-col" width="180px" label="Date">
         <template slot-scope="props">
@@ -34,7 +34,7 @@
           <el-table-column
             label="Reviewer Name"
             prop="rev_id"
-            width="160">
+            width="180">
             <template slot-scope="props">
                 <p style="text-align:center; font-weight:bold;">{{ props.row.reviewer.name }}</p>
             </template>
@@ -42,11 +42,18 @@
 
         <el-table-column
           label="Deadline"
-          prop="date">
+          prop="date"
+          width="120">
           <template slot-scope="props">
             <div style='text-align:center;'>
               <p>{{ remainingDay(props.row.deadline)}}</p>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="Status" prop="status" width="120">
+          <template slot-scope="props">
+            <el-tag class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 1].status)" >{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -88,6 +95,19 @@ export default{
     setSelectedRow (row, event, column) {
         this.selectedRow = row
     },
+    statusInvitationFilter (status) {
+      const statusMap = {
+        done: 'success',
+        pending: 'primary',
+        read:  'primary',
+        sent: 'primary',
+        bademail: 'warning',
+        unsubscribed: 'info',
+        outfield: 'info',
+        removed: 'danger'
+      }
+      return statusMap[status]
+    },
     getMyRequest(){
       axios.get('/api/requests/myRequest/'+this.userId+'?page=1&count=10',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -115,6 +135,9 @@ tbody {
 
 .el-table p {
   margin: 5px 0!important;
+}
+.el-table .cell{
+  text-align: center;
 }
 
 .clearfix:before,
