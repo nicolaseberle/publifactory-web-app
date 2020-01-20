@@ -118,14 +118,14 @@ export default {
     ...mapActions(['logout', 'updateGlobalConfig']),
     doLogout () {
       this.logout().then(() => {
-        this.$router.push('/')
+        this.$router.push('/login')
       })
     },
     doSettings () {
         this.$router.push('/settings')
     },
     goToDashboard () {
-      this.$router.push(this.$route.query.redirect || '/')
+      this.$router.push(this.$route.query.redirect || '/dashboard/home')
     },
   }
 }
