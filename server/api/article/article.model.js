@@ -136,12 +136,12 @@ const ArticleSchema = new Schema({
 			ref: 'Review'
 		}
 	],
-	// globalReviews: [
-	// 	{
-	// 		type: Schema.Types.ObjectId,
-	// 		ref: 'GlobalReview'
-	// 	}
-	// ],
+	globalReviews: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'GlobalReview'
+		}
+	],
 	tags: [
 		{
 			type: String

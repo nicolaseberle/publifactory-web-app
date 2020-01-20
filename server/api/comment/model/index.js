@@ -26,6 +26,7 @@ const ReviewSchema = new Schema(
 				'minor-revision',
 				'major-revision',
 				'rejection',
+				'resolve',
 				'comment'
 			],
 			required: true,
@@ -37,7 +38,22 @@ const ReviewSchema = new Schema(
 				ref: 'Review',
 				default: []
 			}
-		]
+		],
+		scores: {
+			voterId: [
+				{
+					type: String
+				}
+			],
+			upvote: {
+				type: Number,
+				default: 0
+			},
+			downvote: {
+				type: Number,
+				default: 0
+			}
+		}
 	},
 	// createdAt, updateAt
 	{ timestamps: true }
@@ -47,19 +63,18 @@ ReviewSchema.plugin(mongooseDelete, { deletedAt: true });
 ReviewSchema.plugin(mongoosePaginate);
 
 const autoPopulateChildReview = function(next) {
-	this.populate('childReview');
+	this.populate('child child.userId');
 	next();
 };
-// const autoPopulateUser = function(next) {
-// 	this.populate('userId');
-// 	next();
-// };
+const autoPopulateUser = function(next) {
+	this.populate('userId');
+	next();
+};
 
-ReviewSchema.pre('findOne', autoPopulateChildReview).pre(
-	'find',
-	autoPopulateChildReview
-);
-// .pre('findOne', autoPopulateUser)
-// .pre('find', autoPopulateUser);
+ReviewSchema.pre('findById', autoPopulateChildReview)
+	.pre('find', autoPopulateChildReview)
+	.pre('findById', autoPopulateUser)
+	.pre('find', autoPopulateUser);
 
+mongoose.set('debug', true);
 module.exports = mongoose.model('Review', ReviewSchema);

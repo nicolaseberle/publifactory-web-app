@@ -208,6 +208,7 @@ export default {
     }
   },
   created() {
+    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
     if (1) {
       this.sidebar.opened = false
       const id = this.$route.params && this.$route.params.id

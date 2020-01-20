@@ -30,12 +30,13 @@ var CommentSchema = new Schema({
 	reviewRequest: {
 		type: String,
 		enum: [
-			'No revision',
-			'Minor revision',
-			'Major revision',
-			'Rejection',
-			'Simple comment',
-			'Resolved'
+			'no-revision',
+			'minor-revision',
+			'major-revision',
+			'rejection',
+			'comment',
+			'resolved',
+			'reply'
 		],
 		required: true
 	},

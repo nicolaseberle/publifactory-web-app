@@ -486,10 +486,15 @@ aside.content-activity{
                           font-size: 16px;
                           opacity: 0.8;
                       }
-
+                      span.resolve {
+                        background-color: yellowgreen;
+                        border-color: yellowgreen;
+                        color:#333;
+                        font-family:'Calibri-bold';
+                      }
                       span.no-revision {
-                        background-color: YellowGreen;
-                        border-color: YellowGreen;
+                        background-color: #4AA7F7;
+                        border-color: #4AA7F7;
                         color:#333;
                         font-family:'Calibri-bold';
                       }
@@ -511,7 +516,7 @@ aside.content-activity{
                         color:#f3f3f3;
                         font-family:'Calibri-bold';
                       }
-                      span.simple-comment {
+                      span.comment {
                         background-color:rgba(176,196,222,0.8);
                         border-color: rgba(176,196,222,1);
                         color: #333;
@@ -651,17 +656,20 @@ aside.content-activity{
           footer.minor-revision {
             background-color:rgba(230, 162, 60,0.3);
           }
-          footer.simple-comment {
+          footer.comment {
             background-color:rgba(176,196,222,0.3);
           }
           footer.no-revision {
-            background-color: rgba(154, 205, 50, 0.3);
+            background-color: #b6dbfc;
           }
           footer.major-revision {
             background-color:rgba(255,0,0,0.2);
           }
           footer.rejection {
             background-color:rgba(0,0,0,0.2);
+          }
+          footer.resolve {
+            background-color: yellowgreen;
           }
 
       }
@@ -849,10 +857,15 @@ aside.content-comments-reviews {
                         font-size: 16px;
                         opacity: 0.8;
                     }
-
-                    span.no-revision {
+                    span.resolve {
                       background-color: YellowGreen;
                       border-color: YellowGreen;
+                      color:#333;
+                      font-family:'Calibri-bold';
+                    }
+                    span.no-revision {
+                      background-color: #4AA7F7;
+                      border-color: #4AA7F7;
                       color:#333;
                       font-family:'Calibri-bold';
                     }
@@ -874,7 +887,7 @@ aside.content-comments-reviews {
                       color:#f3f3f3;
                       font-family:'Calibri-bold';
                     }
-                    span.simple-comment {
+                    span.comment {
                       background-color:rgba(176,196,222,0.8);
                       border-color: rgba(176,196,222,1);
                       color: #333;
@@ -918,10 +931,10 @@ aside.content-comments-reviews {
             display: block;
             overflow-wrap: break-word;
 
-            p:hover {
-                background-color: greyBorderColor(0.3);
-                cursor: pointer;
-            }
+            // p:hover {
+            //     background-color: greyBorderColor(0.3);
+            //     cursor: pointer;
+            // }
             footer.grid-header {
               display: grid;
               grid-template-columns: 250px;
@@ -1014,11 +1027,11 @@ aside.content-comments-reviews {
         footer.minor-revision {
           background-color:rgba(230, 162, 60,0.3);
         }
-        footer.simple-comment {
+        footer.comment {
           background-color:rgba(176,196,222,0.3);
         }
         footer.no-revision {
-          background-color: rgba(154, 205, 50, 0.3);
+          background-color: #b6dbfc;
         }
         footer.major-revision {
           background-color:rgba(255,0,0,0.2);
@@ -1026,6 +1039,8 @@ aside.content-comments-reviews {
         footer.rejection {
           background-color:rgba(0,0,0,0.2);
         }
-
+        footer.resolve {
+          background-color: yellowgreen;
+        }
     }
 }

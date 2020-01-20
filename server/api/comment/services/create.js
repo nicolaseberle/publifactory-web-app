@@ -2,7 +2,7 @@ const Review = require('../model');
 const Article = require('../../article/article.model');
 const { ApiError } = require('../../../config/error');
 
-async function create({ userId, articleId, review }) {
+async function create({ userId, articleId, review }, child = false) {
 	const article = await Article.findById(articleId);
 	if (!article) throw new ApiError('ARTICLE_NOT_FOUND');
 	const newReview = new Review({
@@ -10,9 +10,9 @@ async function create({ userId, articleId, review }) {
 		...review
 	});
 	await newReview.save();
-	article.reviews.push(newReview._id);
+	if (!child) article.reviews.push(newReview._id);
 	await article.save();
-  await newReview.populate('userId').execPopulate();
+	await newReview.populate('userId').execPopulate();
 	return newReview;
 }
 
