@@ -42,6 +42,25 @@
         </data-table>
       </content-module>
     </div>
+    <!-- Form User Creation-->
+    <el-dialog title="Create an new user" :visible.sync="formVisible">
+      <el-form :model="form">
+        <el-form-item label="Firstname" :label-width="formLabelWidth">
+          <el-input v-model="form.firstname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Lastname" :label-width="formLabelWidth">
+          <el-input v-model="form.lastname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="Email" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="formVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="formVisible = false">Create</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -63,11 +82,12 @@
       search: {
       },
       form: {
-        username: '',
-        password: ''
+        firstname: '',
+        secondname: '',
+        email: ''
       },
       rules: {
-        username: [{
+        email: [{
           required: true, message: this.$t('user.rules.username'), trigger: 'blur'
         }],
         password: [{
@@ -158,5 +178,8 @@
 <style>
 .el-table__header{
   text-align:left;
+}
+.el-table .cell{
+  text-align: center;
 }
 </style>
