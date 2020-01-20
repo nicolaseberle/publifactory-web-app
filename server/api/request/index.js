@@ -6,6 +6,7 @@ const middlewares = require("./middlewares");
 // Base route: '/api/requests'
 
 router.get("/", controllers.list);
+router.get("/myRequest/:userId", controllers.myRequest);
 router.get("/totalRequest", controllers.totalRequest);
 router.get("/logo", controllers.logo);
 router.post("/", middlewares.optionalAuthentication, controllers.create);

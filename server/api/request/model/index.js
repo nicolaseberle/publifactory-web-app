@@ -10,7 +10,8 @@ const enumStatus = [
 	"rejected",
 	"outfield",
 	"unsubscribed",
-	"done"
+	"done",
+	"removed"
 ];
 
 const RequestSchema = new mongoose.Schema(

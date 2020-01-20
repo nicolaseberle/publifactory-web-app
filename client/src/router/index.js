@@ -212,11 +212,6 @@ export const constantRouterMap = [
         component: () => import('../view/invitation/index.vue')
       },
       {
-        path: 'settings',
-        hidden: true,
-        component: () => import('../view/settings/index.vue')
-      },
-      {
         path: '/dashboard/home',
         hidden: true,
         component: () => import('../view/dashboard/index.vue')
@@ -396,6 +391,20 @@ export const constantRouterMap = [
     meta: {
       skipAuth: true
     }
+  },
+  {
+    path: 'settings',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/settings',
+        name: 'my_settings',
+        component: resolve => {
+					import('../view/settings/index.vue').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '',

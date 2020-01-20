@@ -17,7 +17,7 @@ async function create({ reviewer, editor, ...request }) {
 	if (newRequest.editor.email) {
 		sendEmailEditor(
 			newRequest._id,
-			"Summary of your reviewing request",
+			"Copy of your reviewing request",
 			emailEditorTemplate.summary(newRequest)
 		);
 	}

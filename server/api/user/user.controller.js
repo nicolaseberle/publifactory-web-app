@@ -22,7 +22,7 @@ const Email = require('../email/email.controller');
  */
 function index(req, res, next) {
   try {
-    const search = {...req.query.search, ...{role: 'user'}};
+    const search = {...req.query.search, ...{role:  { $in: ['user', 'guest', 'editor'] }}};
     var page = {current: 1, limit: 10};
     paging.listQuery(User, search, '-salt -hashedPassword', {}, page, function (err, json) {
       if (err) throw {code: 500, message: err};
@@ -292,6 +292,7 @@ async function changePassword(req, res, next) {
       throw { code: 422, message: 'Missing parameters.' };
     if (req.body.oldPassword === req.body.newPassword)
       throw { code: 409, message: 'Duplicate entry.' };
+    console.log("ici")
     var userId = req.decoded._id;
     var oldPass = String(req.body.oldPassword);
     var newPass = String(req.body.newPassword);
@@ -307,6 +308,7 @@ async function changePassword(req, res, next) {
       throw { code: 403, message: 'Old password is not correct.' };
     }
   } catch (err) {
+    console.log(err)
     next(err)
   }
 }
@@ -348,6 +350,7 @@ async function changeGuestPassword(req, res, next) {
       res.json({token: token})
     }
   } catch (err) {
+    console.log(err)
     next(err)
   }
 }
