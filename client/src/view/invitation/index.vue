@@ -138,6 +138,7 @@ tbody {
 }
 .el-table .cell{
   text-align: center;
+  word-break: normal;
 }
 
 .clearfix:before,

@@ -21,11 +21,13 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <!--<router-link to="/">-->
-          <!--
             <el-dropdown-item @click.native='goToDashboard'>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          -->
+            <el-dropdown-item @click.native="doSettings">
+              {{ $t('navbar.settings') }}
+            </el-dropdown-item>
+            <!--</router-link>-->
             <el-dropdown-item @click.native="doLogout">
               {{$t('navbar.logout')}}
             </el-dropdown-item>
@@ -123,7 +125,7 @@ export default {
         this.$router.push('/settings')
     },
     goToDashboard () {
-      this.$router.push(this.$route.query.redirect || '/dashboard/home')
+      this.$router.push(this.$route.query.redirect || '/')
     },
   }
 }
