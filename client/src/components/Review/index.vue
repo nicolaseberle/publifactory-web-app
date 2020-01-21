@@ -20,22 +20,18 @@
       </a>
     </header>
     <section class="content reviews">
-      <tree-comment
+      <partial-review
         v-if="reports"
-        :reviewId="reports._id"
-        :creationDate="reports.createdAt"
-        :label="reports.content"
-        :anonymous="reports.anonymous"
-        :reviewType="reports.type"
-        :user="reports.userId"
-        :nodes="reports"
         v-on:post="reload"
+        :nodes="reports"
         :depth="0"
-        :socket="this.socket"
-      ></tree-comment>
-      <partial-review-edit v-on:newReport="newReport" :articleId="id"></partial-review-edit>
+        :socket="socket"
+        v-on:newReport="newReport"
+        :articleId="id"
+      ></partial-review>
     </section>
     <section class="content comments">
+      <global-review></global-review>
       <el-collapse v-model="activeComments" accordion>
         <div v-for="t in Comments">
           <article>
@@ -81,10 +77,9 @@ import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCoffee, faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-// import hightlightText from '../../utils/js/animation/highlight.js';
+import partialReview from './components/partial-review';
+import globalReview from './components/global-review'
 import VuePlotly from '@statnett/vue-plotly';
-import TreeComment from './components/tree-comment';
-import partialReviewEdit from './components/partial-review-edit';
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
 var uuidv4 = require('uuid/v4');
@@ -130,10 +125,10 @@ export default {
   name: 'reportComponent',
   locales,
   components: {
-    'tree-comment': TreeComment,
     'font-awesome-icon': FontAwesomeIcon,
-    partialReviewEdit,
-    VuePlotly
+    VuePlotly,
+    partialReview,
+    globalReview
   },
   props: ['uuid', 'socket'],
   data() {
@@ -224,28 +219,6 @@ export default {
       editAnswer: '',
       errors: { message: '' },
       article: '',
-      optionsReview: [
-        {
-          value: 'No revision',
-          label: 'No revision'
-        },
-        {
-          value: 'Minor revision',
-          label: 'Minor revision'
-        },
-        {
-          value: 'Major revision',
-          label: 'Major revision'
-        },
-        {
-          value: 'Rejection',
-          label: 'Rejection'
-        },
-        {
-          value: 'Simple comment',
-          label: 'Simple comment'
-        }
-      ],
       reviewRequest: 'Simple comment',
       currentData: {},
       layout: {},
@@ -358,60 +331,12 @@ export default {
       await this.fetchReport(this.id);
     },
     async newReport(report) {
-      console.log('NEW REPORT=>', report);
+      console.log('newReportRoot', report);
       this.reports.push(report);
       this.socket.emit('NEW_COMMENT', {
         newReports: this.reports
       });
     }
-    // async createReport() {
-    //   let response__;
-    //   debug('createReport : ', this.uuid);
-    //   let now = new Date().getTime();
-    //   this.form.creationDate = now;
-    //   let uuid = '';
-    //   if (this.uuid === '') {
-    //     uuid = String(uuidv4());
-    //   } else {
-    //     uuid = this.uuid;
-    //   }
-
-    //   const newComment = {
-    //     date: now,
-    //     userId: this.userId,
-    //     content: String(this.editReport),
-    //     uuidComment: String(uuid),
-    //     reviewRequest: String(this.reviewRequest),
-    //     commentFlag: false, //it's a review,
-    //     anonymous: this.checkedAnonymous
-    //   };
-    //   this.uuid = '';
-    //   this.checkedAnonymous = false;
-
-    //   this.article.nbReviews = this.article.nbReviews + 1;
-
-    //   if (this.editReport) {
-    //     this.editReport = '';
-    //     this.reviewRequest = '';
-    //   }
-    //   try {
-    //     const response = await axios.post(
-    //       '/api/comments/' + this.id,
-    //       newComment,
-    //       {
-    //         headers: { Authorization: `Bearer ${this.accessToken}` }
-    //       }
-    //     );
-    //     this.reports.push(response.data);
-    //     response__ = response.data;
-    //     this.errors.message = 'createReport success ';
-    //     this.socket.emit('NEW_COMMENT', {
-    //       newReports: this.reports
-    //     });
-    //   } catch (e) {
-    //     this.errors.message = 'createReport fails';
-    // }
-    // }
   }
 };
 </script>

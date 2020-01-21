@@ -126,7 +126,6 @@ export default {
         anonymous: this.anonymous
       };
       console.log(this.currentType)
-      // this.$emit('newReport', newComment);
       try {
         const response = await axios.post(
           `/api/comments/${this.articleId}`,
