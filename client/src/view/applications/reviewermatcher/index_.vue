@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div class="bandeau">ALPHA v0.3.8</div>
+      <div v-if='!loggedIn' class="bandeau">ALPHA v0.3.8</div>
       <hgroup>
         <h1>Reviewer search engine</h1>
         <h2>Getting the most relevant reviewers for your paper</h2>
@@ -475,7 +475,8 @@ export default {
   components: {researcherCard,requestView},
   computed: {
     ...mapGetters([
-      'loggedIn'
+      'loggedIn',
+      'accessToken'
     ])
   },
   data () {
@@ -562,6 +563,17 @@ export default {
       fileList:[],
       activeNames: "",
       dataUpload: false,
+    }
+  },
+  async mounted () {
+    if(this.loggedIn) {
+      await axios.get('/api/users/me',{headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+        this.formMail.mailDest = response.data.email
+        this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
+        this.formMail.cgu = true
+        })
     }
   },
   methods: {
