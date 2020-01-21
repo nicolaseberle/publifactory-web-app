@@ -206,9 +206,12 @@ export default {
             this.loading = false
             this.$router.push(this.$route.query.redirect || '/dashboard/home')
           }).catch((err) => {
+            let message = null;
+            if (err.body.message === 'ACCOUNTS_INVALID_PASSWORD')
+              message = this.$t("login.passwordFail")
             this.$message({
               title: this.$t('message.error'),
-              message: err.message || this.$t('login.authFail'),
+              message: message || this.$t('login.authFail'),
               type: 'error'
             })
             this.loading = false
@@ -224,11 +227,11 @@ export default {
     onOAuthLogin() {
       const regExpOrcid = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
       const regExpGoogle = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*scope=(.*?)$/g
-      if (regExpOrcid.exec(this.redirect).length === 6) {
+      // if (regExpOrcid.exec(this.redirect).length === 6) {
 
-      } else if (regExpGoogle.exec(this.redirect).length === 5) {
+      // } else if (regExpGoogle.exec(this.redirect).length === 5) {
 
-      }
+      // }
     },
     onGoogleSubmit () {
       this.$refs.form.validate(async valid => {
