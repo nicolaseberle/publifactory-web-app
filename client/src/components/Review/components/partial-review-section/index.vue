@@ -1,6 +1,17 @@
 <template>
   <div>
-    <tree-comment :nodes="nodes" v-on:post="reload" :depth="0" :socket="this.socket"></tree-comment>
+    <div v-if="reviews">
+    <tree-comment v-for="(review, key) in reviews" :key="key" :nodes="review.child" v-on:post="reload" :depth="0" :socket="socket"
+    :reviewId="review._id"
+    :label="review.content"
+    :scores="review.scores"
+    :creationDate="review.createdAt"
+    :reviewType="review.type"
+    :anonymous="review.anonymous"
+    :user="review.userId"
+    :flagShowingComment="false"
+    ></tree-comment>
+    </div>
     <partial-review-edit v-on:newReport="newReport" :articleId="articleId"></partial-review-edit>
   </div>
 </template>
@@ -10,23 +21,22 @@ import { Socket } from 'net';
 import treeComment from './components/tree-comment';
 import partialReviewEdit from './components/partial-review-edit';
 export default {
-  name: 'partialReview',
+  name: 'partialReviewSection',
   props: {
-    nodes: Array,
-    depth: Number,
+    reviews: Array,
     socket: {},
     articleId: String
   },
   components: {
     treeComment,
-    partialReviewEdit
+    partialReviewEdit,
   },
   methods: {
+
     reload() {
       this.$emit('post');
     },
     newReport(data) {
-      console.log("NewReport=>", data);
       this.$emit('newReport', data)
     }
   }

@@ -1,12 +1,12 @@
-const Review = require('../model');
+const PartialReview = require('../model');
 const { ApiError } = require('../../../config/error');
 
-async function update({ userId, reviewId, review }) {
-	const updateReview = await Review.findById(reviewId);
-	if (!updateReview) throw new ApiError('REVIEW_NOT_FOUND');
-	const mergeReview = { ...updateReview.toObject(), ...review };
-	await updateReview.updateOne({ $set: mergeReview }, { runValidators: true });
-	return updateReview;
+async function update({ userId, partialReviewId, partialReview }) {
+	const updatePartialReview = await PartialReview.findById(partialReviewId);
+	if (!updatePartialReview) throw new ApiError('REVIEW_NOT_FOUND');
+	const mergePartialReview = { ...updatePartialReview.toObject(), ...partialReview };
+	await updatePartialReview.updateOne({ $set: mergePartialReview }, { runValidators: true });
+	return updatePartialReview;
 }
 
 module.exports = update;

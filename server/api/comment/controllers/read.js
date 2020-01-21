@@ -3,11 +3,11 @@ const { ApiError } = require('../../../config/error');
 
 async function read(req, res, next) {
 	try {
-		if (!req.params.reviewId) {
+		if (!req.params.partialReviewId) {
 			throw new ApiError('BAD_PARAMETERS');
 		}
 		const response = await serviceRead({
-			reviewId: req.params.reviewId
+			partialReviewId: req.params.partialReviewId
 		});
 		return res
 			.status(200)

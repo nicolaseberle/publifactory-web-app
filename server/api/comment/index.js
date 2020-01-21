@@ -1,22 +1,23 @@
-'use strict';
+'use strict'
 
-const express = require('express');
-const controller = require('./controllers');
-const commentsController = require('./comment.controller');
-const rolesArticle = require('../roles/article/roles.article.controller');
+const express = require('express')
+const controllers = require('./controllers')
+const commentsController = require('./comment.controller')
+const rolesArticle = require('../roles/article/roles.article.controller')
 
-const router = express.Router();
+const router = express.Router()
 
-router.use('/:id', async function(req, res, next) {
-	try {
-		req.route = 'comment';
-		req.params.id = req.params.articleId;
-		req.params.uuid = req.params.reviewId;
-		await rolesArticle.doYouHaveThisRight(req, res, next);
-	} catch (e) {
-		next(e);
-	}
-});
+router.use('/:id', async function (req, res, next) {
+  try {
+    req.route = 'comment'
+    req.params.id_article = req.params.articleId
+    req.params.id = req.params.articleId
+    req.params.uuid = req.params.partialReviewId
+    await rolesArticle.doYouHaveThisRight(req, res, next)
+  } catch (e) {
+    next(e)
+  }
+})
 
 // if (process.env.NODE_ENV === 'production') {
 // router.get('/:id/:uuid?', commentsController.getComments)
@@ -27,10 +28,10 @@ router.use('/:id', async function(req, res, next) {
 // router.delete('/:id/:uuid', commentsController.findCommentAndDelete)
 // } else {
 // 	// Create or if reviewId ==> addChild(=>reply to review)
-router.post('/:articleId/:reviewId?', controller.create);
-router.get('/list/:articleId/', controller.list);
-router.get('/:reviewId/', controller.read);
-router.put('/:reviewId/', controller.update);
-router.delete('/:articleId/:reviewId', controller.remove);
+router.post('/:articleId/:partialReviewId?', controllers.create)
+router.get('/list/:articleId/', controllers.list)
+router.get('/:partialReviewId/', controllers.read)
+router.put('/:partialReviewId/', controllers.update)
+router.delete('/:articleId/:partialReviewId', controllers.remove)
 // }
-module.exports = router;
+module.exports = router

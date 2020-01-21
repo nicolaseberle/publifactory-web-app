@@ -1,10 +1,10 @@
-const Review = require('../model');
+const PartialReview = require('../model');
 const { ApiError } = require('../../../config/error');
 
-async function read({ reviewId }) {
-	const review = await Review.findById(reviewId).populate('userId child');
-	if (!review) throw new ApiError('REVIEW_NOT_FOUND');
-	return review;
+async function read({ partialReviewId }) {
+	const partialReview = await PartialReview.findById(partialReviewId).populate('userId child');
+	if (!partialReview) throw new ApiError('REVIEW_NOT_FOUND');
+	return partialReview;
 }
 
 module.exports = read;

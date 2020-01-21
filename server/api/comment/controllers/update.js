@@ -3,11 +3,11 @@ const { ApiError } = require('../../../config/error');
 
 async function update(req, res, next) {
 	try {
-		if (!req.params.reviewId) throw new ApiError('BAD_PARAMETERS');
+		if (!req.params.partialReviewId) throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceUpdate({
 			userId: req.decoded._id,
-			review: req.body,
-			reviewId: req.params.reviewId
+			partialReview: req.body,
+			partialReviewId: req.params.partialReviewId
 		});
 		return res
 			.status(200)

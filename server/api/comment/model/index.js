@@ -5,7 +5,7 @@ const mongooseDelete = require('mongoose-delete');
 
 const Schema = mongoose.Schema;
 
-const ReviewSchema = new Schema(
+const PartialReviewSchema = new Schema(
 	{
 		userId: {
 			type: Schema.Types.ObjectId,
@@ -35,7 +35,7 @@ const ReviewSchema = new Schema(
 		child: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: 'Review',
+				ref: 'PartialReview',
 				default: []
 			}
 		],
@@ -59,10 +59,10 @@ const ReviewSchema = new Schema(
 	{ timestamps: true }
 );
 
-ReviewSchema.plugin(mongooseDelete, { deletedAt: true });
-ReviewSchema.plugin(mongoosePaginate);
+PartialReviewSchema.plugin(mongooseDelete, { deletedAt: true });
+PartialReviewSchema.plugin(mongoosePaginate);
 
-const autoPopulateChildReview = function(next) {
+const autoPopulateChildPartialReview = function(next) {
 	this.populate('child child.userId');
 	next();
 };
@@ -71,10 +71,10 @@ const autoPopulateUser = function(next) {
 	next();
 };
 
-ReviewSchema.pre('findById', autoPopulateChildReview)
-	.pre('find', autoPopulateChildReview)
+PartialReviewSchema.pre('findById', autoPopulateChildPartialReview)
+	.pre('find', autoPopulateChildPartialReview)
 	.pre('findById', autoPopulateUser)
 	.pre('find', autoPopulateUser);
 
 mongoose.set('debug', true);
-module.exports = mongoose.model('Review', ReviewSchema);
+module.exports = mongoose.model('PartialReview', PartialReviewSchema);

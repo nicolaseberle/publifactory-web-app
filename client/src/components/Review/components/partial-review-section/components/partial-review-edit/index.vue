@@ -137,6 +137,8 @@ export default {
         console.log('new comment', response.data);
         console.log('=====>', this);
         this.$emit('newReport', response.data);
+        this.editor.root.innerHTML = "";
+        this.anonymous = false
       } catch (error) {
         console.warn('failed to add partial review', error);
       }

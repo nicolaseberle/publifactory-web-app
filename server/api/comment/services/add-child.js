@@ -1,14 +1,14 @@
-const Review = require('../model');
+const PartialReview = require('../model');
 const create = require('./create');
 const { ApiError } = require('../../../config/error');
 
-async function addChild({ userId, articleId, reviewId, review }) {
-	const parentReview = await Review.findById(reviewId);
-	if (!parentReview) throw new ApiError('REVIEW_NOT_FOUND');
-	const childReview = await create(arguments[0], true);
-	parentReview.child.push(childReview);
-	await parentReview.save();
-	return childReview;
+async function addChild({  partialReviewId }) {
+	const parentPartialReview = await PartialReview.findById(partialReviewId);
+	if (!parentPartialReview) throw new ApiError('REVIEW_NOT_FOUND');
+	const childPartialReview = await create(arguments[0], true);
+	parentPartialReview.child.push(childPartialReview);
+	await parentPartialReview.save();
+	return childPartialReview;
 }
 
 module.exports = addChild;

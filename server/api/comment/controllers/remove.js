@@ -3,12 +3,13 @@ const { ApiError } = require('../../../config/error');
 
 async function remove(req, res, next) {
 	try {
-		if (!req.params.articleId || !req.params.reviewId)
+		if (!req.params.articleId || !req.params.partialReviewId)
 			throw new ApiError('BAD_PARAMETERS');
+		console.log("REMOVE TRL=>", req.params.articleId, req.params.partialReviewId)
 		const response = await serviceRemove({
 			userId: req.decoded._id,
 			articleId: req.params.articleId,
-			reviewId: req.params.reviewId
+			partialReviewId: req.params.partialReviewId
 		});
 		return res
 			.status(200)

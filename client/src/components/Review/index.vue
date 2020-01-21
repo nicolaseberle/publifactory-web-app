@@ -20,18 +20,17 @@
       </a>
     </header>
     <section class="content reviews">
-      <partial-review
+      <partial-review-section
         v-if="reports"
         v-on:post="reload"
-        :nodes="reports"
-        :depth="0"
+        :reviews="reports"
         :socket="socket"
         v-on:newReport="newReport"
         :articleId="id"
-      ></partial-review>
+      ></partial-review-section>
     </section>
     <section class="content comments">
-      <global-review></global-review>
+      <global-review-section></global-review-section>
       <el-collapse v-model="activeComments" accordion>
         <div v-for="t in Comments">
           <article>
@@ -77,8 +76,8 @@ import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCoffee, faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import partialReview from './components/partial-review';
-import globalReview from './components/global-review'
+import partialReviewSection from './components/partial-review-section';
+import globalReviewSection from './components/global-review-section'
 import VuePlotly from '@statnett/vue-plotly';
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
@@ -127,8 +126,8 @@ export default {
   components: {
     'font-awesome-icon': FontAwesomeIcon,
     VuePlotly,
-    partialReview,
-    globalReview
+    partialReviewSection,
+    globalReviewSection
   },
   props: ['uuid', 'socket'],
   data() {
