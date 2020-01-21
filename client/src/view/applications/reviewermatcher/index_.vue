@@ -450,7 +450,7 @@
     <el-dialog
       title="Send a Request to Review"
       :visible.sync="centerDialogVisible"
-      width="75%">
+      width="65%">
       <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
     </el-dialog>

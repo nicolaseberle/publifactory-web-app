@@ -31,11 +31,32 @@
             </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <!--
+      <div class='right-menu-item' v-show="!loggedIn" style="vertical-align: middle;height:40px">
+
+          <el-dropdown>
+            <span class="el-dropdown-link">
+              <el-progress type="circle" color="#f56c6c"  :percentage="25" :width="40" :stroke-width='6' text-inside></el-progress>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><requestbox :maxInvitation='2'/></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+
+      </div>-->
+
       <div class='right-menu-item' v-show="!loggedIn">
         <router-link :to="{name: '/login'}">
-          <el-button style='  border-color: #333; border-width: 3px; font-weight:800' plain >Login</el-button>
+          <el-button style='font-weight:800' plain >Sign In</el-button>
         </router-link>
       </div>
+      <div class='right-menu-item' v-show="!loggedIn">
+        <el-button @click="upgrade" style='background-color: #000; color:#FFF;font-weight:800'
+          disabled>Create Free Account</el-button
+        >
+        <!--<el-button style='  border-color: #f56c6c; border-width: 3px; font-weight:800' plain >Free Plan</el-button>-->
+      </div>
+
     </div>
   </div>
   <el-dialog
@@ -54,8 +75,6 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import Breadcrumb from '../../../components/Breadcrumb'
-  import Hamburger from '../../../components/Hamburger'
   import ErrorLog from '../../../components/ErrorLog'
   import Screenfull from '../../../components/Screenfull'
   import Nightmode from '../../../components/Nightmode'
@@ -63,18 +82,18 @@
   import LangSelect from '../../../components/LangSelect'
   import locales from '../../../locales/navbar'
   // import locales2 from '../../../locales/header'
+  // import Requestbox from "./Requestbox"
 
 export default {
   locales,
   // locales2,
   components: {
     Nightmode,
-    Breadcrumb,
-    Hamburger,
     ErrorLog,
     Screenfull,
     // SizeSelect,
-    LangSelect
+    LangSelect,
+    // Requestbox
   },
   data () {
     return {
@@ -106,7 +125,6 @@ export default {
     goToDashboard () {
       this.$router.push(this.$route.query.redirect || '/dashboard/home')
     },
-
   }
 }
 </script>
@@ -130,4 +148,9 @@ export default {
     font-size: 12px;
   }
 
+</style>
+<style>
+.el-dropdown-menu-pb{
+  background-color: '#f56c6c';
+}
 </style>

@@ -111,14 +111,21 @@ export const constantRouterMap = [
     props: route => ({ userId: route.query.userId })
   },
   {
-    path:
-			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
-    component: resolve => {
-			import('../view/request/').then(resolve)
-    },
-    meta: {
-      skipAuth: true
-    }
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+        name: 'answer',
+        meta: {
+          skipAuth: true
+        },
+        component: resolve => {
+          import('../view/request/').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '/summarize',
@@ -199,9 +206,10 @@ export const constantRouterMap = [
         component: () => import('../view/data/index.vue')
       },
       {
-        path: 'settings',
-        hidden: true,
-        component: () => import('../view/settings/index.vue')
+        path: '/invitation',
+        name: 'my_invitation',
+        meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
+        component: () => import('../view/invitation/index.vue')
       },
       {
         path: '/dashboard/home',
@@ -315,7 +323,7 @@ export const constantRouterMap = [
         path: 'invitationReviewer',
         name: 'Invitation Reviewer',
         meta: {
-          title: 'Invation Reviewer',
+          title: 'Invitation Reviewer',
           icon: 'guide 2',
           noCache: true,
           roles: ['admin']
@@ -383,6 +391,20 @@ export const constantRouterMap = [
     meta: {
       skipAuth: true
     }
+  },
+  {
+    path: 'settings',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/settings',
+        name: 'my_settings',
+        component: resolve => {
+					import('../view/settings/index.vue').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '',

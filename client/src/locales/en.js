@@ -4,6 +4,8 @@ export default {
     my_articles: 'Articles',
     my_journals: 'Journals',
     my_data: 'Data',
+    my_invitation: 'Invitations',
+    my_settings: 'Settings',
     dashboard: 'Dashboard',
     feeds: 'Feeds',
     settings: 'Settings',

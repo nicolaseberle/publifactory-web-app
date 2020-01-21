@@ -178,7 +178,8 @@
 
 </div>
 
-  </el-tab-pane>
+</el-tab-pane>
+<!--
   <el-tab-pane label="Biblio">
     <div style='margin:20px'>
     <h2>Bibliography</h2>
@@ -186,7 +187,6 @@
         <el-col :span='12'>
         <div class="article-tag header-tag">
           <a v-for="item in tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
-            <!--<a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>-->
         </div>
         </el-col>
       </el-row>
@@ -222,7 +222,7 @@
         </el-col>
       </el-row>
       </div>
-     </el-tab-pane>
+    </el-tab-pane>-->
     </el-tabs>
   </div>
 </template>

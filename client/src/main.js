@@ -16,7 +16,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'vue-awesome/icons/flag'
 import 'vue-awesome/icons'
-
+import VueCookie from 'vue-cookie'
 import { VLazyImagePlugin } from "v-lazy-image";
 Vue.use(VLazyImagePlugin);
 
@@ -50,7 +50,7 @@ Vue.use(ElementUI, {
   // i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(require('vue-moment'))
-
+Vue.use(VueCookie);
 const userPromise = store.dispatch('initUserInfo')
 routerHook(userPromise)
 
