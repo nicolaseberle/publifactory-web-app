@@ -1,10 +1,10 @@
-const { email, backend } = require("../../../config");
+const config = require("../../../config");
 
-const frontUrl = email.rootHTML;
+const frontUrl = config.url;
 const backUrl =
-	process.env.NODE_ENV === "production"
-		? `https://${backend.ip}`
-		: `http://localhost:${backend.port}`;
+	config.env === "development" ? `http://localhost:4000` : config.url;
+
+console.log(frontUrl, backUrl)
 
 function formatDate(date) {
 	return `${new Date(date).toLocaleString()}`;
@@ -377,6 +377,7 @@ img.img-responsive {
  </head>
 <body>
     <div class="wrapper">
+    <div>${(backUrl, frontUrl)}</div>
     	<div class="wrapper-inner">
     		<table class="outer-table">
     			<tr>
@@ -443,12 +444,12 @@ img.img-responsive {
     							<td class="inner-td">
 									<div>
 										<p><strong>${request.reviewer.name} ${
-									reviewerAnswer[status]
-								}</strong> to review the <strong><em>${
-									request.title
-								}'s</em></strong> article : ${formatDate(
-									request.history.slice(-2, -1)[0].date
-								)}.
+	reviewerAnswer[status]
+}</strong> to review the <strong><em>${
+	request.title
+}'s</em></strong> article : ${formatDate(
+	request.history.slice(-2, -1)[0].date
+)}.
 									</p>
 										${
 											status === "outfield"
@@ -466,7 +467,9 @@ img.img-responsive {
     						</tr>
                 <tr>
                   <td class="inner-td">
-                    <p class="justify">Reviewing deadline: ${request.deadline}</p>
+                    <p class="justify">Reviewing deadline: ${
+											request.deadline
+										}</p>
                   </td>
                 </tr>
     					</table>
@@ -492,9 +495,13 @@ img.img-responsive {
                       >
                         Publifactory</a>, All Rights Reserved.</h6>
                       <!--<a href='https://app.publifactory.co'> <img widht="25px" height="32px" src="${backUrl}/api/requests/logo/"></a>-->
-                      <img width="0" height="0" src="${backUrl}/api/requests/seen/${request._id}">
+                      <img width="0" height="0" src="${backUrl}/api/requests/seen/${
+	request._id
+}">
                       <h6>Don't want to get a reminded for this review :
-                        <a style="text-decoration: none;" href="${frontUrl}/requests/${request._id}/unsubscribed">
+                        <a style="text-decoration: none;" href="${frontUrl}/requests/${
+	request._id
+}/unsubscribed">
                           unsubscribe
                         </a>
                       </h6>
