@@ -9,6 +9,10 @@ import Layout_services from '../view/layout_services/Layout'
 
 Vue.use(VueRouter)
 
+const state_ = process.env.DEV_LOCAL === 'true' ? true : false;
+const state__ = process.env.DEV_LOCAL === 'true' ? false : true;
+
+
 export const constantRouterMap = [
   {
     path: '/login',
@@ -187,12 +191,14 @@ export const constantRouterMap = [
     children: [
       {
         path: '/article',
+        hidden: state_ ,
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
         component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
+        hidden: state_ ,
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
         component: (resolve) => import('../view/journals/index.vue').then(resolve)
@@ -210,6 +216,13 @@ export const constantRouterMap = [
         component: (resolve) => import('../view/invitation/index.vue').then(resolve)
       },
       {
+        path: '/reviewermatcher',
+        name: 'reviewer_matcher',
+        hidden: state__,
+        meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
+        component: () => import('../view/applications/reviewermatcher/index_.vue')
+      },
+      {
         path: '/dashboard/home',
         hidden: true,
         component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
@@ -219,6 +232,7 @@ export const constantRouterMap = [
   {
     path: '/feeds',
     component: Layout,
+    hidden: state_,
     redirect: 'feeds',
     // hidden: true,
     meta: { title: 'feeds', icon: 'layers', noCache: true },
@@ -233,6 +247,7 @@ export const constantRouterMap = [
   {
     path: '/applications',
     component: Layout,
+    hidden: state_,
     redirect: 'applications',
     // hidden: true,
     meta: {
@@ -251,7 +266,6 @@ export const constantRouterMap = [
           noCache: true,
           skipAuth: true
         },
-
         component: () =>
 					import('../view/applications/reviewermatcher/index_.vue')
       }, /*
