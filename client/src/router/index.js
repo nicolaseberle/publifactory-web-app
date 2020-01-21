@@ -225,7 +225,7 @@ export const constantRouterMap = [
       {
         path: '/dashboard/home',
         hidden: true,
-        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
+        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
       }
     ]
   }, //
