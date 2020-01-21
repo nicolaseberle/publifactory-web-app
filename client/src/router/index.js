@@ -191,13 +191,13 @@ export const constantRouterMap = [
         path: '/article',
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
-        component: () => import('../view/dashboard/index.vue')
+        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
-        component: () => import('../view/journals/index.vue')
+        component: (resolve) => import('../view/journals/index.vue').then(resolve)
       },/*
       {
         path: '/data',
@@ -209,12 +209,12 @@ export const constantRouterMap = [
         path: '/invitation',
         name: 'my_invitation',
         meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
-        component: () => import('../view/invitation/index.vue')
+        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
       },
       {
         path: '/dashboard/home',
         hidden: true,
-        component: () => import('../view/dashboard/index.vue')
+        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
       }
     ]
   }, //
@@ -255,7 +255,7 @@ export const constantRouterMap = [
         },
 
         component: () =>
-					import('../view/applications/reviewermatcher/index.vue')
+					import('../view/applications/reviewermatcher/index_.vue')
       }, /*
 			{
 				path: 'summarize',
