@@ -6,8 +6,6 @@ import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
 import Layout_services from '../view/layout_services/Layout'
-// import componentsRouter from './modules/components'
-// import otherModuleRoutes from './module'
 
 Vue.use(VueRouter)
 
