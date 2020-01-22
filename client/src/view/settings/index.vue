@@ -109,7 +109,7 @@
           <el-row>
             <el-col :span="12" :offset="6">
               <div style="text-align:right">
-                <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()">Save</el-button>
+                <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()" :loading="loadingOnSave">Save</el-button>
               </div>
             </el-col>
           </el-row>
@@ -146,7 +146,7 @@
                 <el-row>
                   <el-col :span="12" :offset="6">
                     <div style="text-align:right">
-                      <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()">Change Password</el-button>
+                      <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()" :loading="loadingOnChangePassword">Change Password</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -165,7 +165,7 @@
                   </el-col>
                   <el-col :span="6" :offset="6">
                     <div style="text-align:right">
-                      <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()">Delete</el-button>
+                      <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()" :loading="loadingOnDelete">Delete</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -275,7 +275,9 @@
           required: true, message: this.$t('settings.messagePassword'), trigger: 'blur'
         }]
       },
-      loading: false,
+      loadingOnSave: false,
+      loadingOnChangePassword: false,
+      loadingOnDelete: false,
       loginError: false,
       options: [{
           value: 'Biology',
@@ -348,6 +350,7 @@
       this.imagecropperShow = false
     },
     onSave () {
+      this.loadingOnSave = true;
       this.updateUser({
                   firstname: this.form.firstname,
                   lastname: this.form.lastname,
@@ -363,11 +366,14 @@
                     })
                   }).catch(err => {
                     console.log(err)
-                  });
+                  }).finally(() => {
+                    this.loadingOnSave = false
+                  })
     },
     onChangePassword () {
       this.$refs.formPassword.validate(valid => {
         if (valid) {
+          this.loadingOnChangePassword = true;
           this.changePassword({
             oldPassword:this.formPassword.oldPassword,
             newPassword:this.formPassword.newPassword,
@@ -388,7 +394,9 @@
                  title: this.$t('message.error'),
                  message: this.$t('settings.badOldPassword'),
                  type: 'error'})
-             });
+             }).finally(() => {
+               this.loadingOnChangePassword = false
+             })
 
         }
       })

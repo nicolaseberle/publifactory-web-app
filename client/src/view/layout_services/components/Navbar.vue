@@ -21,11 +21,13 @@
         </div>
         <el-dropdown-menu slot="dropdown">
           <!--<router-link to="/">-->
-          <!--
             <el-dropdown-item @click.native='goToDashboard'>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
-          -->
+            <el-dropdown-item @click.native="doSettings">
+              {{ $t('navbar.settings') }}
+            </el-dropdown-item>
+            <!--</router-link>-->
             <el-dropdown-item @click.native="doLogout">
               {{$t('navbar.logout')}}
             </el-dropdown-item>
@@ -116,7 +118,7 @@ export default {
     ...mapActions(['logout', 'updateGlobalConfig']),
     doLogout () {
       this.logout().then(() => {
-        this.$router.push('/')
+        this.$router.push('/login')
       })
     },
     doSettings () {

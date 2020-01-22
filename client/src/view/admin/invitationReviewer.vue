@@ -51,7 +51,6 @@
       highlight-current-row
       :data="dataFinal"
       style="width: 100%"
-      height="500"
       @row-click="setSelectedRow">
 
       <el-table-column type="expand" width="20">
@@ -309,6 +308,7 @@ tbody {
 .el-form-item__label {
   text-align: left;
 }
+
 .clearfix:before,
   .clearfix:after {
     background-color: white;

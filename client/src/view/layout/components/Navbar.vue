@@ -7,7 +7,7 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-        <div style='vertical-align:middle' class="right-menu-item">
+        <div v-if='state_' style='vertical-align:middle' class="right-menu-item">
           <el-switch
             v-model="flag_user"
             inactive-text="Author view"
@@ -80,7 +80,8 @@ export default {
   data () {
     return {
       flag_user: false,
-      navbar_user: false
+      navbar_user: false,
+      state_: (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production') ? false : true
     }
   },
   computed: {

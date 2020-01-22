@@ -69,7 +69,7 @@ const permission = {
         // console.log('updateRoutes :: ',roles,followedJournals)
         let  routes = filterAsyncRouter(constantRouterMap, roles)
         routes.forEach((parentRoute)=>{
-          if(parentRoute.path==='/feeds'){
+          if(parentRoute.path==='/feeds' && process.env.DEV_LOCAL === false){
 
               parentRoute.children = [
                 {
