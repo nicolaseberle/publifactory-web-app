@@ -31,53 +31,18 @@
     </section>
     <section class="content comments">
       <global-review-section></global-review-section>
-      <el-collapse v-model="activeComments" accordion>
-        <div v-for="t in Comments">
-          <article>
-            this.list
-            <section>
-              <el-collapse-item :title="t.name" :name="t.id">
-                <div class="figure">
-                  <vue-plotly :data="t.currentData" :layout="t.layout" :options="options" />
-                </div>
-                <div style="font-family:Calibri;font-size:1rem">{{t.reviewContent}}</div>
-              </el-collapse-item>
-            </section>
-          </article>
-        </div>
-      </el-collapse>
-      <article>
-        <section>
-          <div class="block">
-            <span>Innovative:</span>
-            <el-slider v-model="innovativescore" :step="20" show-stops></el-slider>
-            <span>Reproducibility:</span>
-            <el-slider v-model="reproducibilityscore" :step="20" show-stops></el-slider>
-            <span>Writing:</span>
-            <el-slider v-model="writingscore" :step="20" show-stops></el-slider>
-            <span>Rigorous:</span>
-            <el-slider v-model="rigorousscore" :step="20" show-stops></el-slider>
-            <span>Statistic relevant:</span>
-            <el-slider v-model="statisticrelevancescore" :step="20" show-stops></el-slider>
-            <span>Quality of biblio</span>
-            <el-slider v-model="qualitybiblioscore" :step="20" show-stops></el-slider>
-          </div>
-        </section>
-      </article>
     </section>
-    <!--<footer class="wrapper">
-    </footer>-->
   </div>
 </template>
 <script>
 import locales from '../../locales/article';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCoffee, faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import partialReviewSection from './components/partial-review-section';
-import globalReviewSection from './components/global-review-section'
+import globalReviewSection from './components/global-review-section';
 import VuePlotly from '@statnett/vue-plotly';
 import asideRightAnimation from '../../utils/js/animation/aside.right.js';
 
@@ -86,39 +51,6 @@ var uuidv4 = require('uuid/v4');
 const debug = require('debug')('frontend');
 
 library.add(faCoffee, faReply);
-
-const layout_1 = {
-  autosize: true,
-  width: 400,
-  height: 400,
-  polar: {
-    radialaxis: {
-      visible: false,
-      range: [0, 5]
-    },
-    angularaxis: {
-      showline: false,
-      rotation: 115
-    }
-  },
-  showlegend: false
-};
-const layout_2 = {
-  autosize: true,
-  width: 400,
-  height: 400,
-  polar: {
-    radialaxis: {
-      visible: false,
-      range: [0, 5]
-    },
-    angularaxis: {
-      showline: false,
-      rotation: 115
-    }
-  },
-  showlegend: false
-};
 
 export default {
   name: 'reportComponent',
@@ -132,86 +64,11 @@ export default {
   props: ['uuid', 'socket'],
   data() {
     return {
-      qualitybiblioscore: 0,
-      statisticrelevancescore: 0,
-      rigorousscore: 0,
-      innovativescore: 0,
-      reproducibilityscore: 0,
-      writingscore: 0,
       form: {
         firstname: '',
         lastname: '',
         creationDate: ''
       },
-      Comments: [
-        {
-          name: 'Summary report',
-          id: '1',
-          reviewContent:
-            'Reviewer 1 : This article describes a new approach to brief evolutions - Reviewer 2:This subject is close to the article of Albeck & Al.',
-          layout: layout_1,
-          currentData: [
-            {
-              type: 'scatterpolar',
-              r: [4, 5, 2, 1, 5, 4, 4, 4],
-              theta: [
-                'Reproducibility',
-                'Open Data',
-                'Quality of biblio',
-                'Statistic Relevance',
-                'Rigorous',
-                'Writing',
-                'Innovative',
-                'Reproducibility'
-              ],
-              fill: 'toself',
-              name: 'review 1'
-            },
-            {
-              type: 'scatterpolar',
-              r: [3, 4, 4, 2, 5, 4, 4, 3],
-              theta: [
-                'Reproducibility',
-                'Open Data',
-                'Quality of biblio',
-                'Statistic Relevance',
-                'Rigorous',
-                'Writing',
-                'Innovative',
-                'Reproducibility'
-              ],
-              fill: 'toself',
-              name: 'review 2'
-            }
-          ]
-        },
-        {
-          name: 'Reviewer 1',
-          id: '2',
-          reviewContent:
-            'This article describes a new approach to brief evolutions',
-          layout: layout_2,
-          currentData: [
-            {
-              type: 'scatterpolar',
-              r: [4, 5, 2, 1, 5, 4, 4, 4],
-              theta: [
-                'Reproducibility',
-                'Open Data',
-                'Quality of biblio',
-                'Statistic Relevance',
-                'Rigorous',
-                'Writing',
-                'Innovative',
-                'Reproducibility'
-              ],
-              fill: 'toself',
-              name: 'review 11'
-            }
-          ]
-        }
-      ],
-      activeComments: ['1'],
       activeName: 'first',
       reports: [],
       editReport: '',
@@ -226,10 +83,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userId', 'roles', 'accessToken'])
+    ...mapGetters(['userId', 'roles', 'accessToken'
+    // , 'partialReviews'
+    ])
   },
 
   async created() {
+    // try {
+    //   await this.fetchPartialReviews({
+    //     articleId: this.articleId,
+    //     accessToken: this.accessToken
+    //   });
+    // } catch (error) {
+    //   console.log('COMP ACTIONS =>', error);
+    // }
+
+    // console.log('COMP=>GETTER', this.partialReviews);
     this.id = this.$route.params && this.$route.params.id;
     this.fetchReport(this.id);
     this.fetchArticle(this.id);
@@ -285,6 +154,7 @@ export default {
     ];
   },
   methods: {
+    // ...mapActions(['fetchPartialReviews']),
     async fetchReport(id) {
       try {
         const response = await axios.get('/api/comments/list/' + id, {
