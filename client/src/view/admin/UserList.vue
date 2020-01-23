@@ -27,9 +27,9 @@
                       </el-button>
                     </div>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item  command="modifyUserSettings">Modify Settings</el-dropdown-item>
-                      <el-dropdown-item  command="blockUser">Block User</el-dropdown-item>
-                      <el-dropdown-item  command="sendMessage">Send a message</el-dropdown-item>
+                      <el-dropdown-item  command="modifyUserSettings" disabled>Modify Settings</el-dropdown-item>
+                      <el-dropdown-item  command="blockUser" disabled>Block User</el-dropdown-item>
+                      <el-dropdown-item  command="sendMessage" disabled>Send a message</el-dropdown-item>
                       <el-dropdown-item  command="resetPassword">Reset Password</el-dropdown-item>
                       <el-dropdown-item  command="remove"><div style="color:'red'">Remove user</div></el-dropdown-item>
                     </el-dropdown-menu>
@@ -45,13 +45,7 @@
     <!-- Form User Creation-->
     <el-dialog title="Create an new user" :visible.sync="formVisible">
       <el-form :model="form">
-        <el-form-item label="Firstname" :label-width="formLabelWidth">
-          <el-input v-model="form.firstname" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Lastname" :label-width="formLabelWidth">
-          <el-input v-model="form.lastname" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Email" :label-width="formLabelWidth">
+        <el-form-item label="Email" label-width="120">
           <el-input v-model="form.email" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -67,14 +61,16 @@
   import DataTable from '../../components/DataTable'
   import locales from '../../locales/users'
   import axios from 'axios'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
   locales,
   data () {
     return {
+      loading: false,
       selectedRow : '',
       selectedUserId: '',
+      selectedUserEmail: '',
       listQuery: {
         page: {current : 1},
         limit: 10
@@ -88,10 +84,7 @@
       },
       rules: {
         email: [{
-          required: true, message: this.$t('user.rules.username'), trigger: 'blur'
-        }],
-        password: [{
-          required: true, message: this.$t('user.rules.password'), trigger: 'blur'
+          required: true, message: this.$t('user.rules.email'), trigger: 'blur'
         }]
       },
       formVisible: false,
@@ -110,23 +103,26 @@
     ])
   },
   methods: {
+    ...mapActions(['resetPassword']),
     fetchUsers () {
       axios.get('/api/users/', {
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        }).then(response => {
-        console.log(response.data.results)
         this.users = response.data.results
         })
     },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
         this.selectedUserId = row._id
+        this.selectedUserEmail = row.email
     },
     actionHandleCommand (action) {
       if(action=='nothing'){
         console.log("nothing")
       }else if(action=='remove'){
         this.deleteUser(this.selectedUserId)
+      }else if(action=='resetPassword'){
+        this.handleResetPassword(this.selectedUserEmail)
       }
     },
     createUser () {
@@ -155,8 +151,25 @@
         this.fetchUsers()
       }).catch(() => {})
     },
-    resetPassword () {
-
+    handleResetPassword (userEmail) {
+      this.resetPassword({email: userEmail})
+      .then((data) => {
+        const h = this.$createElement;
+        this.$message({
+          title: this.$t('message.save.ok'),
+          message: this.$t('login.reset.message'),
+          type: 'success'
+        })
+      }).catch((err) => {
+        const h = this.$createElement;
+        this.$message({
+          title: this.$t('message.save.err'),
+          message: this.$t('login.reset.nomail'),
+          type: 'error'
+        })
+      }).finally(() => {
+        this.loading = false
+      })
     },
     sendMessage () {
 
