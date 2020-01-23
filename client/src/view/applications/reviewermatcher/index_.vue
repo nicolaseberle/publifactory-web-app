@@ -583,7 +583,7 @@ export default {
       fileList:[],
       activeNames: "",
       dataUpload: false,
-      visibleDiagFirstConnexion: true,
+      visibleDiagFirstConnexion: false,
       form: {
         email: '',
         password: '',
@@ -603,10 +603,6 @@ export default {
 
         this.form.email = response.data.email
         })
-
-        if (this.roles.includes('user')) {
-          this.visibleDiagFirstConnexion = false
-        }
         // a guest account has only one role : [guest]
         if (this.roles.includes('guest')) {
           this.visibleDiagFirstConnexion = true

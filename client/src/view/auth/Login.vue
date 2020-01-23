@@ -30,7 +30,7 @@
       </el-form-item>
 
       <div class='register' style='margin:5px 0 10px 0; '>
-        <!--<a href='/register' style="text-align:end">Create an account</a>-->
+        <a href='/register' style="text-align:end">Create an account</a>
         <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
       </div>
 
