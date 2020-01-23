@@ -50,7 +50,9 @@
     ...mapActions(['resetPassword', 'changeLang']),
     onSubmit () {
       this.$refs.form.validate(valid => {
+
         if (valid) {
+          this.loading = true
           this.resetPassword({email: this.form.email})
           .then((data) => {
             const h = this.$createElement;
@@ -67,6 +69,8 @@
               message: this.$t('login.reset.nomail'),
               type: 'error'
             })
+          }).finally(() => {
+            this.loading = false
           })
         }
       })
