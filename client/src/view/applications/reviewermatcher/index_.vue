@@ -454,6 +454,24 @@
       <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
     </el-dialog>
+    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+      <h1>Welcome </h1>
+      <h2></h2>
+      <p>Change your password</p>
+      <br>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="Email">
+          <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="New Password">
+          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type='primary' @click="doLogout">Quit</el-button>
+        <el-button type='primary' @click="changePassword">Save</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -461,7 +479,7 @@
 import axios from 'axios'
 import researcherCard from './researcher_card_test'
 import requestView from './requestView'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 // Import JSON
 import cats_json from './json/cats.json'
@@ -476,7 +494,9 @@ export default {
   computed: {
     ...mapGetters([
       'loggedIn',
-      'accessToken'
+      'accessToken',
+      'roles',
+      'userId'
     ])
   },
   data () {
@@ -563,6 +583,13 @@ export default {
       fileList:[],
       activeNames: "",
       dataUpload: false,
+      visibleDiagFirstConnexion: false,
+      form: {
+        email: '',
+        password: '',
+        firstname: '',
+        lastname: ''
+      }
     }
   },
   async mounted () {
@@ -573,10 +600,37 @@ export default {
         this.formMail.mailDest = response.data.email
         this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
         this.formMail.cgu = true
+
+        this.form.email = response.data.email
         })
+        // a guest account has only one role : [guest]
+        if (this.roles.includes('guest')) {
+          this.visibleDiagFirstConnexion = true
+        }
     }
   },
   methods: {
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
+    doLogout () {
+      this.logout().then(() => {
+        this.$router.push('/login')
+      })
+    },
+    changePassword () {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+
+          await this.resetGuestPassword({id: this.userId,
+            email: this.form.email,
+            password: this.form.password,
+            token: this.accessToken
+          }).then((data) => {
+            console.log(data)
+            this.visibleDiagFirstConnexion = false
+          }).catch((err)=>console.log(err))
+        }
+      })
+    },
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
     },

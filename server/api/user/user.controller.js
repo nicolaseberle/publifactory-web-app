@@ -292,7 +292,6 @@ async function changePassword(req, res, next) {
       throw { code: 422, message: 'Missing parameters.' };
     if (req.body.oldPassword === req.body.newPassword)
       throw { code: 409, message: 'Duplicate entry.' };
-    console.log("ici")
     var userId = req.decoded._id;
     var oldPass = String(req.body.oldPassword);
     var newPass = String(req.body.newPassword);
@@ -329,25 +328,24 @@ async function changeGuestPassword(req, res, next) {
     var newPass = String(req.body.password);
     let user = await User.findById(userId);
     const invite = await Invitation.findById(user.invitationId);
+    // invite.senderId is the password
     if (user.authenticate(invite.senderId)) {
-      const query = {
-        _id: userId
-      };
-      const toSet = {
-        $set: {
-          password: newPass,
-          role: 'user',
-          roles: ['user'],
-          invitationId: 'None'
-        }
-      };
-      const updatedUser = await User.findOneAndUpdate(query, toSet);
-      const token = await jwt.sign({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        role: updatedUser.role
-      }, config.secrets.session, {expiresIn: '7d'});
-      res.json({token: token})
+      user.password = newPass;
+      user.role = 'user';
+      user.roles = ['user'];
+      user.invitationId = 'None';
+      await user.save(function (err) {
+        if (err) return validationError(res, err);
+        var token = jwt.sign({
+            _id: user._id,
+            name: user.name,
+            role: user.role
+          },
+          config.secrets.session, {expiresIn: '7d'});
+        res.json({token: token})
+      });
+    } else {
+      throw { code: 403, message: 'Something is very wrong' };
     }
   } catch (err) {
     console.log(err)
