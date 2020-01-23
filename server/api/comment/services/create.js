@@ -10,7 +10,9 @@ async function create({ userId, articleId, partialReview }, child = false) {
 		...partialReview
 	});
 	await newPartialReview.save();
-	if (!child) article.partialReviews.push(newPartialReview._id);
+	if (!child) {
+		article.partialReviews.push(newPartialReview._id);
+	}
 	await article.save();
 	await newPartialReview.populate('userId').execPopulate();
 	return newPartialReview;

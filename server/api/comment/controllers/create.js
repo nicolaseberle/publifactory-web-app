@@ -13,7 +13,10 @@ async function create(req, res, next) {
 			articleId: req.params.articleId
 		};
 		const response = req.params.partialReviewId
-			? await serviceAddChild({ ...params, partialReviewId: req.params.partialReviewId })
+			? await serviceAddChild({
+					...params,
+					partialReviewId: req.params.partialReviewId
+			  })
 			: await serviceCreate(params);
 
 		return res

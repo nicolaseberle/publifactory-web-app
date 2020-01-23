@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 const actions = {
-	async fetchPartialReviews({ commit, state }, payload) {
+	async fetchPartialReviews({ commit, getters: { accessToken } }, payload) {
 		try {
-			console.log('mapactiopn=>', state);
 			const response = await axios.get(
 				`/api/comments/list/${payload.articleId}`,
 				{
-					headers: { Authorization: `Bearer ${payload.accessToken}` }
+					headers: { Authorization: `Bearer ${accessToken}` }
 				}
 			);
 			commit('getPartialReviewsList', {

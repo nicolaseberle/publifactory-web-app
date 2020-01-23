@@ -3,7 +3,7 @@ const { ApiError } = require('../../../config/error');
 
 async function create(req, res, next) {
 	try {
-		if (!req.body.content) {
+		if (!req.body.contentForAuthor && !req.body.contentForEditor) {
 			throw new ApiError('BAD_PARAMETERS');
 		}
 		const params = {

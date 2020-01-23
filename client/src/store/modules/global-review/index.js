@@ -1,14 +1,14 @@
 import actions from './actions';
-import getters from './getters';
 import mutations from './mutations';
+import getters from './getters';
 
 const state = {
-	partialReviews: []
+	globalReviews: []
 };
 
 export default {
-	state,
 	actions,
+	mutations,
 	getters,
-	mutations
+	state
 };

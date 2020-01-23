@@ -83,25 +83,24 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userId', 'roles', 'accessToken'
-    // , 'partialReviews'
-    ])
+    ...mapGetters(['userId', 'roles', 'accessToken', 'partialReviews'])
   },
 
   async created() {
-    // try {
-    //   await this.fetchPartialReviews({
-    //     articleId: this.articleId,
-    //     accessToken: this.accessToken
-    //   });
-    // } catch (error) {
-    //   console.log('COMP ACTIONS =>', error);
-    // }
 
-    // console.log('COMP=>GETTER', this.partialReviews);
     this.id = this.$route.params && this.$route.params.id;
     this.fetchReport(this.id);
     this.fetchArticle(this.id);
+
+  try {
+      await this.fetchPartialReviews({
+        articleId: this.id,
+      });
+    } catch (error) {
+      console.log('COMP ACTIONS =>', error);
+    }
+
+    console.log('COMP=>GETTER', this.partialReviews);
   },
   mounted() {
     this.socket.on('ADD_COMMENT', data => (this.reports = data.newReports));
@@ -154,7 +153,7 @@ export default {
     ];
   },
   methods: {
-    // ...mapActions(['fetchPartialReviews']),
+    ...mapActions(['fetchPartialReviews']),
     async fetchReport(id) {
       try {
         const response = await axios.get('/api/comments/list/' + id, {

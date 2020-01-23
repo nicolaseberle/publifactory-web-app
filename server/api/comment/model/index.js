@@ -76,5 +76,4 @@ PartialReviewSchema.pre('findById', autoPopulateChildPartialReview)
 	.pre('findById', autoPopulateUser)
 	.pre('find', autoPopulateUser);
 
-mongoose.set('debug', true);
 module.exports = mongoose.model('PartialReview', PartialReviewSchema);

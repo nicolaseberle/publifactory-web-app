@@ -36,6 +36,7 @@ module.exports = function(app) {
 	app.use('/api/articles', jwtCheck, require('./api/article'));
 	app.use('/api/journals', jwtCheck, require('./api/journal'));
 	app.use('/api/comments', jwtCheck, require('./api/comment'));
+	app.use('/api/global-reviews', jwtCheck, require('./api/global-review'));
 	app.use('/api/data', jwtCheck, require('./api/data'));
 	app.use('/api/figure', jwtCheck, require('./api/figure'));
 	app.use('/api/converter', jwtCheck, require('./Converter'));

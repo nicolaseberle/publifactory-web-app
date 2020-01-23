@@ -1,13 +1,19 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const mongoosePaginate = require('mongoose-paginate')
-const mongooseDelete = require('mongoose-delete')
+const mongoosePaginate = require('mongoose-paginate');
+const mongooseDelete = require('mongoose-delete');
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
+
+const scoreConfig = {
+	type: Number,
+	min: 0,
+	max: 5
+};
 
 const GlobalReviewSchema = new Schema(
 	{
-		userId: {
+		user: {
 			type: Schema.Types.ObjectId,
 			ref: 'User'
 		},
@@ -15,45 +21,27 @@ const GlobalReviewSchema = new Schema(
 			type: Boolean,
 			default: false
 		},
-		content: {
+		contentForAuthor: {
+			type: String,
+			required: true
+		},
+		contentForEditor: {
 			type: String,
 			required: true
 		},
 		type: {
 			type: String,
-			enum: ['validate', 'rejected'],
+			enum: ['validate', 'reject'],
 			required: true
 		},
-		innovation: {
-			type: Number,
-			min: 0,
-			max: 5
-		},
-		reproducibility: {
-			type: Number,
-			min: 0,
-			max: 5
-    },
-    writting: {
-			type: Number,
-			min: 0,
-			max: 5
-    },
-    rigor: {
-			type: Number,
-			min: 0,
-			max: 5
-    },
-    stats: {
-			type: Number,
-			min: 0,
-			max: 5
-    },
-    quality: {
-      type: Number,
-      min: 0,
-      max: 5
-    }
+		scores: {
+			innovation: scoreConfig,
+			reproducibility: scoreConfig,
+			writting: scoreConfig,
+			rigor: scoreConfig,
+			stats: scoreConfig,
+			quality: scoreConfig
+		}
 	},
 	// createdAt, updateAt
 	{ timestamps: true }
@@ -62,6 +50,5 @@ const GlobalReviewSchema = new Schema(
 GlobalReviewSchema.plugin(mongooseDelete, { deletedAt: true });
 GlobalReviewSchema.plugin(mongoosePaginate);
 
-
-mongoose.set('debug', true)
-module.exports = mongoose.model('GlobalReview', GlobalReviewSchema)
+mongoose.set('debug', true);
+module.exports = mongoose.model('GlobalReview', GlobalReviewSchema);
