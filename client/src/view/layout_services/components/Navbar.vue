@@ -53,9 +53,8 @@
         </router-link>
       </div>
       <div class='right-menu-item' v-show="!loggedIn">
-        <el-button @click="upgrade" style='background-color: #000; color:#FFF;font-weight:800'
-          disabled>Create Free Account</el-button
-        >
+        <el-button style='background-color: #000; color:#FFF;font-weight:800'
+          disabled>Create Free Account</el-button>
         <!--<el-button style='  border-color: #f56c6c; border-width: 3px; font-weight:800' plain >Free Plan</el-button>-->
       </div>
 
