@@ -112,7 +112,6 @@ module.exports = class Email {
 		const contentLink = "Recover your password!";
 
 		const options = this.modifyTemplate(
-			options,
 			subject,
 			content,
 			link,
