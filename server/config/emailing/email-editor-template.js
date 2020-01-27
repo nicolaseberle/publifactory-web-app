@@ -451,7 +451,7 @@ img.img-responsive {
 								)}.
 									</p>
 										${
-											status === "outfield"
+											status === "outfield" || status === "rejected"
 												? ""
 												: `
 												<br>

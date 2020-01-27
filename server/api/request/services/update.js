@@ -66,17 +66,24 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 	);
 
 	// send an email to the editor if the status === accept/rejected/outfield
-	if (
-		(status && status === "accepted") ||
-		status === "rejected" ||
-		status === "outfield"
-	)
+	if (status && status === "accepted")
+	{
 		sendEmailEditor(
 			updatedRequest._id,
 			"A reviewer accepted to review your article",
 			emailEditorTemplate.answer(updatedRequest, status)
 		);
+	}
+	else if (	(status && status === "rejected") ||
+						status === "outfield") {
+		sendEmailEditor(
+			updatedRequest._id,
+			"A reviewer rejected to review your article",
+			emailEditorTemplate.answer(updatedRequest, status)
+		);
+	}
 	return mergedRequest;
+
 }
 
 module.exports = update;
