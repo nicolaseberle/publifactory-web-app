@@ -55,9 +55,7 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.followedJournals = list.data.journals
-        console.log(this.followedJournals)
         this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
-
       }).catch(err => {
         console.error(err)
       })
