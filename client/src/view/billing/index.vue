@@ -138,10 +138,11 @@ export default{
       .then( async (res) => {
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
-        if ((this.amountTotal - this.unitPrice)>0){
-          this.toto = 0}
+        if ((this.amountTotal - this.unitPrice*10)<=0){
+          this.toto = 0
+        }
         else{
-          this.toto = this.amountTotal - this.unitPrice
+          this.toto = this.amountTotal - this.unitPrice*10
         }
         this.isData = true;
 
