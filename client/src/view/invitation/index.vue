@@ -160,4 +160,5 @@ tbody {
     background-color: white;
     font-size: 1.2rem;
   }
+  
 </style>
