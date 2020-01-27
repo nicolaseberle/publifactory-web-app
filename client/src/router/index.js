@@ -419,6 +419,20 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: 'billing',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/billing',
+        name: 'my_billing',
+        component: resolve => {
+					import('../view/billing/index.vue').then(resolve)
+        }
+      }
+    ]
+  },
+  {
     path: '',
     component: Layout,
     hidden: true,

@@ -43,6 +43,9 @@
             <el-dropdown-item @click.native="doSettings">
               {{ $t('navbar.settings') }}
             </el-dropdown-item>
+            <el-dropdown-item @click.native="doBilling">
+              {{ $t('navbar.billing') }}
+            </el-dropdown-item>
             <!--</router-link>-->
             <el-dropdown-item @click.native="doLogout">
               {{$t('navbar.logout')}}
@@ -118,6 +121,9 @@ export default {
     },
     doSettings () {
         this.$router.push('/settings')
+    },
+    doBilling () {
+        this.$router.push('/billing')
     },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')

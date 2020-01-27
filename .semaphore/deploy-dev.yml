@@ -33,6 +33,6 @@ blocks:
               sudo ./script_docker.sh stop;
               git reset --hard origin/dev;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
-              sudo ./script_docker.sh start dev;
+              sudo ./script_docker.sh start staging;
               sudo chown -R collin_q:publifactory-team .;"
     dependencies: []
