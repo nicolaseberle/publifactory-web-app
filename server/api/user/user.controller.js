@@ -456,6 +456,34 @@ async function updateUser(req, res, next) {
   }
 }
 /**
+ * @function changeAvatar
+ * @description This function is used to update the user avatar
+ * This function takes 3 parameters in the body field :
+ *  - avatar, base64 data
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise<*>}
+ */
+async function changeAvatar(req, res, next) {
+  try {
+    if (!(req.body.avatar))
+      throw { code: 422, message: 'Missing parameters.' };
+    var userId = req.decoded._id;
+    var avatar = String(req.body.avatar);
+    const user = await User.findOneAndUpdate(
+      {_id: userId},
+      {$set: {avatar}},
+      {new: true});
+    if (!user)
+      throw { code: 404, message: 'User not found.'};
+    return res.json(user);
+  } catch (err) {
+    console.log(err )
+    return next(err)
+  }
+}
+/**
  * @function me
  * @description This function is used to get the user's information
  * It doesn't take any parameters and just recover the user's id from the decoded JWT
@@ -512,6 +540,7 @@ module.exports = {
   emailConfirmation: emailConfirmation,
   me: me,
   updateUser: updateUser,
+  changeAvatar: changeAvatar,
   resetPassword: resetPassword,
   index: index,
   changeGuestPassword: changeGuestPassword,
