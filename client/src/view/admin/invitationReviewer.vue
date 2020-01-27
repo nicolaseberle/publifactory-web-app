@@ -135,7 +135,9 @@
         </el-table-column>-->
         <el-table-column class-name="status-col" label="Status" width="120">
           <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
-            <el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
+            <!--<el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>-->
+            <el-tag v-if='props.row.history[props.row.history.length - 1].status=="done"' class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 2].status)" >{{ props.row.history[props.row.history.length - 2].status }}</el-tag>
+            <el-tag v-else class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 1].status)" >{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -214,6 +216,21 @@ export default{
     }
   },
   methods: {
+    statusInvitationFilter (status) {
+      const statusMap = {
+        done: 'success',
+        accepted: 'success',
+        pending: 'primary',
+        read:  'primary',
+        sent: 'primary',
+        bademail: 'warning',
+        unsubscribed: 'warning',
+        outfield: 'info',
+        rejected: 'danger',
+        removed: 'danger'
+      }
+      return statusMap[status]
+    },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
     },
