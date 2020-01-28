@@ -213,4 +213,5 @@ client/dist
 database/
 
 # static file
-./server/contents/
+./server/contents/*
+./server/contents/avatar/*

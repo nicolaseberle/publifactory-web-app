@@ -354,7 +354,7 @@
     changeAvatar(image) {
       this.loadingOnSaveAvatar = true
       console.log(image)
-      axios.post(`/api/users/avatars/${this.userId}`,{"avatar":String(image)},{headers: {
+      axios.post(`/api/users/avatars/`,{"avatar":String(image)},{headers: {
         'Authorization': `Bearer ${this.accessToken}`},
       }).then((data) => {
          console.log("settings saved")

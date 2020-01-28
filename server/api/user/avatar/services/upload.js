@@ -17,7 +17,11 @@ async function upload({ userId, avatar }) {
 	const user = await User.findById(userId);
 	if (!user) throw { code: 400, message: "USER_NOT_FOUND" };
 	if (user.avatar) {
-		if (!user.avatar.startsWith("/static")) fs.unlinkSync(`.${user.avatar}`);
+		try {
+			if (!user.avatar.startsWith("/static")) fs.unlinkSync(`.${user.avatar}`);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 	const fileName = `${uuidv4()}.png`;
 	const filePath = `./server/contents/avatars/${userId}`;
