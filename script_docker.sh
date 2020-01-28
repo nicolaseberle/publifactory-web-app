@@ -86,24 +86,28 @@ execution_time () {
 start () {
   build_container
   up_database
-  echo -ne '###################       (88%)\r'
-  debug "Up the API.\n"
-  sudo docker-compose up --no-deps -d api
-  debug "Up the client WebApp.\n"
-  echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
   then
+    debug "STARTING IN PRODUCTION"
+    debug "Up the API.\n"
+    sudo docker-compose up --no-deps -d api
+    debug "Up the client WebApp.\n"
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
     debug "Up Certbot\n"
     sudo docker-compose up  --no-deps -d certbot
   elif [[ ${options} = "staging" ]];
   then
+    debug "STARTING IN STAGING"
+    debug "Up the API.\n"
+    sudo docker-compose -f docker-compose-staging.yml up --no-deps -d api
+    debug "Up the client WebApp.\n"
     debug "Up NGiNX \n"
-    sudo docker-compose up --no-deps -d nginx
+    sudo docker-compose -f docker-compose-staging.yml up --no-deps -d nginx
     debug "Up Certbot\n"
-    sudo docker-compose up  --no-deps -d certbot
+    sudo docker-compose -f docker-compose-staging.yml up  --no-deps -d certbot
   else
+    debug "##############################################################################################"
     debug "Launching the DEV app\n"
     sudo docker-compose up -d client_dev
   fi
