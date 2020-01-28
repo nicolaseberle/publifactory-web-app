@@ -29,7 +29,7 @@ module.exports = function (app) {
   app.use(cors());
   app.use(logger('dev'));
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: "5mb" }));
   app.use(methodOverride());
   app.use(cookieParser());
   app.use(passport.initialize());
