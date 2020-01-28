@@ -129,7 +129,7 @@ export default{
        })
       .then( async (res) => {
         this.mylistrequest = res.data.data;
-        this.page.total = res.data.data.length
+        this.page.total = res.data.data.length;
         this.isData = true;
       })
     }

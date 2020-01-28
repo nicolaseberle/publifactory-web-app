@@ -110,6 +110,7 @@ export default{
       numberTotal: 0,
       unitPrice: 3,
       amountTotal: 0,
+      toto: 0,
       mybill: [],
       mylistrequest: [],
       tableData: []
@@ -132,7 +133,7 @@ export default{
 
     },
     getMyRequest(){
-      axios.get('/api/requests/myRequest/'+this.userId+'?page=1&count=10',{
+      axios.get('/api/requests/myRequest/'+this.userId+'?page=1&count=1000',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( async (res) => {
