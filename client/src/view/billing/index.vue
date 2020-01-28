@@ -44,8 +44,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pv2">
-        <div class='flex items-center mv1'>
+      <div class="pv2 ">
+        <div class='flex-subbill items-center mv1'>
         <div class='w-50 w-75-ns'>
           <div class='f5 gray tr'>
             Subtotal
@@ -57,7 +57,7 @@
           </div>
         </div>
       </div>
-      <div class='flex items-center mv1'>
+      <div class='flex-subbill items-center mv1'>
         <div class='w-50 w-75-ns'>
           <div class='f5 gray tr'>
             Free monthly credit
@@ -69,7 +69,7 @@
           </div>
         </div>
       </div>
-      <div class='flex items-center mv2'>
+      <div class='flex-subbill items-center mv2'>
         <div class='w-50 w-75-ns'>
           <div class='f5 gray tr'>
             This month’s running total ({{beginMonth}} - Today)
@@ -211,19 +211,18 @@ export default{
   font-family: "DNLTPro-regular";
   line-height: 1.5;
 }
-.el-table th{
+.bill-table .el-table th{
   background-color: #FFF;
   color: #333;
   font-size:1rem;
 }
-.el-table__header{
-  background-color: #FFF;
-}
 .bill-table{
   margin-top:50px;
-
-
 }
+.bill-table .el-table__header{
+  background-color: #FFF;
+}
+
 .pv2{
   padding-top: .5rem;
   padding-bottom: .5rem;
@@ -259,7 +258,7 @@ h4{
 .tr{
       text-align: right;
 }
-.flex {
+.flex-subbill {
     display: -ms-flexbox;
     display: flex;
 }
