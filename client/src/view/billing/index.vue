@@ -53,7 +53,7 @@
         </div>
         <div class='w-50 w-25-ns'>
           <div class='gray tr'>
-            {{amountTotal}}
+            ${{amountTotal}}
           </div>
         </div>
       </div>
