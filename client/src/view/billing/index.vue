@@ -153,8 +153,6 @@ export default{
            amountTotal: this.amountTotal,
            unitPrice: this.unitPrice
          }]
-
-
       })
     }
   }
