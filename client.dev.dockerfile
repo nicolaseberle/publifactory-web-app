@@ -11,4 +11,4 @@ ADD ./package.json /src/package.json
 RUN npm install --silent
 EXPOSE 9001
 
-CMD npm run client-prod
+CMD npm run client

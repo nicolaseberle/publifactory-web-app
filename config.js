@@ -53,7 +53,21 @@ const google = {
   callbackUrl: 'http://localhost:9001'
 }
 
-const frontend = {
+const frontendProd = 	 {
+  index: path.resolve(__dirname, './client/dist/index.html'),
+  assetsRoot: path.resolve(__dirname, './client/dist'),
+  assetsSubDirectory: 'static',
+  assetsPublicPath: '/',
+  cssSourceMap: true,
+  // Gzip off by default as many popular static hosts such as
+  // Surge or Netlify already gzip all static assets for you.
+  // Before setting to `true`, make sure to:
+  // npm install --save-dev compression-webpack-plugin
+  productionGzip: false,
+  productionGzipExtensions: ['js', 'css']
+}
+
+const frontendDev = {
   port: 9001,
   assetsRoot: path.resolve(__dirname, './client/src'),
   assetsSubDirectory: 'static',
@@ -87,7 +101,7 @@ const frontend = {
   cssSourceMap: false
 }
 
-const backend = Object.assign({}, backendBase, {
+const backendDev = Object.assign({}, backendBase, {
   resetDB: 'false',
   seedDB: 'true',
   mongo: {
@@ -95,14 +109,40 @@ const backend = Object.assign({}, backendBase, {
     useNewUrlParser: true
   }
 })
+
+const backendProd = Object.assign({}, backendBase, {
+  // whether backend servers the frontend, you can use nginx to server frontend and proxy to backend services
+  // if set to true, you need no web services like nginx
+  serverFrontend: true,
+  resetDB: process.env.RESETDB || 'false',
+  seedDB: process.env.SEEDB || 'false',
+  // Server IP
+  ip: process.env.OPENSHIFT_NODEJS_IP || process.env.ip || undefined,
+
+  // Server port
+  port: process.env.APP_PORT || process.env.PORT || 8080,
+
+  // Socket.io port
+  socketPort: process.env.SOCKET_PORT || 4001,
+
+  // MongoDB connection options
+  mongo: {
+    // uri: process.env.MONGODB_URI
+    uri: 'mongodb://localhost:27017/'
+  },
+
+  // frontend folder
+  frontend: path.resolve(__dirname, './client/dist')
+})
+
 const staging = {
   url,
   env: 'staging',
   email,
   orcid,
   google,
-  frontend,
-  backend
+  frontend: frontendProd,
+  backend: backendProd
 }
 const production = {
   url,
@@ -110,8 +150,8 @@ const production = {
   email,
   orcid,
   google,
-  frontend,
-  backend
+  frontend: frontendProd,
+  backend: backendProd
 }
 const development = {
   url,
@@ -119,8 +159,8 @@ const development = {
   email,
   orcid,
   google,
-  frontend,
-  backend
+  frontend: frontendDev,
+  backend: backendDev
 }
 
 let config = null
@@ -133,7 +173,6 @@ switch (process.env.NODE_ENV) {
     break
   case 'staging':
     config = staging
-    console.log('SET CONFIG')
     process.env.NODE_ENV = 'poduction'
     break
   default:
