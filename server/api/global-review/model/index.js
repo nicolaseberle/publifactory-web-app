@@ -50,5 +50,7 @@ const GlobalReviewSchema = new Schema(
 GlobalReviewSchema.plugin(mongooseDelete, { deletedAt: true });
 GlobalReviewSchema.plugin(mongoosePaginate);
 
-mongoose.set('debug', true);
+if (process.env.NODE_ENV === 'development') {
+	mongoose.set('debug', true);
+}
 module.exports = mongoose.model('GlobalReview', GlobalReviewSchema);

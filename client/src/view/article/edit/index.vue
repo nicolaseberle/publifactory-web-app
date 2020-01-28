@@ -257,7 +257,6 @@ export default {
     this.id = this.$route.params && this.$route.params.id;
     this.currentEditor = 'lightEditorComponent';
     this.getStatus().then(() => {
-      console.log('####', this.articleInfo.authors);
       this.isLead = this.articleInfo.authors.reduce((acc, author) => {
         if (
           this.userId === author.author._id &&

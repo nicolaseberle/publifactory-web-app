@@ -25,11 +25,9 @@ export default {
   },
   async created() {
     try {
-      console.log('ARTICLEID=>', this.articleId);
       await this.getGlobalReviews({
         articleId: this.articleId
       });
-      console.log('====>', this.globalReviews);
     } catch (error) {
       console.warn('error=>', error);
     }

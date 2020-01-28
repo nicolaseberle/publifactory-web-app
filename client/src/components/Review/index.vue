@@ -87,20 +87,17 @@ export default {
   },
 
   async created() {
-
     this.id = this.$route.params && this.$route.params.id;
     this.fetchReport(this.id);
     this.fetchArticle(this.id);
 
-  try {
+    try {
       await this.fetchPartialReviews({
-        articleId: this.id,
+        articleId: this.id
       });
     } catch (error) {
       console.log('COMP ACTIONS =>', error);
     }
-
-    console.log('COMP=>GETTER', this.partialReviews);
   },
   mounted() {
     this.socket.on('ADD_COMMENT', data => (this.reports = data.newReports));

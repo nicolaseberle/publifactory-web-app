@@ -1,7 +1,23 @@
 <template>
   <div class="global-review-slider-container">
     <span class="global-review-slider-label">{{ score.label }} :</span>
-    <el-slider class="global-review-slider" v-model="score.score" :min="min" :max="max" show-stops></el-slider>
+    <el-slider
+      v-if="!disabled"
+      class="global-review-slider"
+      v-model="score.score"
+      :min="min"
+      :max="max"
+      show-stops
+      disabled
+    ></el-slider>
+    <el-slider
+      v-if="disabled"
+      class="global-review-slider"
+      v-model="score.score"
+      :min="min"
+      :max="max"
+      show-stops
+    ></el-slider>
   </div>
 </template>
 
@@ -9,7 +25,11 @@
 export default {
   name: 'globalReviewSlider',
   props: {
-    score: Object
+    score: Object,
+    disabled: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

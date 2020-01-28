@@ -251,7 +251,6 @@ export default {
         .catch(() => {});
     },
     upvoteComment() {
-      console.log('====================================');
       debug('upvoteComment');
       this.scores.upvote = ++this.scores.upvote;
       axios
@@ -268,8 +267,6 @@ export default {
         });
     },
     downvoteComment() {
-      console.log('====================================');
-
       debug('downvoteComment');
       this.scores.upvote = --this.scores.upvote;
       axios

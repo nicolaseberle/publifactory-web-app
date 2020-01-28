@@ -36,9 +36,6 @@ export default {
   },
   components: {
     'font-awesome-icon': FontAwesomeIcon
-  },
-  created() {
-    console.log();
   }
 };
 </script>

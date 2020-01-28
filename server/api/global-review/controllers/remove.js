@@ -15,7 +15,6 @@ async function remove(req, res, next) {
 			.json(response)
 			.end();
 	} catch (error) {
-		console.log(error);
 		return next(error);
 	}
 }

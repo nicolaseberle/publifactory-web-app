@@ -12,7 +12,7 @@ async function create({ userId, articleId, globalReview }) {
 	await newGlobalReview.save();
 	article.globalReviews.push(newGlobalReview._id);
 	await article.save();
-	await newGlobalReview.populate('userId').execPopulate();
+	await newGlobalReview.populate('user').execPopulate();
 	return newGlobalReview;
 }
 

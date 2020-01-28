@@ -9,7 +9,6 @@ async function list({ articleId }) {
 		}
 	});
 	if (!article) throw new ApiError('ARTICLE_NOT_FOUND');
-	console.log(article.globalReviews);
 	return article.globalReviews;
 }
 

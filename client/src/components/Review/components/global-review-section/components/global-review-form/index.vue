@@ -24,9 +24,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import globalReviewSlider from './components/global-review-slider';
+import { mapActions } from 'vuex';
+import globalReviewSlider from '../global-review-slider';
 import globalReviewInput from './components/global-review-input';
+
 const defaultScore = [
   { label: 'Innovation', value: 'innovation', score: 0 },
   { label: 'Reproducibility', value: 'reproducibility', score: 0 },
@@ -53,10 +54,16 @@ export default {
   methods: {
     ...mapActions(['addGlobalReview']),
     async submitGlobalReview() {
+      const t = await this.$confirm(
+        `Are you sure you want to submit the review, you will not be able to delete or edit it after`,
+        this.$t('confirm.title'),
+        {
+          type: 'warning'
+        }
+      );
       const child = this.$children.filter(child => {
         if (child.$options.name === 'globalReviewInput') return child;
       });
-      console.log(child);
       const scores = this.scores.reduce((acc, { value, score }) => {
         return { ...acc, [value]: score };
       }, {});
@@ -90,7 +97,6 @@ export default {
   align-self: center;
 }
 .global-review-form-container {
-  padding: 0px 10px 0px 10px;
   display: flex;
   flex-direction: column;
 }
