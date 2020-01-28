@@ -1,7 +1,7 @@
 <template>
 <div class='app-container'>
-  <!--
-  <div v-for='publisher in listOfPublisher' >
+
+  <div v-for='publisher in listOfPublisher' style='margin-bottom:100px;'>
     <h4>{{publisher.name}}</h4>
   <div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
     <div class='flex-l items-center justify-between' style='display: table-cell;'>
@@ -9,19 +9,8 @@
       <div class='bill-content-free-plan'>Your made {{publisher.nb}} requests</div>
     </div>
     <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-      <el-button v-on:click="upgrade()">Request to remove limit</el-button>
+      <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
     </div>
-  </div>
-  </div>
--->
-<div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
-  <div class='flex-l items-center justify-between' style='display: table-cell;'>
-    <div class='bill-title-free-plan'>Free Plan</div>
-    <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
-  </div>
-  <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-    <el-button v-on:click="upgrade()">upgrade to remove the limit</el-button>
-  </div>
   </div>
   <div class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
@@ -30,10 +19,10 @@
         :data="listOfPublisher"
         style="width: 100%">
         <el-table-column
-          label="Publisher"
+          label="Title"
           >
           <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.name }}</p>
+            <p style="text-align:center;">Titre de l'article</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -97,6 +86,18 @@
       </div>
     </div>
   </div>
+
+  </div>
+
+<!--<div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+  <div class='flex-l items-center justify-between' style='display: table-cell;'>
+    <div class='bill-title-free-plan'>Free Plan</div>
+    <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
+  </div>
+  <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+    <el-button v-on:click="upgrade()">upgrade to remove the limit</el-button>
+  </div>
+</div>-->
 
 </div>
 </template>
