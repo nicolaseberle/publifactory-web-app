@@ -1,46 +1,60 @@
 <template>
 <div class='app-container'>
+  <!--
+  <div v-for='publisher in listOfPublisher' >
+    <h4>{{publisher.name}}</h4>
   <div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
     <div class='flex-l items-center justify-between' style='display: table-cell;'>
       <div class='bill-title-free-plan'>Free Plan</div>
-      <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
+      <div class='bill-content-free-plan'>Your made {{publisher.nb}} requests</div>
     </div>
     <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-      <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+      <el-button v-on:click="upgrade()">Request to remove limit</el-button>
     </div>
   </div>
-  <div class='bill-table'>
+  </div>
+-->
+<div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+  <div class='flex-l items-center justify-between' style='display: table-cell;'>
+    <div class='bill-title-free-plan'>Free Plan</div>
+    <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
+  </div>
+  <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+    <el-button v-on:click="upgrade()">upgrade to remove the limit</el-button>
+  </div>
+  </div>
+  <div class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
 
   <el-table
-        :data="tableData"
+        :data="listOfPublisher"
         style="width: 100%">
         <el-table-column
           label="Publisher"
           >
           <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.user }}</p>
+            <p style="text-align:center;">{{ props.row.name }}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="Price($/request)"
           width="200">
           <template slot-scope="props">
-            <p style="text-align:center;">${{props.row.unitPrice }}/request</p>
+            <p style="text-align:center;">${{unitPrice }}/request</p>
           </template>
         </el-table-column>
         <el-table-column
           label="Usage(request)"
           width="200">
           <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.numberTotal }}</p>
+            <p style="text-align:center;">{{ props.row.nb }}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="Total"
           width="200">
           <template slot-scope="props">
-            <p style="text-align:center;">${{ props.row.amountTotal }}</p>
+            <p style="text-align:center;"></p>
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +127,8 @@ export default{
       toto: 0,
       mybill: [],
       mylistrequest: [],
-      tableData: []
+      tableData: [],
+      listOfPublisher: []
     }
   },
   created () {
@@ -137,6 +152,20 @@ export default{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( async (res) => {
+        var outJSON = res.data.data.map(item=>{return {journal:item.editor.journal}})
+
+        var groupBy = function(xs, key) {
+          return xs.reduce(function(rv, x) {
+            (rv[x[key]] = rv[x[key]] || []).push(x);
+            return rv;
+          }, {});
+        };
+        var groubedByPublisher = groupBy(outJSON, 'journal')
+        //this.listOfPublisher = Object.keys(groubedByPublisher)
+        Object.keys(groubedByPublisher).forEach((category)=>{
+          console.log(category,groubedByPublisher[category].length)
+          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length})
+        });
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
         if ((this.amountTotal - this.unitPrice*10)<=0){
