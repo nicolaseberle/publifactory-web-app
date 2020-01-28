@@ -3,12 +3,12 @@
     <div class="app-container">
       <div v-if='!loggedIn' class="bandeau">ALPHA v0.3.8</div>
       <hgroup>
-        <h1>Reviewer search engine</h1>
-        <h2>Getting the most relevant reviewers for your paper</h2>
-        <div style="display:flex; justify-content:space-between">
+        <h1><span style='letter-spacing: -0.04em;'>Reviewer search engine</span></h1>
+        <h2><span style='letter-spacing: -0.04em;'>Getting the most relevant reviewers for your paper <span class='title-highlight'>in 3 steps</span></span></h2>
+        <!--<div style="display:flex; justify-content:space-between">
           <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</div></div>
           <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles. Then, you can <b>contact the suggested reviewers</b> by sending them an invitation to review the article.</div></div>
-        </div>
+        </div>-->
       </hgroup>
 
       <!-- popup message erreur -->
@@ -22,6 +22,13 @@
           <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
         </span>
       </el-dialog>
+      <div style='display: block;'>
+        <div class='SimpleSteps'>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Load your article<br> & run the search</div></div>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Select a reviewer</div></div>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Send an invitation</div></div>
+        </div>
+      </div>
 
       <!-- <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
@@ -1292,10 +1299,12 @@ export default {
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
+  font-size:3rem;
 }
 
 h2 {
   font-family: 'DNLTPro-bold';
+  font-size:2rem;
 }
 
 p {
@@ -1532,5 +1541,54 @@ hgroup {
     padding: 5px 7px;
   }
 }
-
+.title-highlight{
+  background-color: rgba(161,198,255,0.2);
+  color: #003380;
+  padding: 0 0.25rem;
+}
+.SimpleSteps{
+  counter-reset: section;
+  display: flex;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 60px auto 80px auto;
+  position: relative;
+}
+.SimpleSteps__step{
+  flex-basis: 0;
+  flex-grow: 1;
+  position: relative;
+  text-align: center;
+}
+.SimpleSteps__step-content{
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2rem;
+}
+.SimpleSteps__step::before {
+  background: white;
+  border-radius: 50%;
+  border: solid 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 0 10px white;
+  content: counter(section);
+  counter-increment: section;
+  display: block;
+  font-size: 1rem;
+  height: 28px;
+  line-height: 24px;
+  margin: 0 auto 1rem;
+  position: relative;
+  width: 28px;
+  z-index: 2;
+}
+.SimpleSteps::before {
+  background: rgba(0, 0, 0, 0.38);
+  content: '';
+  height: 1px;
+  left: 140px;
+  position: absolute;
+  right: 120px;
+  top: 14px;
+  z-index: 1;
+}
 </style>
