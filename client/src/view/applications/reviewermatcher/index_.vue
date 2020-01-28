@@ -6,8 +6,8 @@
         <h1>Reviewer search engine</h1>
         <h2>Getting the most relevant reviewers for your paper</h2>
         <div style="display:flex; justify-content:space-between">
-          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
-          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
+          <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</div></div>
+          <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles. Then, you can <b>contact the suggested reviewers</b> by sending them an invitation to review the article.</div></div>
         </div>
       </hgroup>
 
@@ -1326,8 +1326,9 @@ hgroup {
   width:48%;
   text-align:justify;
   text-align-last:center;
-  padding: 5px 15px 10px 15px;
+  padding: 10px 10px 10px 10px;
   background-color: #f1f1f1;
+  border-radius: 5px;
 }
 
 .el-tag  {
