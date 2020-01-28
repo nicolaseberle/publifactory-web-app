@@ -50,10 +50,10 @@ build_container () {
   debug "Begin build container.\n"
   if [[ ${options} = "staging" ]];
   then
-    echo -ne "USING STAGING CONFIG"
+    debub "USING STAGING CONFIG"
     sudo docker-compose -f docker-compose-staging.yml build
   else
-    echo -ne "USING PROD CONFIG"
+    debub "USING PROD CONFIG"
     sudo docker-compose build
   fi
   echo -ne '###############           (72%)\r'
