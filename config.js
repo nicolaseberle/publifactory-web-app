@@ -2,7 +2,6 @@
  * Project config file includes dev/prod and frontend/backend
  */
 var path = require('path')
-console.log('ENV/:::::config', process.env.NODE_ENV)
 
 var backendBase = {
   // Root path of server
@@ -173,7 +172,7 @@ switch (process.env.NODE_ENV) {
     break
   case 'staging':
     config = staging
-    process.env.NODE_ENV = 'poduction'
+    // process.env.NODE_ENV = 'poduction'
     break
   default:
     config = development
@@ -181,4 +180,9 @@ switch (process.env.NODE_ENV) {
 }
 
 console.log('CONFIG', process.env.NODE_ENV)
+
+console.log('---------------------------------')
+console.log(config)
+console.log('---------------------------------')
+
 module.exports = Object.assign({}, config)
