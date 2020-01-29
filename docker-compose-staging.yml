@@ -22,7 +22,7 @@ services:
       WAIT_HOSTS: mongo:27017
       NODE_ENV: staging
       BASE_MONGO: mongo
-      ROOT_APP: "https://dev.publifactory.co"
+      ROOT_APP: "http://dev.publifactory.co"
       DOCKER: "true"
     networks:
       - backend
