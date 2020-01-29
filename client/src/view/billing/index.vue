@@ -1,18 +1,34 @@
 <template>
-<div class='app-container'>
-
-  <div v-for='publisher in listOfPublisher' style='margin-bottom:100px;'>
-    <h4>{{publisher.name}}</h4>
-  <div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
-    <div class='flex-l items-center justify-between' style='display: table-cell;'>
-      <div class='bill-title-free-plan'>Free Plan</div>
-      <div class='bill-content-free-plan'>Your made {{publisher.nb}} requests</div>
+<div class='app-container bill-page'>
+<h2>Billing</h2>
+  <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
+    <div slot="header" class="clearfix one-bill">
+    <h2>{{publisher.name}}</h2>
     </div>
-    <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-      <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+    <div class="one-bill-content">
+      <div v-if="publisher.nb<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+        <div class='flex-l items-center justify-between' style='display: table-cell;'>
+          <div class='bill-title-free-plan'>Free Plan</div>
+          <div class='bill-content-free-plan'>Your made {{publisher.nb}} requests</div>
+        </div>
+        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+        </div>
+      </div>
+      <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
+        <div class='flex-l items-center justify-between' style='display: table-cell;'>
+          <div class='bill-title-free-plan'>Pipelines disabled</div>
+          <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
+        </div>
+        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+        </div>
+      </div>
+      <div style='text-align:right;'>
+        <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
+      </div>
     </div>
-  </div>
-  <div class='bill-table' style='margin-top:50px;'>
+  <div v-if="publisher.hidden===false" class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
 
   <el-table
@@ -87,8 +103,8 @@
     </div>
   </div>
 
-  </div>
 
+</el-card>
 <!--<div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
   <div class='flex-l items-center justify-between' style='display: table-cell;'>
     <div class='bill-title-free-plan'>Free Plan</div>
@@ -98,6 +114,59 @@
     <el-button v-on:click="upgrade()">upgrade to remove the limit</el-button>
   </div>
 </div>-->
+
+<!--
+<el-dialog title="Activation" :visible.sync="dialogFormVisible" width="75%">
+
+  <div style="display:flex; justify-content:space-between">
+    <div class="text_block">
+      <h2>Activate the account yourself</h2>
+      <p>"A pay as you go" means we will recieve the bill at the end of the month. You can stop using the service when you want</p>
+      <div style="display: block; padding: 10px 10px;">
+        <el-form :model="form">
+          <el-form-item label="Firstname" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Lastname" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Email" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Address" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer" style='text-align:center'>
+        <el-button type="primary" @click="dialogFormVisible = false">Update</el-button>
+      </span>
+    </div>
+    or
+    <div class="text_block">
+      <div style="display: block; padding: 10px 10px;">
+        <h2>Send activation to the publisher</h2>
+        <p>We will send a link to the publisher to activate the journal account.</p>
+        <el-form :model="form">
+          <el-form-item label="Publisher" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Firsname" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Lastname" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Email" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
+          </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer" style='text-align:center'>
+        <el-button type="primary" @click="dialogFormVisible = false">Send the request to the publisher</el-button>
+      </span>
+      </div></div>
+  </div>
+</el-dialog>-->
 
 </div>
 </template>
@@ -119,6 +188,9 @@ export default{
   },
   data () {
     return {
+      formLabelWidth: '100px',
+      dialogFormVisible: false,
+      form: {name:''},
       isData: false,
       endMonth: "",
       selectedRow: "",
@@ -146,7 +218,7 @@ export default{
         this.selectedRow = row
     },
     upgrade () {
-
+      this.$router.push('/pricing')
     },
     getMyRequest(){
       axios.get('/api/requests/myRequest/'+this.userId+'?page=1&count=1000',{
@@ -165,7 +237,7 @@ export default{
         //this.listOfPublisher = Object.keys(groubedByPublisher)
         Object.keys(groubedByPublisher).forEach((category)=>{
           console.log(category,groubedByPublisher[category].length)
-          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length})
+          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true})
         });
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
@@ -201,11 +273,15 @@ export default{
 .purple {
     color: rgb(48, 65, 86);
 }
-
+.red {
+    color:#ea261a;
+}
 .bg-lightest-purple {
     background-color: #F0F7FF;
 }
-
+.bg-lightest-red {
+    background-color: #fdd;
+}
 .bl{
   border-left-style: solid;
 }
@@ -266,6 +342,7 @@ export default{
   margin-top: .5rem;
   margin-bottom: .5rem;
 }
+
 h4{
   font-family: "DNLTPro-bold";
   line-height: 1.5;
@@ -296,5 +373,43 @@ h4{
 }
 .f5 {
   font-size: .875rem;
+}
+.one-bill h2{
+    font-family: "DNLTPro-bold";
+    text-align:left;
+    font-size:1.5rem;
+  }
+  .bill-page h2{
+    font-family: "DNLTPro-bold";
+    text-align:left;
+    font-size:1.7rem;
+  }
+
+.one-bill-content{
+  margin-left:5px;
+}
+.el-card__header {
+    padding: 0px 20px;
+    border-bottom: 1px solid #EBEEF5;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .el-card .el-card__header {
+    background-color: #FFF;
+    color: #333333;
+    font-size: 1rem;
+    text-align: center;
+    font-weight: bold;
+}
+.text_block {
+  text-align:justify;
+  line-height: 24px;
+  display:block;
+  width:48%;
+  text-align:justify;
+  text-align-last:center;
+  padding: 10px 10px 10px 10px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
 }
 </style>
