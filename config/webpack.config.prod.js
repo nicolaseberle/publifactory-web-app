@@ -16,6 +16,8 @@ const CopyPlugin = require('copy-webpack-plugin')
 
 const { env } = require('../config.js')
 
+console.log('----------WEBPACK_PROD--------------', env, isProd)
+
 const webpackConfig = merge(commonConfig, {
   mode: 'production',
   output: {

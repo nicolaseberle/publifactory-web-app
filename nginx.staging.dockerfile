@@ -3,7 +3,7 @@ COPY ./ /src
 WORKDIR /src
 ADD ./package.json /src/package.json
 RUN npm install --silent
-RUN npm run build
+RUN NOVE_ENV=staging npm run build
 
 FROM nginx:1.17.2-alpine
 # Create container's directory
