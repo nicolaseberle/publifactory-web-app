@@ -57,6 +57,14 @@ require('./config/socketio')(socketIo)
 require('./config/express')(app)
 require('./routes')(app)
 
+if (process.env.NODE_ENV === 'production') {
+  // app.use('/static', express.static(path.join(__dirname, '/../client/dist/static')))
+  // app.use(favicon(path.join(__dirname, '/../client/dist/static/favicon.ico')));
+  app.use(serveStatic(__dirname + '/../client/dist'))
+  console.log(__dirname + '/../client/dist')
+  console.log('listen port :' + config.port)
+}
+
 server.listen(config.port, config.ip, function () {
   console.log(
     'Express side server listening on %d, in %s mode',
