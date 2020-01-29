@@ -1,4 +1,5 @@
 <template>
+  <div class='app-container'>
   <div class='wrapper'>
   <div class='package'>
     <div class='name'>Freemium</div>
@@ -17,6 +18,9 @@
         <b>Unlimited</b> access to your board
       </li>
     </ul>
+    </div>
+    <div class='footer-pricing'>
+      <el-button class='blue-button' round>Free Trial</el-button>
     </div>
   </div>
   <div class='package brilliant'>
@@ -49,20 +53,21 @@
     <div class='list-item-content'>
     <ul>
       <li><i class="el-icon-check"></i>
-        <strong>Unlimited</strong> research
+        <b>Unlimited</b> research
       </li>
       <li><i class="el-icon-check"></i>
-        <strong>Unlimited</strong> invitation
+        <b>Unlimited</b> invitation
       </li>
       <li><i class="el-icon-check"></i>
-        <strong>Access</strong> to associate editor requests
+        <b>Access</b> to associate editor requests
       </li>
     </ul>
     </div>
     <div class='footer-pricing'>
-      <el-button round>Send a request</el-button>
+      <el-button class='blue-button' round>Send a request</el-button>
     </div>
   </div>
+</div>
 </div>
 </template>
 <script>
@@ -91,7 +96,7 @@ export default{
 }
 .package {
     box-sizing: border-box;
-    width: 301px;
+    width: 300px;
     height: 500px;
     border: 3px solid #e8e8e8;
     border-radius: 7px;
@@ -102,7 +107,6 @@ export default{
     transition: margin-top .5s linear;
     position: relative;
     margin-right: 11px;
-
 }
 .package:hover {
     margin-top: -30px;
@@ -144,6 +148,7 @@ hr {
     position: relative;
     bottom: -25px;
 }
+
 .list-item-content ul {
     list-style: none;
     padding: 0 0 0 0;
@@ -151,20 +156,24 @@ hr {
     margin-top: 40px;
     margin-bottom: 30px;
 }
+
 .list-item-content li {
     margin-bottom: 20px;
 }
-.list-item-content li::before {
 
+.list-item-content li::before {
     font-size: 1.3rem;
     color: rgb(48, 65, 86);
     margin-right: 3px;
 }
+
 .brilliant {
     border-color: rgb(48, 65, 86);
 }
-.footer-pricing{
 
+.footer-pricing{
+  margin: 0 auto;
+  text-align: center;
 }
 /* Triangle */
 /*
