@@ -1,5 +1,6 @@
 <template>
 <div class='app-container bill-page'>
+  
 <h2>Billing</h2>
   <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
     <div slot="header" class="clearfix one-bill">

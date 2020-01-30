@@ -398,6 +398,13 @@ export const constantRouterMap = [
         component: resolve => {
 					import('../view/legal/index.vue').then(resolve)
         }
+      },
+      {
+        path: '/pricing',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricing2.vue').then(resolve)
+        }
       }
     ],
     meta: {
