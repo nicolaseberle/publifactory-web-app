@@ -34,7 +34,7 @@ export function changePassword (oldPassword, newPassword, token) {
 
 export function resetGuestPassword (id, newPassword, token) {
   return Vue.http.put('users/' + id + '/guestPassword', {
-      newPassword, headers: {
+      password: newPassword, headers: {
       'Authorization': `Bearer ${token}`
     }
   }).then(res => res.json())

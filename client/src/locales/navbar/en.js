@@ -1,6 +1,7 @@
 export default {
   navbar: {
     settings: 'Settings',
+    billing: 'Billing',
     password: 'Password',
     logout: 'Logout',
     langSetting: 'Lang',

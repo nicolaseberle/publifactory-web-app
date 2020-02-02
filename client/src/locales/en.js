@@ -6,6 +6,7 @@ export default {
     my_data: 'Data',
     my_invitation: 'Invitations',
     my_settings: 'Settings',
+    my_pricing: 'Pricing',
     dashboard: 'Dashboard',
     feeds: 'Feeds',
     settings: 'Settings',

@@ -3,12 +3,12 @@
     <div class="app-container">
       <div v-if='!loggedIn' class="bandeau">ALPHA v0.3.8</div>
       <hgroup>
-        <h1>Reviewer search engine</h1>
-        <h2>Getting the most relevant reviewers for your paper</h2>
-        <div style="display:flex; justify-content:space-between">
-          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</p>
-          <p class="text_block"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles.</p>
-        </div>
+        <h1><span style='letter-spacing: -0.04em;'>Reviewer search engine</span></h1>
+        <h2><span style='letter-spacing: -0.04em;'>Getting the most relevant reviewers for your paper <span class='title-highlight'>in 3 steps</span></span></h2>
+        <!--<div style="display:flex; justify-content:space-between">
+          <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">What is it?</strong>The reviewer matcher is<b> a reviewer search engine</b> which helps you to find<b> the best reviewers</b> for your manuscrits</div></div>
+          <div class="text_block"><div style="display: block; padding: 10px 10px;"><strong style="display: block; margin: 10px 0; font-size: 18px">How does it work ?</strong>Load the <b>title, the abstract and the author</b> of the manuscript. The algorithm finds similarity between this article and all the articles in the database of articles. Then, you can <b>contact the suggested reviewers</b> by sending them an invitation to review the article.</div></div>
+        </div>-->
       </hgroup>
 
       <!-- popup message erreur -->
@@ -22,6 +22,13 @@
           <el-button type="primary" @click="dialogVisibleError = false">Confirm</el-button>
         </span>
       </el-dialog>
+      <div style='display: block;'>
+        <div class='SimpleSteps'>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Load your article<br> & run the search</div></div>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Select a reviewer</div></div>
+          <div class='SimpleSteps__step'><div class='SimpleSteps__step-content'>Send an invitation</div></div>
+        </div>
+      </div>
 
       <!-- <el-row :gutter='30' style='margin-top=80px;'>
         <el-col :span='15'>
@@ -454,6 +461,24 @@
       <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
     </el-dialog>
+    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+      <h1>Welcome </h1>
+      <h2></h2>
+      <p>Change your password</p>
+      <br>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="Email">
+          <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="New Password">
+          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type='primary' @click="doLogout">Quit</el-button>
+        <el-button type='primary' @click="changePassword">Save</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -461,7 +486,7 @@
 import axios from 'axios'
 import researcherCard from './researcher_card_test'
 import requestView from './requestView'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 // Import JSON
 import cats_json from './json/cats.json'
@@ -476,7 +501,9 @@ export default {
   computed: {
     ...mapGetters([
       'loggedIn',
-      'accessToken'
+      'accessToken',
+      'roles',
+      'userId'
     ])
   },
   data () {
@@ -563,6 +590,13 @@ export default {
       fileList:[],
       activeNames: "",
       dataUpload: false,
+      visibleDiagFirstConnexion: false,
+      form: {
+        email: '',
+        password: '',
+        firstname: '',
+        lastname: ''
+      }
     }
   },
   async mounted () {
@@ -573,10 +607,37 @@ export default {
         this.formMail.mailDest = response.data.email
         this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
         this.formMail.cgu = true
+
+        this.form.email = response.data.email
         })
+        // a guest account has only one role : [guest]
+        if (this.roles.includes('guest')) {
+          this.visibleDiagFirstConnexion = true
+        }
     }
   },
   methods: {
+    ...mapActions(['resetGuestPassword','logout','toggleSideBar']),
+    doLogout () {
+      this.logout().then(() => {
+        this.$router.push('/login')
+      })
+    },
+    changePassword () {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+
+          await this.resetGuestPassword({id: this.userId,
+            email: this.form.email,
+            password: this.form.password,
+            token: this.accessToken
+          }).then((data) => {
+            console.log(data)
+            this.visibleDiagFirstConnexion = false
+          }).catch((err)=>console.log(err))
+        }
+      })
+    },
     closeDialogBox (new_val) {
       this.centerDialogVisible = new_val
     },
@@ -1238,10 +1299,12 @@ export default {
 h1 {
   font-family: 'DNLTPro-bold';
   text-align: center;
+  font-size:3rem;
 }
 
 h2 {
   font-family: 'DNLTPro-bold';
+  font-size:2rem;
 }
 
 p {
@@ -1272,8 +1335,9 @@ hgroup {
   width:48%;
   text-align:justify;
   text-align-last:center;
-  padding: 5px 15px 10px 15px;
+  padding: 10px 10px 10px 10px;
   background-color: #f1f1f1;
+  border-radius: 5px;
 }
 
 .el-tag  {
@@ -1477,5 +1541,54 @@ hgroup {
     padding: 5px 7px;
   }
 }
-
+.title-highlight{
+  background-color: rgba(161,198,255,0.2);
+  color: #003380;
+  padding: 0 0.25rem;
+}
+.SimpleSteps{
+  counter-reset: section;
+  display: flex;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 60px auto 80px auto;
+  position: relative;
+}
+.SimpleSteps__step{
+  flex-basis: 0;
+  flex-grow: 1;
+  position: relative;
+  text-align: center;
+}
+.SimpleSteps__step-content{
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2rem;
+}
+.SimpleSteps__step::before {
+  background: white;
+  border-radius: 50%;
+  border: solid 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 0 10px white;
+  content: counter(section);
+  counter-increment: section;
+  display: block;
+  font-size: 1rem;
+  height: 28px;
+  line-height: 24px;
+  margin: 0 auto 1rem;
+  position: relative;
+  width: 28px;
+  z-index: 2;
+}
+.SimpleSteps::before {
+  background: rgba(0, 0, 0, 0.38);
+  content: '';
+  height: 1px;
+  left: 140px;
+  position: absolute;
+  right: 120px;
+  top: 14px;
+  z-index: 1;
+}
 </style>

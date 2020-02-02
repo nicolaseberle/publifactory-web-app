@@ -210,3 +210,6 @@ client/dist
 
 # Save database file
 database/
+
+# static file
+server/contents/*

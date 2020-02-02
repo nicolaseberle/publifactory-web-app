@@ -398,6 +398,13 @@ export const constantRouterMap = [
         component: resolve => {
 					import('../view/legal/index.vue').then(resolve)
         }
+      },
+      {
+        path: '/pricing',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricing2.vue').then(resolve)
+        }
       }
     ],
     meta: {
@@ -414,6 +421,27 @@ export const constantRouterMap = [
         name: 'my_settings',
         component: resolve => {
 					import('../view/settings/index.vue').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: 'billing',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/billing',
+        name: 'my_billing',
+        component: resolve => {
+					import('../view/billing/index.vue').then(resolve)
+        }
+      },
+      {
+        path: '/pricing',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricing.vue').then(resolve)
         }
       }
     ]

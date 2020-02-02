@@ -71,7 +71,7 @@
               <h3>{{$t('settings.numORCID')}}</h3>
             </el-col>
             <el-col :span="12">
-              13344-2239203-2023023
+              XXXXX-XXXXXXX-XXXXXXX
             </el-col>
           </el-row>
           </el-form-item>
@@ -279,6 +279,7 @@
       loadingOnChangePassword: false,
       loadingOnDelete: false,
       loginError: false,
+      loadingOnSaveAvatar: false,
       options: [{
           value: 'Biology',
           label: 'Biology'
@@ -345,9 +346,29 @@
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar
+      this.changeAvatar(this.image)
     },
     close() {
       this.imagecropperShow = false
+    },
+    changeAvatar(image) {
+      this.loadingOnSaveAvatar = true
+      console.log(image)
+      axios.post(`/api/users/avatars/`,{"avatar":String(image)},{headers: {
+        'Authorization': `Bearer ${this.accessToken}`},
+      }).then((data) => {
+         console.log("settings saved")
+         const h = this.$createElement;
+         this.$message({
+           title: this.$t('message.save.ok'),
+           message: this.$t('settings.successSaving'),
+           type: 'success'
+         })
+       }).catch(err => {
+         console.log(err)
+       }).finally(() => {
+         this.loadingOnSaveAvatar = false
+       })
     },
     onSave () {
       this.loadingOnSave = true;

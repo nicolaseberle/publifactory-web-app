@@ -58,10 +58,10 @@ Elles peuvent être complétées le cas échéant par des conditions d’utilisa
                 </template>
                 <div class='version'>Dernière Modification: 12 Novembre 2019</div>
                 <div class='subcontent'>
-                <p>L’utilisation du <strong>Services</strong> de recherche de relecteurs ne nécessite pas d’une inscription sur le site, néanmoins l’utilisateur reconnaît avoir pris connaissance des présentes conditions d’utilisation.</p>
+                <p>L’utilisation du <strong>Services</strong> de recherche de relecteurs ("reviewer") ne nécessite pas d’une inscription sur le site, néanmoins l’utilisateur reconnaît avoir pris connaissance des présentes conditions d’utilisation.</p>
                 <h3> Pour utiliser les Services d’invitation, l’Utilisateur doit :</h3>
                 <ul>
-                  <li>soit remplir le formulaire d’inscription disponible sur demande par email <a href='contac@publifactory.co'>contac@publifactory.co</a></li>
+                  <li>soit remplir le formulaire de creation de compte</li>
                   <li>soit en envoyant une invitation à relire un article à un relecteur</li>
                 </ul>
                 <p>L’inscription entraîne automatiquement l’ouverture d’un compte au nom de l’Utilisateur (ci-après le « Compte ») qui lui permet de gérer son utilisation des <strong>Services</strong> sous une forme et selon les moyens techniques que Publifactory juge les plus appropriés pour rendre lesdits <strong>Services</strong>.</p>
@@ -89,9 +89,8 @@ Elles peuvent être complétées le cas échéant par des conditions d’utilisa
                  </ul>
 
                  <p>Les <strong>Services</strong> sont détaillés sur le Site, sous une forme et selon les fonctionnalités et moyens techniques que Publifactory juge les plus appropriés.</p>
-                 <h3>Pour réaliser les Services, Publifactory propose 2 (deux) offres (ci-après les « Offres ») :</h3>
+                 <h3>Pour réaliser les Services, Publifactory propose 1 (une) offre (ci-après l' « Offre ») :</h3>
                  <ul>
-                   <li>Une offre de récupération d’une liste de relecteur sous forme de fichier (.csv)</li>
                    <li>Une offre d’envoie d’invitation de relecteurs par mail. L’utilisateur peut faire le choix d’envoyer une invitation à un relecteur pour relire un article. </li>
                  </ul>
                  </div>

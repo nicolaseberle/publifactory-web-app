@@ -4,9 +4,11 @@ var express = require('express')
 var controller = require('./user.controller')
 var auth = require('../../auth/auth.service')
 
-const jwtCheck = require('../../auth/jwt');
+const jwtCheck = require('../../auth/jwt')
 
-var router = express.Router();
+var router = express.Router()
+
+router.use('/avatars/', require('./avatar'))
 
 router.post('/', controller.create)
 router.post('/orcid', controller.orcidCreation)

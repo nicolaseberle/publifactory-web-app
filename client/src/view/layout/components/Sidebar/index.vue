@@ -14,6 +14,7 @@
       background-color="#304156"
       text-color="#bfcbd9"
       active-text-color="#409EFF"
+      :default-openeds="['/dashboard/home']"
     >
       <sidebar-item v-for="route in permissionrouters" :key="route.name" :item="route" :base-path="route.path"/>
     </el-menu>
@@ -55,9 +56,7 @@
         headers: {'Authorization': `Bearer ${this.accessToken}`}
       }).then(list => {
         this.followedJournals = list.data.journals
-        console.log(this.followedJournals)
         this.updateRoutes({'roles':this.roles,  'followedJournals': this.followedJournals})
-
       }).catch(err => {
         console.error(err)
       })

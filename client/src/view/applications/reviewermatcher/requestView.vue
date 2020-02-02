@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-form
-			label-width="200px"
+			label-width="240px"
 			:model="formMail"
 			:rules="mailRules"
 			ref="formMail"
@@ -14,8 +14,25 @@
 				<el-input v-model="formMail.name"></el-input>
 			</el-form-item>
 			<el-form-item label="Journal requesting the reviewing" prop="journal">
-				<el-input v-model="formMail.journal"></el-input>
+				<el-select
+					v-model="formMail.journal"
+					filterable
+					remote
+					placeholder="Enter your revue"
+					:remote-method="remoteMethod"
+					:loading="loading">
+					<el-option
+						v-for="item in options2"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value">
+					</el-option>
+				</el-select>
 			</el-form-item>
+			<!--
+			<el-form-item label="Journal requesting the reviewing" prop="journal">
+				<el-input v-model="formMail.journal"></el-input>
+			</el-form-item>-->
 			<!-- <el-form-item label="Journal issn" prop="issn">
       <el-input v-model="formMail.issn"></el-input>
     </el-form-item> -->
@@ -112,6 +129,7 @@ export default {
 	components:{freePlanStatusBar,quotaRequestBox},
 	data() {
 		return {
+			list: [],
 			editor: {},
 			idEditor: this.setIdEditor(),
 			idToolBar: this.setIdToolBar(),
@@ -119,6 +137,10 @@ export default {
 			requestInfos: {},
 			dialogVisible: false,
 			maxInvitation: 0,
+			journal: ["Nature","Publiscience","the BMJ"],
+			options2: [],
+			value: [],
+			loading: false,
 			options: [
 				{
 					value: "1x1week",
@@ -215,9 +237,34 @@ export default {
 			this.$cookie.set("maxInvitation",0);
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 		}
-		console.log(this.maxInvitation)
+		this.getListJournal()
 	},
 	methods: {
+		async getListJournal() {
+			/*await axios.get('/api/journal/list').then((res)=>{
+				this.journal = res.data
+				this.list = this.journal.map(item => {
+	        return { value: `value:${item}`, label: `label:${item}` };
+	      });
+			})*/
+			this.list = this.journal.map(item => {
+				return { value: `${item}`, label: `${item}` };
+			});
+		},
+		remoteMethod(query) {
+			if (query !== '') {
+				this.loading = true;
+				setTimeout(() => {
+					this.loading = false;
+					this.options2 = this.list.filter(item => {
+						return item.label.toLowerCase()
+							.indexOf(query.toLowerCase()) > -1;
+					});
+				}, 200);
+			} else {
+				this.options2 = [];
+			}
+		},
 		async addRequest(dataJson) {
 			const response = await axios({
 				method: "post",

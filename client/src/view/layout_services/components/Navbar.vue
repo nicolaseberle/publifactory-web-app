@@ -48,14 +48,14 @@
       </div>-->
 
       <div class='right-menu-item' v-show="!loggedIn">
-        <router-link :to="{name: '/login'}">
+        <router-link :to="{path: '/login'}">
           <el-button style='font-weight:800' plain >Sign In</el-button>
         </router-link>
       </div>
       <div class='right-menu-item' v-show="!loggedIn">
-        <el-button @click="upgrade" style='background-color: #000; color:#FFF;font-weight:800'
-          disabled>Create Free Account</el-button
-        >
+        <router-link :to="{path: '/register'}">
+        <el-button style='background-color: #000; color:#FFF;font-weight:800'>Create Free Account</el-button>
+        </router-link>
         <!--<el-button style='  border-color: #f56c6c; border-width: 3px; font-weight:800' plain >Free Plan</el-button>-->
       </div>
 

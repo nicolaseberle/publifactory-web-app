@@ -187,4 +187,9 @@ UserSchema.methods = {
   }
 }
 
+UserSchema.methods.authenticate = function(password) {
+  return bcrypt.compareSync(password, this.hashedPassword)
+}
+
+
 module.exports = mongoose.model('User', UserSchema)
