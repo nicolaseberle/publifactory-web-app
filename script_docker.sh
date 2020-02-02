@@ -14,13 +14,17 @@ command=$1
 options=$2
 
 export BASE_MONGO=localhost
-export BASE_API=localhost
+export BASE_API=locahost
 
 if [[ ${options} = "staging" ]];
 then
-  export ROOT_APP="https://dev.publifactory.co/"
+    export ROOT_APP="http://dev.publifactory.co/"
+    export BASE_API="127.0.0.1"
+    export PORT="4000"
 else
-  export ROOT_APP="https://app.publifactory.co/"
+    export ROOT_APP="http://app.publifactory.co/"
+    export BASE_API="127.0.0.1"
+    export PORT="4000"
 fi
 
 debug () {
