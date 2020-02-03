@@ -8,7 +8,7 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
 var vueLoaderConfig = require('./vue-loader.conf')
 const helpers = require('./helpers')
 // const utils = require('./utils')
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = true // process.env.NODE_ENV === 'development' ==> otherwhise is will be stuck in a loop in production
 
 function resolve (dir) {
   return path.join(__dirname, '../client/', dir)
