@@ -5,7 +5,8 @@ async function list(req, res, next) {
 		const response = await serviceList({
 			page: req.query.page ? parseInt(req.query.page, 10) : undefined,
 			count: req.query.count ? parseInt(req.query.count, 10) : undefined,
-			filters: req.query
+			filters: req.query,
+			userId: req.query.userId === 'true' ? req.decoded._id : undefined
 		});
 		return res
 			.status(200)

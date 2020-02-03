@@ -5,6 +5,7 @@
 "use strict";
 
 const path = require("path");
+const express = require("express");
 const YAML = require("yamljs");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = YAML.load(
@@ -19,6 +20,8 @@ const jwtCheck = require("./auth/jwt");
  */
 module.exports = function(app) {
 	// Create documentation route
+	app.use("/contents", express.static(`${__dirname}/contents`));
+
 	app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 	// Insert routes below

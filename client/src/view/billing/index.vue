@@ -1,16 +1,15 @@
 <template>
 <div class='app-container bill-page'>
-  
-<h2>Billing</h2>
-  <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
+<h2 style='font-size:1.7rem;'>Billing</h2>
+  <el-card style='margin-bottom:30px;'>
     <div slot="header" class="clearfix one-bill">
-    <h2>{{publisher.name}}</h2>
+    <h2>{{firstname}} {{lastname}}<span style='font-size:0.8rem;float:right;margin-right:20px;'>USER</span></h2>
     </div>
     <div class="one-bill-content">
-      <div v-if="publisher.nb<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+      <div v-if="numberTotal<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
           <div class='bill-title-free-plan'>Free Plan</div>
-          <div class='bill-content-free-plan'>Your made {{publisher.nb}} requests</div>
+          <div class='bill-content-free-plan'>Your made {{numberTotal}} requests</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
           <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
@@ -25,7 +24,35 @@
           <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
         </div>
       </div>
-      <div style='text-align:right;'>
+      <div style='text-align:right;margin-right:20px'>
+        <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
+      </div>
+    </div>
+  </el-card>
+  <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
+    <div slot="header" class="clearfix one-bill">
+    <h2>{{publisher.name}}<span style='font-size:0.8rem;float:right;margin-right:20px;'>PUBLISHER</span></h2>
+    </div>
+    <div class="one-bill-content">
+      <div v-if="publisher.nb<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+        <div class='flex-l items-center justify-between' style='display: table-cell;'>
+          <div class='bill-title-free-plan'>Free Plan</div>
+          <div class='bill-content-free-plan'>This publisher doesn't have any subscription to use the service. </div>
+        </div>
+        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+          <el-button v-on:click="upgrade()">Request to the publisher to Upgrade the Plan</el-button>
+        </div>
+      </div>
+      <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
+        <div class='flex-l items-center justify-between' style='display: table-cell;'>
+          <div class='bill-title-free-plan'>Pipelines disabled</div>
+          <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
+        </div>
+        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+        </div>
+      </div>
+      <div style='text-align:right;;margin-right:20px'>
         <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
       </div>
     </div>
@@ -202,7 +229,9 @@ export default{
       mybill: [],
       mylistrequest: [],
       tableData: [],
-      listOfPublisher: []
+      listOfPublisher: [],
+      firstname: '',
+      lastname: ''
     }
   },
   created () {
@@ -210,8 +239,13 @@ export default{
     this.beginMonth    = moment().startOf('M').format('DD/MM');
     this.endMonth    = moment().endOf('M').format('DD/MM');
   },
-  mounted () {
-
+  async mounted () {
+    await axios.get('/api/users/me',{headers: {
+      'Authorization': `Bearer ${this.accessToken}`}
+    }).then(response => {
+      this.firstname = response.data.firstname
+      this.lastname = response.data.lastname
+      })
     this.mylistrequest = this.getMyRequest()
   },
   methods: {
@@ -222,7 +256,7 @@ export default{
       this.$router.push('/pricing')
     },
     getMyRequest(){
-      axios.get('/api/requests/myRequest/'+this.userId+'?page=1&count=1000',{
+      axios.get('/api/requests/?page=1&count=1000&userId=true',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( async (res) => {
@@ -378,12 +412,12 @@ h4{
 .one-bill h2{
     font-family: "DNLTPro-bold";
     text-align:left;
-    font-size:1.5rem;
+    font-size:1.2rem;
   }
   .bill-page h2{
     font-family: "DNLTPro-bold";
     text-align:left;
-    font-size:1.7rem;
+    font-size:1.4rem;
   }
 
 .one-bill-content{

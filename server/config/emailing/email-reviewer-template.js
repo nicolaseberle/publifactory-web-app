@@ -1,10 +1,9 @@
-const { email, backend } = require("../../../config");
+const config = require("../../../config");
 
-const frontUrl = email.rootHTML;
-const backUrl =
-	process.env.NODE_ENV === 'production'
-		? `https://${backend.ip}`
-		:`http://localhost:${backend.port}`;
+const frontUrl = config.url;
+const backUrl = config.env === 'development' ? `http://localhost:4000` : config.url
+
+console.log(frontUrl, backUrl);
 
 const redirect = request => `
 <!DOCTYPE html>
@@ -373,6 +372,7 @@ img.img-responsive {
  </head>
 <body>
     <div class="wrapper">
+        <div>${backUrl, frontUrl}</div>
     	<div class="wrapper-inner">
     		<table class="outer-table">
     			<tr>

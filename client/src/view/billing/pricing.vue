@@ -28,7 +28,7 @@
   </div>
   <div class='package brilliant'>
     <div class='name'>Associate</div>
-    <div class='price'>€3</div>
+    <div class='price'>€1</div>
     <div class='trial'>Pay per use</div>
     <hr>
     <div class='list-item-content'>
@@ -50,11 +50,14 @@
   </div>
   <div class='package'>
     <div class='name'>Publisher</div>
-    <div class='price'>€3</div>
+    <div class='price'>€0.3-1</div>
     <div class='trial'>Pay per use</div>
     <hr>
     <div class='list-item-content'>
     <ul>
+      <li><i class="el-icon-check"></i>
+        <b>Negociable</b> by volume
+      </li>
       <li><i class="el-icon-check"></i>
         <b>Unlimited</b> research
       </li>
@@ -67,7 +70,7 @@
     </ul>
     </div>
     <div class='footer-pricing'>
-      <el-button class='blue-button' round>Send a request</el-button>
+      <el-button class='blue-button' round>Send a request to your editor</el-button>
     </div>
   </div>
 </div>
@@ -208,6 +211,7 @@ hr {
  .title-pricing h1{
    margin-left: 20px;
    font-family: "DNLTPro-regular";
+   text-align: center;
    line-height: 1.5;
    font-size: 2.5rem;
  }

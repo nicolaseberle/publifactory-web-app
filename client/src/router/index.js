@@ -400,10 +400,10 @@ export const constantRouterMap = [
         }
       },
       {
-        path: '/pricing',
+        path: '/pricing_',
         name: 'my_pricing',
         component: resolve => {
-					import('../view/billing/pricing2.vue').then(resolve)
+					import('../view/billing/pricing.vue').then(resolve)
         }
       }
     ],

@@ -25,7 +25,7 @@ async function upload({ userId, avatar }) {
 	}
 	const fileName = `${uuidv4()}.png`;
 	const filePath = `./server/contents/avatars/${userId}`;
-	const urlPath = `${filePath.substring(1)}/${fileName}`;
+	const urlPath = `${filePath.substring('./server'.length)}/${fileName}`;
 	await createPath(filePath);
 	const rawImage = avatar.split(";base64,").pop();
 	fs.writeFileSync(`${filePath}/${fileName}`, rawImage, {
