@@ -13,8 +13,7 @@ script_set_var_prod_gcloud.sh
 npm-debug.log
 client/dist
 
-certbot/conf/*
-certbot/www/*
+certbot/*
 
 ### Node ###
 # Logs

@@ -11,14 +11,14 @@ blocks:
         commands:
           - checkout
       jobs:
-        - name: 'START'
+        - name: "START"
           commands:
             - echo "starting deployement"
     dependencies: []
 
 promotions:
   - name: Deploy to dev
-    pipeline_file: deploy-dev.yml
+    pipeline_file: deploy-staging.yml
     auto_promote_on:
       - result: passed
         branch:
@@ -30,3 +30,10 @@ promotions:
       - result: passed
         branch:
           - master
+
+  - name: Deploy to branch
+    pipeline_file: deploy-staging.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - features/env
