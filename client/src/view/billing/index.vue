@@ -1,23 +1,23 @@
 <template>
 <div class='app-container bill-page'>
 <h2 style='font-size:1.7rem;'>Billing</h2>
-  <el-card style='margin-bottom:30px;'>
+  <el-card style='margin-bottom:20px;'>
     <div slot="header" class="clearfix one-bill">
-    <h2>{{firstname}} {{lastname}}<span style='font-size:0.8rem;float:right;margin-right:20px;'>USER</span></h2>
+    <h2>{{firstname}} {{lastname}}<span style='margin-left:20px;'><el-button  type="info" round size="mini" >USER</el-button></span></h2>
     </div>
     <div class="one-bill-content">
-      <div v-if="numberTotal<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+      <div v-if="numberTotal<=100" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
           <div class='bill-title-free-plan'>Free Plan</div>
           <div class='bill-content-free-plan'>Your made {{numberTotal}} requests</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+          <el-button v-on:click="upgrade()">Upgrade to remove your individual limit</el-button>
         </div>
       </div>
       <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Pipelines disabled</div>
+          <div class='bill-title-free-plan'>Locked account</div>
           <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
@@ -31,25 +31,26 @@
   </el-card>
   <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
     <div slot="header" class="clearfix one-bill">
-    <h2>{{publisher.name}}<span style='font-size:0.8rem;float:right;margin-right:20px;'>PUBLISHER</span></h2>
+    <h2>{{publisher.name}} <span style='margin-left:20px;'><el-button  type="info" round size="mini" >PUBLISHER</el-button></span></h2>
+
     </div>
     <div class="one-bill-content">
-      <div v-if="publisher.nb<=10" class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+      <div v-if="publisher.unlock" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Free Plan</div>
+          <div class='bill-title-free-plan'>Activated account</div>
           <div class='bill-content-free-plan'>This publisher doesn't have any subscription to use the service. </div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Request to the publisher to Upgrade the Plan</el-button>
+          <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
         </div>
       </div>
       <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Pipelines disabled</div>
+          <div class='bill-title-free-plan'>Non-activated account</div>
           <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+          <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
         </div>
       </div>
       <div style='text-align:right;;margin-right:20px'>
@@ -124,7 +125,7 @@
         </div>
         <div class='w-50 w-25-ns'>
           <div class='gray tr'>
-            <div class="f0 f00-l green tnum">${{toto}}</div>
+            <div class="f0 f00-l green-toto tnum">${{toto}}</div>
           </div>
         </div>
       </div>
@@ -133,7 +134,7 @@
 
 
 </el-card>
-<!--<div class='mv3 bg-lightest-purple bl bw2 purple' style='  width: 100%;display: table;'>
+<!--<div class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
   <div class='flex-l items-center justify-between' style='display: table-cell;'>
     <div class='bill-title-free-plan'>Free Plan</div>
     <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
@@ -272,7 +273,7 @@ export default{
         //this.listOfPublisher = Object.keys(groubedByPublisher)
         Object.keys(groubedByPublisher).forEach((category)=>{
           console.log(category,groubedByPublisher[category].length)
-          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true})
+          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true,"unlock": true})
         });
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
@@ -288,7 +289,8 @@ export default{
             user: this.userId,
            numberTotal: this.numberTotal,
            amountTotal: this.amountTotal,
-           unitPrice: this.unitPrice
+           unitPrice: this.unitPrice,
+           unlock: true
          }]
       })
     }
@@ -299,23 +301,32 @@ export default{
 .mv3{
   margin: 1rem 0;
   padding:  0.5rem 1rem ;
+  border-radius: 5px;
 }
 
 .bw2 {
     border-width: 4px;
 }
 
-.purple {
+.light-blue {
     color: rgb(48, 65, 86);
 }
 .red {
     color:#ea261a;
 }
-.bg-lightest-purple {
+.green{
+  color: #458227;
+}
+
+.bg-lightest-light-blue {
     background-color: #F0F7FF;
 }
 .bg-lightest-red {
     background-color: #fdd;
+}
+
+.bg-lightest-green {
+    background-color: rgb(225, 243, 216);
 }
 .bl{
   border-left-style: solid;
@@ -384,7 +395,7 @@ h4{
   font-size: 1.2rem;
 }
 
-.green{
+.green-toto{
   font-size: 2.25rem;
 }
 .w-25-ns{

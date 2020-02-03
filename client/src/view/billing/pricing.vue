@@ -115,7 +115,7 @@ export default{
     margin-right: 11px;
 }
 .package:hover {
-    margin-top: -30px;
+    margin-top: -20px;
     transition: margin-top .3s linear;
 }
 .name {
