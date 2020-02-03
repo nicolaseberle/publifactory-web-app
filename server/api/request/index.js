@@ -4,7 +4,7 @@ const router = express.Router();
 const middlewares = require('../../middlewares');
 // Base route: '/api/requests'
 
-router.get('/', middlewares.optionalAuthentication, controllers.list);
+router.get('/', middlewares.authentication, controllers.list);
 router.get('/totalRequest', controllers.totalRequest);
 router.get('/logo', controllers.logo);
 router.post('/', middlewares.optionalAuthentication, controllers.create);
