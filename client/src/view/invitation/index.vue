@@ -124,7 +124,7 @@ export default{
       return statusMap[status]
     },
     getMyRequest(page=1){
-      axios.get('/api/requests/?page='+page+'&count=10'+'userId=true',{
+      axios.get('/api/requests/?page='+page+'&count=10'+'&userId=true',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( async (res) => {
