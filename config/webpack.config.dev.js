@@ -72,6 +72,7 @@ const webpackConfig = merge(commonConfig, {
 			},
 			'/static': { target: 'http://localhost:9001', pathRewrite: { '^/static': '/client/static' } },
 			'/public': { target: 'http://localhost:9001', pathRewrite: { '^/public': '/client/public' } },
+			'/contents': { target: 'http://localhost:9001', pathRewrite: { '^/contents': '/server/contents' } },
 			'/socket.io': {
 				target: `http://${process.env.BASE_API}:${backendBase.port}`,
 				changeOrigin: true,
