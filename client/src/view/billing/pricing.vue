@@ -1,7 +1,7 @@
 <template>
   <div class='app-container'>
     <div class='title-pricing'>
-      <h1>Pricing</h1>
+      <h1 style="text-align:left;">Pricing</h1>
     </div>
   <div class='wrapper'>
   <div class='package'>
