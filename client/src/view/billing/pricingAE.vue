@@ -5,8 +5,7 @@
     </div>
   <div class='wrapper'>
   <div class='package'>
-    <div class='name'>Freemium<p style='font-size:0.8rem;'>(Individual plan)</p></div>
-
+    <div class='name'>Freemium</div>
     <div class='price'>€0</div>
     <div class='trial'>Free trial</div>
     <hr>
@@ -24,11 +23,11 @@
     </ul>
     </div>
     <div class='footer-pricing'>
-      <el-button class='blue-button' disabled round>Current trial</el-button>
+      <el-button class='blue-button' round>Free Trial</el-button>
     </div>
   </div>
   <div class='package brilliant'>
-    <div class='name'>Associate Editor<p style='font-size:0.8rem;'>(Individual plan)</p></div>
+    <div class='name'>Associate</div>
     <div class='price'>€1</div>
     <div class='trial'>Pay per use</div>
     <hr>
@@ -46,58 +45,14 @@
     </ul>
     </div>
     <div class='footer-pricing'>
-      <el-button class='blue-button' @click="visibleDiagSubscription=true" round>Update</el-button>
-    </div>
-  </div>
-  <div class='package'>
-    <div class='name'>Publisher<p style='font-size:0.8rem;'>(Publisher plan)</p></div>
-    <div class='price'>€0.3-1</div>
-    <div class='trial'>Pay per use</div>
-    <hr>
-    <div class='list-item-content'>
-    <ul>
-      <li><i class="el-icon-check"></i>
-        <b>Negociable</b> by volume
-      </li>
-      <li><i class="el-icon-check"></i>
-        <b>Unlimited</b> research
-      </li>
-      <li><i class="el-icon-check"></i>
-        <b>Unlimited</b> invitation
-      </li>
-      <li><i class="el-icon-check"></i>
-        <b>Unlimited</b> collaborator
-      </li>
-    </ul>
-    </div>
-    <div class='footer-pricing'>
-      <el-button class='blue-button' @click='dialogSendEditorVisible=true' round>Send a request to your editor</el-button>
+      <el-button class='blue-button' round>Update</el-button>
     </div>
   </div>
 </div>
-<el-dialog :visible.sync="visibleDiagSubscription" title="Subscription">
-    <createSubscription @close="visibleDiagSubscription=false"/>
-</el-dialog>
-<el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
-    <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
-</el-dialog>
 </div>
 </template>
 <script>
-import createSubscription from './createSubscription';
-import sendEditorInvitation from './sendRequestToEditor'
-//import createSubscription from './subscription';
-
 export default{
-  name: "princing",
-  components: {createSubscription,sendEditorInvitation},
-  data () {
-    return {
-      loadingAccess: false,
-      visibleDiagSubscription: false,
-      dialogSendEditorVisible: false
-    }
-  }
 
 }
 </script>
@@ -111,17 +66,12 @@ export default{
  */
 
 .wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -220px 0 0 -468px;
+    display: inline-block;
+    text-align: center;
     font-family: 'Open Sans', sans-serif;
     font-weight: 400;
     color: #333;
     font-size: 15px;
-}
-.blocked-package{
-  background-color: #E4E4E4;
 }
 .package {
     box-sizing: border-box;
@@ -137,26 +87,17 @@ export default{
     position: relative;
     margin-right: 11px;
 }
-.package:hover{
-  border-color: rgb(48, 65, 86);
-}
-/*
-.package:hover {
-    margin-top: -20px;
-    transition: margin-top .3s linear;
-}*/
 .name {
     color: #565656;
     font-weight: 700;
     font-size: 1.5rem;
-    line-height:0.8rem;
     margin-top: -5px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 .price {
 
     margin-top: 30px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-weight: bold;
     font-size: 3rem;
 }
@@ -200,17 +141,13 @@ hr {
     color: rgb(48, 65, 86);
     margin-right: 3px;
 }
-/*
+
 .brilliant {
     border-color: rgb(48, 65, 86);
-}*/
+}
 
 .footer-pricing{
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  margin-bottom:20px;
-  left:0;
+  margin: 0 auto;
   text-align: center;
 }
 /* Triangle */

@@ -28,7 +28,7 @@
           <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Locked account</div>
-              <div class='bill-content-free-plan'>Please upgrade your plan</div>
+              <div class='bill-content-free-plan'>You have reached the limit of free invitations</div>
             </div>
             <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
               <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
@@ -143,7 +143,7 @@
           <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>Please upgrade to continue using this publisher account</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
+          <el-button v-on:click="sendRequest()">Request to the editor to upgrade the plan</el-button>
         </div>
       </div>
       <!--<div style='text-align:right;;margin-right:20px'>
@@ -316,6 +316,7 @@ export default{
       invoice: false,
       formLabelWidth: '100px',
       dialogFormVisible: false,
+      dialogSendEditorVisible: false,
       form: {name:''},
       isData: false,
       endMonth: "",
@@ -347,6 +348,9 @@ export default{
     this.mylistrequest = this.getMyRequest()
   },
   methods: {
+    sendRequest () {
+      
+    },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
     },

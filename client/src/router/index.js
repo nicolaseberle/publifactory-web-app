@@ -443,6 +443,13 @@ export const constantRouterMap = [
         component: resolve => {
 					import('../view/billing/pricing.vue').then(resolve)
         }
+      },
+      {
+        path: '/pricingAE',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricingAE.vue').then(resolve)
+        }
       }
     ]
   },
