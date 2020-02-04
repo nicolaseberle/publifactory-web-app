@@ -145,7 +145,7 @@
                 message: this.$t('message.created'),
                 type: 'success'
               })
-              this.$router.push(this.$route.query.redirect || '/')
+              this.$router.push(this.$route.query.redirect || '/login')
           }).catch((err) => {
             this.loading = false
             this.$message({

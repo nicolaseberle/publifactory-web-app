@@ -26,7 +26,6 @@
     let loadingInstance = Loading.service({ fullscreen: true });
     setTimeout(async () => {
       this.id = this.$route.params && this.$route.params.id
-      console.log(this.id)
       this.postForm  = await this.fetch(this.id)
       this.guestLogin()
       this.$nextTick(() => { // Loading should be closed asynchronously
@@ -55,18 +54,20 @@
       return data
     },
     guestLogin() {
+
       if(this.loggedIn){
         this.$router.push(this.$route.query.redirect || '/')
       }else{
-      this.login({
-        email: this.postForm.recieptEmail,
-        password: this.postForm.senderId
-      }).then((data) => {
-          this.loading = false
-          this.$router.push(this.$route.query.redirect || '/' )
-      }).catch((err) => {
-          this.$router.push(this.$route.query.redirect || '/')
-      })
+        this.loading = true
+        this.login({
+          email: this.postForm.recieptEmail,
+          password: this.postForm.senderId
+        }).then((data) => {
+            this.loading = false
+            this.$router.push(this.$route.query.redirect || '/' )
+        }).catch((err) => {
+            this.$router.push(this.$route.query.redirect || '/')
+        })
       }
     }
   }
