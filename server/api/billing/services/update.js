@@ -1,8 +1,14 @@
 const { Billing } = require('../model');
 
-async function update() {
-	// await newBilling.save();
-	// return newBilling.toObject();
+async function update({
+	billingId,
+	userId = undefined,
+	journalId = undefined,
+	billing
+}) {
+	const updateBilling = await Billing.findById(billingId);
+
+	return updateBilling;
 }
 
 module.exports = update;

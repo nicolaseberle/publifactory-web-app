@@ -2,22 +2,14 @@ const { Billing } = require('../model');
 const Journal = require('../../journal/journal.model');
 const User = require('../../user/user.model');
 const { ApiError } = require('../../../config/error');
-const serviceRole = require('../../roles/services');
 
 async function create({ billing, userId = undefined, journalId = undefined }) {
-	console.log(userId, journalId);
 	const newBilling = new Billing({
 		...billing
 	});
 	if (journalId) {
 		const journal = await Journal.findById(journalId);
 		if (!journal) throw new ApiError('JOURNAL_NOT_FOUND');
-		const userRole = await serviceRole.journalGetRole({
-			journalId,
-			userId,
-			right: 'editor'
-		});
-		if (!userRole) throw new ApiError('JOURNAL_FORBIDEN_ROLE');
 		journal.billing = newBilling;
 		await journal.save();
 	} else if (userId) {

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const BillingSchema = new mongoose.Schema(
 	{
-		email: { type: String },
+		// email: { type: String },
 		curstomerStripeId: { type: String, default: null },
 		payementMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
