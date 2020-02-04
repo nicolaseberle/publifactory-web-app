@@ -56,13 +56,14 @@
       if(this.loggedIn){
         this.$router.push(this.$route.query.redirect || '/')
       }else{
-      this.login({
-        email: this.postForm.recieptEmail,
-        password: this.postForm.senderId
-      }).then((data) => {
+        this.loading = true
+        this.login({
+          email: this.postForm.recieptEmail,
+          password: this.postForm.senderId
+        }).then((data) => {
           this.loading = false
           this.$router.push(this.$route.query.redirect || '/' )
-      }).catch((err) => {
+        }).catch((err) => {
           this.$router.push(this.$route.query.redirect || '/')
       })
       }
