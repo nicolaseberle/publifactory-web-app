@@ -9,7 +9,7 @@ const BillingSchema = new mongoose.Schema(
 		freemium: Boolean, // turn to false on request.length >= 10
 		currency: { type: String, default: 'EUR' },
 		amount: { type: Number, default: 2 },
-		request: [
+		requests: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Request'

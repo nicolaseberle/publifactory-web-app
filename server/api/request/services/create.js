@@ -1,15 +1,16 @@
-const { Request } = require("../model");
-const sendEmailEditor = require("./send-email-editor");
-const { emailEditorTemplate } = require("../../../config/emailing");
+const { Request } = require('../model');
+const { Billing } = require('../../billing/model');
+const sendEmailEditor = require('./send-email-editor');
+const { emailEditorTemplate } = require('../../../config/emailing');
 
-async function create({ reviewer, editor, ...request }) {
+async function create({ reviewer, editor, ...request }, billingId) {
 	const newRequest = new Request({
 		reviewer,
 		editor,
 		...request
 	});
 	newRequest.history.push({
-		status: "pending",
+		status: 'pending',
 		date: new Date().toUTCString()
 	});
 
@@ -17,7 +18,7 @@ async function create({ reviewer, editor, ...request }) {
 	if (newRequest.editor.email) {
 		sendEmailEditor(
 			newRequest._id,
-			"Copy of your reviewing request",
+			'Copy of your reviewing request',
 			emailEditorTemplate.summary(newRequest)
 		);
 	}

@@ -1,17 +1,17 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const enumStatus = [
-	"pending",
-	"bademail",
-	"sent",
-	"remind",
-	"read",
-	"accepted",
-	"rejected",
-	"outfield",
-	"unsubscribed",
-	"done",
-	"removed"
+	'pending',
+	'bademail',
+	'sent',
+	'remind',
+	'read',
+	'accepted',
+	'rejected',
+	'outfield',
+	'unsubscribed',
+	'done',
+	'removed'
 ];
 
 const RequestSchema = new mongoose.Schema(
@@ -69,16 +69,20 @@ const RequestSchema = new mongoose.Schema(
 			date: Date,
 			status: {
 				type: String,
-				default: "pending",
+				default: 'pending',
 				enum: {
 					values: enumStatus
 				}
 			}
+		},
+		billing: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Billing'
 		}
 	},
 	{ timestamps: true }
 );
 
-module.exports.Request = mongoose.model("Request", RequestSchema);
+module.exports.Request = mongoose.model('Request', RequestSchema);
 module.exports.RequestSchema = RequestSchema;
 module.exports.enumStatus = enumStatus;
