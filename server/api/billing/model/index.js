@@ -2,12 +2,19 @@ const mongoose = require('mongoose');
 
 const BillingSchema = new mongoose.Schema(
 	{
-		// email: { type: String },
-		curstomerStripeId: { type: String, default: null },
+		email: { type: String, required: true },
+		lastName: { type: String, required: true },
+		firstName: { type: String, required: true },
+		customerStripeId: { type: String, default: null },
 		payementMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
 		freemium: Boolean, // turn to false on request.length >= 10
 		currency: { type: String, default: 'EUR' },
+		intervan: {
+			type: String,
+			default: 'day',
+			enum: { values: ['day', 'week', 'month', 'year'] }
+		},
 		amount: { type: Number, default: 2 },
 		requests: [
 			{
