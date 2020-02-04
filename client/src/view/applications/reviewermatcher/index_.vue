@@ -462,7 +462,7 @@
 
     </el-dialog>
     <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-      <h1>Welcome </h1>
+      <h1 style='font-size:1.5rem;'>Welcome </h1>
       <h2></h2>
       <p>Change your password</p>
       <br>
@@ -476,7 +476,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type='primary' @click="doLogout">Quit</el-button>
-        <el-button type='primary' @click="changePassword">Save</el-button>
+        <el-button type='primary' @click="changePassword" :loading="loadingAccess">Save</el-button>
       </span>
     </el-dialog>
   </div>
@@ -590,6 +590,7 @@ export default {
       fileList:[],
       activeNames: "",
       dataUpload: false,
+      loadingAccess: false,
       visibleDiagFirstConnexion: false,
       form: {
         email: '',
@@ -626,7 +627,7 @@ export default {
     changePassword () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-
+          this.loadingAccess = true
           await this.resetGuestPassword({id: this.userId,
             email: this.form.email,
             password: this.form.password,
@@ -634,7 +635,11 @@ export default {
           }).then((data) => {
             console.log(data)
             this.visibleDiagFirstConnexion = false
-          }).catch((err)=>console.log(err))
+          }).catch((err)=>
+            console.log(err)
+          ).finally(() => {
+            this.loadingAccess = false
+          })
         }
       })
     },

@@ -9,8 +9,8 @@ import Layout_services from '../view/layout_services/Layout'
 
 Vue.use(VueRouter)
 
-const state_ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production') ? true : false;
-const state__ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production') ? false : true;
+const state_ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? true : false;
+const state__ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? false : true;
 
 
 export const constantRouterMap = [

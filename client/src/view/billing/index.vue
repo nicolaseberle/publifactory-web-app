@@ -1,61 +1,157 @@
 <template>
 <div class='app-container bill-page'>
-<h2 style='font-size:1.7rem;'>Billing</h2>
-  <el-card style='margin-bottom:20px;'>
-    <div slot="header" class="clearfix one-bill">
-    <h2>{{firstname}} {{lastname}}<span style='margin-left:20px;'><el-button  type="info" round size="mini" >USER</el-button></span></h2>
-    </div>
-    <div class="one-bill-content">
-      <div v-if="numberTotal<=100" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
-        <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Free Plan</div>
-          <div class='bill-content-free-plan'>Your made {{numberTotal}} requests</div>
-        </div>
-        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Upgrade to remove your individual limit</el-button>
-        </div>
-      </div>
-      <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
-        <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Locked account</div>
-          <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
-        </div>
-        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
-        </div>
-      </div>
+  <el-alert
+    title="Choose between individual or publisher plan"
+    type="info"
+    description="With updating individual plan, you will be able to use the service even if the publisher has not activated his account. "
+    show-icon>
+  </el-alert>
+<h2 style='font-size:1.4rem;'>Individual Plan</h2>
+  <el-card style='margin-bottom:50px; margin-left:30px;'>
+    <div class="clearfix one-bill">
+    <el-row>
+      <el-col :span='6'>
+        <h2 style='font-size:1.1rem;'>{{firstname}} {{lastname}} <!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >USER</el-button></span>--></h2>
+      </el-col >
+      <el-col :span='18'>
+        <div class="one-bill-content">
+
+          <div v-if="numberTotal<=22" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+            <div class='flex-l items-center justify-between' style='display: table-cell;'>
+              <div class='bill-title-free-plan'>Free Plan</div>
+              <div class='bill-content-free-plan'>Request {{ numberTotal }} out of your 30 free requests</div>
+            </div>
+            <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+              <el-button v-on:click="upgrade()">Upgrade to remove your individual limit</el-button>
+            </div>
+          </div>
+          <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
+            <div class='flex-l items-center justify-between' style='display: table-cell;'>
+              <div class='bill-title-free-plan'>Locked account</div>
+              <div class='bill-content-free-plan'>Please upgrade your plan</div>
+            </div>
+            <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+              <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
+            </div>
+          </div>
+          </div>
+        </el-col>
+      </el-row>
       <div style='text-align:right;margin-right:20px'>
-        <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
+        <a @click='invoice==false ? invoice=true: invoice=false' style='font-size:1rem;'><u>See detailed insights…</u></a>
       </div>
-    </div>
-  </el-card>
-  <el-card v-for='publisher in listOfPublisher' class="box-card" style='margin-bottom:10px;'>
-    <div slot="header" class="clearfix one-bill">
-    <h2>{{publisher.name}} <span style='margin-left:20px;'><el-button  type="info" round size="mini" >PUBLISHER</el-button></span></h2>
+
+      <div v-if="invoice" class='bill-table' style='margin-top:50px;'>
+        <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
+
+      <el-table
+            :data="listOfPublisher"
+            style="width: 100%">
+            <el-table-column
+              label="Title"
+              >
+              <template slot-scope="props">
+                <p style="text-align:center;">Titre de l'article</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="Price($/request)"
+              width="200">
+              <template slot-scope="props">
+                <p style="text-align:center;">${{unitPrice }}/request</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="Usage(request)"
+              width="200">
+              <template slot-scope="props">
+                <p style="text-align:center;">{{ props.row.nb }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="Total"
+              width="200">
+              <template slot-scope="props">
+                <p style="text-align:center;"></p>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="pv2 ">
+            <div class='flex-subbill items-center mv1'>
+            <div class='w-50 w-75-ns'>
+              <div class='f5 gray tr'>
+                Subtotal
+              </div>
+            </div>
+            <div class='w-50 w-25-ns'>
+              <div class='gray tr'>
+                ${{amountTotal}}
+              </div>
+            </div>
+          </div>
+          <div class='flex-subbill items-center mv1'>
+            <div class='w-50 w-75-ns'>
+              <div class='f5 gray tr'>
+                Free monthly credit
+              </div>
+            </div>
+            <div class='w-50 w-25-ns'>
+              <div class='gray tr'>
+                -$30
+              </div>
+            </div>
+          </div>
+          <div class='flex-subbill items-center mv2'>
+            <div class='w-50 w-75-ns'>
+              <div class='f5 gray tr'>
+                This month’s running total ({{beginMonth}} - Today)
+              </div>
+            </div>
+            <div class='w-50 w-25-ns'>
+              <div class='gray tr'>
+                <div class="f0 f00-l green-toto tnum">${{toto}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
+  </el-card>
+  <h2 style='font-size:1.4rem;'>Publisher Plan</h2>
+  <el-card v-for='publisher in listOfPublisher' class="box-card " style='margin-bottom:10px;margin-left:30px;'>
+    <div class="clearfix one-bill">
+    <el-row>
+      <el-col :span='6'>
+    <h2 style='font-size:1.1rem;'>{{publisher.name}}<!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >PUBLISHER</el-button></span>--></h2>
+
+    </el-col>
+    <el-col :span='18'>
     <div class="one-bill-content">
       <div v-if="publisher.unlock" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
           <div class='bill-title-free-plan'>Activated account</div>
-          <div class='bill-content-free-plan'>This publisher doesn't have any subscription to use the service. </div>
+          <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>This publisher has subscribed to use the service. </div>
         </div>
-        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+        <!--<div  style='display: table-cell;text-align:right;vertical-align: middle;'>
           <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
-        </div>
+        </div>-->
       </div>
-      <div v-else class='mv3 bg-lightest-red bl bw2 red' style='  width: 100%;display: table;'>
+      <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
           <div class='bill-title-free-plan'>Non-activated account</div>
-          <div class='bill-content-free-plan'>Please upgrade to continue using this publisher account</div>
+          <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>Please upgrade to continue using this publisher account</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
           <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
         </div>
       </div>
-      <div style='text-align:right;;margin-right:20px'>
+      <!--<div style='text-align:right;;margin-right:20px'>
         <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
+      </div>-->
       </div>
+    </el-col>
+    </el-row>
     </div>
   <div v-if="publisher.hidden===false" class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
@@ -217,6 +313,7 @@ export default{
   },
   data () {
     return {
+      invoice: false,
       formLabelWidth: '100px',
       dialogFormVisible: false,
       form: {name:''},
@@ -273,7 +370,7 @@ export default{
         //this.listOfPublisher = Object.keys(groubedByPublisher)
         Object.keys(groubedByPublisher).forEach((category)=>{
           console.log(category,groubedByPublisher[category].length)
-          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true,"unlock": true})
+          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true,"unlock": false})
         });
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
@@ -317,6 +414,9 @@ export default{
 .green{
   color: #458227;
 }
+.yellow{
+  color: #DB9107;
+}
 
 .bg-lightest-light-blue {
     background-color: #F0F7FF;
@@ -328,6 +428,11 @@ export default{
 .bg-lightest-green {
     background-color: rgb(225, 243, 216);
 }
+
+.bg-lightest-yellow {
+    background-color: #FAF4D0;
+}
+
 .bl{
   border-left-style: solid;
 }
@@ -432,6 +537,7 @@ h4{
   }
 
 .one-bill-content{
+  text-align: left;
   margin-left:5px;
 }
 .el-card__header {

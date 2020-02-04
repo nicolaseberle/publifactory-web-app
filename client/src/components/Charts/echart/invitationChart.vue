@@ -7,6 +7,7 @@
 <script>
   import echarts from 'echarts'
   import resize from '../mixins/resize'
+  import { mapGetters } from 'vuex'
   import axios from 'axios'
   import moment from 'moment'
   import _ from 'underscore'
@@ -31,6 +32,11 @@
       default: '400px'
     }
   },
+  computed: {
+    ...mapGetters([
+      'accessToken'
+    ])
+  },
   data() {
     return {
       chart: null,
@@ -52,7 +58,9 @@
   },
   methods: {
     getOccurenceByDate() {
-      axios.get('/api/requests??page=1&count=100').then(async(res)=>{
+      axios.get('/api/requests/?page=1&count=100',{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       }).then(async(res)=>{
         let array = res.data.data
         this.array_date = []
         this.array_occurence = []
