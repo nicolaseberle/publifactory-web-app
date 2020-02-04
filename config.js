@@ -134,11 +134,19 @@ const backendProd = Object.assign({}, backendBase, {
 	// frontend folder
 	frontend: path.resolve(__dirname, './client/dist')
 });
-
+const stripeTest = {
+	public_key: 'pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c',
+	private_key: 'sk_test_5H43wOkffLTagWkJdFn4Q4Jm008y6a3Mzj'
+};
+const stripeProd = {
+	public_key: '',
+	private_key: ''
+};
 const staging = {
 	url,
 	env: 'staging',
 	email,
+	stripe: stripeTest,
 	orcid,
 	google,
 	frontend: frontendProd,
@@ -148,6 +156,7 @@ const production = {
 	url,
 	env: 'production',
 	email,
+	stripe: stripeProd,
 	orcid,
 	google,
 	frontend: frontendProd,
@@ -157,6 +166,7 @@ const development = {
 	url,
 	env: 'development',
 	email,
+	stripe: stripeTest,
 	orcid,
 	google,
 	frontend: frontendDev,
