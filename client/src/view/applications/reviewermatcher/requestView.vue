@@ -187,14 +187,14 @@ export default {
 						message: "You need to enter your email",
 						trigger: "blur"
 					}
-				],
+				],/*
 				journal: [
 					{
 						required: true,
 						message: "You need to enter your journal",
 						trigger: "blur"
 					}
-				],
+				],*/
 				name: [
 					{
 						required: true,
@@ -376,11 +376,15 @@ export default {
 					this.requestInfos["deadline"] = this.formMail["deadline"];
 					this.requestInfos["object"] = this.formMail["object"];
 					this.requestInfos["remind"] = this.formMail["relaunch"];
-					this.requestInfos["content"] =
-						"<p class='h2'>Invitation to review in <i>" +
-						this.formMail["journal"] +
-						"</i></p>" +
-						this.formMail["message"];
+					if(this.formMail["journal"]!=='None'){
+						this.requestInfos["content"] =
+							"<p class='h2'>Invitation to review in <i>" +
+							this.formMail["journal"] +
+							"</i></p>" +
+							this.formMail["message"];
+					}else{
+						this.requestInfos["content"] = this.formMail["message"];
+					}
 					this.requestInfos["pub_mail"] = this.formMail["mailDest"];
 					this.requestInfos["pub_journal"] = this.formMail["journal"];
 					this.requestInfos["pub_name"] = this.formMail["name"];
