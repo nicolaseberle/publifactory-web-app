@@ -43,6 +43,6 @@ router.delete(
 
 // services.stripe.createCustomer();
 // services.stripe.createProduct();
-// services.stripe.createPlan();
+services.stripe.createPlan();
 // services.stripe.incrementPlan();
 module.exports = router;

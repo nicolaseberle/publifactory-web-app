@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+const productStripeId = 'prod_Gg5piJFRSBT6Lh';
+const planStripeId = 'plan_Gg5yf6dpuiQ91r';
+
 const BillingSchema = new mongoose.Schema(
 	{
 		email: { type: String, required: true },
@@ -8,14 +11,17 @@ const BillingSchema = new mongoose.Schema(
 		customerStripeId: { type: String, default: null },
 		payementMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
+		productStripeId: { type: String, default: productStripeId },
+		planStripeId: { type: String, default: planStripeId },
 		freemium: Boolean, // turn to false on request.length >= 10
+		// amount: { type: Number, default: 2 },
 		currency: { type: String, default: 'EUR' },
-		intervan: {
+		interval: {
 			type: String,
 			default: 'day',
 			enum: { values: ['day', 'week', 'month', 'year'] }
 		},
-		amount: { type: Number, default: 2 },
+
 		requests: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +34,8 @@ const BillingSchema = new mongoose.Schema(
 
 module.exports.Billing = mongoose.model('Billing', BillingSchema);
 module.exports.BillingSchema = BillingSchema;
+module.exports.productStripeId = productStripeId;
+module.exports.planStripeId = planStripeId;
 
 /**
  * Freemium (N / 10)
