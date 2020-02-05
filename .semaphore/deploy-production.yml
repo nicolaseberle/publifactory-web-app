@@ -21,6 +21,7 @@ blocks:
             - export LANG=C.UTF-8
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
+            - echo $( if [ $( sudo docker images -f 'dangling=true' -q | wc -l ) -gt 0 ]; then echo $( sudo docker rmi $( sudo docker images -f 'dangling=true' -q ) ); fi )
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@35.246.243.12
               "cd /home/publifactory;

@@ -6,10 +6,12 @@ import VueRouter from 'vue-router'
 import store from '../store'
 import Layout from '../view/layout/Layout'
 import Layout_services from '../view/layout_services/Layout'
-// import componentsRouter from './modules/components'
-// import otherModuleRoutes from './module'
 
 Vue.use(VueRouter)
+
+const state_ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? true : false;
+const state__ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? false : true;
+
 
 export const constantRouterMap = [
   {
@@ -111,14 +113,21 @@ export const constantRouterMap = [
     props: route => ({ userId: route.query.userId })
   },
   {
-    path:
-			'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
-    component: resolve => {
-			import('../view/request/').then(resolve)
-    },
-    meta: {
-      skipAuth: true
-    }
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+        name: 'answer',
+        meta: {
+          skipAuth: true
+        },
+        component: resolve => {
+          import('../view/request/').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '/summarize',
@@ -182,37 +191,48 @@ export const constantRouterMap = [
     children: [
       {
         path: '/article',
+        hidden: state_ ,
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
-        component: () => import('../view/dashboard/index.vue')
+        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
+        hidden: state_ ,
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
-        component: () => import('../view/journals/index.vue')
-      },
+        component: (resolve) => import('../view/journals/index.vue').then(resolve)
+      },/*
       {
         path: '/data',
         name: 'my_data',
         meta: { title: 'my_data', icon: 'database', noCache: true },
         component: () => import('../view/data/index.vue')
+      },*/
+      {
+        path: '/invitation',
+        name: 'my_invitation',
+        meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
+        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
       },
       {
-        path: 'settings',
-        hidden: true,
-        component: () => import('../view/settings/index.vue')
+        path: '/reviewermatcher',
+        name: 'reviewer_matcher',
+        hidden: state__,
+        meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
+        component: () => import('../view/applications/reviewermatcher/index_.vue')
       },
       {
         path: '/dashboard/home',
         hidden: true,
-        component: () => import('../view/dashboard/index.vue')
+        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
       }
     ]
   }, //
   {
     path: '/feeds',
     component: Layout,
+    hidden: state_,
     redirect: 'feeds',
     // hidden: true,
     meta: { title: 'feeds', icon: 'layers', noCache: true },
@@ -227,6 +247,7 @@ export const constantRouterMap = [
   {
     path: '/applications',
     component: Layout,
+    hidden: state_,
     redirect: 'applications',
     // hidden: true,
     meta: {
@@ -245,9 +266,8 @@ export const constantRouterMap = [
           noCache: true,
           skipAuth: true
         },
-
         component: () =>
-					import('../view/applications/reviewermatcher/index.vue')
+					import('../view/applications/reviewermatcher/index_.vue')
       }, /*
 			{
 				path: 'summarize',
@@ -315,7 +335,7 @@ export const constantRouterMap = [
         path: 'invitationReviewer',
         name: 'Invitation Reviewer',
         meta: {
-          title: 'Invation Reviewer',
+          title: 'Invitation Reviewer',
           icon: 'guide 2',
           noCache: true,
           roles: ['admin']
@@ -378,11 +398,60 @@ export const constantRouterMap = [
         component: resolve => {
 					import('../view/legal/index.vue').then(resolve)
         }
+      },
+      {
+        path: '/pricing_',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricing.vue').then(resolve)
+        }
       }
     ],
     meta: {
       skipAuth: true
     }
+  },
+  {
+    path: 'settings',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/settings',
+        name: 'my_settings',
+        component: resolve => {
+					import('../view/settings/index.vue').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: 'billing',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/billing',
+        name: 'my_billing',
+        component: resolve => {
+					import('../view/billing/index.vue').then(resolve)
+        }
+      },
+      {
+        path: '/pricing',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricing.vue').then(resolve)
+        }
+      },
+      {
+        path: '/pricingAE',
+        name: 'my_pricing',
+        component: resolve => {
+					import('../view/billing/pricingAE.vue').then(resolve)
+        }
+      }
+    ]
   },
   {
     path: '',

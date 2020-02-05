@@ -24,6 +24,7 @@ blocks:
             - export LANG=C.UTF-8
             - ls /home/semaphore/
             - sudo chmod 600 /home/semaphore/ssh
+            - echo $( if [ $( sudo docker images -f 'dangling=true' -q | wc -l ) -gt 0 ]; then echo $( sudo docker rmi $( sudo docker images -f 'dangling=true' -q ) ); fi )
             - >-
               ssh -o "StrictHostKeyChecking no" -i /home/semaphore/ssh collin_q@34.89.179.162
               "cd /home/publifactory;
@@ -32,6 +33,6 @@ blocks:
               sudo ./script_docker.sh stop;
               git reset --hard origin/dev;
               git pull https://publifactory:C8R%3CyFD%5B3S%26%40jW8T@github.com/publifactory/web-app.git dev;
-              sudo ./script_docker.sh start dev;
+              sudo ./script_docker.sh start staging;
               sudo chown -R collin_q:publifactory-team .;"
     dependencies: []

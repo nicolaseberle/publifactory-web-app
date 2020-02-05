@@ -1,11 +1,14 @@
 <template>
   <div class="login-main">
-    <div class="bg"></div>
+    <v-lazy-image class='bg'
+      :src='bg.image'
+      :src-placeholder='bg.small_image'
+    />
   <div class="login-wrapper" v-show="!loggedIn">
 
     <!--<h1>{{$t('title')}}</h1>-->
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
-    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Reset Your Password</h1>
+    <h1 style="font-size:1.8rem; font-family: 'DNLTPro-bold';">Reset Your Password</h1>
     <p>We’ll email you instructions to reset your password. </p>
     <el-form class="login-form" ref="form" :model="form" :rules="rules"
       @submit.native.prevent="onSubmit">
@@ -31,6 +34,7 @@
   locales,
   data () {
     return {
+      bg:  this.randomImage() ,
       form: {
         email: ''
       },
@@ -48,9 +52,19 @@
   },
   methods: {
     ...mapActions(['resetPassword', 'changeLang']),
+    randomImage() {
+      let number = Math.ceil(Math.random()*9)
+      return {
+        'image':"/static/images/login-bg-"+ number + ".jpg",
+        'small_image':"/static/images/login-bg-"+ number + "-small.jpg",
+        'legend': ''
+      }
+    },
     onSubmit () {
       this.$refs.form.validate(valid => {
+
         if (valid) {
+          this.loading = true
           this.resetPassword({email: this.form.email})
           .then((data) => {
             const h = this.$createElement;
@@ -67,6 +81,8 @@
               message: this.$t('login.reset.nomail'),
               type: 'error'
             })
+          }).finally(() => {
+            this.loading = false
           })
         }
       })

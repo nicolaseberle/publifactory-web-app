@@ -1,6 +1,6 @@
 <template>
   <div class='app-container'>
-    <el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
+    <!--<el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
       <el-table
       ref="listAllMail"
@@ -41,129 +41,141 @@
 
       </el-table>
 
-    </el-row>
+    </el-row>-->
 
 
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
-      <el-table
-      ref="dataReq"
-      highlight-current-row
-      :data="dataFinal"
-      style="width: 100%"
-      height="500"
-      @row-click="setSelectedRow">
+      <content-module name="dataFinal">
+        <data-table ref="dataFinal" :page="page" @page-change="nextPage">
 
-      <el-table-column type="expand" width="20">
-        <template slot-scope="props">
-          <el-steps>
-            <el-step v-bind:key="req" v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date"></el-step>
-            <el-step v-else-if="req.status == 'accept'" title="status" status="success" :description="req.status"></el-step>
-            <el-step v-else-if="req.status == 'decline'" title="status" status="error" :description="req.status"></el-step>
-            <el-step v-if="Object.values(props.row.history[props.row.history.length -1]).indexOf('decline') && Object.values(props.row.history[props.row.history.length -1]).indexOf('accept')" title="status" status="wait" description="pending"></el-step>
-          </el-steps>
-        </template>
-      </el-table-column>
+          <el-table
+          ref="dataReq"
+          highlight-current-row
+          :data="dataFinal"
+          style="width: 100%"
+          @row-click="setSelectedRow">
 
-        <el-table-column
-          label="Title"
-          prop="title"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.title }}</p>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="Publisher"
-          prop="edi_name"
-          width="180">
-          <template slot-scope="props">
-            <el-tooltip class="item" effect="dark" placement="top">
-              <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
-              <p style="text-align:center">{{ props.row.editor.journal }}</p>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="Reviewer">
-          <el-table-column
-            label="Name"
-            prop="rev_id"
-            width="160">
+          <el-table-column type="expand" width="20">
             <template slot-scope="props">
-              <!-- <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p> -->
-              <el-tooltip class="item" effect="dark" placement="top">
-                <div slot="content">{{props.row.reviewer.semanticScholarId}}</div>
-                <p style="text-align:center; font-weight:bold;"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+props.row.reviewer.semanticScholarId">{{ props.row.reviewer.name }}</a></p>
-              </el-tooltip>
+              <el-steps>
+                <el-step v-bind:key="req" v-for="req in props.row.history" v-if="req.status != 'accept' && req.status != 'decline'" :title="req.status" status="success" :description="req.date | moment('DD/MM/YYYY, h:mm a')"></el-step>
+                <el-step v-else-if="req.status == 'accept'" title="status" status="success" :description="req.status"></el-step>
+                <el-step v-else-if="req.status == 'decline'" title="status" status="error" :description="req.status"></el-step>
+                <el-step v-if="Object.values(props.row.history[props.row.history.length -1]).indexOf('decline') && Object.values(props.row.history[props.row.history.length -1]).indexOf('accept')" title="status" status="wait" description="pending"></el-step>
+              </el-steps>
             </template>
           </el-table-column>
-          <el-table-column
-            label="Mail"
-            prop="rev_mail">
+          <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="props">
-              <el-form :inline="true" class="demo-form-inline">
-                <el-form-item>
-                  <el-input v-model="props.row.reviewer.email" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" size="mini" @click="changeMail(props.row.reviewer.semanticScholarId, props.row.reviewer.email)">Save</el-button>
-                </el-form-item>
-              </el-form>
+              <span>{{ props.row.history[0].date | moment("DD/MM/YYYY, h:mm a") }}</span>
             </template>
           </el-table-column>
-        </el-table-column>
+            <el-table-column
+              label="Title"
+              prop="title"
+              width="200">
+              <template slot-scope="props">
+                <p style="text-align:center;">{{ props.row.title }}</p>
+              </template>
+            </el-table-column>
 
-        <!--<el-table-column
-          label="Deadline"
-          prop="date">
-          <template slot-scope="props">
-            <p>Deadline : {{ props.row.deadline }}</p>
-            <el-select v-model="relance[props.$index]" placeholder="Relaunch" size="mini">
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
-        </el-table-column>-->
-        <el-table-column class-name="status-col" label="Status" width="120">
-          <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
-            <el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Actions"
-          prop="actions"
-          width="120">
-          <template slot-scope="props">
-            <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
-              <div>
-                <el-button class="el-button-action" icon="el-icon-more" circle>
-                </el-button>
-              </div>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item  command="send">Send</el-dropdown-item>
-                <el-dropdown-item  command="accept">Accept</el-dropdown-item>
-                <el-dropdown-item  command="decline">Decline</el-dropdown-item>
-                <el-dropdown-item  command="relaunch">Relaunch</el-dropdown-item>
-                <el-dropdown-item  command="unsubscribe"  style='color:red'>Unsubscribe</el-dropdown-item>
-                <el-dropdown-item  command="remove" style='color:red'>Remove</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
+            <el-table-column
+              label="Publisher"
+              prop="edi_name"
+              width="120">
+              <template slot-scope="props">
+                <el-tooltip class="item" effect="dark" placement="top">
+                  <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
+                  <p style="text-align:center">{{ props.row.editor.journal }}</p>
+                </el-tooltip>
+              </template>
+            </el-table-column>
 
-      </el-table>
+            <el-table-column label="Reviewer">
+              <el-table-column
+                label="Name"
+                prop="rev_id"
+                width="160">
+                <template slot-scope="props">
+                  <!-- <p style="text-align:center;">{{ props.row.reviewer.rev_id }}</p> -->
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">{{props.row.reviewer.semanticScholarId}}</div>
+                    <p style="text-align:center; font-weight:bold;"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+props.row.reviewer.semanticScholarId">{{ props.row.reviewer.name }}</a></p>
+                  </el-tooltip>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="Mail"
+                prop="rev_mail">
+                <template slot-scope="props">
+                  <el-form :inline="true" class="demo-form-inline">
+                    <el-form-item>
+                      <el-input v-model="props.row.reviewer.email" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                      <el-button type="primary" size="mini" @click="changeMail(props.row.reviewer.semanticScholarId, props.row.reviewer.email)">Save</el-button>
+                    </el-form-item>
+                  </el-form>
+                </template>
+              </el-table-column>
+            </el-table-column>
+
+            <!--<el-table-column
+              label="Deadline"
+              prop="date">
+              <template slot-scope="props">
+                <p>Deadline : {{ props.row.deadline }}</p>
+                <el-select v-model="relance[props.$index]" placeholder="Relaunch" size="mini">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </template>
+            </el-table-column>-->
+            <el-table-column class-name="status-col" label="Status" width="120">
+              <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
+                <!--<el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>-->
+                <el-tag v-if='props.row.history[props.row.history.length - 1].status=="done"' class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 2].status)" >{{ props.row.history[props.row.history.length - 2].status }}</el-tag>
+                <el-tag v-else class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 1].status)" >{{ props.row.history[props.row.history.length - 1].status }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="Actions"
+              prop="actions"
+              width="100">
+              <template slot-scope="props">
+                <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
+                  <div>
+                    <el-button class="el-button-action" icon="el-icon-more" circle>
+                    </el-button>
+                  </div>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item  command="send">Send</el-dropdown-item>
+                    <el-dropdown-item  command="accept">Accept</el-dropdown-item>
+                    <el-dropdown-item  command="decline">Decline</el-dropdown-item>
+                    <el-dropdown-item  command="relaunch">Relaunch</el-dropdown-item>
+                    <el-dropdown-item  command="unsubscribe"  style='color:red'>Unsubscribe</el-dropdown-item>
+                    <el-dropdown-item  command="remove" style='color:red'>Remove</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </data-table>
+      </content-module>
     </el-row>
   </div>
 </template>
 <script>
 import locales from 'locales/article'
+import DataTable from '../../components/DataTable'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 
 export function requestStatusFilter (status) {
@@ -183,6 +195,8 @@ export function requestStatusFilter (status) {
 }
 
 export default{
+  name: 'invitationReviewerView',
+  components: {DataTable},
   data () {
     return {
       formList: [],
@@ -206,155 +220,36 @@ export default{
       isData: false,
       metricsFinal: [],
       isMetrics: false,
-      dataTest: [
-        {
-          "title": "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
-          "abstract": "abstract1",
-          "deadline": "12-12-2019",
-          "objet": "test",
-          "content": "blablablalbal",
-          "remind": "1x2month",
-          "reviewer": {
-            "rev_id": "46485613",
-            "rev_name": "Vincent Schuck",
-            "rev_mail": ""
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          },
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "07-12-2019",
-            }
-          ]
-        },
-        {
-          "title": "titre1",
-          "abstract": "abstract1",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "07-12-2019",
-            }
-          ],
-          "deadline": "12-12-2019",
-          "reviewer": {
-            "rev_id": "46485614",
-            "rev_name": "Pierre Schuck",
-            "rev_mail": ""
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          }
-        },
-        {
-          "title": "titre2",
-          "abstract": "abstract2",
-          "deadline": "12-12-2019",
-          "requests": [
-            {
-              "status": "En attente",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Envoyé",
-              "date": "05-12-2019",
-            },
-            {
-              "status": "Read",
-              "date": "06-12-2019",
-            },
-            {
-              "status": "Decline",
-              "date": "08-12-2019",
-            }
-          ],
-          "reviewer": {
-            "rev_id": "46485615",
-            "rev_name": "Jean Michel",
-            "rev_mail": "jm@example.com"
-          },
-          "editor": {
-            "edi_name": "Nicolas Eberle",
-            "edi_mail": "nico@example.com",
-            "edi_journal": "Nature"
-          }
-        }
-      ],
-      listAllMail: [
-        {
-          "title": "titre1",
-          "mail_publisher": "publi@mail.com",
-          "list": [
-            {
-              "id": "123456",
-              "name": "blabla1",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123457",
-              "name": "blabla2",
-              "mail": ""
-            },
-            {
-              "id": "123458",
-              "name": "blabla3",
-              "mail": ""
-            },
-            {
-              "id": "123459",
-              "name": "blabla4",
-              "mail": ""
-            },
-            {
-              "id": "123451",
-              "name": "blabla5",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123452",
-              "name": "blabla6",
-              "mail": ""
-            },
-            {
-              "id": "123453",
-              "name": "blabla7",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123454",
-              "name": "blabla8",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123455",
-              "name": "blabla9",
-              "mail": "mail@mail.com"
-            },
-            {
-              "id": "123450",
-              "name": "blabla0",
-              "mail": ""
-            }
-          ]
-        }
-      ]
+      dataTest: [],
+      listAllMail: [],
+      page:{current: 1,total:0}
     }
   },
+  computed: {
+    ...mapGetters([
+      'accessToken'
+    ])
+  },
   methods: {
+    nextPage(val){
+      this.page.current = val
+      this.getRequests(this.page.current)
+    },
+    statusInvitationFilter (status) {
+      const statusMap = {
+        done: 'success',
+        accepted: 'success',
+        pending: 'primary',
+        read:  'primary',
+        sent: 'primary',
+        bademail: 'warning',
+        unsubscribed: 'warning',
+        outfield: 'info',
+        rejected: 'danger',
+        removed: 'danger'
+      }
+      return statusMap[status]
+    },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
     },
@@ -371,12 +266,13 @@ export default{
         })
       })
     },
-    getRequests(){
+    getRequests(page = 1){
       new Promise ((resolve,reject) => {
-        axios.get('/api/requests?page=1&count=10')
+        axios.get('/api/requests/?page='+page+'&count=10',{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         })
         .then( async (res) => {
           this.dataFinal = res.data.data;
-          console.log(this.dataFinal);
           this.isData = true;
         })
       })
@@ -388,6 +284,12 @@ export default{
           await this.getRequests()
         })
       })
+    },
+    getTotalRequest () {
+      axios.get('/api/activity/totalRequest')
+      .then( async (res) => {
+        this.page.total = res.data.data;
+      }).catch((e)=>{console.log(e)})
     },
     sendRequest(id){
       new Promise ((resolve,reject) => {
@@ -408,19 +310,24 @@ export default{
       }
       else if (command == "accept") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "decline") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "relaunch") {
         console.log(command);
+        console.log("no action");
       }
       else if (command == "unsubscribe") {
         console.log(command);
+        console.log("no action");
       }
     }
   },
   async mounted() {
+    this.getTotalRequest()
     await this.getRequests()
   }
 }
@@ -445,6 +352,7 @@ tbody {
 .el-form-item__label {
   text-align: left;
 }
+
 .clearfix:before,
   .clearfix:after {
     background-color: white;

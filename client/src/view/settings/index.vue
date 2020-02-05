@@ -71,7 +71,7 @@
               <h3>{{$t('settings.numORCID')}}</h3>
             </el-col>
             <el-col :span="12">
-              13344-2239203-2023023
+              XXXXX-XXXXXXX-XXXXXXX
             </el-col>
           </el-row>
           </el-form-item>
@@ -109,7 +109,7 @@
           <el-row>
             <el-col :span="12" :offset="6">
               <div style="text-align:right">
-                <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()">Save</el-button>
+                <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onSave()" :loading="loadingOnSave">Save</el-button>
               </div>
             </el-col>
           </el-row>
@@ -146,13 +146,14 @@
                 <el-row>
                   <el-col :span="12" :offset="6">
                     <div style="text-align:right">
-                      <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()">Change Password</el-button>
+                      <el-button type="warning" style='background-color: rgb(48, 65, 86);border: none;' round v-on:click="onChangePassword()" :loading="loadingOnChangePassword">Change Password</el-button>
                     </div>
                   </el-col>
                 </el-row>
               </el-col>
             </el-row>
           </el-form>
+
 
         <el-row style='margin-top:20px'>
           <el-form >
@@ -165,7 +166,7 @@
                   </el-col>
                   <el-col :span="6" :offset="6">
                     <div style="text-align:right">
-                      <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()">Delete</el-button>
+                      <el-button type="danger"  icon="el-icon-delete" round v-on:click="deleteAccount()" :loading="loadingOnDelete">Delete</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -176,53 +177,31 @@
       </el-row>
 
 
-</div>
-
-  </el-tab-pane>
-  <el-tab-pane label="Biblio">
-    <div style='margin:20px'>
-    <h2>Bibliography</h2>
-      <el-row>
-        <el-col :span='12'>
-        <div class="article-tag header-tag">
-          <a v-for="item in tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
-            <!--<a v-for="item in postForm.tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>-->
-        </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span='24'>
-          <el-table
-          :data="tableData"
-          style="width: 100%"
-          >
-          <el-table-column
-            prop="date"
-            label="Date"
-            width="60"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="title"
-              label="Title"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="journal"
-              label="Journal"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="cited"
-              label="Cited"
-              width="80"
-              >
-            </el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
+      <el-row style='margin-top:20px'>
+        <el-form >
+          <el-row>
+            <el-col  :offset="4" :span="20">
+              <el-form-item prop="plan">
+                <el-row>
+                  <el-col :span="6">
+                    <h3>{{$t('settings.currentPlan')}}</h3>
+                  </el-col>
+                  <el-col :span="6">
+                    <p>Free Plan</p>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="text-align:right">
+                      <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' icon="el-icon-magic-stick" round v-on:click="updatePlan()" :loading="loadingOnDelete">Upgrade</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-row>
       </div>
-     </el-tab-pane>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -275,8 +254,11 @@
           required: true, message: this.$t('settings.messagePassword'), trigger: 'blur'
         }]
       },
-      loading: false,
+      loadingOnSave: false,
+      loadingOnChangePassword: false,
+      loadingOnDelete: false,
       loginError: false,
+      loadingOnSaveAvatar: false,
       options: [{
           value: 'Biology',
           label: 'Biology'
@@ -343,11 +325,32 @@
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
       this.image = resData.files.avatar
+      this.changeAvatar(this.image)
     },
     close() {
       this.imagecropperShow = false
     },
+    changeAvatar(image) {
+      this.loadingOnSaveAvatar = true
+      console.log(image)
+      axios.post(`/api/users/avatars/`,{"avatar":String(image)},{headers: {
+        'Authorization': `Bearer ${this.accessToken}`},
+      }).then((data) => {
+         console.log("settings saved")
+         const h = this.$createElement;
+         this.$message({
+           title: this.$t('message.save.ok'),
+           message: this.$t('settings.successSaving'),
+           type: 'success'
+         })
+       }).catch(err => {
+         console.log(err)
+       }).finally(() => {
+         this.loadingOnSaveAvatar = false
+       })
+    },
     onSave () {
+      this.loadingOnSave = true;
       this.updateUser({
                   firstname: this.form.firstname,
                   lastname: this.form.lastname,
@@ -363,11 +366,14 @@
                     })
                   }).catch(err => {
                     console.log(err)
-                  });
+                  }).finally(() => {
+                    this.loadingOnSave = false
+                  })
     },
     onChangePassword () {
       this.$refs.formPassword.validate(valid => {
         if (valid) {
+          this.loadingOnChangePassword = true;
           this.changePassword({
             oldPassword:this.formPassword.oldPassword,
             newPassword:this.formPassword.newPassword,
@@ -388,7 +394,9 @@
                  title: this.$t('message.error'),
                  message: this.$t('settings.badOldPassword'),
                  type: 'error'})
-             });
+             }).finally(() => {
+               this.loadingOnChangePassword = false
+             })
 
         }
       })

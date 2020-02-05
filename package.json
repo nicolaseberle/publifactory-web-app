@@ -21,11 +21,12 @@
 	"private": false,
 	"scripts": {
 		"client": "./node_modules/.bin/cross-env NODE_ENV=development webpack-dev-server --host 0.0.0.0 --hot --progress",
-		"server-dev": "./node_modules/.bin/nodemon --watch server server/app.js",
+		"server-dev": "NODE_ENV=development ./node_modules/.bin/nodemon  --watch server server/app.js",
 		"server-prod": "node server/app.js",
 		"test": "./node_modules/.bin/mocha ./server/api --recursive --reporter nyan --silent --exit",
 		"staging": "./node_modules/.bin/cross-env NODE_ENV=staging webpack",
-		"build": "NODE_ENV=production ./node_modules/.bin/cross-env webpack",
+		"build-prod": "NODE_ENV=production ./node_modules/.bin/cross-env webpack",
+		"build-staging": "NODE_ENV=staging ./node_modules/.bin/cross-env webpack",
 		"svgo": "svgo -f ./client/src/icons/svg --config=./client/src/icons/svgo.yml"
 	},
 	"dependencies": {
@@ -123,6 +124,7 @@
 		"socket.io-client": "^1.7.1",
 		"socketio-jwt": "^4.5.0",
 		"sortablejs": "^1.9.0",
+		"stripe": "^8.13.0",
 		"svg-fill-loader": "0.0.8",
 		"swagger-ui-express": "^4.0.7",
 		"tapable": "^1.1.3",
@@ -139,6 +141,7 @@
 		"vue-awesome": "^3.5.4",
 		"vue-chartjs": "^3.4.2",
 		"vue-codemirror": "^4.0.6",
+		"vue-cookie": "^1.1.4",
 		"vue-i18n": "^5.0.3",
 		"vue-lazyload": "^1.3.3",
 		"vue-moment": "^4.0.0",
@@ -149,6 +152,7 @@
 		"vue-social-sharing": "^2.4.6",
 		"vue-split-panel": "^1.0.4",
 		"vue-status-indicator": "^1.1.1",
+		"vue-stripe-elements-plus": "^0.3.2",
 		"vue-textarea-autosize": "^1.0.4",
 		"vuex": "^2.5.0",
 		"vuex-router-sync": "^4.1.2",

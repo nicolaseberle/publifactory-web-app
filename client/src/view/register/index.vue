@@ -7,7 +7,7 @@
   />
   <div class="login-wrapper" v-show="!loggedIn">
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
-    <h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>
+    <h1 style='font-size:1.8rem; font-family: "DNLTPro-bold";'>{{$t('registerTitle')}} in Publifactory</h1>
 
     <!--<h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules">
@@ -23,6 +23,12 @@
       <el-form-item prop="password">
         <el-input v-model="form.password" type="password" :placeholder="$t('register.password')" ></el-input>
       </el-form-item>
+      <el-form-item prop="type">
+				<el-checkbox-group v-model="form.type">
+					<el-checkbox label="I accept the Term of Use" name="type"></el-checkbox>
+				</el-checkbox-group>
+			</el-form-item>
+      <!--
       <el-form-item>
       <el-checkbox v-model="checkedCGU">I accept the
         <a style='text-decoration:underline'>
@@ -30,9 +36,11 @@
         </a>
       </el-checkbox>
       </el-form-item>
+    -->
       <el-form-item>
         <el-button class="login-button" :class="{error: loginError}" type="success"
           v-on:click="onSubmit()" :loading="loading">{{$t('register.button')}}</el-button>
+          <a  href='/login' style='text-decoration:underline'>Return to Login</a>
       </el-form-item>
       <!--
       <h2>or</h2>
@@ -65,10 +73,11 @@
   data () {
     return {
       bg:  this.randomImage() ,
-      checkedCGU: false,
+      checkedCGU: [],
       form: {
         email: '',
-        password: ''
+        password: '',
+        type: []
       },
       rules: {
         email: [{
@@ -76,7 +85,15 @@
         }],
         password: [{
           required: true, message: this.$t('register.password'), trigger: 'blur'
-        }]
+        }],
+        type: [
+					{
+						type: "array",
+						required: true,
+						message: "You need to accept the CGU",
+						trigger: "blur"
+					}
+				]
       },
       loading: false,
       loginError: false
@@ -128,7 +145,7 @@
                 message: this.$t('message.created'),
                 type: 'success'
               })
-              this.$router.push(this.$route.query.redirect || '/')
+              this.$router.push(this.$route.query.redirect || '/login')
           }).catch((err) => {
             this.loading = false
             this.$message({

@@ -14,13 +14,17 @@ command=$1
 options=$2
 
 export BASE_MONGO=localhost
-export BASE_API=localhost
+export BASE_API=locahost
 
-if [[ ${options} = "dev" ]];
+if [[ ${options} = "staging" ]];
 then
-  export ROOT_APP="https://dev.publifactory.co/"
+    export ROOT_APP="http://dev.publifactory.co/"
+    export BASE_API="127.0.0.1"
+    export PORT="4000"
 else
-  export ROOT_APP="https://app.publifactory.co/"
+    export ROOT_APP="http://app.publifactory.co/"
+    export BASE_API="127.0.0.1"
+    export PORT="4000"
 fi
 
 debug () {
@@ -48,10 +52,12 @@ print_help () {
 build_container () {
   echo -ne '##############            (66%)\r'
   debug "Begin build container.\n"
-  if [[ ${options} = "dev" ]];
+  if [[ ${options} = "staging" ]];
   then
-    sudo docker-compose -f docker-compose-dev.yml build
+    debug "USING STAGING CONFIG"
+    sudo docker-compose -f docker-compose-staging.yml build
   else
+    debug "USING PROD CONFIG"
     sudo docker-compose build
   fi
   echo -ne '###############           (72%)\r'
@@ -66,7 +72,7 @@ up_database () {
   sudo docker-compose up -d mongo
   debug 'Populating database'
   # shellcheck disable=SC2046
-  sudo cat ${CWD}/database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --archive'
+  sudo cat ${CWD}/database/"${db_chosen}" | sudo docker exec -i $(sudo docker ps -f name=mongo -q) sh -c 'mongorestore --drop --preserveUUID --archive'
   echo -ne '#################         (80%)\r'
 }
 
@@ -84,24 +90,28 @@ execution_time () {
 start () {
   build_container
   up_database
-  echo -ne '###################       (88%)\r'
-  debug "Up the API.\n"
-  sudo docker-compose up --no-deps -d api
-  debug "Up the client WebApp.\n"
-  echo -ne '##################        (84%)\r'
   if [[ ${options} = "prod" ]];
   then
+    debug "STARTING IN PRODUCTION"
+    debug "Up the API.\n"
+    sudo docker-compose up --no-deps -d api
+    debug "Up the client WebApp.\n"
     debug "Up NGiNX \n"
     sudo docker-compose up --no-deps -d nginx
     debug "Up Certbot\n"
     sudo docker-compose up  --no-deps -d certbot
-  elif [[ ${options} = "dev" ]];
+  elif [[ ${options} = "staging" ]];
   then
+    debug "STARTING IN STAGING"
+    debug "Up the API.\n"
+    sudo docker-compose -f docker-compose-staging.yml up --no-deps -d api
+    debug "Up the client WebApp.\n"
     debug "Up NGiNX \n"
-    sudo docker-compose up --no-deps -d nginx
+    sudo docker-compose -f docker-compose-staging.yml up --no-deps -d nginx
     debug "Up Certbot\n"
-    sudo docker-compose up  --no-deps -d certbot
+    sudo docker-compose -f docker-compose-staging.yml up  --no-deps -d certbot
   else
+    debug "##############################################################################################"
     debug "Launching the DEV app\n"
     sudo docker-compose up -d client_dev
   fi
@@ -110,6 +120,7 @@ start () {
 
 stop () {
   debug "Stopping every container and networks.\n"
+  save_data
   sudo docker-compose down
   debug "Docker stopped every container !"
   debug "Verifying if the container are not still running...\n"
@@ -136,12 +147,12 @@ stop () {
 }
 
 make_test () {
-  sudo apt-get install -y nodejs
-  sudo docker-compose build mongo
+  # sudo apt-get install -y nodejs
+  # sudo docker-compose build mongo
   up_database
-  npm install --silent
-  npm test
-  stop
+  # npm install --silent
+  # npm test
+  # stop
 }
 
 save_data () {

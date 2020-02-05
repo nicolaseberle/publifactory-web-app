@@ -7,7 +7,7 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <!--<error-log class="errLog-container right-menu-item"/>-->
-        <div style='vertical-align:middle' class="right-menu-item">
+        <div v-if='state_' style='vertical-align:middle' class="right-menu-item">
           <el-switch
             v-model="flag_user"
             inactive-text="Author view"
@@ -42,6 +42,9 @@
             </el-dropdown-item>
             <el-dropdown-item @click.native="doSettings">
               {{ $t('navbar.settings') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="doBilling">
+              {{ $t('navbar.billing') }}
             </el-dropdown-item>
             <!--</router-link>-->
             <el-dropdown-item @click.native="doLogout">
@@ -80,7 +83,8 @@ export default {
   data () {
     return {
       flag_user: false,
-      navbar_user: false
+      navbar_user: false,
+      state_: (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production') ? false : true
     }
   },
   computed: {
@@ -117,6 +121,9 @@ export default {
     },
     doSettings () {
         this.$router.push('/settings')
+    },
+    doBilling () {
+        this.$router.push('/billing')
     },
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')

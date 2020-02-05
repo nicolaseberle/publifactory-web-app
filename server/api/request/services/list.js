@@ -1,4 +1,5 @@
 const { Request } = require('../model');
+const User = require('../../user/user.model');
 
 function paginate(page = 1, count = 5) {
 	const skip = { $skip: (page - 1) * count };
@@ -6,10 +7,10 @@ function paginate(page = 1, count = 5) {
 	return [skip, limit];
 }
 
-async function list({ page = 1, count = 5, filters }) {
+async function list({ page = 1, count = 5, filters, userId = undefined }) {
 	const response = { page, count };
-	let pipeline = [];
-	const sort = { $sort: { deadline: -1 } };
+	const pipeline = [];
+	const sort = { $sort: { createdAt: -1 } };
 	pipeline.push(sort);
 	if (filters.title) {
 		pipeline.push({
@@ -19,6 +20,17 @@ async function list({ page = 1, count = 5, filters }) {
 	if (filters.status) {
 		pipeline.push({
 			$match: { 'history.status': { $in: [filters.status] } }
+		});
+	}
+	if (filters.email) {
+		pipeline.push({
+			$match: { 'editor.email': filters.email }
+		});
+	}
+	if (filters.userId) {
+		const user = await User.findById(userId).exec();
+		pipeline.push({
+			$match: { 'editor.email': user.email }
 		});
 	}
 

@@ -13,7 +13,7 @@
 
     <!--<h1>{{$t('title')}}</h1>-->
     <img style='margin: 0 0 40px 0;' src='/static/img/logo-publifactory.png'></img>
-    <h1 style='font-size:1.8rem; font-family:"Calibri"'>Login</h1>
+    <h1 style='font-size:1.8rem; font-family: "DNLTPro-bold";'>Login</h1>
     <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules">
       <el-form-item>
@@ -30,7 +30,7 @@
       </el-form-item>
 
       <div class='register' style='margin:5px 0 10px 0; '>
-        <!--<a href='/register' style="text-align:end">Create an account</a>-->
+        <a href='/register' style="text-align:end">Create an account</a>
         <!--<p style='font-size:0.9rem;'>or <a href='/register' style="text-decoration:underline;text-align:end">Create an account</a></p>-->
       </div>
 
@@ -206,9 +206,12 @@ export default {
             this.loading = false
             this.$router.push(this.$route.query.redirect || '/dashboard/home')
           }).catch((err) => {
+            let message = null;
+            if (err.body.message === 'ACCOUNTS_INVALID_PASSWORD')
+              message = this.$t("login.passwordFail")
             this.$message({
               title: this.$t('message.error'),
-              message: err.message || this.$t('login.authFail'),
+              message: message || this.$t('login.authFail'),
               type: 'error'
             })
             this.loading = false
@@ -224,11 +227,11 @@ export default {
     onOAuthLogin() {
       const regExpOrcid = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
       const regExpGoogle = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*scope=(.*?)$/g
-      if (regExpOrcid.exec(this.redirect).length === 6) {
+      // if (regExpOrcid.exec(this.redirect).length === 6) {
 
-      } else if (regExpGoogle.exec(this.redirect).length === 5) {
+      // } else if (regExpGoogle.exec(this.redirect).length === 5) {
 
-      }
+      // }
     },
     onGoogleSubmit () {
       this.$refs.form.validate(async valid => {
