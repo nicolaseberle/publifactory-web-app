@@ -38,7 +38,7 @@
         </el-col>
       </el-row>
       <div style='text-align:right;margin-right:20px'>
-        <a @click='invoice==false ? invoice=true: invoice=false' style='font-size:1rem;'><u>See detailed insights…</u></a>
+        <a @click='invoice==false ? invoice=true: invoice=false' style='font-size:0.9rem;'><u>See detailed insights…</u></a>
       </div>
 
       <div v-if="invoice" class='bill-table' style='margin-top:50px;'>
@@ -133,9 +133,6 @@
           <div class='bill-title-free-plan'>Activated account</div>
           <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>This publisher has subscribed to use the service. </div>
         </div>
-        <!--<div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="upgrade()">Request to the editor to upgrade the plan</el-button>
-        </div>-->
       </div>
       <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
         <div class='flex-l items-center justify-between' style='display: table-cell;'>
@@ -143,12 +140,9 @@
           <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>Please upgrade to continue using this publisher account</div>
         </div>
         <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="sendRequest()">Request to the editor to upgrade the plan</el-button>
+          <el-button v-on:click="dialogSendEditorVisible=true">Request to the editor to upgrade the plan</el-button>
         </div>
       </div>
-      <!--<div style='text-align:right;;margin-right:20px'>
-        <a @click='publisher.hidden==false ? publisher.hidden=true: publisher.hidden=false'><u>See detailed insights…</u></a>
-      </div>-->
       </div>
     </el-col>
     </el-row>
@@ -292,7 +286,17 @@
       </div></div>
   </div>
 </el-dialog>-->
-
+<el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
+    <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
+</el-dialog>
+<div class='pricing-dialog-container'>
+<el-dialog :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
+    <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
+</el-dialog>
+<el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
+    <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
+</el-dialog>
+</div>
 </div>
 </template>
 <script>
@@ -301,10 +305,13 @@ import { mapGetters } from 'vuex'
 import axios from 'axios'
 import * as moment from 'moment';
 
+import sendEditorInvitation from './sendRequestToEditor'
+import showPricing from './showPricing'
+
 export default{
   name: 'billing',
   locales,
-  component: {},
+  components: {sendEditorInvitation,showPricing},
   computed: {
     ...mapGetters([
       'userId',
@@ -317,12 +324,14 @@ export default{
       formLabelWidth: '100px',
       dialogFormVisible: false,
       dialogSendEditorVisible: false,
+      visibleDiagSubscription: false,
+      visiblePricing: false,
       form: {name:''},
       isData: false,
       endMonth: "",
       selectedRow: "",
       numberTotal: 0,
-      unitPrice: 3,
+      unitPrice: 1,
       amountTotal: 0,
       toto: 0,
       mybill: [],
@@ -348,14 +357,18 @@ export default{
     this.mylistrequest = this.getMyRequest()
   },
   methods: {
+    toto () {
+      console.log('-------------------------------------')
+    },
     sendRequest () {
-      
+
     },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
     },
     upgrade () {
-      this.$router.push('/pricing')
+      this.visiblePricing = true
+      //this.$router.push('/pricing')
     },
     getMyRequest(){
       axios.get('/api/requests/?page=1&count=1000&userId=true',{
@@ -378,7 +391,7 @@ export default{
         });
         this.numberTotal = res.data.data.length;
         this.amountTotal = this.unitPrice * this.numberTotal;
-        if ((this.amountTotal - this.unitPrice*10)<=0){
+        if ((this.amountTotal - this.unitPrice*30)<=0){
           this.toto = 0
         }
         else{
@@ -478,6 +491,7 @@ export default{
 }
 .bill-table{
   margin-top:50px;
+  margin-left: 60px;
 }
 .bill-table .el-table__header{
   background-color: #FFF;
@@ -567,5 +581,14 @@ h4{
   padding: 10px 10px 10px 10px;
   background-color: #f1f1f1;
   border-radius: 5px;
+}
+.pricing-dialog-container .el-dialog .el-dialog__header{
+  background-color: #FFFFFF;
+  padding: 10 0;
+}
+.pricing-dialog-container .el-dialog .el-dialog__title{
+  color: #333;
+  font-size: 2rem;
+  font-family: 'DNLTPro-bold';
 }
 </style>

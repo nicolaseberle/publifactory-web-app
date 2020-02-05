@@ -35,6 +35,8 @@ import locales from 'locales/article'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
 
+
+
 export default{
   locales,
   name: 'createSubscription',
@@ -44,9 +46,11 @@ export default{
       'accessToken'
     ])
   },
+  created (){
+  },
   mounted () {
     // Create a Stripe client.
-    var stripe = Stripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+    var stripe = Stripe('pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c');
 
     // Create an instance of Elements.
     var elements = stripe.elements();
@@ -196,4 +200,5 @@ label {
     margin-top: 30px;
     width:100%;
 }
+
 </style>
