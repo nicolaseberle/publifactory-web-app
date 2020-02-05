@@ -1,7 +1,12 @@
 .pricing-container{
+  width:100%;
+  text-align: center;
+  display: block;
+  position: relative;
   .wrapper {
-      position: inline-block;
       width:100%;
+      display: flex;
+
       text-align: center;
       margin: 20px 20px;
       font-family: 'Open Sans', sans-serif;
@@ -15,16 +20,16 @@
   .package {
       box-sizing: border-box;
       width: 300px;
-      height: 500px;
+      height: 540px;
       border: 3px solid #e8e8e8;
       border-radius: 7px;
       display: inline-block;
       padding: 24px;
       text-align: center;
-      float: left;
       transition: margin-top .5s linear;
       position: relative;
       margin-right: 11px;
+      min-width: 265px;
   }
   .package:hover{
     border-color: rgb(48, 65, 86);
@@ -50,7 +55,7 @@
       font-size: 3rem;
   }
   .price::after {
-      content: " / request";
+      content: " / request*";
       font-weight: normal;
       font-size: 1rem;
   }
@@ -74,7 +79,7 @@
 
   .list-item-content ul {
       list-style: none;
-      padding: 0 0 0 0;
+      padding: 0 10px 0 0px;
       text-align: left;
       margin-top: 40px;
       margin-bottom: 30px;
@@ -89,10 +94,6 @@
       color: rgb(48, 65, 86);
       margin-right: 3px;
   }
-  /*
-  .brilliant {
-      border-color: rgb(48, 65, 86);
-  }*/
 
   .footer-pricing{
     position: absolute;
@@ -101,6 +102,14 @@
     margin-bottom:20px;
     left:0;
     text-align: center;
+
+
+  }
+  .footer-details{
+      display: block;
+      margin: 20px 20px;
+      text-align: right;
+      font-size:0.8rem;
   }
   /* Triangle */
   /*

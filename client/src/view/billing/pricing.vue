@@ -1,9 +1,12 @@
 <template>
   <div class='app-container'>
     <div class='pricing-container'>
+      <el-row>
       <div class='title-pricing'>
         <h1 style="text-align:left;">Pricing</h1>
       </div>
+      </el-row>
+      <el-row>
       <div class='wrapper'>
         <div class='package'>
           <div class='name'>Freemium<p style='font-size:0.8rem;'>(Individual plan)</p></div>
@@ -28,7 +31,7 @@
             <el-button class='blue-button' disabled round>Current trial</el-button>
           </div>
         </div>
-        <div class='package brilliant'>
+        <div class='package'>
           <div class='name'>Associate Editor<p style='font-size:0.8rem;'>(Individual plan)</p></div>
           <div class='price'>€1</div>
           <div class='trial'>Pay per use</div>
@@ -56,6 +59,32 @@
           <div class='trial'>Pay per use</div>
           <hr>
           <div class='list-item-content'>
+            <ul>
+              <li><i class="el-icon-check"></i>
+                <b>Negociable</b> by volume
+              </li>
+              <li><i class="el-icon-check"></i>
+                <b>Unlimited</b> research
+              </li>
+              <li><i class="el-icon-check"></i>
+                <b>Unlimited</b> invitation
+              </li>
+              <li><i class="el-icon-check"></i>
+                <b>Unlimited</b> collaborator
+              </li>
+            </ul>
+          </div>
+          <div class='footer-pricing'>
+            <el-button class='blue-button' @click='dialogSendEditorVisible=true' round>Send a request to your editor</el-button>
+          </div>
+        </div>
+        <!--
+        <div class='package'>
+          <div class='name'>Publisher<p style='font-size:0.8rem;'>(Publisher plan)</p></div>
+          <div class='price'>€0.3-1</div>
+          <div class='trial'>Pay per use</div>
+          <hr>
+          <div class='list-item-content'>
           <ul>
             <li><i class="el-icon-check"></i>
               <b>Negociable</b> by volume
@@ -74,9 +103,14 @@
           <div class='footer-pricing'>
             <el-button class='blue-button' @click='dialogSendEditorVisible=true' round>Send a request to your editor</el-button>
           </div>
-        </div>
+        </div>-->
       </div>
+      </el-row>
+      <el-row>
+      <div class="footer-details"><p>*Only accepted or rejected invitations are counted</p></div>
+      </el-row>
     </div>
+
       <el-dialog :visible.sync="visibleDiagSubscription" title="Subscription">
           <createSubscription @close="visibleDiagSubscription=false"/>
       </el-dialog>
