@@ -10,6 +10,7 @@ export default {
     laboratory: 'Laboratory',
     field: 'Field',
     tags: 'Tags',
+    currentPlan: "Current Plan",
     messagePassword: 'Enter a password',
     oldPassword: 'Old password',
     messageOldPassword: 'Enter your old password',

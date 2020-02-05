@@ -152,6 +152,7 @@
 		"vue-social-sharing": "^2.4.6",
 		"vue-split-panel": "^1.0.4",
 		"vue-status-indicator": "^1.1.1",
+		"vue-stripe-elements-plus": "^0.3.2",
 		"vue-textarea-autosize": "^1.0.4",
 		"vuex": "^2.5.0",
 		"vuex-router-sync": "^4.1.2",

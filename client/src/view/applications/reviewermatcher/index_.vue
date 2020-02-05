@@ -512,7 +512,7 @@ export default {
         object: '',
         mailDest: '',
         name: '',
-        journal: '',
+        journal: 'None',
         message: '',
         deadline: '',
         relaunch: '2x1month',
