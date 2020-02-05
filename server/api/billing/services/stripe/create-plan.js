@@ -2,7 +2,7 @@ const stripe = require('../../../../config/stripe');
 const { planStripeId } = require('../../model');
 
 //! \\ Should not be called unless it is deleted from stipe dashboard
-async function createPlan(billing) {
+async function createPlan({ currency, interval, productStripeId }) {
 	// if (!billing.productStripeId)
 	try {
 		const plan = await stripe.plans.retrieve(planStripeId);
@@ -11,9 +11,9 @@ async function createPlan(billing) {
 		console.log('ERROR=>', error);
 		if (error.statusCode === 404 && error.code === 'resource_missing') {
 			const plan = await stripe.plans.create({
-				currency: billing.currency,
-				interval: billing.interval,
-				product: billing.productStripeId,
+				currency,
+				interval,
+				product: productStripeId,
 				nickname: 'requests plan',
 				// eslint-disable-next-line
 				aggregate_usage: 'sum',

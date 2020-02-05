@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const { stripe } = require('../../../../config');
 
-const productStripeId = 'prod_Gg5piJFRSBT6Lh';
-const planStripeId = 'plan_Gg5yf6dpuiQ91r';
+const productStripeId = stripe.productId;
+const planStripeId = stripe.planId;
 
 const BillingSchema = new mongoose.Schema(
 	{
@@ -9,6 +10,8 @@ const BillingSchema = new mongoose.Schema(
 		lastName: { type: String, required: true },
 		firstName: { type: String, required: true },
 		customerStripeId: { type: String, default: null },
+		subscriptionId: { type: String, default: null },
+		subscriptionItemId: { type: String, default: null },
 		payementMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
 		productStripeId: { type: String, default: productStripeId },

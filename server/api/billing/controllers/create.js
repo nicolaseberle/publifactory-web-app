@@ -9,7 +9,6 @@ async function create(req, res, next) {
 			req.path.includes('billings/journals/')
 		)
 			throw new ApiError('BAD_ROUTE_PARAMETERS');
-
 		const response = await serviceCreate({
 			userId: req.params.userId,
 			journalId: req.params.journalId,

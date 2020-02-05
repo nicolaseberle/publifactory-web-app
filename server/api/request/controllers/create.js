@@ -19,7 +19,8 @@ async function create(req, res, next) {
 			!req.body.reviewer ||
 			!req.body.editor ||
 			!req.body.object ||
-			!req.body.content
+			!req.body.content ||
+			!req.params.billingId
 		) {
 			throw { code: 422, message: 'Missing parameters.' };
 		}
@@ -34,35 +35,48 @@ async function create(req, res, next) {
 					.json({ success: false, message: 'MAX_INVITATION_NUMBER' })
 					.end();
 			} else {
-				const response = await serviceCreate(req.body, req.params.billingId);
+				const response = await serviceCreate(
+					req.body,
+					req.decoded._id,
+					req.params.billingId
+				);
 				if (!maxInvitation) {
-					return res
-						.status(200)
-						.cookie('maxInvitation', '1', cookieConfig)
-						.cookie('billing', response.billing, cookieConfig)
-						.json({ ...response, invitationNumber: 1 })
-						.end();
+					return (
+						res
+							.status(200)
+							.cookie('maxInvitation', '1', cookieConfig)
+							// .cookie('billing', response.billing, cookieConfig)
+							.json({ ...response, invitationNumber: 1 })
+							.end()
+					);
 				} else {
 					const invitationNumber = parseInt(maxInvitation, 10) + 1;
-					return res
-						.status(200)
-						.cookie('maxInvitation', invitationNumber, cookieConfig)
-						.cookie('billing', response.billing, cookieConfig)
-						.cookie('billing', response.billing, cookieConfig)
-						.json({ ...response, invitationNumber })
-						.end();
+					return (
+						res
+							.status(200)
+							.cookie('maxInvitation', invitationNumber, cookieConfig)
+							// .cookie('billing', response.billing, cookieConfig)
+							.json({ ...response, invitationNumber })
+							.end()
+					);
 				}
 			}
 		}
 
-		const response = await serviceCreate(req.body, req.params.billingId);
+		const response = await serviceCreate(
+			req.body,
+			req.decoded._id,
+			req.params.billingId
+		);
 
-		return res
-			.status(200)
-			.clearCookie('maxInvitation', { ...cookieConfig, path: '/' })
-			.crearCookie('billing', { ...cookieConfig, path: '/' })
-			.json(response)
-			.end();
+		return (
+			res
+				.status(200)
+				.clearCookie('maxInvitation', { ...cookieConfig, path: '/' })
+				// .clearCookie('billing', { ...cookieConfig, path: '/' })
+				.json(response)
+				.end()
+		);
 	} catch (error) {
 		return next(error);
 	}

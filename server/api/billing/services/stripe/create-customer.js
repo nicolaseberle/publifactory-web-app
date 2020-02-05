@@ -1,12 +1,19 @@
 const stripe = require('../../../../config/stripe');
 
-async function createCustomer(billing) {
-	const customer = await stripe.customers.create({
-		email: billing.email,
-		name: billing.lastname
-	});
-	billing.customerStripeId = customer.id;
-	await billing.save();
+async function createCustomer({
+	email,
+	lastName,
+	payementMethodId = undefined
+}) {
+	// stripe empty field
+	const customer = {
+		email,
+		name: lastName
+	};
+	if (payementMethodId) customer.payment_method = payementMethodId;
+	console.log('==================+>', customer, payementMethodId);
+	const newCustomer = await stripe.customers.create(customer);
+	return newCustomer;
 }
 
 module.exports = createCustomer;
