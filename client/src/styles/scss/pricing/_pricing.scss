@@ -55,7 +55,7 @@
       font-size: 3rem;
   }
   .price::after {
-      content: " / request*";
+      content: " / request";
       font-weight: normal;
       font-size: 1rem;
   }
@@ -146,3 +146,16 @@
      font-size: 2.5rem;
    }
  }
+
+ .subscribe-dialog-container{
+  .el-dialog__header{
+   background-color: #FFFFFF;
+   padding: 10 0;
+ }
+
+  .el-dialog__header .el-dialog__title{
+   color: #333;
+   font-size: 1.6rem;
+   font-family: 'DNLTPro-bold';
+ }
+}

@@ -286,9 +286,6 @@
       </div></div>
   </div>
 </el-dialog>-->
-<el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
-    <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
-</el-dialog>
 <div class='pricing-dialog-container'>
 <el-dialog :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
     <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
