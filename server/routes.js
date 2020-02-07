@@ -50,6 +50,8 @@ module.exports = function(app) {
 	app.use("/api/roles", require("./api/roles"));
 	app.use("/api/pictures", require("./api/picture"));
 	app.use("/api/history", require("./api/article/history"));
+	app.use("/api/billings", require("./api/billing"));
+
 
 	// catch 404 and forward to error handler
 	app.use(function(req, res, next) {
