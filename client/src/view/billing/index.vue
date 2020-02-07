@@ -286,14 +286,13 @@
       </div></div>
   </div>
 </el-dialog>-->
-<div class='pricing-dialog-container'>
-<el-dialog :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
+
+<el-dialog custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
     <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
 </el-dialog>
 <el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
     <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
 </el-dialog>
-</div>
 </div>
 </template>
 <script>
@@ -426,7 +425,7 @@ export default{
     color:#ea261a;
 }
 .green{
-  color: #458227;
+    color: #458227;
 }
 .yellow{
   color: #DB9107;
@@ -579,13 +578,5 @@ h4{
   background-color: #f1f1f1;
   border-radius: 5px;
 }
-.pricing-dialog-container .el-dialog .el-dialog__header{
-  background-color: #FFFFFF;
-  padding: 10 0;
-}
-.pricing-dialog-container .el-dialog .el-dialog__title{
-  color: #333;
-  font-size: 2rem;
-  font-family: 'DNLTPro-bold';
-}
+
 </style>

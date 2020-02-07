@@ -1,5 +1,5 @@
 <template>
-  <div>
+    <div>
     <div class='pricing-container'>
       <el-row>
       <div class='wrapper'>
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class='package'>
-          <div class='name'>Associate Editor<p style='font-size:0.8rem;'>(Individual plan)</p></div>
+          <div class='name'>Premium<p style='font-size:0.8rem;'>(Individual plan)</p></div>
           <div class='price'>€1</div>
           <div class='trial'>Pay per use</div>
           <hr>

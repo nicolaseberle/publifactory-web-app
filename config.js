@@ -136,7 +136,21 @@ const backendProd = Object.assign({}, backendBase, {
 })
 const stripeTest = {
   public_key: "pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c",
-  private_key: "sk_test_5H43wOkffLTagWkJdFn4Q4Jm008y6a3Mzj"
+  private_key: "sk_test_5H43wOkffLTagWkJdFn4Q4Jm008y6a3Mzj",
+  plan:{
+    freemium:{
+      name: "freemium",
+      requestLimit: 5
+    },
+    premium:{
+      name: "premium",
+      requestLimit: None
+    },
+    publisher:{
+      name: "publisher",
+      requestLimit: None 
+    }
+  }
 }
 const stripeProd = {
   public_key: "",
