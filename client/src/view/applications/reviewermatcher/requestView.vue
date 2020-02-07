@@ -13,22 +13,6 @@
 			<el-form-item label="Your name" prop="name">
 				<el-input v-model="formMail.name"></el-input>
 			</el-form-item>
-			<el-form-item label="Journal requesting the reviewing" prop="journal">
-				<el-select
-					v-model="formMail.journal"
-					filterable
-					remote
-					placeholder="Enter your revue"
-					:remote-method="remoteMethod"
-					:loading="loading">
-					<el-option
-						v-for="item in options2"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value">
-					</el-option>
-				</el-select>
-			</el-form-item>
 			<!--
 			<el-form-item label="Journal requesting the reviewing" prop="journal">
 				<el-input v-model="formMail.journal"></el-input>
@@ -75,6 +59,40 @@
 					v-model="formMail.deadline"
 				></el-date-picker>
 			</el-form-item>
+			<el-form-item>
+				<el-switch
+				  v-model="editorialUse"
+				  active-text="Editorial use"
+				  inactive-text="Personal use">
+				</el-switch>
+				<el-form-item  label="Journal requesting the reviewing" prop="journal">
+					<el-select
+						v-model="formMail.journal"
+						filterable
+						remote
+						placeholder="Enter your revue"
+						:remote-method="remoteMethod"
+						:loading="loading"
+						:disabled="editorialUse===false">
+						<el-option
+							v-for="item in listJournals"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+							:disabled="editorialUse===false">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="Editor in Chief to contact" >
+					<el-form-item label="Name" prop="nameEditorInChief">
+	    			<el-input v-model="formMail.nameEditorInChief" :disabled="editorialUse===false"></el-input>
+	  			</el-form-item>
+					<el-form-item label="Email" prop="emailEditorInChief">
+	    			<el-input v-model="formMail.emailEditorInChief" :disabled="editorialUse===false"></el-input>
+	  			</el-form-item>
+				</el-form-item>
+			</el-form-item>
+
 			<!--
     <el-form-item label="Relaunch" prop="relaunch">
       <el-select v-model="formMail.relaunch">
@@ -129,6 +147,7 @@ export default {
 	components:{freePlanStatusBar,quotaRequestBox},
 	data() {
 		return {
+			editorialUse: false,
 			list: [],
 			editor: {},
 			idEditor: this.setIdEditor(),
@@ -138,7 +157,7 @@ export default {
 			dialogVisible: false,
 			maxInvitation: 0,
 			journal: ["Nature","Publiscience","the BMJ"],
-			options2: [],
+			listJournals: [],
 			value: [],
 			loading: false,
 			options: [
@@ -187,14 +206,28 @@ export default {
 						message: "You need to enter your email",
 						trigger: "blur"
 					}
-				],/*
+				],
 				journal: [
 					{
-						required: true,
+						required: false,
 						message: "You need to enter your journal",
 						trigger: "blur"
 					}
-				],*/
+				],
+				nameEditorInChief: [
+					{
+						required: false,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				],
+				emailEditorInChief: [
+					{
+						required: false,
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				],
 				name: [
 					{
 						required: true,
@@ -219,6 +252,60 @@ export default {
 	},
 	computed: {
 		...mapGetters(["loggedIn"])
+	},
+	watch: {
+		editorialUse (val) {
+			if(val) {
+				this.formMail.journal = ''
+				this.mailRules.journal = [
+					{
+						required: true,
+						message: "You need to enter your journal",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.nameEditorInChief = [
+					{
+						required: true,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.emailEditorInChief = [
+					{
+						required: true,
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				]
+			}
+			else {
+				this.formMail.journal = 'None'
+				this.formMail.nameEditorInChief = ''
+				this.formMail.emailEditorInChief = ''
+				this.mailRules.nameEditorInChief = [
+					{
+						required: false,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.emailEditorInChief= [
+					{
+						required: false,
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.journal = [
+					{
+						required: false,
+						message: "You need to enter your journal",
+						trigger: "blur"
+					}
+				]
+			}
+		}
 	},
 	mounted() {
 		var quill = new Quill("#" + this.idEditor, {
@@ -256,13 +343,13 @@ export default {
 				this.loading = true;
 				setTimeout(() => {
 					this.loading = false;
-					this.options2 = this.list.filter(item => {
+					this.listJournals = this.list.filter(item => {
 						return item.label.toLowerCase()
 							.indexOf(query.toLowerCase()) > -1;
 					});
 				}, 200);
 			} else {
-				this.options2 = [];
+				this.listJournals = [];
 			}
 		},
 		async addRequest(dataJson) {

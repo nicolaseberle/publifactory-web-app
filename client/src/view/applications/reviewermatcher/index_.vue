@@ -513,6 +513,8 @@ export default {
         mailDest: '',
         name: '',
         journal: 'None',
+        nameEditorInChief: '',
+        emailEditorInChief: '',
         message: '',
         deadline: '',
         relaunch: '2x1month',
@@ -698,6 +700,8 @@ export default {
               }
               this.centerDialogVisible = false;
               console.log(this.requestInfos);
+            }).catch((e)=>{
+              console.log(e);
             })
           })
         }
