@@ -106,7 +106,7 @@
     <el-row>
     <div class="footer-details"><p>*Only accepted or rejected invitations are counted</p></div>
     </el-row>
-    <el-dialog :visible.sync="visibleDiagSubscription"  title="Subscription" append-to-body>
+    <el-dialog :visible.sync="visibleDiagSubscription"  title="Subscription" width="30%" append-to-body>
         <createSubscription @close="closeCheckout()"/>
     </el-dialog>
     <el-dialog :visible.sync="dialogSendEditorVisible"  title="Invitation" append-to-body>
