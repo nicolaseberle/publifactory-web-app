@@ -1,5 +1,6 @@
 'use strict';
 const axios = require('axios');
+var Evaluation = require('./services.model');
 
 /**
  * getArticles - Returns an array of articles requested with a page offset and limit,
@@ -18,4 +19,28 @@ exports.searchReviewers = async (req, res, next) => {
 exports.getInfoFile =  async (req, res, next) => {
   await axios.post('http://35.241.170.253:5000/api/extract_infos_pdf', { headers: { 'Content-Type': 'multipart/form-data' } })
 
+}
+exports.getEvaluation =  async (req, res, next) => {
+  try{
+    const evaluation_ = await Evaluation.find({}).exec();
+    res.status(201).json(newEvaluation_);
+  }
+  catch (err) {
+    next(err);
+  }
+}
+exports.sendEvaluation =  async (req, res, next) => {
+  try {
+    const fields = req.body.fields;
+    const subfields = req.body.subfields;
+    const evaluationPositive = req.body.evaluationPositive;
+    const evaluationNegative = req.body.evaluationNegative;
+    const evaluationUnknown = req.body.evaluationUnknown;
+    const newEvaluation = new Evaluation({ fields , subfields, evaluationPositive,evaluationNegative,evaluationUnknown});
+    const newEvaluation_ = await newEvaluation.save();
+    res.status(201).json(newEvaluation_);
+  }
+  catch (err) {
+    next(err);
+  }
 }

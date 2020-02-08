@@ -292,7 +292,7 @@
           <el-table-column type="expand" width="1">
             <template slot-scope="props">
               <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
-                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)"/>
+                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)" v-on:dontknow="unvalidateRow(props.$index, tableData, props.row)"/>
               </div>
               <!--<article v-if="state_click[props.$index] == 2">
                 <strong>Contacts :</strong>
@@ -422,7 +422,8 @@
                 plain
                 icon="el-icon-check"
                 circle
-                @click.native.prevent="validateRow(scope.$index, tableData)"
+                @click.native.prevent="
+                (scope.$index, tableData)"
                 v-popover:popcheck/>
               <el-popover
                 ref="popdel"
@@ -1221,7 +1222,14 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
-    deleteRow(index, rows, row) {
+    async deleteRow(index, rows, row) {
+
+      await axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":0,"evaluationNegative":1,"evaluationUnknown":0})
+      .then((res) => {
+          console.log("sendEvaluation :: ", res.data);
+        }
+      )
+
       this.$refs.refTable.toggleRowExpansion(row);
       this.isExpanded[index] = false;
       this.state_click[index] = 0;
@@ -1234,15 +1242,23 @@ export default {
       let temp = JSON.stringify(this.listPertinence)
       let today = new Date();
       let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
-      console.log(token);
+      /*console.log(token);
       new Promise ((resolve,reject) => {
         axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
         .then( async (res) => {
           console.log("after", res.data);
         })
-      })
+      })*/
+
     },
-    validateRow(index, rows, row) {
+    async validateRow(index, rows, row) {
+
+      await axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":1,"evaluationNegative":0,"evaluationUnknown":0})
+      .then((res) => {
+          console.log("sendEvaluation :: ", res.data);
+        }
+      )
+
       if (typeof this.listPertinence.list_failed[index] != 'undefined'){
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;
@@ -1255,13 +1271,46 @@ export default {
         let temp = JSON.stringify(this.listPertinence)
         let today = new Date();
         let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
-        console.log(token);
+        /*console.log(token);
         new Promise ((resolve,reject) => {
           axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
           .then( async (res) => {
             console.log("after", res.data);
           })
-        })
+        })*/
+
+
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+    },
+    unvalidateRow(index, rows, row) {
+      if (typeof this.listPertinence.list_failed[index] != 'undefined'){
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+
+        this.listPertinence.list_failed.splice(index, 1);
+
+        this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+        console.log("before", this.listPertinence);
+        let temp = JSON.stringify(this.listPertinence)
+        let today = new Date();
+        let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+        /*console.log(token);
+        new Promise ((resolve,reject) => {
+          axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+          .then( async (res) => {
+            console.log("after", res.data);
+          })
+        })*/
+        axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":0,"evaluationNegative":0,"evaluationUnknown":1})
+        .then((res) => {
+            console.log("sendEvaluation :: ", res.data);
+          }
+        )
       } else {
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;

@@ -32,6 +32,7 @@ module.exports = function(app) {
 	/* Token is not necessary for those parts*/
 	app.use("/api/requests", require("./api/request"));
 	app.use("/api/activity", require("./api/activity"));
+	app.use("/api/services", require("./api/services"));
 
 	app.use(function(req, res, next) {
 		console.log("Ommit Connection for:", req.originalUrl);
