@@ -22,8 +22,24 @@ exports.getInfoFile =  async (req, res, next) => {
 }
 exports.getEvaluation =  async (req, res, next) => {
   try{
-    const evaluation_ = await Evaluation.find({}).exec();
-    res.status(201).json(newEvaluation_);
+    let pipeline = [];
+    pipeline.push(
+      {$group:
+        { _id: "$fields",
+          positive: { $sum: "$evaluationPositive" },
+          negative: { $sum: "$evaluationNegative" },
+          unknown: { $sum: "$evaluationUnknown" }
+        }
+      }
+    )
+
+    //pipeline.push(...paginate(page, count));
+    const list = await Evaluation.aggregate(pipeline);
+
+    console.log(list)
+
+
+    res.status(201).json(list);
   }
   catch (err) {
     next(err);
