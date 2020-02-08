@@ -1,0 +1,329 @@
+.subscribe-dialog-container{
+ .el-dialog__header{
+  background-color: #FFFFFF;
+  padding: 10 0;
+}
+
+ .el-dialog__header .el-dialog__title{
+  color: #333;
+  font-size: 1.8rem;
+  font-family: 'DNLTPro-bold';
+}
+}
+
+
+.example.example2 {
+  background-color: #fff;
+  text-align:left;
+}
+
+.example.example2 * {
+  font-family: "DNLTPro-regular";
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.example.example2 .row {
+  display: -ms-flexbox;
+  display: flex;
+  margin: 0 5px 10px;
+}
+
+.example.example2 .field {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 0 10px;
+}
+.example.example2 .footer {
+  position: relative;
+  width: 100%;
+  text-align:center;
+  margin: 20 10px;
+  font-size: 0.6rem;
+}
+
+
+.example.example2 .field.half-width {
+  width: 50%;
+}
+
+.example.example2 .field.quarter-width {
+  width: calc(25% - 10px);
+}
+
+.example.example2 .baseline {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  left: 0;
+  bottom: 0;
+  background-color: #cfd7df;
+  transition: background-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 label {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 8px;
+  color: #cfd7df;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform-origin: 0 50%;
+  cursor: text;
+  pointer-events: none;
+  transition-property: color, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  padding-bottom: 7px;
+  color: #32325d;
+  background-color: transparent;
+}
+
+.example.example2 .input::-webkit-input-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input::-moz-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input:-ms-input-placeholder {
+  color: transparent;
+  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.example.example2 .input.StripeElement {
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: opacity;
+}
+
+.example.example2 .input.focused,
+.example.example2 .input:not(.empty) {
+  opacity: 1;
+}
+
+.example.example2 .input.focused::-webkit-input-placeholder,
+.example.example2 .input:not(.empty)::-webkit-input-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused::-moz-placeholder,
+.example.example2 .input:not(.empty)::-moz-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused:-ms-input-placeholder,
+.example.example2 .input:not(.empty):-ms-input-placeholder {
+  color: #cfd7df;
+}
+
+.example.example2 .input.focused + label,
+.example.example2 .input:not(.empty) + label {
+  color: #aab7c4;
+  transform: scale(0.85) translateY(-25px);
+  cursor: default;
+}
+
+.example.example2 .input.focused + label {
+  color: #24b47e;
+}
+
+.example.example2 .input.invalid + label {
+  color: #ffa27b;
+}
+
+.example.example2 .input.focused + label + .baseline {
+  background-color: #24b47e;
+}
+
+.example.example2 .input.focused.invalid + label + .baseline {
+  background-color: #e25950;
+}
+
+.example.example2 input, .example.example2 button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border-style: none;
+}
+
+
+.example.example2 input:-webkit-autofill {
+  -webkit-text-fill-color: #e39f48;
+  transition: background-color 100000000s;
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example2 .StripeElement--webkit-autofill {
+  background: transparent !important;
+}
+
+.example.example2 input, .example.example2 button {
+  -webkit-animation: 1ms void-animation-out;
+}
+
+.example.example2 button {
+  display: block;
+  width: calc(100% - 30px);
+  height: 40px;
+  margin: 15px 15px 0;
+  background-color: #24b47e;
+  border-radius: 20px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.example.example2 button:disabled,button[disabled] {
+  background-color: #e6e6e6;
+  color: #737373;
+}
+
+
+.example.example2 .error svg {
+  margin-top: 0 !important;
+}
+
+.example.example2 .error svg .base {
+  fill: #e25950;
+}
+
+.example.example2 .error svg .glyph {
+  fill: #fff;
+}
+
+.example.example2 .error .message {
+  color: #e25950;
+}
+
+.example.example2 .success .icon .border {
+  stroke: #abe9d2;
+}
+
+.example.example2 .success .icon .checkmark {
+  stroke: #24b47e;
+}
+
+.example.example2 .success .title {
+  color: #32325d;
+  font-size: 16px !important;
+}
+
+.example.example2 .success .message {
+  color: #8898aa;
+  font-size: 13px !important;
+}
+
+.example.example2 .success .reset path {
+  fill: #24b47e;
+}
+/**
+ * The CSS shown here will not be introduced in the Quickstart guide, but shows
+ * how you can use CSS to style your Element's container.
+ */
+ /**
+ * The CSS shown here will not be introduced in the Quickstart guide, but
+ * shows how you can use CSS to style your Element's container.
+ */
+ .form-row.inline {
+    display: -ms-flexbox;
+    display: flex;
+}
+.form-row:first-child {
+    margin-top: 0;
+}
+.form-row.inline .col:not(:last-child) {
+    margin-right: 20px;
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+    max-width:100%;
+    font-size: 14px;
+    font-weight: 500;
+}
+.form-row.inline .col {
+    width: 100%;
+}
+.form-row {
+    width: 100%;
+    margin-top: 20px;
+}
+ input, .StripeElement {
+   height: 40px;
+   padding: 10px 12px;
+   margin-bottom: 10px;
+   width: 100%;
+   color: #32325d;
+   background-color: white;
+   /*border: 1px solid rgba(107, 124, 147, 0.3);;*/
+   border-radius: 4px;
+
+   /*box-shadow: 0 1px 3px 0 #e6ebf1;*/
+   /*-webkit-transition: box-shadow 150ms ease;
+   transition: box-shadow 150ms ease;*/
+ }
+
+ input:focus, .StripeElement--focus {
+   /*box-shadow: 0 1px 3px 0 #cfd7df;*/
+ }
+
+ .StripeElement--invalid {
+   border-color: #fa755a;
+ }
+
+ .StripeElement--webkit-autofill {
+   background-color: #fefde5 !important;
+ }
+
+ .stripe-form {
+   text-align: left;
+   color: rgba(107, 124, 147, 1);
+   font-size: 16px;
+   line-height: 1.42857143;
+   font-family: "DNLTPro-regular";
+ }
+.stripe-form button {
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    text-decoration: none;
+    color: #fff;
+    background: #0fb160;
+    white-space: nowrap;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-decoration: none;
+    -webkit-transition: all 150ms ease;
+    transition: all 150ms ease;
+    float: left;
+    margin-top: 30px;
+    width:100%;
+}
+
+.sr-combo-inputs-row {
+  width: 100%;
+  display: flex;
+}
