@@ -287,7 +287,7 @@
   </div>
 </el-dialog>-->
 
-<el-dialog custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
+<el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
     <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
 </el-dialog>
 <el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">

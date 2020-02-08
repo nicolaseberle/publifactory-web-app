@@ -143,12 +143,10 @@ const stripeTest = {
       requestLimit: 5
     },
     premium:{
-      name: "premium",
-      requestLimit: None
+      name: "premium"
     },
     publisher:{
-      name: "publisher",
-      requestLimit: None 
+      name: "publisher"
     }
   }
 }

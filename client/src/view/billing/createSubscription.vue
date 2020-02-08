@@ -1,7 +1,10 @@
 <template>
   <div class='subscribe-dialog-container'>
     <!--Example 2-->
+
+
           <div class="cell example example2" id="example-2">
+
             <form>
               <div data-locale-reversible>
                 <div class="row">
@@ -46,12 +49,29 @@
                   <div class="baseline"></div>
                 </div>
                 <div class="field half-width">
-                  <div id="example2-card-cvc" class="input empty"></div>
+                  <div id="example2-card-cvc" class="input empty "></div>
                   <label for="example2-card-cvc" data-tid="elements_examples.form.card_cvc_label">CVC</label>
                   <div class="baseline"></div>
                 </div>
               </div>
-            <button type="submit" data-tid="elements_examples.form.pay_button">Subscribe</button>
+              <div class="row">
+                <div class="field" style='margin-top:20px'>
+
+                    <el-switch
+                      v-model="checked"
+                      active-text="I agree with the Term of Use">
+                    </el-switch>
+
+                </div>
+              </div>
+
+
+            <button type="submit" data-tid="elements_examples.form.pay_button" :disabled='checked===false'>Subscribe</button>
+            <div class="row" >
+              <div class="footer">
+                <p>Your card will be charged every 5 requests</p>
+              </div>
+            </div>
               <!--<div class="error" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
                   <path class="base" fill="#000" d="M8.5,17 C3.80557963,17 0,13.1944204 0,8.5 C0,3.80557963 3.80557963,0 8.5,0 C13.1944204,0 17,3.80557963 17,8.5 C17,13.1944204 13.1944204,17 8.5,17 Z"></path>
                   <path class="glyph" fill="#FFF" d="M8.5,7.29791847 L6.12604076,4.92395924 C5.79409512,4.59201359 5.25590488,4.59201359 4.92395924,4.92395924 C4.59201359,5.25590488 4.59201359,5.79409512 4.92395924,6.12604076 L7.29791847,8.5 L4.92395924,10.8739592 C4.59201359,11.2059049 4.59201359,11.7440951 4.92395924,12.0760408 C5.25590488,12.4079864 5.79409512,12.4079864 6.12604076,12.0760408 L8.5,9.70208153 L10.8739592,12.0760408 C11.2059049,12.4079864 11.7440951,12.4079864 12.0760408,12.0760408 C12.4079864,11.7440951 12.4079864,11.2059049 12.0760408,10.8739592 L9.70208153,8.5 L12.0760408,6.12604076 C12.4079864,5.79409512 12.4079864,5.25590488 12.0760408,4.92395924 C11.7440951,4.59201359 11.2059049,4.59201359 10.8739592,4.92395924 L8.5,7.29791847 L8.5,7.29791847 Z"></path>
@@ -59,6 +79,7 @@
                 <span class="message"></span>
               </div>-->
             </form>
+
             <!--
             <div class="success">
               <div class="icon">
@@ -100,7 +121,7 @@ function registerElements(elements, exampleName) {
   function enableInputs() {
     Array.prototype.forEach.call(
       form.querySelectorAll(
-        "input[type='text'], input[type='email'], input[type='tel']"
+        "input[type='text'], input[type='email'], input[type='tel'], input[type='checkbox']"
       ),
       function(input) {
         input.removeAttribute('disabled');
@@ -111,7 +132,7 @@ function registerElements(elements, exampleName) {
   function disableInputs() {
     Array.prototype.forEach.call(
       form.querySelectorAll(
-        "input[type='text'], input[type='email'], input[type='tel']"
+        "input[type='text'], input[type='email'], input[type='tel'], input[type='checkbox']"
       ),
       function(input) {
         input.setAttribute('disabled', 'true');
@@ -247,6 +268,11 @@ export default{
       'accessToken'
     ])
   },
+  data () {
+    return {
+      checked: false
+    };
+  },
   created (){
   },
   mounted () {
@@ -304,12 +330,16 @@ export default{
             color: '#FFCCA5',
           },
         },
+        checkbox:{
+          margin:'0 0 0 100px '
+        }
       };
 
       var elementClasses = {
         focus: 'focused',
         empty: 'empty',
         invalid: 'invalid',
+        checkbox: 'checkbox'
       };
       /*
       var card = elements.create('card', { style: elementStyles });
@@ -333,8 +363,13 @@ export default{
       });
       cardCvc.mount('#example2-card-cvc');
 
-      registerElements([cardNumber, cardExpiry, cardCvc], 'example2');
+      var cardRules = elements.create('cardRules', {
+        style: elementStyles,
+        classes: elementClasses,
+      });
+      cardRules.mount('#example2-rules');
 
+      registerElements([cardNumber, cardExpiry, cardCvc, cardRules], 'example2')
 
   },
   methods:{
@@ -347,306 +382,7 @@ export default{
 }
 </script>
 <style>
+.el-checkbox__input{
 
-.example.example2 {
-  background-color: #fff;
-  text-align:left;
 }
-
-.example.example2 * {
-  font-family: Source Code Pro, Consolas, Menlo, monospace;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.example.example2 .row {
-  display: -ms-flexbox;
-  display: flex;
-  margin: 0 5px 10px;
-}
-
-.example.example2 .field {
-  position: relative;
-  width: 100%;
-  height: 50px;
-  margin: 0 10px;
-}
-
-.example.example2 .field.half-width {
-  width: 50%;
-}
-
-.example.example2 .field.quarter-width {
-  width: calc(25% - 10px);
-}
-
-.example.example2 .baseline {
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  left: 0;
-  bottom: 0;
-  background-color: #cfd7df;
-  transition: background-color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.example.example2 label {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  bottom: 8px;
-  color: #cfd7df;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transform-origin: 0 50%;
-  cursor: text;
-  pointer-events: none;
-  transition-property: color, transform;
-  transition-duration: 0.3s;
-  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.example.example2 .input {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  bottom: 0;
-  padding-bottom: 7px;
-  color: #32325d;
-  background-color: transparent;
-}
-
-.example.example2 .input::-webkit-input-placeholder {
-  color: transparent;
-  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.example.example2 .input::-moz-placeholder {
-  color: transparent;
-  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.example.example2 .input:-ms-input-placeholder {
-  color: transparent;
-  transition: color 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.example.example2 .input.StripeElement {
-  opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-  will-change: opacity;
-}
-
-.example.example2 .input.focused,
-.example.example2 .input:not(.empty) {
-  opacity: 1;
-}
-
-.example.example2 .input.focused::-webkit-input-placeholder,
-.example.example2 .input:not(.empty)::-webkit-input-placeholder {
-  color: #cfd7df;
-}
-
-.example.example2 .input.focused::-moz-placeholder,
-.example.example2 .input:not(.empty)::-moz-placeholder {
-  color: #cfd7df;
-}
-
-.example.example2 .input.focused:-ms-input-placeholder,
-.example.example2 .input:not(.empty):-ms-input-placeholder {
-  color: #cfd7df;
-}
-
-.example.example2 .input.focused + label,
-.example.example2 .input:not(.empty) + label {
-  color: #aab7c4;
-  transform: scale(0.85) translateY(-25px);
-  cursor: default;
-}
-
-.example.example2 .input.focused + label {
-  color: #24b47e;
-}
-
-.example.example2 .input.invalid + label {
-  color: #ffa27b;
-}
-
-.example.example2 .input.focused + label + .baseline {
-  background-color: #24b47e;
-}
-
-.example.example2 .input.focused.invalid + label + .baseline {
-  background-color: #e25950;
-}
-
-.example.example2 input, .example.example2 button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  outline: none;
-  border-style: none;
-}
-
-.example.example2 input:-webkit-autofill {
-  -webkit-text-fill-color: #e39f48;
-  transition: background-color 100000000s;
-  -webkit-animation: 1ms void-animation-out;
-}
-
-.example.example2 .StripeElement--webkit-autofill {
-  background: transparent !important;
-}
-
-.example.example2 input, .example.example2 button {
-  -webkit-animation: 1ms void-animation-out;
-}
-
-.example.example2 button {
-  display: block;
-  width: calc(100% - 30px);
-  height: 40px;
-  margin: 40px 15px 0;
-  background-color: #24b47e;
-  border-radius: 4px;
-  color: #fff;
-  text-transform: uppercase;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.example.example2 .error svg {
-  margin-top: 0 !important;
-}
-
-.example.example2 .error svg .base {
-  fill: #e25950;
-}
-
-.example.example2 .error svg .glyph {
-  fill: #fff;
-}
-
-.example.example2 .error .message {
-  color: #e25950;
-}
-
-.example.example2 .success .icon .border {
-  stroke: #abe9d2;
-}
-
-.example.example2 .success .icon .checkmark {
-  stroke: #24b47e;
-}
-
-.example.example2 .success .title {
-  color: #32325d;
-  font-size: 16px !important;
-}
-
-.example.example2 .success .message {
-  color: #8898aa;
-  font-size: 13px !important;
-}
-
-.example.example2 .success .reset path {
-  fill: #24b47e;
-}
-/**
- * The CSS shown here will not be introduced in the Quickstart guide, but shows
- * how you can use CSS to style your Element's container.
- */
- /**
- * The CSS shown here will not be introduced in the Quickstart guide, but
- * shows how you can use CSS to style your Element's container.
- */
- .form-row.inline {
-    display: -ms-flexbox;
-    display: flex;
-}
-.form-row:first-child {
-    margin-top: 0;
-}
-.form-row.inline .col:not(:last-child) {
-    margin-right: 20px;
-}
-label {
-    display: block;
-    margin-bottom: 8px;
-    max-width:100%;
-    font-size: 14px;
-    font-weight: 500;
-}
-.form-row.inline .col {
-    width: 100%;
-}
-.form-row {
-    width: 100%;
-    margin-top: 20px;
-}
- input, .StripeElement {
-   height: 40px;
-   padding: 10px 12px;
-   margin-bottom: 10px;
-   width: 100%;
-   color: #32325d;
-   background-color: white;
-   /*border: 1px solid rgba(107, 124, 147, 0.3);;*/
-   border-radius: 4px;
-
-   /*box-shadow: 0 1px 3px 0 #e6ebf1;*/
-   /*-webkit-transition: box-shadow 150ms ease;
-   transition: box-shadow 150ms ease;*/
- }
-
- input:focus, .StripeElement--focus {
-   /*box-shadow: 0 1px 3px 0 #cfd7df;*/
- }
-
- .StripeElement--invalid {
-   border-color: #fa755a;
- }
-
- .StripeElement--webkit-autofill {
-   background-color: #fefde5 !important;
- }
-
- .stripe-form {
-   text-align: left;
-   color: rgba(107, 124, 147, 1);
-   font-size: 16px;
-   line-height: 1.42857143;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
- }
-.stripe-form button {
-    border: none;
-    border-radius: 4px;
-    outline: none;
-    text-decoration: none;
-    color: #fff;
-    background: #0fb160;
-    white-space: nowrap;
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 10px;
-    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    text-decoration: none;
-    -webkit-transition: all 150ms ease;
-    transition: all 150ms ease;
-    float: left;
-    margin-top: 30px;
-    width:100%;
-}
-
-.sr-combo-inputs-row {
-  width: 100%;
-  display: flex;
-}
-
 </style>

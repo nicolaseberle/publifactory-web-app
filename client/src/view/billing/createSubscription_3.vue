@@ -3,9 +3,6 @@
 
     <div class="sr-root">
     <div class="sr-main">
-      <div class="sr-payment-summary payment-view">
-        <h2>Subscribe to Premium Plan</h2>
-      </div>
       <form>
         <div class="sr-payment-form payment-view">
           <div class="sr-form-row">
