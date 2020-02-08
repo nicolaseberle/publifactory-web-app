@@ -203,6 +203,7 @@ export default {
 				mailDest: [
 					{
 						required: true,
+						type: "email",
 						message: "You need to enter your email",
 						trigger: "blur"
 					}
@@ -224,6 +225,7 @@ export default {
 				emailEditorInChief: [
 					{
 						required: false,
+						type: "email",
 						message: "You need to enter the email of the editor in chief",
 						trigger: "blur"
 					}
