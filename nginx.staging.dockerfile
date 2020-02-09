@@ -16,6 +16,7 @@ RUN rm -rf /etc/nginx/conf.d/*
 
 # Copy all the files necessary to dump nginx server
 COPY ./nginx/publifactory-nginx-staging.conf /etc/nginx/conf.d/publifactory-nginx-frontend-staging.conf
+COPY  /etc/letsencrypt/options-ssl-nginx.conf /etc/letsencrypt/options-ssl-nginx.conf
 COPY --from=build-front-stage /src/dist /usr/share/nginx/html
 
 # Expose the port 80 for HTTP and port 443 for HTTPS
