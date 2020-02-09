@@ -341,7 +341,19 @@ export const constantRouterMap = [
           roles: ['admin']
         },
         component: () => import('../view/admin/invitationReviewer.vue')
+      },
+      {
+        path: 'evaluation',
+        name: 'Evaluation',
+        meta: {
+          title: 'Evaluation',
+          icon: 'exam',
+          noCache: true,
+          roles: ['admin']
+        },
+        component: () => import('../view/admin/Evaluation.vue')
       }
+
     ]
   },
   {
