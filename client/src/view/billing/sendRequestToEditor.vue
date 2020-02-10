@@ -48,7 +48,9 @@ export default{
   },
   data () {
     return {
+      listJournals: [],
       journal: ["Nature","Publiscience","the BMJ"],
+      loading: false,
       form: {
         journal: '',
         emailEditorInChief: '',
@@ -87,6 +89,20 @@ export default{
     closeDialog () {
       this.emit('close')
     },
+    remoteMethod(query) {
+			if (query !== '') {
+				this.loading = true;
+				setTimeout(() => {
+					this.loading = false;
+					this.listJournals = this.list.filter(item => {
+						return item.label.toLowerCase()
+							.indexOf(query.toLowerCase()) > -1;
+					});
+				}, 200);
+			} else {
+				this.listJournals = [];
+			}
+		},
     submit () {
       this.$refs[form].validate(async (valid) => {
 				if (valid) {
