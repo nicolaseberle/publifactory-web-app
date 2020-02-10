@@ -9,8 +9,8 @@ const requestMiddlewares = require('./middlewares');
 router.get(
 	'/',
 	middlewares.authentication,
-	requestMiddlewares.permissions,
-	requestMiddlewares.canRead,
+	//requestMiddlewares.permissions,
+	//requestMiddlewares.canRead,
 	controllers.list
 );
 

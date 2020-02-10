@@ -118,7 +118,7 @@ export default{
   },
   mounted () {
     //this.getPublicKey();
-    this.stripeElements('pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c')
+    this.stripeElements('pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs')
   },
   methods:{
     stripeElements (publicKey) {
@@ -219,21 +219,17 @@ export default{
           return response.json();
         })
         .then(function(subscription) {
-          orderComplete(subscription);
+          this.orderComplete(subscription);
         });
     },
-    getPublicKey () {
-      return axios.get('/public-key', {
+    async getPublicKey () {
+      await axios.get('/api/billings/publicKey', {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(response) {
-          //stripeElements(response.publicKey);
-
+        .then((response) => {
+          this.stripeElements(response.publicKey);
         });
 
     },
@@ -290,32 +286,18 @@ export default{
           'Authorization': `Bearer ${this.accessToken}`
         }
       }).then(async res => {
-        let subscription = await stripe.subscriptions.retrieve(
-            res.data.subscriptionId
-        );
-        this.handleSubscription(subscription);
+        this.orderComplete(res.data.subscription);
         })
-    },
-    async getSubscription (subscriptionId) {
-      await axios.get('/api/billings/users/'+ this.userId +'/'+ subscriptionId,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.accessToken}`
-        }
-      }).then((res)=>{
-        return res.data
-      })
     },
     showCardError (error) {
       this.changeLoadingState(false);
       // The card was declined (i.e. insufficient funds, card has expired, etc)
-      var errorMsg = document.querySelector('.sr-field-error');
+      const errorMsg = document.querySelector('.sr-field-error');
       errorMsg.textContent = error.message;
       setTimeout(function() {
         errorMsg.textContent = '';
       }, 8000);
-    },
+    },/*
     handleSubscription (subscription) {
       const { latest_invoice } = subscription;
       const { payment_intent } = latest_invoice;
@@ -343,7 +325,7 @@ export default{
       } else {
         this.orderComplete(subscription);
       }
-    },
+    },*/
     closeDialog () {
       this.emit('close')
     }

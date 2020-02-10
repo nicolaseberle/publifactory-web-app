@@ -351,6 +351,7 @@ export default{
       this.lastname = response.data.lastname
       })
     this.mylistrequest = this.getMyRequest()
+    this.getSubscription()
   },
   methods: {
     toto () {
@@ -403,7 +404,16 @@ export default{
            unlock: true
          }]
       })
+    },
+    getSubscription(){
+      axios.get('/api/billings/?page=1&count=1000&userId=true',{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       })
+      .then( async (res) => {
+        console.log(res.data)
+      })
     }
+
   }
 }
 </script>
