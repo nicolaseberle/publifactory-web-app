@@ -119,7 +119,7 @@
     </div>
   </el-card>
   <h2 v-if="listOfPublisher.length>0" style='font-size:1.4rem;'>Publisher Plan</h2>
-  <el-card v-for='publisher in listOfPublisher' class="box-card " style='margin-bottom:10px;margin-left:30px;'>
+  <el-card v-for='publisher in listOfPublisher' v-bind:key="publisher.id" class="box-card " style='margin-bottom:10px;margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
       <el-col :span='6'>

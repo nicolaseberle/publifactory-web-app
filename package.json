@@ -16,6 +16,10 @@
 		"element",
 		"element-ui"
 	],
+	"resolutions": {
+		"browserslist": "4.8.3",
+		"caniuse-lite": "1.0.30001020"
+	},
 	"description": "A vue-fullstack project",
 	"author": "nicolaseberle <nicolas.eberle.09@gmail.com>",
 	"private": false,
@@ -43,6 +47,8 @@
 		"babelify": "^8.0.0",
 		"bcrypt": "^3.0.6",
 		"body-parser": "^1.19.0",
+		"browserslist": "^4.8.6",
+		"caniuse-lite": "^1.0.30001027",
 		"chance": "^1.0.18",
 		"chart.js": "^2.8.0",
 		"child_process": "^1.0.2",
