@@ -1,17 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const enumStatus = [
-	"pending",
-	"bademail",
-	"sent",
-	"remind",
-	"read",
-	"accepted",
-	"rejected",
-	"outfield",
-	"unsubscribed",
-	"done",
-	"removed"
+	'approval', // user is not in journal
+	'pending', // all good need to be sent
+	'bademail',
+	'sent', // email sent to reviewer
+	'remind', // another mail sent to reviewer
+	'read', // reviewer has read the mail
+	'accepted',
+	'rejected',
+	'outfield',
+	'unsubscribed',
+	'done', // request flow done
+	'removed' // request deleted
 ];
 
 const RequestSchema = new mongoose.Schema(
@@ -61,7 +62,8 @@ const RequestSchema = new mongoose.Schema(
 				required: true
 			},
 			journal: {
-				type: String
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Journal'
 			}
 		},
 		history: {
@@ -69,16 +71,20 @@ const RequestSchema = new mongoose.Schema(
 			date: Date,
 			status: {
 				type: String,
-				default: "pending",
+				default: 'pending',
 				enum: {
 					values: enumStatus
 				}
 			}
+		},
+		billing: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Billing'
 		}
 	},
 	{ timestamps: true }
 );
 
-module.exports.Request = mongoose.model("Request", RequestSchema);
+module.exports.Request = mongoose.model('Request', RequestSchema);
 module.exports.RequestSchema = RequestSchema;
 module.exports.enumStatus = enumStatus;

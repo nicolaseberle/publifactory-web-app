@@ -1,16 +1,18 @@
 'use strict';
 
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
-const rolesController = require('./roles.article.controller')
+const rolesController = require('./roles.article.controller');
 
 router.post('/', rolesController.createRole);
 router.put('/:id', rolesController.modifyRight);
 router.delete('/:id', rolesController.deleteRole);
 router.get('/:id', rolesController.getRoleById);
 router.get('/user/all/:id?', rolesController.getUserRoles);
-router.get('/all/:id_article/:right(author|associateEditor|reviewer)?',
-  rolesController.getArticleUsers);
+router.get(
+	'/all/:id_article/:right(author|associateEditor|reviewer)?',
+	rolesController.getArticleUsers
+);
 
 module.exports = router;

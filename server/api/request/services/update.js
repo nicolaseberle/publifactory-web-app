@@ -1,44 +1,26 @@
-const { Request } = require("../model/");
-const sendEmailEditor = require("./send-email-editor");
-const { emailEditorTemplate } = require("../../../config/emailing");
+const { Request } = require('../model/');
+const { emailEditorTemplate } = require('../../../config/emailing');
+const Email = require('../../email/email.controller');
 
 function getRawStatus(history) {
 	return history.reduce((acc, request) => [...acc, request.status], []);
 }
 
-// function getRemindCount(history) {
-// 	return history.reduce((acc, request) => {
-// 		return request.status === "remind" ? (acc += 1) : acc;
-// 	}, 0);
-// }
-
-// todo move status update here =>
 function updateStatus(request, status) {
 	const rawStatus = getRawStatus(request.history);
-	if (rawStatus.includes("done")) throw new Error("REQUEST_ALREADY_DONE");
+	if (rawStatus.includes('done')) throw new Error('REQUEST_ALREADY_DONE');
 	request.history.push({
 		status,
 		date: new Date().toUTCString()
 	});
-	// const remindCount = getRemindCount(request.history);
-	// if (remindCount >= request.remindMax) {
-	// 	request.history.push(
-	// 		{
-	// 			status: "rejected",
-	// 			date: new Date().toUTCString()
-	// 		},
-	// 		{ status: "done", data: new Date().toUTCString() }
-	// 	);
-	// }
-	// request.remindCount = remindCount;
 	if (
-		status === "accepted" ||
-		status === "rejected" ||
-		status === "outfield" ||
-		status === "unsubscribed"
+		status === 'accepted' ||
+		status === 'rejected' ||
+		status === 'outfield' ||
+		status === 'unsubscribed'
 	) {
 		request.history.push({
-			status: "done",
+			status: 'done',
 			data: new Date().toUTCString()
 		});
 	}
@@ -46,8 +28,7 @@ function updateStatus(request, status) {
 
 async function update(requestId, { reviewer, editor, status, ...request }) {
 	const updatedRequest = await Request.findById(requestId);
-	if (!updatedRequest) throw new Error("REQUEST_NOT_FOUND");
-
+	if (!updatedRequest) throw new Error('REQUEST_NOT_FOUND');
 	if (status) {
 		updateStatus(updatedRequest, status);
 	}
@@ -65,25 +46,20 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 		{ runValidators: true }
 	);
 
+	const email = new Email(updatedRequest.editor.email);
 	// send an email to the editor if the status === accept/rejected/outfield
-	if (status && status === "accepted")
-	{
-		sendEmailEditor(
-			updatedRequest._id,
-			"A reviewer accepted to review your article",
-			emailEditorTemplate.answer(updatedRequest, status)
-		);
-	}
-	else if (	(status && status === "rejected") ||
-						status === "outfield") {
-		sendEmailEditor(
-			updatedRequest._id,
-			"A reviewer rejected to review your article",
-			emailEditorTemplate.answer(updatedRequest, status)
-		);
+	if (status && status === 'accepted') {
+		email.sendEmail({
+			subject: 'A reviewer accepted to review your article',
+			html: emailEditorTemplate.answer(updatedRequest, status)
+		});
+	} else if ((status && status === 'rejected') || status === 'outfield') {
+		email.sendEmail({
+			subject: 'A reviewer rejected to review your article',
+			html: emailEditorTemplate.answer(updatedRequest, status)
+		});
 	}
 	return mergedRequest;
-
 }
 
 module.exports = update;

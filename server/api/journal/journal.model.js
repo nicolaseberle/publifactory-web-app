@@ -64,9 +64,10 @@ const JournalSchema = new Schema({
 			}
 		}
 	],
-	billings: {
+	billing: {
 		type: Schema.Types.ObjectId,
-		ref: 'Billing'
+		ref: 'Billing',
+		default: null
 	}
 });
 

@@ -7,7 +7,7 @@ const middlewares = require('../../middlewares');
 router.get('/', middlewares.authentication, controllers.list);
 router.get('/totalRequest', controllers.totalRequest);
 router.get('/logo', controllers.logo);
-router.post('/', middlewares.optionalAuthentication, controllers.create);
+router.post('/:billingId', middlewares.authentication, controllers.create);
 router.get('/:requestId', controllers.read);
 router.patch('/:requestId', controllers.update);
 router.delete('/:requestId', controllers.remove);
