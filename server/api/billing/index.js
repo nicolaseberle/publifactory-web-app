@@ -17,7 +17,7 @@ router.post(
 );
 
 router.get(
-	['/:userId/:billingId', '/:journalId/:billingId'],
+	['/users/:userId/:billingId', '/journals/:journalId/:billingId'],
 	middlewares.authentication,
 	billingMiddlewares.permissions,
 	billingMiddlewares.canRead,

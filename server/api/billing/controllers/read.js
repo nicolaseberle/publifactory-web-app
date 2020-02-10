@@ -4,7 +4,6 @@ const serviceRead = require('../services/read');
 async function read(req, res, next) {
 	try {
 		if (!req.params.billingId) throw new ApiError('BAD_PARAMETERS');
-		console.log('THHHHHHHHHHHHHHHHHHHH');
 		const response = await serviceRead({
 			billingId: req.params.billingId
 		});
