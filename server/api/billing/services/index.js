@@ -9,5 +9,5 @@ module.exports = {
 	read,
 	update,
 	list,
-	stripe // ...stripe ?
+	...stripe
 };

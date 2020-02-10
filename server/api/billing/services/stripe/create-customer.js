@@ -11,7 +11,6 @@ async function createCustomer({
 		name: lastName
 	};
 	if (payementMethodId) customer.payment_method = payementMethodId;
-	console.log('==================+>', customer, payementMethodId);
 	const newCustomer = await stripe.customers.create(customer);
 	return newCustomer;
 }

@@ -11,13 +11,15 @@ async function create({ billing, userId = undefined, journalId = undefined }) {
 	if (journalId) {
 		const journal = await Journal.findById(journalId);
 		if (!journal) throw new ApiError('JOURNAL_NOT_FOUND');
-		journal.billing = newBilling;
+		journal.billing = newBilling._id;
 		await journal.save();
 	} else if (userId) {
 		const user = await User.findById(userId);
 		if (!user) throw new ApiError('USER_NOT_FOUND');
-		user.billing = newBilling;
+		user.billing = newBilling._id;
+		console.log('CREATE BILLING FROM USEr');
 		await user.save();
+		console.log('USER BILLING=========++>', user);
 	} else {
 		throw new ApiError('BILLING_FORBIDEN_OPERATION');
 	}

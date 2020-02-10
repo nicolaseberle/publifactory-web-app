@@ -1,9 +1,12 @@
 const stripe = require('../../../../config/stripe');
-const { planStripeId } = require('../../model');
 
 //! \\ Should not be called unless it is deleted from stipe dashboard
-async function createPlan({ currency, interval, productStripeId }) {
-	// if (!billing.productStripeId)
+async function createPlan({
+	currency,
+	interval,
+	productStripeId,
+	planStripeId
+}) {
 	try {
 		const plan = await stripe.plans.retrieve(planStripeId);
 		return plan;

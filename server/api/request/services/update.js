@@ -1,10 +1,7 @@
 const { Request } = require('../model/');
 const { emailEditorTemplate } = require('../../../config/emailing');
 const Email = require('../../email/email.controller');
-
-function getRawStatus(history) {
-	return history.reduce((acc, request) => [...acc, request.status], []);
-}
+const getRawStatus = require('./get-raw-status');
 
 function updateStatus(request, status) {
 	const rawStatus = getRawStatus(request.history);

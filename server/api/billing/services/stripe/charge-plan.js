@@ -1,6 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
-async function incrementPlan({ subscriptionItemId }) {
+async function chargePlan({ subscriptionItemId }) {
 	try {
 		const increment = await stripe.subscriptionItems.createUsageRecord(
 			subscriptionItemId,
@@ -16,4 +16,4 @@ async function incrementPlan({ subscriptionItemId }) {
 	}
 }
 
-module.exports = incrementPlan;
+module.exports = chargePlan;

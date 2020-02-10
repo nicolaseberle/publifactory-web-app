@@ -74,16 +74,13 @@ module.exports = class Email {
 		});
 	}
 
-	sendEmailRequestReviewer(request, template, cb) {
-		this.transporter.sendMail(
-			{
-				from: '"PubliFactory" <publifactory.noreply@gmail.com>',
-				to: this.email,
-				subject: request.object,
-				html: template
-			},
-			(err, info) => cb(err, info)
-		);
+	async sendEmailRequestReviewer(request, template) {
+		await this.transporter.sendMail({
+			from: '"PubliFactory" <publifactory.noreply@gmail.com>',
+			to: this.email,
+			subject: request.object,
+			html: template
+		});
 	}
 
 	sendEmail(options, cb = null) {

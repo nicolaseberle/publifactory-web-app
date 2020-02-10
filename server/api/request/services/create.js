@@ -29,6 +29,14 @@ async function create({ reviewer, editor, ...request }, authId, billingId) {
 			journalId: editor.journal,
 			right: 'editor'
 		});
+		console.log(
+			'AUTHID=>',
+			authId,
+			'userRole=>',
+			userRole,
+			'editorRole',
+			editorRole
+		);
 		newRequest.history.push({
 			status: 'approval',
 			date: new Date().toUTCString()
@@ -36,7 +44,7 @@ async function create({ reviewer, editor, ...request }, authId, billingId) {
 		const emailEditor = new Email(editorRole.id_user.email);
 		emailEditor.sendEmail({
 			subject: `A potential associate editor of ${newRequest.editor.journal.title}'s Journal`,
-			html: emailEditorApproval(newRequest)
+			html: emailEditorApproval(newRequest, authId)
 		});
 	} else {
 		newRequest.history.push({

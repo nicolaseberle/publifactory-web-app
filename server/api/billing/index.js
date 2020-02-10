@@ -23,6 +23,7 @@ router.get(
 	billingMiddlewares.canRead,
 	controllers.read
 );
+
 router.patch(
 	['/:userId/:billingId', '/:journalId/:billingId'],
 	middlewares.authentication,
@@ -38,5 +39,7 @@ router.delete(
 	billingMiddlewares.canWrite,
 	controllers.remove
 );
+
+router.get('/publicKey', middlewares.authentication, controllers.publicKey);
 
 module.exports = router;

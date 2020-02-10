@@ -136,10 +136,10 @@ const backendProd = Object.assign({}, backendBase, {
 });
 
 const stripeDev = {
-	publicKey: 'pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c',
-	privateKey: 'sk_test_5H43wOkffLTagWkJdFn4Q4Jm008y6a3Mzj',
-	productId: 'prod_Gg5piJFRSBT6Lh',
-	planId: 'plan_Gg5yf6dpuiQ91r'
+	publicKey: 'pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs',
+	privateKey: 'sk_test_b9eIkUCav37bCcEOdMAoB2jJ00vLO95PS0',
+	productId: 'prod_GhzfMdMqWBXFe5',
+	planId: 'plan_GhzqxsXmfBgtHp'
 };
 
 const stripeProd = {
