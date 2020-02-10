@@ -1,104 +1,90 @@
 <template>
   <div class='subscribe-dialog-container'>
-    <!--Example 2-->
 
+    <div class="cell example example2" id="example-2">
 
-          <div class="cell example example2" id="example-2">
-
-            <form>
-              <div data-locale-reversible>
-                <div class="row">
-                  <div class="field">
-                    <input id="example2-address" data-tid="elements_examples.form.address_placeholder" class="input empty" type="text" placeholder="185 Berry St" required="" autocomplete="address-line1">
-                    <label for="example2-address" data-tid="elements_examples.form.address_label">Address</label>
-                    <div class="baseline"></div>
-                  </div>
-                </div>
-                <div class="row" data-locale-reversible>
-                  <div class="field half-width">
-                    <input id="example2-city" data-tid="elements_examples.form.city_placeholder" class="input empty" type="text" placeholder="San Francisco" required="" autocomplete="address-level2">
-                    <label for="example2-city" data-tid="elements_examples.form.city_label">City</label>
-                    <div class="baseline"></div>
-                  </div>
-                  <div class="field quarter-width">
-                    <input id="example2-state" data-tid="elements_examples.form.state_placeholder" class="input empty" type="text" placeholder="CA" required="" autocomplete="address-level1">
-                    <label for="example2-state" data-tid="elements_examples.form.state_label">State</label>
-                    <div class="baseline"></div>
-                  </div>
-                  <div class="field quarter-width">
-                    <input id="example2-zip" data-tid="elements_examples.form.postal_code_placeholder" class="input empty" type="text" placeholder="94107" required="" autocomplete="postal-code">
-                    <label for="example2-zip" data-tid="elements_examples.form.postal_code_label">ZIP</label>
-                    <div class="baseline"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="sr-combo-inputs-row">
-                <div class="sr-input sr-card-element" id="card-element"></div>
-              </div>
-              <div class="row">
-                <div class="field">
-                  <div id="example2-card-number" class="input empty"></div>
-                  <label for="example2-card-number" data-tid="elements_examples.form.card_number_label">Card number</label>
-                  <div class="baseline"></div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="field half-width">
-                  <div id="example2-card-expiry" class="input empty"></div>
-                  <label for="example2-card-expiry" data-tid="elements_examples.form.card_expiry_label">Expiration</label>
-                  <div class="baseline"></div>
-                </div>
-                <div class="field half-width">
-                  <div id="example2-card-cvc" class="input empty "></div>
-                  <label for="example2-card-cvc" data-tid="elements_examples.form.card_cvc_label">CVC</label>
-                  <div class="baseline"></div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="field" style='margin-top:20px'>
-
-                    <el-switch
-                      v-model="checked"
-                      active-text="I agree with the Term of Use">
-                    </el-switch>
-
-                </div>
-              </div>
-
-
-            <button type="submit" data-tid="elements_examples.form.pay_button" :disabled='checked===false'>Subscribe</button>
-            <div class="row" >
-              <div class="footer">
-                <p>Your card will be charged every 5 requests</p>
-              </div>
+      <form>
+        <div data-locale-reversible>
+          <div class="row" >
+            <div class="field">
+              <input id="email" data-tid="elements_examples.form.email_placeholder" class="input empty" type="text" placeholder="john.smith@domain.com" required="">
+              <label for="example2-email" data-tid="elements_examples.form.email">Email</label>
+              <div class="baseline"></div>
             </div>
-              <!--<div class="error" role="alert"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
-                  <path class="base" fill="#000" d="M8.5,17 C3.80557963,17 0,13.1944204 0,8.5 C0,3.80557963 3.80557963,0 8.5,0 C13.1944204,0 17,3.80557963 17,8.5 C17,13.1944204 13.1944204,17 8.5,17 Z"></path>
-                  <path class="glyph" fill="#FFF" d="M8.5,7.29791847 L6.12604076,4.92395924 C5.79409512,4.59201359 5.25590488,4.59201359 4.92395924,4.92395924 C4.59201359,5.25590488 4.59201359,5.79409512 4.92395924,6.12604076 L7.29791847,8.5 L4.92395924,10.8739592 C4.59201359,11.2059049 4.59201359,11.7440951 4.92395924,12.0760408 C5.25590488,12.4079864 5.79409512,12.4079864 6.12604076,12.0760408 L8.5,9.70208153 L10.8739592,12.0760408 C11.2059049,12.4079864 11.7440951,12.4079864 12.0760408,12.0760408 C12.4079864,11.7440951 12.4079864,11.2059049 12.0760408,10.8739592 L9.70208153,8.5 L12.0760408,6.12604076 C12.4079864,5.79409512 12.4079864,5.25590488 12.0760408,4.92395924 C11.7440951,4.59201359 11.2059049,4.59201359 10.8739592,4.92395924 L8.5,7.29791847 L8.5,7.29791847 Z"></path>
-                </svg>
-                <span class="message"></span>
-              </div>-->
-            </form>
-
-            <!--
-            <div class="success">
-              <div class="icon">
-                <svg width="84px" height="84px" viewBox="0 0 84 84" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <circle class="border" cx="42" cy="42" r="40" stroke-linecap="round" stroke-width="4" stroke="#000" fill="none"></circle>
-                  <path class="checkmark" stroke-linecap="round" stroke-linejoin="round" d="M23.375 42.5488281 36.8840688 56.0578969 64.891932 28.0500338" stroke-width="4" stroke="#000" fill="none"></path>
-                </svg>
-              </div>
-              <h3 class="title" data-tid="elements_examples.success.title">Payment successful</h3>
-              <p class="message"><span data-tid="elements_examples.success.message">Thanks for trying Stripe Elements. No money was charged, but we generated a token: </span><span class="token">tok_189gMN2eZvKYlo2CwTBv9KKh</span></p>
-              <a class="reset" href="#">
-                <svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <path fill="#000000" d="M15,7.05492878 C10.5000495,7.55237307 7,11.3674463 7,16 C7,20.9705627 11.0294373,25 16,25 C20.9705627,25 25,20.9705627 25,16 C25,15.3627484 24.4834055,14.8461538 23.8461538,14.8461538 C23.2089022,14.8461538 22.6923077,15.3627484 22.6923077,16 C22.6923077,19.6960595 19.6960595,22.6923077 16,22.6923077 C12.3039405,22.6923077 9.30769231,19.6960595 9.30769231,16 C9.30769231,12.3039405 12.3039405,9.30769231 16,9.30769231 L16,12.0841673 C16,12.1800431 16.0275652,12.2738974 16.0794108,12.354546 C16.2287368,12.5868311 16.5380938,12.6540826 16.7703788,12.5047565 L22.3457501,8.92058924 L22.3457501,8.92058924 C22.4060014,8.88185624 22.4572275,8.83063012 22.4959605,8.7703788 C22.6452866,8.53809377 22.5780351,8.22873685 22.3457501,8.07941076 L22.3457501,8.07941076 L16.7703788,4.49524351 C16.6897301,4.44339794 16.5958758,4.41583275 16.5,4.41583275 C16.2238576,4.41583275 16,4.63969037 16,4.91583275 L16,7 L15,7 L15,7.05492878 Z M16,32 C7.163444,32 0,24.836556 0,16 C0,7.163444 7.163444,0 16,0 C24.836556,0 32,7.163444 32,16 C32,24.836556 24.836556,32 16,32 Z"></path>
-                </svg>
-              </a>
+          </div>
+          <div class="row" data-locale-reversible>
+            <div class="field ">
+              <input id="fullname" data-tid="elements_examples.form.name_placeholder" class="input empty" type="text" placeholder="John Smith (or corporate name)" required="">
+              <label for="example2-name" data-tid="elements_examples.form.name">Name</label>
+              <div class="baseline"></div>
             </div>
-            -->
-</div>
+          </div>
+          <div class="row" data-locale-reversible>
+            <div class="field" >
+              <input id="address" data-tid="elements_examples.form.address_placeholder" class="input empty" type="text" placeholder="185 Berry St" required="" autocomplete="address-line1">
+              <label for="example2-address" data-tid="elements_examples.form.address_label">Address</label>
+              <div class="baseline"></div>
+            </div>
+          </div>
+          <div class="row" data-locale-reversible>
+            <div class="field half-width">
+              <input id="city" data-tid="elements_examples.form.city_placeholder" class="input empty" type="text" placeholder="San Francisco" required="" autocomplete="address-level2">
+              <label for="example2-city" data-tid="elements_examples.form.city_label">City</label>
+              <div class="baseline"></div>
+            </div>
+            <div class="field quarter-width">
+              <input id="state" data-tid="elements_examples.form.state_placeholder" class="input empty" type="text" placeholder="CA" required="" autocomplete="address-level1">
+              <label for="example2-state" data-tid="elements_examples.form.state_label">State</label>
+              <div class="baseline"></div>
+            </div>
+            <div class="field quarter-width">
+              <input id="zip" data-tid="elements_examples.form.postal_code_placeholder" class="input empty" type="text" placeholder="94107" required="" autocomplete="postal-code">
+              <label for="example2-zip" data-tid="elements_examples.form.postal_code_label">ZIP</label>
+              <div class="baseline"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <div class="sr-input sr-card-element" id="card-element"></div>
+            <div class="baseline"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style='margin-top:20px'>
+              <el-switch
+                v-model="checked"
+                active-text="I agree with the Term of Use">
+              </el-switch>
+          </div>
+        </div>
 
+        <div class="sr-field-error" id="card-errors" role="alert"></div>
+
+
+        <button id="submit"  :disabled='checked===false'>
+          <div id="spinner" class="hidden"></div>
+          <span id="button-text">Subscribe</span>
+        </button>
+        <div class="row" >
+          <div class="footer">
+            <p>Your card will be charged every 5 requests</p>
+          </div>
+        </div>
+      </form>
+      <div class="sr-payment-summary hidden completed-view">
+        <h1>Your subscription is <span class="order-status"></span></h1>
+        <h4>
+          <a>View subscription response:</a>
+        </h4>
+      </div>
+      <div class="sr-section hidden completed-view">
+        <div class="sr-callout">
+          <pre><code></code></pre>
+        </div>
+        <button onclick="window.location.href='/'">Restart demo</button>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -106,6 +92,8 @@
 import locales from 'locales/article'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
+
+
 
 
 
@@ -124,49 +112,22 @@ export default{
     return {
       checked: false,
       stripe: ''
-    };
+    }
   },
   created (){
   },
   mounted () {
-
-    this.getPublicKey()
+    //this.getPublicKey();
+    this.stripeElements('pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c')
   },
   methods:{
-    mountStripeElements (publicKey) {
+    stripeElements (publicKey) {
+
       this.stripe = Stripe(publicKey);
-      
-      var elements = this.stripe.elements({
-        fonts: [
-          {
-            cssSrc: 'https://fonts.googleapis.com/css?family=Source+Code+Pro',
-          },
-        ],
-        // Stripe's examples are localized to specific languages, but if
-        // you wish to have Elements automatically detect your user's locale,
-        // use `locale: 'auto'` instead.
-        locale: window.__exampleLocale
-      });
+      var elements = this.stripe.elements();
 
-      // Floating labels
-      var inputs = document.querySelectorAll('.cell.example.example2 .input');
-      Array.prototype.forEach.call(inputs, function(input) {
-        input.addEventListener('focus', function() {
-          input.classList.add('focused');
-        });
-        input.addEventListener('blur', function() {
-          input.classList.remove('focused');
-        });
-        input.addEventListener('keyup', function() {
-          if (input.value.length === 0) {
-            input.classList.add('empty');
-          } else {
-            input.classList.remove('empty');
-          }
-        });
-      });
-
-      var elementStyles = {
+      // Element styles
+      var style = {
         base: {
           color: '#32325D',
           fontWeight: 500,
@@ -196,43 +157,73 @@ export default{
       var elementClasses = {
         focus: 'focused',
         empty: 'empty',
-        invalid: 'invalid',
-        checkbox: 'checkbox'
+        invalid: 'invalid'
       };
-      /*
-      var card = elements.create('card', { style: elementStyles });
-      card.mount('#card-element');*/
 
-      var cardNumber = elements.create('cardNumber', {
-        style: elementStyles,
+      // Floating labels
+      var inputs = document.querySelectorAll('.cell.example.example2 .input');
+      Array.prototype.forEach.call(inputs, function(input) {
+        input.addEventListener('focus', function() {
+          input.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+          input.classList.remove('focused');
+        });
+        input.addEventListener('keyup', function() {
+          if (input.value.length === 0) {
+            input.classList.add('empty');
+          } else {
+            input.classList.remove('empty');
+          }
+        });
+      });
+
+      var card = elements.create('card', {
+        style: style,
         classes: elementClasses,
       });
-      cardNumber.mount('#example2-card-number');
 
-      var cardExpiry = elements.create('cardExpiry', {
-        style: elementStyles,
-        classes: elementClasses,
+      card.mount('#card-element');
+
+      // Element focus ring
+      card.on('focus', () => {
+        var el = document.getElementById('card-element');
+        el.classList.add('focused');
       });
-      cardExpiry.mount('#example2-card-expiry');
 
-      var cardCvc = elements.create('cardCvc', {
-        style: elementStyles,
-        classes: elementClasses,
+      card.on('blur', () => {
+        var el = document.getElementById('card-element');
+        el.classList.remove('focused');
       });
-      cardCvc.mount('#example2-card-cvc');
 
-      var cardRules = elements.create('cardRules', {
-        style: elementStyles,
-        classes: elementClasses,
+      document.querySelector('#submit').addEventListener('click', (evt) => {
+        evt.preventDefault();
+        this.changeLoadingState(true);
+        // Initiate payment
+        this.createPaymentMethodAndCustomer(card);
       });
-      cardRules.mount('#example2-rules');
-
-      registerElements([cardNumber, cardExpiry, cardCvc, cardRules], 'example2')
-
     },
-    async getPublicKey() {
-      /*return axios.get('/api/billing/public-key', {
-        method: 'get',
+
+
+
+    confirmSubscription (subscriptionId) {
+      return axis.post('/subscription', {
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          subscriptionId: subscriptionId
+        })
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(subscription) {
+          orderComplete(subscription);
+        });
+    },
+    getPublicKey () {
+      return axios.get('/public-key', {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -241,171 +232,524 @@ export default{
           return response.json();
         })
         .then(function(response) {
-          this.mountStripeElements(response.publicKey);
-        });*/
-        await this.mountStripeElements('pk_test_wguuuEtFtQMMVHpdl8gk2Lhu00e3mmkN5c');
+          //stripeElements(response.publicKey);
+
+        });
+
+    },
+    orderComplete (subscription) {
+      this.changeLoadingState(false);
+      var subscriptionJson = JSON.stringify(subscription, null, 2);
+      document.querySelectorAll('.payment-view').forEach(function(view) {
+        view.classList.add('hidden');
+      });
+      document.querySelectorAll('.completed-view').forEach(function(view) {
+        view.classList.remove('hidden');
+      });
+      document.querySelector('.order-status').textContent = subscription.status;
+      document.querySelector('code').textContent = subscriptionJson;
+    },
+    changeLoadingState (isLoading) {
+      if (isLoading) {
+        document.querySelector('#spinner').classList.add('loading');
+        document.querySelector('button').disabled = true;
+
+        document.querySelector('#button-text').classList.add('hidden');
+      } else {
+        document.querySelector('button').disabled = false;
+        document.querySelector('#spinner').classList.remove('loading');
+        document.querySelector('#button-text').classList.remove('hidden');
+      }
+    },
+    createPaymentMethodAndCustomer ( card) {
+      var cardholderEmail = document.querySelector('#email').value;
+      var fullName = document.querySelector('#fullname').value;
+
+      this.stripe.createPaymentMethod('card', card, {
+          billing_details: {
+            email: cardholderEmail
+          }
+        })
+        .then((result) => {
+          if (result.error) {
+            this.showCardError(result.error);
+          } else {
+            this.createCustomer(result.paymentMethod.id, cardholderEmail, fullName);
+          }
+        });
+    },
+
+    createCustomer (paymentMethod, cardholderEmail, fullName) {
+      axios.post('/api/billings/users/' + this.userId,
+      {
+        fullName: fullName,
+        email: cardholderEmail,
+        paymentMethodId: paymentMethod.id
+      }, {headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      }).then(async res => {
+        let subscription = await stripe.subscriptions.retrieve(
+            res.data.subscriptionId
+        );
+        this.handleSubscription(subscription);
+        })
+    },
+    async getSubscription (subscriptionId) {
+      await axios.get('/api/billings/users/'+ this.userId +'/'+ subscriptionId,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.accessToken}`
+        }
+      }).then((res)=>{
+        return res.data
+      })
+    },
+    showCardError (error) {
+      this.changeLoadingState(false);
+      // The card was declined (i.e. insufficient funds, card has expired, etc)
+      var errorMsg = document.querySelector('.sr-field-error');
+      errorMsg.textContent = error.message;
+      setTimeout(function() {
+        errorMsg.textContent = '';
+      }, 8000);
+    },
+    handleSubscription (subscription) {
+      const { latest_invoice } = subscription;
+      const { payment_intent } = latest_invoice;
+
+      if (payment_intent) {
+        const { client_secret, status } = payment_intent;
+
+        if (status === 'requires_action' || status === 'requires_payment_method') {
+          this.stripe.confirmCardPayment(client_secret).then((result) => {
+            if (result.error) {
+              // Display error message in your UI.
+              // The card was declined (i.e. insufficient funds, card has expired, etc)
+              this.changeLoadingState(false);
+              this.showCardError(result.error);
+            } else {
+              // Show a success message to your customer
+              this.confirmSubscription(subscription.id);
+            }
+          });
+        } else {
+          // No additional information was needed
+          // Show a success message to your customer
+          this.orderComplete(subscription);
+        }
+      } else {
+        this.orderComplete(subscription);
+      }
     },
     closeDialog () {
       this.emit('close')
-    },
-    registerElements( elements, exampleName) {
-
-
-      var formClass = '.' + exampleName;
-      var example = document.querySelector(formClass);
-
-      var form = example.querySelector('form');
-      var resetButton = example.querySelector('a.reset');
-      var error = form.querySelector('.error');
-      var errorMessage = error.querySelector('.message');
-
-      function enableInputs() {
-        Array.prototype.forEach.call(
-          form.querySelectorAll(
-            "input[type='text'], input[type='email'], input[type='tel'], input[type='checkbox']"
-          ),
-          function(input) {
-            input.removeAttribute('disabled');
-          }
-        );
-      }
-
-      function disableInputs() {
-        Array.prototype.forEach.call(
-          form.querySelectorAll(
-            "input[type='text'], input[type='email'], input[type='tel'], input[type='checkbox']"
-          ),
-          function(input) {
-            input.setAttribute('disabled', 'true');
-          }
-        );
-      }
-
-      function triggerBrowserValidation() {
-        // The only way to trigger HTML5 form validation UI is to fake a user submit
-        // event.
-        var submit = document.createElement('input');
-        submit.type = 'submit';
-        submit.style.display = 'none';
-        form.appendChild(submit);
-        submit.click();
-        submit.remove();
-      }
-
-      // Listen for errors from each Element, and show error messages in the UI.
-      var savedErrors = {};
-      elements.forEach(function(element, idx) {
-        element.on('change', function(event) {
-          if (event.error) {
-            error.classList.add('visible');
-            savedErrors[idx] = event.error.message;
-            errorMessage.innerText = event.error.message;
-          } else {
-            savedErrors[idx] = null;
-
-            // Loop over the saved errors and find the first one, if any.
-            var nextError = Object.keys(savedErrors)
-              .sort()
-              .reduce(function(maybeFoundError, key) {
-                return maybeFoundError || savedErrors[key];
-              }, null);
-
-            if (nextError) {
-              // Now that they've fixed the current error, show another one.
-              errorMessage.innerText = nextError;
-            } else {
-              // The user fixed the last error; no more errors.
-              error.classList.remove('visible');
-            }
-          }
-        });
-      });
-
-      // Listen on the form's 'submit' handler...
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Trigger HTML5 validation UI on the form if any of the inputs fail
-        // validation.
-        var plainInputsValid = true;
-        Array.prototype.forEach.call(form.querySelectorAll('input'), function(
-          input
-        ) {
-          if (input.checkValidity && !input.checkValidity()) {
-            plainInputsValid = false;
-            return;
-          }
-        });
-        if (!plainInputsValid) {
-          triggerBrowserValidation();
-          return;
-        }
-
-        // Show a loading screen...
-        example.classList.add('submitting');
-
-        // Disable all inputs.
-        disableInputs();
-
-        // Gather additional customer data we may have collected in our form.
-        var name = form.querySelector('#' + exampleName + '-name');
-        var address1 = form.querySelector('#' + exampleName + '-address');
-        var city = form.querySelector('#' + exampleName + '-city');
-        var state = form.querySelector('#' + exampleName + '-state');
-        var zip = form.querySelector('#' + exampleName + '-zip');
-        var additionalData = {
-          name: name ? name.value : undefined,
-          address_line1: address1 ? address1.value : undefined,
-          address_city: city ? city.value : undefined,
-          address_state: state ? state.value : undefined,
-          address_zip: zip ? zip.value : undefined,
-        };
-
-        // Use Stripe.js to create a token. We only need to pass in one Element
-        // from the Element group in order to create a token. We can also pass
-        // in the additional customer data we collected in our form.
-        this.stripe.createToken(elements[0], additionalData).then(function(result) {
-          // Stop loading!
-          example.classList.remove('submitting');
-
-          if (result.token) {
-            // If we received a token, show the token ID.
-            example.querySelector('.token').innerText = result.token.id;
-            example.classList.add('submitted');
-          } else {
-            // Otherwise, un-disable inputs.
-            enableInputs();
-          }
-        });
-      });
-
-      resetButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Resetting the form (instead of setting the value to `''` for each input)
-        // helps us clear webkit autofill styles.
-        form.reset();
-
-        // Clear each Element.
-        elements.forEach(function(element) {
-          element.clear();
-        });
-
-        // Reset error state as well.
-        error.classList.remove('visible');
-
-        // Resetting the form does not un-disable inputs, so we need to do it separately:
-        enableInputs();
-        example.classList.remove('submitted');
-      });
     }
-
   }
 
 
 }
 </script>
 <style>
-.el-checkbox__input{
 
+.sr-payment-summary {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
+.sr-main,
+.sr-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  align-self: center;
+}
+.sr-main {
+  width: var(--form-width);
+}
+.sr-content {
+  padding-left: 48px;
+}
+.sr-legal-text {
+  color: var(--gray-light);
+  text-align: center;
+  font-size: 13px;
+  line-height: 17px;
+  margin-top: 12px;
+}
+.sr-field-error {
+  color: var(--accent-color);
+  text-align: center;
+  color: red;
+  font-size: 12px;
+  line-height: 15px;
+  margin-top: 10px;
+}
+
+/* Form */
+.sr-form-row {
+  margin: 16px 0;
+}
+label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+/* Inputs */
+/*
+.sr-input,
+.sr-select,
+input[type='text'] {
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 5px 12px;
+  height: 44px;
+  width: 100%;
+  transition: box-shadow 0.2s ease;
+  background: white;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.sr-input:focus,
+input[type='text']:focus,
+button:focus,
+.focused {
+  box-shadow: 0 0 0 1px rgba(50, 151, 211, 0.3), 0 1px 1px 0 rgba(0, 0, 0, 0.07),
+    0 0 0 4px rgba(50, 151, 211, 0.3);
+  outline: none;
+  z-index: 9;
+}
+.sr-input::placeholder,
+input[type='text']::placeholder {
+  color: var(--gray-light);
+}*/
+
+/* Checkbox */
+.sr-checkbox-label {
+  position: relative;
+  cursor: pointer;
+}
+
+.sr-checkbox-label input {
+  opacity: 0;
+  margin-right: 6px;
+}
+
+.sr-checkbox-label .sr-checkbox-check {
+  position: absolute;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background-color: white;
+  border: 1px solid var(--gray-border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.sr-checkbox-label input:focus ~ .sr-checkbox-check {
+  box-shadow: 0 0 0 1px rgba(50, 151, 211, 0.3), 0 1px 1px 0 rgba(0, 0, 0, 0.07),
+    0 0 0 4px rgba(50, 151, 211, 0.3);
+  outline: none;
+}
+
+.sr-checkbox-label input:checked ~ .sr-checkbox-check {
+  background-color: var(--accent-color);
+  background-image: url('https://storage.googleapis.com/stripe-sample-images/icon-checkmark.svg');
+  background-repeat: no-repeat;
+  background-size: 16px;
+  background-position: -1px -1px;
+}
+
+/* Select */
+.sr-select {
+  display: block;
+  height: 44px;
+  margin: 0;
+  background-image: url('https://storage.googleapis.com/stripe-sample-images/icon-chevron-down.svg');
+  background-repeat: no-repeat, repeat;
+  background-position: right 12px top 50%, 0 0;
+  background-size: 0.65em auto, 100%;
+}
+.sr-select:after {
+}
+.sr-select::-ms-expand {
+  display: none;
+}
+.sr-select:hover {
+  cursor: pointer;
+}
+.sr-select:focus {
+  box-shadow: 0 0 0 1px rgba(50, 151, 211, 0.3), 0 1px 1px 0 rgba(0, 0, 0, 0.07),
+    0 0 0 4px rgba(50, 151, 211, 0.3);
+  outline: none;
+}
+.sr-select option {
+  font-weight: 400;
+}
+.sr-select:invalid {
+  color: var(--gray-light);
+  background-opacity: 0.4;
+}
+
+/* Combo inputs */
+.sr-combo-inputs {
+  display: flex;
+  flex-direction: column;
+}
+.sr-combo-inputs input,
+.sr-combo-inputs .sr-select {
+  border-radius: 0;
+  border-bottom: 0;
+}
+.sr-combo-inputs > input:first-child,
+.sr-combo-inputs > .sr-select:first-child {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.sr-combo-inputs > input:last-child,
+.sr-combo-inputs > .sr-select:last-child {
+  border-radius: 0 0 var(--radius) var(--radius);
+  border-bottom: 1px solid var(--gray-border);
+}
+.sr-combo-inputs > .sr-combo-inputs-row:first-child input:first-child {
+  border-radius: var(--radius) 0 0 0;
+}
+.sr-combo-inputs > .sr-combo-inputs-row:first-child input:last-child {
+  border-radius: 0 var(--radius) 0 0;
+}
+.sr-combo-inputs-row {
+  width: 100%;
+  display: flex;
+}
+
+.sr-combo-inputs-row > input {
+  width: 100%;
+  border-radius: 0;
+}
+
+.sr-combo-inputs > .sr-combo-inputs-row:first-child input:last-child {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+/*
+.sr-combo-inputs-row:not(:first-of-type) .sr-input {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+*/
+
+/* Buttons and links */
+/*
+button {
+  background: var(--accent-color);
+  border-radius: var(--radius);
+  color: white;
+  border: 0;
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+button:hover {
+  filter: contrast(115%);
+}
+button:active {
+  transform: translateY(0px) scale(0.98);
+  filter: brightness(0.9);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: none;
+}*/
+
+.sr-payment-form button,
+.fullwidth {
+  width: 100%;
+}
+
+a {
+  /*color: var(--accent-color);*/
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  filter: brightness(0.8);
+}
+
+a:active {
+  filter: brightness(0.5);
+}
+
+/* Code block */
+.sr-callout {
+  background: var(--gray-offset);
+  padding: 12px;
+  border-radius: var(--radius);
+  max-height: 400px;
+  max-width: 600px;
+  overflow: auto;
+}
+code,
+pre {
+  font-family: 'SF Mono', 'IBM Plex Mono', 'Menlo', monospace;
+  font-size: 14px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* Stripe Element placeholder */
+.sr-card-element {
+  padding-top: 12px;
+}
+
+/* Responsiveness */
+@media (max-width: 720px) {
+  .sr-root {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 48px 20px;
+    min-width: 320px;
+  }
+
+  .sr-header__logo {
+    background-position: center;
+  }
+
+  .sr-payment-summary {
+    text-align: center;
+  }
+
+  .sr-content {
+    display: none;
+  }
+
+  .sr-main {
+    width: 100%;
+  }
+}
+
+.sr-root {
+  animation: 0.4s form-in;
+  animation-fill-mode: both;
+  animation-timing-function: ease;
+}
+
+.sr-payment-form .sr-form-row {
+  animation: 0.4s field-in;
+  animation-fill-mode: both;
+  animation-timing-function: ease;
+  transform-origin: 50% 0%;
+}
+
+/* need saas for loop :D  */
+.sr-payment-form .sr-form-row:nth-child(1) {
+  animation-delay: 0;
+}
+.sr-payment-form .sr-form-row:nth-child(2) {
+  animation-delay: 60ms;
+}
+.sr-payment-form .sr-form-row:nth-child(3) {
+  animation-delay: 120ms;
+}
+.sr-payment-form .sr-form-row:nth-child(4) {
+  animation-delay: 180ms;
+}
+.sr-payment-form .sr-form-row:nth-child(5) {
+  animation-delay: 240ms;
+}
+.sr-payment-form .sr-form-row:nth-child(6) {
+  animation-delay: 300ms;
+}
+
+.hidden {
+  display: none;
+}
+
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.sr-plans {
+  display: flex;
+  width: 600px;
+}
+
+.sr-plan {
+  border: 1px solid rgb(232, 232, 232);
+  border-radius: 6px;
+  margin-right: 25px;
+  height: 226px;
+  width: 257px;
+}
+
+.sr-plan-inner {
+  margin: 28px;
+}
+
+.sr-plan-name {
+  color: rgb(166, 166, 166);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0px;
+}
+
+.sr-plan-text {
+  color: rgb(153, 153, 153);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0px;
+  line-height: 14px;
+}
+
+.sr-plan-button {
+  border: 2px solid rgb(237, 95, 116);
+  border-radius: 7px;
+}
+
+@keyframes field-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes form-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
 </style>
