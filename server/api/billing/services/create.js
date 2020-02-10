@@ -17,9 +17,7 @@ async function create({ billing, userId = undefined, journalId = undefined }) {
 		const user = await User.findById(userId);
 		if (!user) throw new ApiError('USER_NOT_FOUND');
 		user.billing = newBilling._id;
-		console.log('CREATE BILLING FROM USEr');
 		await user.save();
-		console.log('USER BILLING=========++>', user);
 	} else {
 		throw new ApiError('BILLING_FORBIDEN_OPERATION');
 	}
@@ -29,7 +27,7 @@ async function create({ billing, userId = undefined, journalId = undefined }) {
 	newBilling.subscriptionId = subscription.id;
 	newBilling.subscriptionItemId = subscription.items.data[0].id;
 	await newBilling.save();
-	return newBilling.toObject();
+	return { newBilling, subscription: await newBilling.subscription };
 }
 
 module.exports = create;
