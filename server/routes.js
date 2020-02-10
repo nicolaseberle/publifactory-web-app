@@ -61,7 +61,6 @@ module.exports = function(app) {
 	// error handling
 	// next is mandatory because 4 args => error handling, 3 args => middleware
 	app.use(function(err, req, res, next) {
-		console.log('==+>', process.env.NODE_ENV);
 		if (process.env.NODE_ENV === 'development') console.log('ERROR::', err);
 		try {
 			if (err.constructor === error.ApiError) {
