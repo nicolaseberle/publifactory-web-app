@@ -9,9 +9,8 @@ import Layout_services from '../view/layout_services/Layout'
 
 Vue.use(VueRouter)
 
-const state_ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? true : false;
-const state__ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? false : true;
-
+const state_ = !!((process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'))
+const state__ = !((process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'))
 
 export const constantRouterMap = [
   {
@@ -118,6 +117,23 @@ export const constantRouterMap = [
     hidden: true,
     children: [
       {
+        path: '/approvals/:journalId/:userId/:status(accepted|rejected)',
+        name: 'approvals',
+        meta: {
+          skipAuth: false
+        },
+        component: resolve => {
+          import('../view/approvals/').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
         path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
         name: 'answer',
         meta: {
@@ -191,18 +207,18 @@ export const constantRouterMap = [
     children: [
       {
         path: '/article',
-        hidden: state_ ,
+        hidden: state_,
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
         component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
-        hidden: state_ ,
+        hidden: state_,
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
         component: (resolve) => import('../view/journals/index.vue').then(resolve)
-      },/*
+      }, /*
       {
         path: '/data',
         name: 'my_data',

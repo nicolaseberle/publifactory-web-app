@@ -85,7 +85,8 @@ var UserSchema = new Schema({
 	},
 	billing: {
 		type: Schema.Types.ObjectId,
-		ref: 'Billing'
+		ref: 'Billing',
+		default: null
 	}
 });
 

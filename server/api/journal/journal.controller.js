@@ -394,13 +394,16 @@ module.exports.followJournal = async (req, res, next) => {
  */
 module.exports.addAssociateEditor = async (req, res, next) => {
   try {
-    if (req.body.associate_editor === undefined) { throw { code: 422, message: 'Missing parameters.' } }
-    const user = await UserModel.findOne({ email: req.body.associate_editor.email }).exec()
+    let user = null
+    if (req.body.associate_editor !== undefined) {
+      user = await UserModel.findOne({ email: req.body.associate_editor.email }).exec()
+    } else if (req.body.userId !== undefined) { user = await UserModel.findById(req.body.userId) } else {
+      throw { code: 422, message: 'Missing parameters.' }
+    }
     const query = { _id: req.params.id }
     const toAdd = { $push: { users: user._id }}
     const options = { new: true }
     await Journal.findOneAndUpdate(query, toAdd, options)
-    console.log('add asssssoooooooooooo editor', req.params.id)
     const newAE = await new RolesJournal({
       id_user: user._id,
       id_journal: req.params.id,

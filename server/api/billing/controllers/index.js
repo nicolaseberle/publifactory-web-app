@@ -3,11 +3,13 @@ const update = require('./update');
 const create = require('./create');
 const remove = require('./remove');
 const list = require('./list');
+const publicKey = require('./public-key');
 
 module.exports = {
 	read,
 	update,
 	create,
 	remove,
-	list
+	list,
+	publicKey
 };

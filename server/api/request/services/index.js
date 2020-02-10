@@ -5,6 +5,8 @@ const read = require('./read');
 const list = require('./list');
 const remind = require('./remind');
 const totalRequest = require('./totalRequest');
+const sendInvitation = require('./sendInvitation');
+const getRawStatus = require('./get-raw-status');
 
 module.exports = {
 	create,
@@ -13,5 +15,7 @@ module.exports = {
 	read,
 	list,
 	remind,
-	totalRequest
+	totalRequest,
+	sendInvitation,
+	getRawStatus
 };
