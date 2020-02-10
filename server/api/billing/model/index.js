@@ -41,8 +41,6 @@ BillingSchema.virtual('subscription').get(async function() {
 	return subscription;
 });
 
-// latest_invoice =>
-
 module.exports.Billing = mongoose.model('Billing', BillingSchema);
 module.exports.BillingSchema = BillingSchema;
 module.exports.productStripeId = productStripeId;

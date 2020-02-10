@@ -13,12 +13,6 @@ async function isRequestFromJournal(req, billing) {
 }
 
 function isRequestFromUser(billing, user) {
-	console.log(
-		'ISREQFROMUSEr====>',
-		billing._id,
-		user.billing,
-		user.billing.toString() === billing._id.toString()
-	);
 	return user.billing
 		? user.billing.toString() === billing._id.toString()
 		: false;
@@ -56,7 +50,6 @@ async function permissions(req, res, next) {
 		const user = await User.findById(req.decoded._id);
 		if (!user) throw new ApiError('USER_NOT_FOUND');
 		// bypass if admin:
-		console.log('user=>', user);
 		const isAdmin = user.roles.find(role => role === 'admin');
 		if (isAdmin) req.permissions = { read: true, write: true };
 		const billing = await Billing.findOne({
@@ -65,17 +58,13 @@ async function permissions(req, res, next) {
 		req.billing = billing;
 		req.user = user;
 		if (!billing) throw new ApiError('BILLING_NOT_FOUND');
-		console.log('MIDDDLEWARE PERM====================');
 		if (isRequestFromUser(billing, user)) {
-			console.log('REQUEST FROM USER');
 			if (isAdmin) return next();
 			else {
 				req.permissions = userPermissions(user._id.toString(), req.decoded._id);
-				console.log('PERM USER=>', req.permissions);
 				return next();
 			}
 		} else if (await isRequestFromJournal(req, billing)) {
-			console.log('REQUEST FROM JOURNAL');
 			if (isAdmin) return next();
 			else {
 				req.permissions = await journalPermissions(

@@ -29,8 +29,28 @@ async function findJournalsByUser(userId, page, count) {
 async function list({ userId, page = 1, count = 5 }) {
 	const user = await User.findById(userId).populate('billing');
 	if (!user) throw new ApiError('USER_NOT_FOUND');
-	const billings = await findJournalsByUser(userId, page, count);
-	return { ...user.billing.toObject(), journalBillings: billings, page, count };
+	const lists = await findJournalsByUser(userId, page, count);
+	const journals = await Promise.all(
+		lists.map(async journal => {
+			if (journal.billing) {
+				return {
+					...journal,
+					billing: {
+						...journal.billing.toObject(),
+						subscription: await journal.billing.subscription
+					}
+				};
+			}
+			return journal;
+		})
+	);
+	return {
+		...user.toObject(),
+		subscription: await user.billing.subscription,
+		journals,
+		page,
+		count
+	};
 }
 
 module.exports = list;
