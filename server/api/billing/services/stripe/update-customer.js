@@ -1,7 +1,7 @@
 const stripe = require('../../../../config/stripe');
 
 async function updateCustomer(customerStripeId, customer) {
-	const updatedCustomer = await stripe.update.retrieve(
+	const updatedCustomer = await stripe.customers.update(
 		customerStripeId,
 		customer
 	);

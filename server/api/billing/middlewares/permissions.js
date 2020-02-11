@@ -1,4 +1,5 @@
 const servicePermissions = require('../services/permissions');
+const { ApiError } = require('../../../config/error');
 
 /**
  * Inject req.permissions: {read: Boolean, write: Boolean}
@@ -18,7 +19,7 @@ async function permissions(req, res, next) {
 			});
 			return next();
 		}
-		return next();
+		return next(new ApiError('BILLING_FORBIDEN_OPERATION'));
 	} catch (error) {
 		console.log('MIDL=>', error);
 		return next(error);

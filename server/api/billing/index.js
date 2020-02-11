@@ -41,7 +41,7 @@ router.delete(
 );
 
 router.post(
-	'/upgrade/:billingId',
+	['/upgrade/:userId/:billingId', '/upgrade/:journalId/:billingId'],
 	middlewares.authentication,
 	billingMiddlewares.permissions,
 	billingMiddlewares.canWrite,
