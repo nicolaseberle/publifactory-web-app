@@ -1,7 +1,7 @@
 <template>
-  <div class="request-background">
-    <div class="request-container">
-      <div class="request-center-middle">
+  <div class="approval-background">
+    <div class="approval-container">
+      <div class="approval-center-middle">
         <div v-if="status === 'accepted'">
           <h4>We added {{associateEditor.firstname}} {{associateEditor.lastname}} as a new associate editor</h4>
           <!-- <h4>If this was a mistake you can still remove his right from your journal by clicking here :</h4> -->
@@ -45,13 +45,6 @@ export default {
         url: `/api/users/${userId}`,
         headers: { Authorization: `Bearer ${this.accessToken}` }
       });
-      if (
-        response.status === 500 &&
-        !response.data.success &&
-        response.data.message === 'REQUEST_ALREADY_DONE'
-      ) {
-        throw new Error('GET_USER_FAILED');
-      }
       return response.data;
     },
     async addAssociateEditor() {
@@ -64,13 +57,6 @@ export default {
         },
         headers: { Authorization: `Bearer ${this.accessToken}` }
       });
-      if (
-        response.status === 500 &&
-        !response.data.success &&
-        response.data.message === 'REQUEST_ALREADY_DONE'
-      ) {
-        throw new Error('ADD_ASSOEDITOR_FAILED');
-      }
       return response.data.user.id_user;
     }
   },
@@ -81,7 +67,7 @@ export default {
 </script>
 
 <style>
-.request-background {
+.approval-background {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -89,7 +75,7 @@ export default {
   background-color: #fff;
   justify-content: center;
 }
-.request-container {
+.approval-container {
   height: 30%;
   width: 50%;
   margin-top: 40px;
@@ -99,14 +85,14 @@ export default {
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.request-center-middle {
+.approval-center-middle {
   text-align: center;
 }
-.request-center-middle h4 {
+.approval-center-middle h4 {
   font-family: 'DNLTPro-regular';
   font-size: 1.2rem;
 }
-.request-title {
+.approval-title {
   font-size: 24px;
 }
 /* Put your css in here */
