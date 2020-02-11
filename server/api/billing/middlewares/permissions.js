@@ -21,7 +21,6 @@ async function permissions(req, res, next) {
 		}
 		return next(new ApiError('BILLING_FORBIDEN_OPERATION'));
 	} catch (error) {
-		console.log('MIDL=>', error);
 		return next(error);
 	}
 }

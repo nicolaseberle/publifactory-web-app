@@ -7,8 +7,6 @@ async function create(req, res, next) {
 			throw new ApiError('BAD_PARAMETERS');
 		}
 		const response = await serviceUpgradePlan({
-			userId: req.params.userId,
-			journalId: req.params.journalId,
 			billingId: req.params.billingId,
 			billing: req.body
 		});

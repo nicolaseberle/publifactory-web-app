@@ -3,7 +3,6 @@ const { ApiError } = require('../../../config/error');
 
 async function remove(req, res, next) {
 	try {
-		console.log('PERMISSIONS:', req.permissions);
 		if (!req.params.journalId || !req.params.userId)
 			throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceRemove({

@@ -1,12 +1,9 @@
 const { Request } = require('../model');
 const { Billing } = require('../../billing/model');
 const error = require('../../../config/error');
+const { stripe } = require('../../../../config');
 const sendEmailReviewer = require('./send-email-reviewer');
-const {
-	chargePlan,
-	readSubscription,
-	readNextInvoice
-} = require('../../billing/services');
+const { chargePlan, readNextInvoice } = require('../../billing/services');
 const getRawStatus = require('./get-raw-status');
 
 async function checkIfBillingNeedUpgrade(billing) {
@@ -14,13 +11,13 @@ async function checkIfBillingNeedUpgrade(billing) {
 		customerStripeId: billing.customerStripeId,
 		subscriptionId: billing.subscriptionId
 	});
-	const subscription = await readSubscription(billing.subscriptionId);
 	// Check if freemium will exced
-	const max = subscription.items.data[0].plan.tiers[0].up_to;
-	if (
-		nextInvoice.amount_due / 100 + 1 >= max &&
-		!nextInvoice.default_payment_method.invoice_settings.default_payment_method
-	) {
+	const line = nextInvoice.lines.data.find(
+		line => line.plan.id === stripe.freemiumPlanId
+	);
+	const max = line.plan.tiers[0].up_to;
+	const quantity = line.quantity;
+	if (quantity + 1 > max && !nextInvoice.default_payment_method) {
 		throw new error.ApiError('BILLING_NEED_UPGRADE');
 	}
 }
