@@ -46,8 +46,10 @@ async function list({ userId, page = 1, count = 5 }) {
 	);
 	return {
 		...user.profile,
-		billing: user.billing.toObject(),
-		subscription: await user.billing.subscription,
+		billing: {
+			...user.billing.toObject(),
+			subscription: await user.billing.subscription
+		},
 		journals,
 		page,
 		count

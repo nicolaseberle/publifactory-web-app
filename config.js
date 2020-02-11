@@ -139,14 +139,16 @@ const stripeDev = {
 	publicKey: 'pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs',
 	privateKey: 'sk_test_b9eIkUCav37bCcEOdMAoB2jJ00vLO95PS0',
 	productId: 'prod_GhzfMdMqWBXFe5',
-	planId: 'plan_GhzqxsXmfBgtHp'
+	freemiumPlanId: 'plan_GiN4tkppj4rVU0',
+	premiumPlanId: 'plan_GiN4CMvQq3AvDK'
 };
 
 const stripeProd = {
 	publicKey: '',
 	privateKey: '',
 	productId: '',
-	planId: ''
+	freemiumPlanId: '',
+	premiumPlanId: ''
 };
 
 const staging = {

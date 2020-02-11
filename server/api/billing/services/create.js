@@ -3,6 +3,7 @@ const Journal = require('../../journal/journal.model');
 const User = require('../../user/user.model');
 const { ApiError } = require('../../../config/error');
 const { createCustomer, createSubscription } = require('./stripe');
+const { stripe } = require('../../../../config');
 
 async function create({ billing, userId = undefined, journalId = undefined }) {
 	const newBilling = new Billing({
@@ -21,13 +22,19 @@ async function create({ billing, userId = undefined, journalId = undefined }) {
 	} else {
 		throw new ApiError('BILLING_FORBIDEN_OPERATION');
 	}
+
+	if (newBilling.plan === 'premium')
+		newBilling.planStripeId = stripe.premiumPlanId;
 	const customer = await createCustomer(newBilling);
 	newBilling.customerStripeId = customer.id;
 	const subscription = await createSubscription(newBilling);
 	newBilling.subscriptionId = subscription.id;
 	newBilling.subscriptionItemId = subscription.items.data[0].id;
 	await newBilling.save();
-	return { newBilling, subscription: await newBilling.subscription };
+	return {
+		...newBilling.toObject(),
+		subscription: await newBilling.subscription
+	};
 }
 
 module.exports = create;

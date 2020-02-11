@@ -1,14 +1,15 @@
-const serviceCreate = require('../services/create');
+const serviceUpgradePlan = require('../services/upgrade-plan');
 const { ApiError } = require('../../../config/error');
 
 async function create(req, res, next) {
 	try {
-		if (req.body.plan === 'premium' && !req.body.payementMethodId) {
+		if (!req.body.payementMethodId) {
 			throw new ApiError('BAD_PARAMETERS');
 		}
-		const response = await serviceCreate({
+		const response = await serviceUpgradePlan({
 			userId: req.params.userId,
 			journalId: req.params.journalId,
+			billingId: req.params.billingId,
 			billing: req.body
 		});
 		return res
