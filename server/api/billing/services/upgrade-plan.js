@@ -1,19 +1,6 @@
-// const updateReviewer = { ...updatedRequest.reviewer.toObject(), ...reviewer };
-// const updateEditor = { ...updatedRequest.editor.toObject(), ...editor };
-// const mergedRequest = {
-//   ...updatedRequest.toObject(),
-//   ...request,
-//   editor: updateEditor,
-//   reviewer: updateReviewer
-// };
-// await updatedRequest.updateOne(
-//   { $set: mergedRequest },
-//   { runValidators: true }
-// );
-
 const { Billing } = require('../model');
 const { ApiError } = require('../../../config/error');
-const { updateCustomer, upgradePlan: stripeUpgradePlan } = require('./stripe');
+const { updateCustomer, upgradeSubscriptionPlan } = require('./stripe');
 const { stripe } = require('../../../../config');
 
 async function upgradePlan({ billing, billingId }) {
@@ -32,7 +19,7 @@ async function upgradePlan({ billing, billingId }) {
 	await updateCustomer(updatedBilling.customerStripeId, {
 		payment_method: updatedBilling.payementMethodId // eslint-disable-line
 	});
-	const subscription = await stripeUpgradePlan({
+	const subscription = await upgradeSubscriptionPlan({
 		subscriptionId: billing.subscriptionId,
 		payementMethodId: billing.payementMethodId,
 		premiumPlanId: stripe.premiumPlanId

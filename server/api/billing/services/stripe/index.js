@@ -8,6 +8,7 @@ const readInvoice = require('./read-invoice');
 const readCustomer = require('./read-customer');
 const readNextInvoice = require('./read-next-invoice');
 const updateCustomer = require('./update-customer');
+const upgradeSubscriptionPlan = require('./upgrade-subscription-plan');
 
 module.exports = {
 	createCustomer,
@@ -19,5 +20,6 @@ module.exports = {
 	readInvoice,
 	readCustomer,
 	readNextInvoice,
-	updateCustomer
+	updateCustomer,
+	upgradeSubscriptionPlan
 };

@@ -1,6 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
-async function upgradePlan({
+async function upgradeSubscriptionPlan({
 	subscriptionId,
 	payementMethodId,
 	premiumPlanId
@@ -28,4 +28,4 @@ async function upgradePlan({
 	}
 }
 
-module.exports = upgradePlan;
+module.exports = upgradeSubscriptionPlan;
