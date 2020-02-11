@@ -15,8 +15,17 @@
       </el-col >
       <el-col :span='18'>
         <div class="one-bill-content">
-
-          <div v-if="numberTotal<=22" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+          <div v-show="currentPlan">
+          <div v-if="currentPlan==='Premium'" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
+            <div class='flex-l items-center justify-between' style='display: table-cell;'>
+              <div class='bill-title-free-plan'>Premium Plan</div>
+              <div class='bill-content-free-plan'>You can use the tool as much as you like</div>
+            </div>
+            <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+              <el-button v-on:click="downgrade()">Downgrade to your individual plan</el-button>
+            </div>
+          </div>
+          <div v-else-if="numberTotal<=10" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Free Plan</div>
               <div class='bill-content-free-plan'>Request {{ numberTotal }} out of your 30 free requests</div>
@@ -34,6 +43,7 @@
               <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
             </div>
           </div>
+        </div>
           </div>
         </el-col>
       </el-row>
@@ -149,7 +159,6 @@
     </div>
   <div v-if="publisher.hidden===false" class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
-
   <el-table
         :data="listOfPublisher"
         style="width: 100%">
@@ -335,10 +344,12 @@ export default{
       tableData: [],
       listOfPublisher: [],
       firstname: '',
-      lastname: ''
+      lastname: '',
+      currentPlan: null
     }
   },
-  created () {
+  async created () {
+    await this.getSubscription()
     //this.currentMonth = moment().format('M')
     this.beginMonth    = moment().startOf('M').format('DD/MM');
     this.endMonth    = moment().endOf('M').format('DD/MM');
@@ -350,13 +361,11 @@ export default{
       this.firstname = response.data.firstname
       this.lastname = response.data.lastname
       })
+
     this.mylistrequest = this.getMyRequest()
-    this.getSubscription()
+
   },
   methods: {
-    toto () {
-      console.log('-------------------------------------')
-    },
     sendRequest () {
 
     },
@@ -405,13 +414,12 @@ export default{
          }]
       })
     },
-    getSubscription(){
-      axios.get('/api/billings/?page=1&count=1000&userId=true',{
+    async getSubscription(){
+      const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
-       })
-      .then( async (res) => {
-        console.log(res.data)
       })
+      this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+
     }
 
   }

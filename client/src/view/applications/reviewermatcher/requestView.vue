@@ -45,7 +45,6 @@
 					</span>
 					<span class="ql-formats">
 						<button class="ql-link"></button>
-						<!--<input  class="ql-input" name="title" type="text"></input>-->
 					</span>
 				</div>
 				<div v-bind:id="idEditor">
@@ -67,7 +66,7 @@
 				</el-switch>
 				<el-form-item  label="Journal requesting the reviewing" prop="journal">
 					<el-select
-						v-model="formMail.journal"
+						v-model="currentJournal"
 						filterable
 						remote
 						placeholder="Enter your revue"
@@ -92,40 +91,16 @@
 	  			</el-form-item>
 				</el-form-item>
 			</el-form-item>
-
-			<!--
-    <el-form-item label="Relaunch" prop="relaunch">
-      <el-select v-model="formMail.relaunch">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-    </el-form-item>
-  -->
-			<!--
-    <el-form-item label="Option">
-      <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
-    </el-form-item>
-  -->
 			<el-form-item label="CGU" prop="type">
 				<el-checkbox-group v-model="formMail.type">
-					<el-checkbox label="I accept the CGU" name="type"></el-checkbox>
+					<el-checkbox label="I accept the Term of Use (CGU)" name="type"></el-checkbox>
 				</el-checkbox-group>
-				<!--<el-checkbox v-model="formMail.cgu" name='type'>-->
-				<!--  I accept the-->
-				<!--<el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">-->
-				<!--<a><router-link :to="'/cgu_publifactory_v1'">CGU</router-link></a>-->
-				<!--</el-tooltip>-->
-				<!--</el-checkbox>-->
 			</el-form-item>
 			<el-form-item class="flex_items">
 				<el-button v-on:click="$emit('close')">Cancel</el-button>
 				<el-button type="primary" @click="sendRequestRev('formMail')" style="margin-left:10px!important"
 					>Send</el-button>
-					<quotaRequestBox :maxInvitation='maxInvitation' :remainingDay="30"/>
+					<currentPlanBox :maxInvitation='maxInvitation' :currentPlan='currentPlan'/>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -136,17 +111,17 @@ import "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
-import freePlanStatusBar from "./components/free-plan-status-bar";
-import quotaRequestBox from "./components/free-plan-status-bar/generic";
+import currentPlanBox from "./components/plan";
 import { mapGetters } from "vuex";
 
 var Quill = require("quill");
 
 export default {
 	props: ["formPost", "formMail", "rowInfos"],
-	components:{freePlanStatusBar,quotaRequestBox},
+	components:{currentPlanBox},
 	data() {
 		return {
+			currentJournal: null,
 			editorialUse: false,
 			list: [],
 			editor: {},
@@ -156,6 +131,7 @@ export default {
 			requestInfos: {},
 			dialogVisible: false,
 			maxInvitation: 0,
+			currentPlan: null,
 			journal: ["Nature","Publiscience","the BMJ"],
 			listJournals: [],
 			value: [],
@@ -253,11 +229,12 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters(["loggedIn"])
+		...mapGetters(["loggedIn","accessToken"])
 	},
 	watch: {
 		editorialUse (val) {
 			if(val) {
+				this.currentJournal = ''
 				this.formMail.journal = ''
 				this.mailRules.journal = [
 					{
@@ -282,6 +259,7 @@ export default {
 				]
 			}
 			else {
+				this.currentJournal = 'None'
 				this.formMail.journal = 'None'
 				this.formMail.nameEditorInChief = ''
 				this.formMail.emailEditorInChief = ''
@@ -306,8 +284,21 @@ export default {
 						trigger: "blur"
 					}
 				]
+				// update the personnal plan to check permission
+				this.getSubscription()
 			}
-		}
+		},
+		currentJournal(val){
+			this.formMail.journal = val
+			if(val!=='' && val!=='None'){
+				// update the editorial plan to check permission
+				this.checkJournalSubscription ()
+			}
+		},
+	},
+	async created () {
+		// update the personnal plan to check permission
+		await this.getSubscription()
 	},
 	mounted() {
 		var quill = new Quill("#" + this.idEditor, {
@@ -329,6 +320,13 @@ export default {
 		this.getListJournal()
 	},
 	methods: {
+		async checkJournalSubscription () {
+			/*const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+				headers: {'Authorization': `Bearer ${this.accessToken}`}
+			})*/
+			this.currentPlan = 'Non-Activated'
+			//this.currentPlan = response.data.billing ? 'Activated' : 'Non-activated'
+		},
 		async getListJournal() {
 			/*await axios.get('/api/journal/list').then((res)=>{
 				this.journal = res.data
@@ -339,6 +337,17 @@ export default {
 			this.list = this.journal.map(item => {
 				return { value: `${item}`, label: `${item}` };
 			});
+		},
+		async getSubscription(){
+			if(this.loggedIn){
+				const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+					headers: {'Authorization': `Bearer ${this.accessToken}`}
+				})
+				this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+			} else {
+				this.currentPlan="Free"
+			}
+
 		},
 		remoteMethod(query) {
 			if (query !== '') {
