@@ -155,9 +155,9 @@
                   </div>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item  command="send">Send</el-dropdown-item>
+                    <el-dropdown-item  command="remind">Remind</el-dropdown-item>
                     <el-dropdown-item  command="accept">Accept</el-dropdown-item>
                     <el-dropdown-item  command="decline">Decline</el-dropdown-item>
-                    <el-dropdown-item  command="relaunch">Relaunch</el-dropdown-item>
                     <el-dropdown-item  command="unsubscribe"  style='color:red'>Unsubscribe</el-dropdown-item>
                     <el-dropdown-item  command="remove" style='color:red'>Remove</el-dropdown-item>
                   </el-dropdown-menu>
@@ -293,6 +293,14 @@ export default{
     },
     sendRequest(id){
       new Promise ((resolve,reject) => {
+        axios.post('/api/requests/send/' + id)
+        .then( async (res) => {
+          await this.getRequests()
+        })
+      })
+    },
+    remindRequest(id){
+      new Promise ((resolve,reject) => {
         axios.post('/api/requests/remind/' + id)
         .then( async (res) => {
           await this.getRequests()
@@ -301,8 +309,10 @@ export default{
     },
     actionHandleCommand(command) {
       if (command == "send") {
-        console.log(command);
         this.sendRequest(this.selectedRow._id)
+      }
+      else if (command == "remind") {
+        this.remindRequest(this.selectedRow._id)
       }
       else if (command == "remove") {
         console.log(command);
@@ -313,10 +323,6 @@ export default{
         console.log("no action");
       }
       else if (command == "decline") {
-        console.log(command);
-        console.log("no action");
-      }
-      else if (command == "relaunch") {
         console.log(command);
         console.log("no action");
       }

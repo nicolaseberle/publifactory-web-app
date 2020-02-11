@@ -257,6 +257,7 @@ export default {
 						trigger: "blur"
 					}
 				]
+			
 			}
 			else {
 				this.currentJournal = 'None'
@@ -291,7 +292,7 @@ export default {
 		currentJournal(val){
 			this.formMail.journal = val
 			if(val!=='' && val!=='None'){
-				// update the editorial plan to check permission
+				// update the personnal plan to check permission
 				this.checkJournalSubscription ()
 			}
 		},
