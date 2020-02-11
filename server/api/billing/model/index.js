@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const { stripe } = require('../../../../config');
-const { readSubscription, readInvoice } = require('../services/stripe/');
+const {
+	readSubscription,
+	readInvoice,
+	readNextInvoice
+} = require('../services/stripe/');
 
 const productStripeId = stripe.productId;
 const planStripeId = stripe.freemiumPlanId;
@@ -41,17 +45,22 @@ const BillingSchema = new mongoose.Schema(
 BillingSchema.virtual('subscription').get(async function() {
 	const subscription = await readSubscription(this.subscriptionId);
 	const { ...invoice } = await readInvoice(subscription.latest_invoice);
+	const { ...nextInvoice } = await readNextInvoice({
+		customerStripeId: this.customerStripeId,
+		subscriptionId: this.subscriptionId
+	});
+	const quantity = nextInvoice.lines.data[0].quantity;
 	const {
 		status,
-		quantity,
 		current_period_end, // eslint-disable-line
 		current_period_start, // eslint-disable-line
 		canceled_at // eslint-disable-line
 	} = subscription;
 	return {
+		quantity,
+		nextInvoice,
 		invoice,
 		status,
-		quantity,
 		current_period_end, // eslint-disable-line
 		current_period_start, // eslint-disable-line
 		canceled_at // eslint-disable-line
