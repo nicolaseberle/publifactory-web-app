@@ -4,6 +4,7 @@ const create = require('./create');
 const remove = require('./remove');
 const list = require('./list');
 const publicKey = require('./public-key');
+const upgradePlan = require('./upgrade-plan');
 
 module.exports = {
 	read,
@@ -11,5 +12,6 @@ module.exports = {
 	create,
 	remove,
 	list,
-	publicKey
+	publicKey,
+	upgradePlan
 };

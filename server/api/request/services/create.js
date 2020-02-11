@@ -29,14 +29,6 @@ async function create({ reviewer, editor, ...request }, authId, billingId) {
 			journalId: editor.journal,
 			right: 'editor'
 		});
-		console.log(
-			'AUTHID=>',
-			authId,
-			'userRole=>',
-			userRole,
-			'editorRole',
-			editorRole
-		);
 		newRequest.history.push({
 			status: 'approval',
 			date: new Date().toUTCString()

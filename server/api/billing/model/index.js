@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 const { stripe } = require('../../../../config');
-const { readSubscription, readInvoice } = require('../services/stripe/');
+const {
+	readSubscription,
+	readInvoice,
+	readNextInvoice
+} = require('../services/stripe/');
 
 const productStripeId = stripe.productId;
-const planStripeId = stripe.planId;
+const planStripeId = stripe.freemiumPlanId;
 
 const BillingSchema = new mongoose.Schema(
 	{
@@ -23,7 +27,11 @@ const BillingSchema = new mongoose.Schema(
 			default: 'day',
 			enum: { values: ['day', 'week', 'month', 'year'] }
 		},
-
+		plan: {
+			type: String,
+			default: 'freemium',
+			enum: { values: ['freemium', 'premium'] }
+		},
 		requests: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -36,9 +44,27 @@ const BillingSchema = new mongoose.Schema(
 
 BillingSchema.virtual('subscription').get(async function() {
 	const subscription = await readSubscription(this.subscriptionId);
-	const invoice = await readInvoice(subscription.latest_invoice);
-	subscription.latest_invoice = invoice;
-	return subscription;
+	const { ...invoice } = await readInvoice(subscription.latest_invoice);
+	const { ...nextInvoice } = await readNextInvoice({
+		customerStripeId: this.customerStripeId,
+		subscriptionId: this.subscriptionId
+	});
+	const quantity = nextInvoice.lines.data[0].quantity;
+	const {
+		status,
+		current_period_end, // eslint-disable-line
+		current_period_start, // eslint-disable-line
+		canceled_at // eslint-disable-line
+	} = subscription;
+	return {
+		quantity,
+		nextInvoice,
+		invoice,
+		status,
+		current_period_end, // eslint-disable-line
+		current_period_start, // eslint-disable-line
+		canceled_at // eslint-disable-line
+	};
 });
 
 module.exports.Billing = mongoose.model('Billing', BillingSchema);

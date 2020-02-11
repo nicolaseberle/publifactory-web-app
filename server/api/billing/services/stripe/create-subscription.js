@@ -1,7 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
 async function createSubscription({ customerStripeId, planStripeId }) {
-	console.log('ppllan=>', planStripeId);
 	try {
 		const subscription = await stripe.subscriptions.create({
 			customer: customerStripeId,

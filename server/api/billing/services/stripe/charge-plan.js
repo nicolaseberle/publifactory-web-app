@@ -12,7 +12,7 @@ async function chargePlan({ subscriptionItemId }) {
 		);
 		return increment;
 	} catch (error) {
-		console.log('ERROR INCREMENT=>', error);
+		throw error;
 	}
 }
 

@@ -1,4 +1,5 @@
 const { Billing } = require('../model');
+const { ApiError } = require('../../../config/error');
 
 async function update({
 	billingId,
@@ -6,9 +7,7 @@ async function update({
 	journalId = undefined,
 	billing
 }) {
-	const updateBilling = await Billing.findById(billingId);
-
-	return updateBilling;
+	throw new ApiError('NOT_IMPLEMENTED');
 }
 
 module.exports = update;

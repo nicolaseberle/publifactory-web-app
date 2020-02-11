@@ -40,6 +40,14 @@ router.delete(
 	controllers.remove
 );
 
+router.post(
+	['/upgrade/:userId/:billingId', '/upgrade/:journalId/:billingId'],
+	middlewares.authentication,
+	billingMiddlewares.permissions,
+	billingMiddlewares.canWrite,
+	controllers.upgradePlan
+);
+
 router.get('/publicKey', middlewares.authentication, controllers.publicKey);
 
 module.exports = router;
