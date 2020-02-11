@@ -1,6 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
-async function readInvoice({ customerStripeId, subscriptionId }) {
+async function readNextInvoice({ customerStripeId, subscriptionId }) {
 	try {
 		const invoice = await stripe.invoices.retrieveUpcoming({
 			customer: customerStripeId,
@@ -14,4 +14,4 @@ async function readInvoice({ customerStripeId, subscriptionId }) {
 	}
 }
 
-module.exports = readInvoice;
+module.exports = readNextInvoice;
