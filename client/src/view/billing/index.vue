@@ -415,10 +415,15 @@ export default{
       })
     },
     async getSubscription(){
-      const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      })
-      this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+      try {
+        const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        })
+        this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+      } catch {
+        this.currentPlan = 'Free'  
+      }
+
 
     }
 

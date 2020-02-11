@@ -257,7 +257,6 @@ export default {
 						trigger: "blur"
 					}
 				]
-			
 			}
 			else {
 				this.currentJournal = 'None'
@@ -292,13 +291,12 @@ export default {
 		currentJournal(val){
 			this.formMail.journal = val
 			if(val!=='' && val!=='None'){
-				// update the personnal plan to check permission
+				console.log("watch currentJournal:: ")
 				this.checkJournalSubscription ()
 			}
 		},
 	},
 	async created () {
-		// update the personnal plan to check permission
 		await this.getSubscription()
 	},
 	mounted() {
@@ -340,14 +338,19 @@ export default {
 			});
 		},
 		async getSubscription(){
-			if(this.loggedIn){
-				const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
-					headers: {'Authorization': `Bearer ${this.accessToken}`}
-				})
-				this.currentPlan = response.data.billing ? 'Premium' : 'Free'
-			} else {
+			try{
+				if(this.loggedIn){
+					const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+						headers: {'Authorization': `Bearer ${this.accessToken}`}
+					})
+					this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+				} else {
+					this.currentPlan="Free"
+				}
+			} catch {
 				this.currentPlan="Free"
 			}
+
 
 		},
 		remoteMethod(query) {
