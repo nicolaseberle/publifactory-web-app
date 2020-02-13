@@ -24,21 +24,40 @@ export default {
         name: '',
         firstname: '',
         lastname: ''
-      }
+      },
+      journalId: '',
+      status: '',
+      userId: '',
+      requestId: ''
     };
   },
   async created() {
     this.status = this.$route.params.status;
     this.journalId = this.$route.params.journalId;
     this.userId = this.$route.params.userId;
+    this.requestId = this.$route.params.requestId;
     try {
       const associateEditorRole = await this.addAssociateEditor();
       this.associateEditor = await this.getAssociateEditor(associateEditorRole);
+      this.approveRequest();
     } catch (error) {
       console.warn(error);
     }
   },
   methods: {
+    // async
+    approveRequest() {
+      axios({
+        method: 'post',
+        url: `/api/requests/${this.requestId}`,
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+        data: {
+          status: 'pending'
+        }
+      }).then(response => {
+        console.log(response.status);
+      });
+    },
     async getAssociateEditor(userId) {
       const response = await axios({
         method: 'get',

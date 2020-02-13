@@ -11,11 +11,11 @@ const emailEditorApproval = (request, userId) => `
 
   <p>This user actually doesn't have any right concerning your journal, if you trust this user as an associate editor you can give
   him the right to send requests to reviewers by clicking:
-    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/accepted">
+    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/accepted">
       Here
     </a>
   Or :
-    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/rejected">
+    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/rejected">
       Decline
     </a>
   </p>
