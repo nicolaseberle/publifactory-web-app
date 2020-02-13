@@ -9,8 +9,16 @@ import Layout_services from '../view/layout_services/Layout'
 
 Vue.use(VueRouter)
 
-const state_ = !!((process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'))
-const state__ = !((process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'))
+const state_ = !!(
+  process.env.DEV_LOCAL === 'true' ||
+	process.env.NODE_ENV === 'production' ||
+	process.env.NODE_ENV === 'staging'
+)
+const state__ = !(
+  process.env.DEV_LOCAL === 'true' ||
+	process.env.NODE_ENV === 'production' ||
+	process.env.NODE_ENV === 'staging'
+)
 
 export const constantRouterMap = [
   {
@@ -64,10 +72,7 @@ export const constantRouterMap = [
       skipAuth: true
     },
     props: route => ({ userId: route.query.userId })
-  }, /*
-	{
-		path: '/services_test',
-		component: Layout_services,
+  }, /*	{		path: '/services_test',		component: Layout_services,
 		redirect: 'services_test',
 		hidden: true,
 		children: [
@@ -123,7 +128,7 @@ export const constantRouterMap = [
           skipAuth: false
         },
         component: resolve => {
-          import('../view/approvals/').then(resolve)
+					import('../view/approvals/').then(resolve)
         }
       }
     ]
@@ -134,13 +139,31 @@ export const constantRouterMap = [
     hidden: true,
     children: [
       {
-        path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+        path: '/account-validation/:token',
+        name: 'account-validation',
+        meta: {
+          skipAuth: true
+        },
+        component: resolve => {
+					import('../view/account-validation/').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path:
+					'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
         name: 'answer',
         meta: {
           skipAuth: true
         },
         component: resolve => {
-          import('../view/request/').then(resolve)
+					import('../view/request/').then(resolve)
         }
       }
     ]
@@ -210,18 +233,16 @@ export const constantRouterMap = [
         hidden: state_,
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
-        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
         hidden: state_,
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
-        component: (resolve) => import('../view/journals/index.vue').then(resolve)
-      }, /*
-      {
-        path: '/data',
-        name: 'my_data',
+        component: resolve => import('../view/journals/index.vue').then(resolve)
+      }, /*      {        path: '/data',        name: 'my_data',
         meta: { title: 'my_data', icon: 'database', noCache: true },
         component: () => import('../view/data/index.vue')
       },*/
@@ -229,19 +250,22 @@ export const constantRouterMap = [
         path: '/invitation',
         name: 'my_invitation',
         meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
-        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/invitation/index.vue').then(resolve)
       },
       {
         path: '/reviewermatcher',
         name: 'reviewer_matcher',
         hidden: state__,
         meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
-        component: () => import('../view/applications/reviewermatcher/index_.vue')
+        component: () =>
+					import('../view/applications/reviewermatcher/index_.vue')
       },
       {
         path: '/dashboard/home',
         hidden: true,
-        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/invitation/index.vue').then(resolve)
       }
     ]
   }, //
@@ -284,10 +308,7 @@ export const constantRouterMap = [
         },
         component: () =>
 					import('../view/applications/reviewermatcher/index_.vue')
-      }, /*
-			{
-				path: 'summarize',
-				name: 'summarize_text',
+      }, /*			{				path: 'summarize',				name: 'summarize_text',
 				meta: {
 					title: 'summarize_text',
 					icon: 'network',
