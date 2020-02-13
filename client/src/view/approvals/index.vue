@@ -39,7 +39,6 @@ export default {
     try {
       const associateEditorRole = await this.addAssociateEditor();
       this.associateEditor = await this.getAssociateEditor(associateEditorRole);
-      this.approveRequest();
     } catch (error) {
       console.warn(error);
     }
@@ -59,12 +58,17 @@ export default {
       });
     },
     async getAssociateEditor(userId) {
-      const response = await axios({
-        method: 'get',
-        url: `/api/users/${userId}`,
-        headers: { Authorization: `Bearer ${this.accessToken}` }
-      });
-      return response.data;
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `/api/users/${userId}`,
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        return response.data;
+        this.approveRequest();
+      } catch (error) {
+        console.warn(error);
+      }
     },
     async addAssociateEditor() {
       const response = await axios({
