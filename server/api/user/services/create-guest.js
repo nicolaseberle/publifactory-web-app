@@ -9,6 +9,8 @@ const { emailAccountValidation } = require('../../../config/emailing');
 // TODO? FIND BILLING BY EMAIL => reassign
 async function createGuest({ email, lastName, firstName }) {
 	const uuid = uuidv4();
+	const user = User.findOne({ email });
+	if (user) throw new ApiError('USER_ALREADY_EXIST');
 	const newUser = new User({
 		email,
 		lastname: lastName,

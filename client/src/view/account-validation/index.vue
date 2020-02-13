@@ -30,7 +30,6 @@
 </template>
 <script>
 import axios from 'axios';
-import { mapGetters } from 'vuex';
 export default {
   name: 'accountValidation',
   data() {
@@ -66,7 +65,7 @@ export default {
         action === 'create' ? 'created' : 'deleted'
       }`;
       this.done = true;
-      this.$router.push(this.$route.query.redirect || '/');
+      this.$router.push(this.$route.query.redirect || '/login');
     }
   }
 };
@@ -134,7 +133,7 @@ export default {
 }
 
 .lds-ring {
-  transform: translate(110px, 30%);
+  transform: translate(300px, 30%);
 }
 .lds-ring div {
   box-sizing: border-box;
