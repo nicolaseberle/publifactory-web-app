@@ -1,12 +1,12 @@
 const serviceCreateGuest = require('../services/create-guest');
 const { ApiError } = require('../../../config/error');
 
-async function list(req, res, next) {
+async function createGuest(req, res, next) {
 	try {
 		if (!req.body.email || !req.body.firstName || !req.body.lastName)
 			throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceCreateGuest({
-			user: req.body
+			...req.body
 		});
 		return res
 			.status(200)
@@ -17,4 +17,4 @@ async function list(req, res, next) {
 	}
 }
 
-module.exports = list;
+module.exports = createGuest;

@@ -3,30 +3,41 @@ const User = require('../user.model');
 const { ApiError } = require('../../../config/error');
 const config = require('../../../../config');
 
-async function validateGuest({ token, password }) {
+async function deleteAccount(user) {
+	await User.findByIdAndRemove(user._id);
+}
+
+async function createAccount(user, password) {
+	user.role = 'user';
+	const roles = user.roles.filter(role => role !== 'guest');
+	user.roles = [...roles, 'user'];
+	user.password = password;
+
+	const auToken = jwt.sign(
+		{
+			_id: user._id,
+			name: user.name,
+			role: user.role
+		},
+		config.backend.secrets.session,
+		{ expiresIn: '7d' }
+	);
+	await user.save();
+	return { auToken };
+}
+
+async function validateGuest({ token, password, state }) {
 	try {
 		const decoded = jwt.verify(token, config.backend.secrets.session);
-
-		const user = User.findById(decoded._id);
+		const user = await User.findById(decoded._id);
 		if (!user) throw new ApiError('USER_NOT_FOUND');
 		const auth = user.authenticate(decoded.h);
 		if (!auth) throw new ApiError('USER_WRONG_PASSWORD');
-		user.role = 'user';
-		const roles = user.roles.filter(role => role !== 'guest');
-		user.roles = [...roles, 'user'];
-		user.password = password;
-
-		const token = jwt.sign(
-			{
-				_id: user._id,
-				name: user.name,
-				role: user.role
-			},
-			config.backend.secrets.session,
-			{ expiresIn: '7d' }
-		);
-
-		return { token };
+		if (state === 'delete') {
+			return await deleteAccount(user);
+		} else {
+			return await createAccount(user, password);
+		}
 	} catch (error) {
 		switch (error.constructor) {
 			case jwt.TokenExpiredError:

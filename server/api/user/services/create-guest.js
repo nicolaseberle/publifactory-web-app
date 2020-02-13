@@ -6,10 +6,13 @@ const uuidv4 = require('uuid/v4');
 const Email = require('../../email/email.controller.js');
 const { emailAccountValidation } = require('../../../config/emailing');
 
-async function createGuest({ user }) {
+// TODO? FIND BILLING BY EMAIL => reassign
+async function createGuest({ email, lastName, firstName }) {
 	const uuid = uuidv4();
 	const newUser = new User({
-		...user,
+		email,
+		lastname: lastName,
+		firstname: firstName,
 		isVerified: true,
 		provider: 'local',
 		role: 'guest',
@@ -20,7 +23,7 @@ async function createGuest({ user }) {
 		{
 			_id: newUser._id,
 			name: newUser.name,
-			role: user.role
+			role: newUser.role
 		},
 		config.backend.secrets.session,
 		{ expiresIn: '7d' }
@@ -29,20 +32,20 @@ async function createGuest({ user }) {
 		{
 			_id: newUser._id,
 			name: newUser.name,
-			role: user.role,
+			role: newUser.role,
 			h: uuid,
 			email: newUser.email
 		},
 		config.backend.secrets.session,
 		{ expiresIn: '20d' }
 	);
-	const email = new Email(newUser.email);
-	email.sendEmail({
+	const mailing = new Email(newUser.email);
+	mailing.sendEmail({
 		subject: 'Account validation from publifactory',
-		html: emailAccountValidation(user, tokenLink)
+		html: emailAccountValidation(newUser, tokenLink)
 	});
 	await newUser.save();
-	return { user: newUser, token };
+	return { user: newUser, token, tokenLink };
 }
 
 module.exports = createGuest;

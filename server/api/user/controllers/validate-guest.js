@@ -3,9 +3,11 @@ const { ApiError } = require('../../../config/error');
 
 async function validateGuest(req, res, next) {
 	try {
-		if (!req.body.token) throw new ApiError('BAD_PARAMETERS');
+		if (!req.body.token || !req.params.state || !req.body.password)
+			throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceValidateGuest({
-			token: req.body.token
+			...req.body,
+			state: req.params.state
 		});
 		return res
 			.status(200)
