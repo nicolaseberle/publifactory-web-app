@@ -30,16 +30,16 @@ async function sendInvitation(requestId) {
 		throw new error.ApiError('REQUEST_ALREADY_SENT');
 	}
 	try {
-		await sendEmailReviewer(requestId);
-		request.history.push({
-			status: 'sent',
-			date: new Date().toUTCString()
-		});
 		const billing = await Billing.findOne({ requests: { $in: [request._id] } });
 		if (billing.plan === 'freemium') {
 			await checkIfBillingNeedUpgrade(billing);
 		}
 		await chargePlan(billing);
+		await sendEmailReviewer(requestId);
+		request.history.push({
+			status: 'sent',
+			date: new Date().toUTCString()
+		});
 		await request.save();
 		return request;
 	} catch (err) {
