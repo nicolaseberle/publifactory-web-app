@@ -23,7 +23,12 @@ async function checkIfBillingNeedUpgrade(billing) {
 }
 
 async function sendInvitation(requestId) {
-	const request = await Request.findById(requestId);
+	const request = await Request.findById(requestId)
+		.populate({
+			path: 'user',
+			select: 'name firstname lastname role roles email'
+		})
+		.populate({ path: 'journal' });
 	if (!request) throw new error.ApiError('REQUEST_NOT_FOUND');
 	const requestStatus = getRawStatus(request.history);
 	if (requestStatus.includes('sent')) {
@@ -34,12 +39,12 @@ async function sendInvitation(requestId) {
 		if (billing.plan === 'freemium') {
 			await checkIfBillingNeedUpgrade(billing);
 		}
-		await chargePlan(billing);
 		await sendEmailReviewer(requestId);
 		request.history.push({
 			status: 'sent',
 			date: new Date().toUTCString()
 		});
+		await chargePlan(billing);
 		await request.save();
 		return request;
 	} catch (err) {

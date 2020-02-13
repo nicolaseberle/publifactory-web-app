@@ -23,7 +23,7 @@ function updateStatus(request, status) {
 	}
 }
 
-async function update(requestId, { reviewer, editor, status, ...request }) {
+async function update(requestId, { reviewer, status, ...request }) {
 	const updatedRequest = await Request.findById(requestId);
 	if (!updatedRequest) throw new Error('REQUEST_NOT_FOUND');
 	if (status) {
@@ -31,19 +31,17 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 	}
 
 	const updateReviewer = { ...updatedRequest.reviewer.toObject(), ...reviewer };
-	const updateEditor = { ...updatedRequest.editor.toObject(), ...editor };
 	const mergedRequest = {
 		...updatedRequest.toObject(),
 		...request,
-		editor: updateEditor,
 		reviewer: updateReviewer
 	};
 	await updatedRequest.updateOne(
 		{ $set: mergedRequest },
 		{ runValidators: true }
 	);
-
-	const email = new Email(updatedRequest.editor.email);
+	await updatedRequest.populate('journal user').execPopulate();
+	const email = new Email(updatedRequest.user.email);
 	// send an email to the editor if the status === accept/rejected/outfield
 	if (status && status === 'accepted') {
 		email.sendEmail({
@@ -56,7 +54,14 @@ async function update(requestId, { reviewer, editor, status, ...request }) {
 			html: emailEditorTemplate.answer(updatedRequest, status)
 		});
 	}
-	return mergedRequest;
+	await updatedRequest
+		.populate({
+			path: 'user',
+			select: 'name firstname lastname role roles email'
+		})
+		.populate({ path: 'journal' })
+		.execPopulate();
+	return updatedRequest;
 }
 
 module.exports = update;

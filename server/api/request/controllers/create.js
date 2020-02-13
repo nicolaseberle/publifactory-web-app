@@ -17,7 +17,6 @@ async function create(req, res, next) {
 	try {
 		if (
 			!req.body.reviewer ||
-			!req.body.editor ||
 			!req.body.object ||
 			!req.body.content ||
 			!req.params.billingId

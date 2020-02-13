@@ -18,10 +18,9 @@ function isRequestFromUser(billing, user) {
 		: false;
 }
 
-function userPermissions(userId, authId) {
-	if (userId === authId) {
-		return { read: true, write: true };
-	} else return { read: false, write: false };
+function userPermissions(authId, request) {
+	if (request.user.toString() === authId) return { write: true, read: true };
+	return { write: false, read: false };
 }
 
 async function journalPermissions(journalId, authId) {
@@ -47,7 +46,7 @@ async function permissions(req, res, next) {
 	try {
 		const request = await Request.findById(req.params.requestId);
 		if (!request) throw new ApiError('REQUEST_NOT_FOUND');
-		const user = await User.findById(req.decoded._id);
+		const user = await User.findById(req.decoded._id).populate();
 		if (!user) throw new ApiError('USER_NOT_FOUND');
 		// bypass if admin:
 		const isAdmin = user.roles.find(role => role === 'admin');
@@ -61,7 +60,7 @@ async function permissions(req, res, next) {
 		if (isRequestFromUser(billing, user)) {
 			if (isAdmin) return next();
 			else {
-				req.permissions = userPermissions(user._id.toString(), req.decoded._id);
+				req.permissions = userPermissions(req.decoded._id, request);
 				return next();
 			}
 		} else if (await isRequestFromJournal(req, billing)) {
@@ -73,6 +72,7 @@ async function permissions(req, res, next) {
 				);
 			}
 		}
+		req.permissions = { read: false, write: false };
 		return next();
 	} catch (error) {
 		return next(error);
