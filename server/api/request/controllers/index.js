@@ -8,6 +8,7 @@ const reviewerRead = require('./reviewer-read');
 const logo = require('./logo');
 const remind = require('./remind');
 const totalRequest = require('./totalRequest');
+const sendInvitation = require('./send-invitation');
 
 module.exports = {
 	create,
@@ -19,5 +20,6 @@ module.exports = {
 	reviewerRead,
 	logo,
 	remind,
-	totalRequest
+	totalRequest,
+	sendInvitation
 };

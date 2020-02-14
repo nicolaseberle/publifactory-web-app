@@ -76,10 +76,10 @@
           </el-button>->
         </div>
         </div>
-          <el-button class="login-button" circle   type="primary" native-type="submit" :loading="loading" style='background-color:#A6CE3A ; vertical-align: middle;' v-on:click="onOrcidSubmit()" ></el-button>-->
+          <el-button class="login-button" circle   type="primary" native-type="submit" :loading="loading" style='background-color:#A6CE3A ; vertical-align: middle;' v-on:click="onOrcidSubmit()" ></el-button>
         </el-row>
       </el-form-item>
-    </el-row>
+    </el-row>-->
 
     </el-form>
     <div class='register' style='float:right'>
@@ -127,7 +127,6 @@ export default {
     }
   },
   mounted () {
-    console.log("mounted login page")
   },
   created () {
     console.log("created login page")

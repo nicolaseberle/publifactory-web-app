@@ -1,8 +1,10 @@
 const { Billing } = require('../model');
+const { ApiError } = require('../../../config/error');
 
-async function read() {
-	// await newBilling.save();
-	// return newBilling.toObject();
+async function read({ billingId }) {
+	const billing = await Billing.findById(billingId);
+	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
+	return { billing, subscription: await billing.subscription };
 }
 
 module.exports = read;

@@ -2,6 +2,7 @@
  .el-dialog__header{
   background-color: #FFFFFF;
   padding: 10 0;
+  max-height:600px;
 }
 
  .el-dialog__header .el-dialog__title{

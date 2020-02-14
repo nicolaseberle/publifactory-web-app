@@ -33,7 +33,6 @@ async function list({ page = 1, count = 5, filters, userId = undefined }) {
 			$match: { 'editor.email': user.email }
 		});
 	}
-
 	pipeline.push(...paginate(page, count));
 	const list = await Request.aggregate(pipeline);
 	return { ...response, data: list };

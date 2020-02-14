@@ -15,8 +15,17 @@
       </el-col >
       <el-col :span='18'>
         <div class="one-bill-content">
-
-          <div v-if="numberTotal<=22" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+          <div v-show="currentPlan">
+          <div v-if="currentPlan==='Premium'" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
+            <div class='flex-l items-center justify-between' style='display: table-cell;'>
+              <div class='bill-title-free-plan'>Premium Plan</div>
+              <div class='bill-content-free-plan'>You can use the tool as much as you like</div>
+            </div>
+            <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+              <el-button v-on:click="downgrade()">Delete your individual plan</el-button>
+            </div>
+          </div>
+          <div v-else-if="numberTotal<=10" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Free Plan</div>
               <div class='bill-content-free-plan'>Request {{ numberTotal }} out of your 30 free requests</div>
@@ -34,6 +43,7 @@
               <el-button v-on:click="upgrade()">Upgrade to remove limit</el-button>
             </div>
           </div>
+        </div>
           </div>
         </el-col>
       </el-row>
@@ -42,37 +52,34 @@
       </div>
 
       <div v-if="invoice" class='bill-table' style='margin-top:50px;'>
-        <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
-
+        <h4>Current month's spending - From <!--{{beginMonth}} to {{endMonth}}--></h4>
       <el-table
-            :data="listOfPublisher"
+            :data="mySubscription"
             style="width: 100%">
             <el-table-column
               label="Title"
               >
               <template slot-scope="props">
-                <p style="text-align:center;">Titre de l'article</p>
+                <p style="text-align:center;">INVITATION TO REVIEW </p>
               </template>
             </el-table-column>
             <el-table-column
               label="Price($/request)"
               width="200">
-              <template slot-scope="props">
-                <p style="text-align:center;">${{unitPrice }}/request</p>
-              </template>
+                <p style="text-align:center;">$1/request</p>
             </el-table-column>
             <el-table-column
               label="Usage(request)"
               width="200">
               <template slot-scope="props">
-                <p style="text-align:center;">{{ props.row.nb }}</p>
+                <p style="text-align:center;">{{ props.row.quantity }}</p>
               </template>
             </el-table-column>
             <el-table-column
               label="Total"
               width="200">
               <template slot-scope="props">
-                <p style="text-align:center;"></p>
+                <p style="text-align:center;">{{props.row.amount_due}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -85,7 +92,9 @@
             </div>
             <div class='w-50 w-25-ns'>
               <div class='gray tr'>
-                ${{amountTotal}}
+                <template slot-scope="props">
+                  <p>{{props.row.amount_due}}</p>
+                </template>
               </div>
             </div>
           </div>
@@ -104,12 +113,14 @@
           <div class='flex-subbill items-center mv2'>
             <div class='w-50 w-75-ns'>
               <div class='f5 gray tr'>
-                This month’s running total ({{beginMonth}} - Today)
+                This month’s running total (<!--{{beginMonth}}--> - Today)
               </div>
             </div>
             <div class='w-50 w-25-ns'>
               <div class='gray tr'>
-                <div class="f0 f00-l green-toto tnum">${{toto}}</div>
+                <template slot-scope="props">
+                  <div class="f0 f00-l green-toto tnum">{{props.row.amount_due}}</div>
+                </template>
               </div>
             </div>
           </div>
@@ -118,8 +129,9 @@
 
     </div>
   </el-card>
-  <h2 v-if="listOfPublisher.length>0" style='font-size:1.4rem;'>Publisher Plan</h2>
-  <el-card v-for='publisher in listOfPublisher' class="box-card " style='margin-bottom:10px;margin-left:30px;'>
+
+  <h2 v-if="myJournals.length>0" style='font-size:1.4rem;'>Publisher Plan</h2>
+  <el-card v-for='publisher in myJournals' v-bind:key="publisher.id" class="box-card " style='margin-bottom:10px;margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
       <el-col :span='6'>
@@ -149,7 +161,6 @@
     </div>
   <div v-if="publisher.hidden===false" class='bill-table' style='margin-top:50px;'>
     <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
-
   <el-table
         :data="listOfPublisher"
         style="width: 100%">
@@ -210,12 +221,12 @@
       <div class='flex-subbill items-center mv2'>
         <div class='w-50 w-75-ns'>
           <div class='f5 gray tr'>
-            This month’s running total ({{beginMonth}} - Today)
+            <!--This month’s running total ({{beginMonth}} - Today)-->
           </div>
         </div>
         <div class='w-50 w-25-ns'>
           <div class='gray tr'>
-            <div class="f0 f00-l green-toto tnum">${{toto}}</div>
+            <div class="f0 f00-l green-toto tnum"><!--${{toto}}--></div>
           </div>
         </div>
       </div>
@@ -335,10 +346,15 @@ export default{
       tableData: [],
       listOfPublisher: [],
       firstname: '',
-      lastname: ''
+      lastname: '',
+      currentPlan: null,
+      billingId: null,
+      mySubscription: null,
+      myJournals: null
     }
   },
-  created () {
+  async created () {
+    await this.getSubscription()
     //this.currentMonth = moment().format('M')
     this.beginMonth    = moment().startOf('M').format('DD/MM');
     this.endMonth    = moment().endOf('M').format('DD/MM');
@@ -349,13 +365,13 @@ export default{
     }).then(response => {
       this.firstname = response.data.firstname
       this.lastname = response.data.lastname
+      this.billingId = response.data.billing
       })
+
     this.mylistrequest = this.getMyRequest()
+
   },
   methods: {
-    toto () {
-      console.log('-------------------------------------')
-    },
     sendRequest () {
 
     },
@@ -365,6 +381,29 @@ export default{
     upgrade () {
       this.visiblePricing = true
       //this.$router.push('/pricing')
+    },
+    downgrade () {
+      this.$confirm("Are you sure to delete your individual plan ?", "Confirmation", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        type: "success"
+      }).then(()=>{
+        //this.downgradeMySubscription()
+      })
+    },
+    downgradeMySubscription() {
+      axios.delete('/api/billings/'+this.userId ,{billingId: this.billingId},{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then(()=>{this.$message({
+         type: "success",
+         message: "Individual plan deleted"
+       })}).catch((err)=>{
+         console.log(err)
+         this.$message({
+   				type: "error",
+   				message: "Contact us please, something happens!"
+   			});
+       });
     },
     getMyRequest(){
       axios.get('/api/requests/?page=1&count=1000&userId=true',{
@@ -403,7 +442,35 @@ export default{
            unlock: true
          }]
       })
+    },
+    async getSubscription(){
+
+        await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then((response)=>{
+          console.log(response)
+          this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+          if(response.data.billing){
+            this.mySubscription = [response.data.billing.subscription]
+          }
+          this.myJournals = response.data.journals
+          console.log(this.myJournals)
+
+        })
+
+        /*
+        ...user.profile,
+        billing: {
+          ...user.billing.toObject(),
+          subscription: await user.billing.subscription
+        },
+        journals,
+        page,
+        count
+        */
+
     }
+
   }
 }
 </script>
