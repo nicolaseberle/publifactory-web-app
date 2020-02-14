@@ -411,35 +411,6 @@
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
               </el-button>
-<!--              <el-popover
-                ref="popcheck"
-                placement="top"
-                trigger="hover"
-                content="The author matches correctly">
-              </el-popover>
-              <el-button
-                type="success"
-                plain
-                icon="el-icon-check"
-                circle
-                @click.native.prevent="
-                (scope.$index, tableData)"
-                v-popover:popcheck/>
-              <el-popover
-                ref="popdel"
-                placement="top"
-                trigger="hover"
-                content="The author does not match">
-              </el-popover>
-              <el-button
-                type="info"
-                plain
-                icon="el-icon-close"
-                circle
-                @click.native.prevent="deleteRow(scope.$index, tableData)"
-                v-popover:popdel>
-              </el-button>
--->
             </template>
           </el-table-column>
         </el-table>
@@ -455,31 +426,35 @@
       </el-row>
     </div>
     </div>
-    <el-dialog
-      title="Send a Request to Review"
-      :visible.sync="centerDialogVisible"
-      width="65%">
-      <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
+    <div class="request-modal">
+      <el-dialog
+        title="Send a Request to Review"
+        :visible.sync="centerDialogVisible"
+        width="65%"
+        top='10vh'
+        >
+        <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
-    </el-dialog>
-    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-      <h1 style='font-size:1.5rem;'>Welcome </h1>
-      <h2></h2>
-      <p>Change your password</p>
-      <br>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="Email">
-          <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="New Password">
-          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type='primary' @click="doLogout">Quit</el-button>
-        <el-button type='primary' @click="changePassword" :loading="loadingAccess">Save</el-button>
-      </span>
-    </el-dialog>
+      </el-dialog>
+      <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+        <h1 style='font-size:1.5rem;'>Welcome </h1>
+        <h2></h2>
+        <p>Change your password</p>
+        <br>
+        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+          <el-form-item label="Email">
+            <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="New Password">
+            <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type='primary' @click="doLogout">Quit</el-button>
+          <el-button type='primary' @click="changePassword" :loading="loadingAccess">Save</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -509,10 +484,13 @@ export default {
   },
   data () {
     return {
+      modalLoginVisible: true,
       formMail: {
         object: '',
         mailDest: '',
         name: '',
+        firstname: '',
+        lastname: '',
         journal: 'None',
         nameEditorInChief: '',
         emailEditorInChief: '',
@@ -610,6 +588,8 @@ export default {
       }).then(response => {
         this.formMail.mailDest = response.data.email
         this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
+        this.formMail.firstname = response.data.firstname
+        this.formMail.lastname =  response.data.lastname
         this.formMail.cgu = true
 
         this.form.email = response.data.email
@@ -688,7 +668,7 @@ export default {
           this.requestInfos["deadline"] = this.formMail["deadline"]
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
-          this.requestInfos["pub_name"] = this.formMail["name"]
+          this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"]
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
@@ -1649,4 +1629,17 @@ hgroup {
   top: 14px;
   z-index: 1;
 }
+
+.request-modal  .el-dialog .el-dialog__header {
+    background-color: #FFF;
+    border-top: 5px solid #2F4155!important;
+}
+
+.request-modal .el-dialog__header .el-dialog__title{
+ color: #333;
+ font-size: 1.8rem;
+ font-family: 'DNLTPro-bold';
+ }
+
+
 </style>

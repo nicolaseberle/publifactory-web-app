@@ -10,8 +10,11 @@
 			<el-form-item label="Your email" prop="mailDest">
 				<el-input v-model="formMail.mailDest"></el-input>
 			</el-form-item>
-			<el-form-item label="Your name" prop="name">
-				<el-input v-model="formMail.name"></el-input>
+			<el-form-item label="Firstname" prop="firstname">
+				<el-input v-model="formMail.firstname"></el-input>
+			</el-form-item>
+			<el-form-item label="Lastname" prop="lastname">
+				<el-input v-model="formMail.lastname"></el-input>
 			</el-form-item>
 			<!--
 			<el-form-item label="Journal requesting the reviewing" prop="journal">
@@ -103,6 +106,18 @@
 					<currentPlanBox :maxInvitation='maxInvitation' :currentPlan='currentPlan'/>
 			</el-form-item>
 		</el-form>
+
+    <el-dialog class='login-modal'
+		:close-on-click-modal="false"
+		:close-on-press-escape="false"
+		:show-close="false"
+		:visible.sync="modalLoginVisible"
+		width="30%"
+		top="20vh"
+		append-to-body>
+      <modalLogin v-on:close='modalLoginVisible=false'/>
+    </el-dialog>
+
 	</div>
 </template>
 <script>
@@ -113,14 +128,16 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import currentPlanBox from "./components/plan";
 import { mapGetters } from "vuex";
+import modalLogin from './components/modalLogin'
 
 var Quill = require("quill");
 
 export default {
 	props: ["formPost", "formMail", "rowInfos"],
-	components:{currentPlanBox},
+	components:{currentPlanBox,modalLogin},
 	data() {
 		return {
+			modalLoginVisible: false,
 			currentJournal: null,
 			editorialUse: false,
 			list: [],
@@ -206,7 +223,14 @@ export default {
 						trigger: "blur"
 					}
 				],
-				name: [
+				firstname: [
+					{
+						required: true,
+						message: "You need to enter your name",
+						trigger: "blur"
+					}
+				],
+				lastname: [
 					{
 						required: true,
 						message: "You need to enter your name",
@@ -232,6 +256,20 @@ export default {
 		...mapGetters(["loggedIn","accessToken"])
 	},
 	watch: {
+		modalLoginVisible (val){
+			if(val==false){
+				if(this.loggedIn) {
+		      axios.get('/api/users/me',{headers: {
+		        'Authorization': `Bearer ${this.accessToken}`}
+		      }).then(response => {
+		        this.formMail.mailDest = response.data.email
+		        this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
+		        this.formMail.firstname = response.data.firstname
+		        this.formMail.lastname =  response.data.lastname
+		        })
+		    }
+			}
+		},
 		editorialUse (val) {
 			if(val) {
 				this.currentJournal = ''
@@ -300,6 +338,12 @@ export default {
 		await this.getSubscription()
 	},
 	mounted() {
+		if(this.loggedIn) {
+			this.modalLoginVisible = false
+		} else{
+			this.modalLoginVisible = true
+		}
+
 		var quill = new Quill("#" + this.idEditor, {
 			modules: {
 				toolbar: "#" + this.idToolBar
@@ -367,10 +411,10 @@ export default {
 				this.listJournals = [];
 			}
 		},
-		async addRequest(dataJson) {
+		async addRequest(dataJson,billingId) {
 			const response = await axios({
 				method: "post",
-				url: "/api/requests",
+				url: "/api/requests/" + billingId,
 				validateStatus: undefined,
 				headers: {
 					"Content-Type": "application/json"
@@ -449,11 +493,17 @@ export default {
 				*/
 
 		},
-		handlePromptSuccess() {
+		async handlePromptSuccess() {
 			this.$emit("close");
 			let dataJson = this.updateDataJson();
 			this.confirmationOfSending = true;
-			this.addRequest(dataJson);
+			if (this.loggedIn)  {
+				this.addRequest(dataJson)
+			} else {
+				let billingId = await this.createGuestAccount()
+				await this.addRequest(dataJson,billingId)
+			}
+
 			this.$message({
 				type: "success",
 				message: "Invitation sent"
@@ -466,6 +516,19 @@ export default {
 				type: "info",
 				message: "Invitation canceled"
 			});
+		},
+		createGuestAccount() {
+			axios.post("/api/users/create-guest/",
+			{
+			  "email": this.formMail["mailDest"],
+			  "firstName": this.formMail["firstname"],
+			  "lastName": this.formMail["lastname"]
+			}).then((res)=>{
+				//if(res.=="USER_ALREADY_EXIST")
+				console.log(res.data)
+				console.log(res.statusText)
+			})
+
 		},
 		sendRequestRev(formMail) {
 			this.confirmationOfSending = false;
@@ -489,7 +552,7 @@ export default {
 					}
 					this.requestInfos["pub_mail"] = this.formMail["mailDest"];
 					this.requestInfos["pub_journal"] = this.formMail["journal"];
-					this.requestInfos["pub_name"] = this.formMail["name"];
+					this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
 					console.log(this.requestInfos);
 					new Promise((resolve, reject) => {
 						axios
