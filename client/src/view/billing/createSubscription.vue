@@ -2,87 +2,79 @@
   <div class='subscribe-dialog-container'>
 
     <div class="cell example example2" id="example-2">
-
-      <form>
-        <div data-locale-reversible>
-          <div class="row" >
+      <div v-if="mySubscription.status==='noActive'">
+        <form>
+          <div data-locale-reversible>
+            <div class="row" >
+              <div class="field">
+                <input id="email" data-tid="elements_examples.form.email_placeholder" class="input empty" type="text" placeholder="john.smith@domain.com" required="">
+                <label for="example2-email" data-tid="elements_examples.form.email">Email</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+            <div class="row" data-locale-reversible>
+              <div class="field ">
+                <input id="fullname" data-tid="elements_examples.form.name_placeholder" class="input empty" type="text" placeholder="John Smith (or corporate name)" required="">
+                <label for="example2-name" data-tid="elements_examples.form.name">Name</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+            <div class="row" data-locale-reversible>
+              <div class="field" >
+                <input id="address" data-tid="elements_examples.form.address_placeholder" class="input empty" type="text" placeholder="185 Berry St" required="" autocomplete="address-line1">
+                <label for="example2-address" data-tid="elements_examples.form.address_label">Address</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+            <div class="row" data-locale-reversible>
+              <div class="field half-width">
+                <input id="city" data-tid="elements_examples.form.city_placeholder" class="input empty" type="text" placeholder="San Francisco" required="" autocomplete="address-level2">
+                <label for="example2-city" data-tid="elements_examples.form.city_label">City</label>
+                <div class="baseline"></div>
+              </div>
+              <div class="field quarter-width">
+                <input id="state" data-tid="elements_examples.form.state_placeholder" class="input empty" type="text" placeholder="CA" required="" autocomplete="address-level1">
+                <label for="example2-state" data-tid="elements_examples.form.state_label">State</label>
+                <div class="baseline"></div>
+              </div>
+              <div class="field quarter-width">
+                <input id="zip" data-tid="elements_examples.form.postal_code_placeholder" class="input empty" type="text" placeholder="94107" required="" autocomplete="postal-code">
+                <label for="example2-zip" data-tid="elements_examples.form.postal_code_label">ZIP</label>
+                <div class="baseline"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="field">
-              <input id="email" data-tid="elements_examples.form.email_placeholder" class="input empty" type="text" placeholder="john.smith@domain.com" required="">
-              <label for="example2-email" data-tid="elements_examples.form.email">Email</label>
+              <div class="sr-input sr-card-element" id="card-element"></div>
               <div class="baseline"></div>
             </div>
           </div>
-          <div class="row" data-locale-reversible>
-            <div class="field ">
-              <input id="fullname" data-tid="elements_examples.form.name_placeholder" class="input empty" type="text" placeholder="John Smith (or corporate name)" required="">
-              <label for="example2-name" data-tid="elements_examples.form.name">Name</label>
-              <div class="baseline"></div>
+          <div class="row">
+            <div class="field" style='margin-top:20px'>
+                <el-switch
+                  v-model="checked"
+                  active-text="I agree with the Term of Use">
+                </el-switch>
             </div>
           </div>
-          <div class="row" data-locale-reversible>
-            <div class="field" >
-              <input id="address" data-tid="elements_examples.form.address_placeholder" class="input empty" type="text" placeholder="185 Berry St" required="" autocomplete="address-line1">
-              <label for="example2-address" data-tid="elements_examples.form.address_label">Address</label>
-              <div class="baseline"></div>
-            </div>
-          </div>
-          <div class="row" data-locale-reversible>
-            <div class="field half-width">
-              <input id="city" data-tid="elements_examples.form.city_placeholder" class="input empty" type="text" placeholder="San Francisco" required="" autocomplete="address-level2">
-              <label for="example2-city" data-tid="elements_examples.form.city_label">City</label>
-              <div class="baseline"></div>
-            </div>
-            <div class="field quarter-width">
-              <input id="state" data-tid="elements_examples.form.state_placeholder" class="input empty" type="text" placeholder="CA" required="" autocomplete="address-level1">
-              <label for="example2-state" data-tid="elements_examples.form.state_label">State</label>
-              <div class="baseline"></div>
-            </div>
-            <div class="field quarter-width">
-              <input id="zip" data-tid="elements_examples.form.postal_code_placeholder" class="input empty" type="text" placeholder="94107" required="" autocomplete="postal-code">
-              <label for="example2-zip" data-tid="elements_examples.form.postal_code_label">ZIP</label>
-              <div class="baseline"></div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="field">
-            <div class="sr-input sr-card-element" id="card-element"></div>
-            <div class="baseline"></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="field" style='margin-top:20px'>
-              <el-switch
-                v-model="checked"
-                active-text="I agree with the Term of Use">
-              </el-switch>
-          </div>
-        </div>
 
-        <div class="sr-field-error" id="card-errors" role="alert"></div>
+          <div class="sr-field-error" id="card-errors" role="alert"></div>
 
 
-        <button id="submit"  :disabled='checked===false'>
-          <div id="spinner" class="hidden"></div>
-          <span id="button-text">Subscribe</span>
-        </button>
-        <div class="row" >
-          <div class="footer">
-            <p>Your card will be charged every 5 requests</p>
+          <button id="submit"  :disabled='checked===false'>
+            <div id="spinner" class="hidden"></div>
+            <span id="button-text">Subscribe</span>
+          </button>
+          <div class="row" >
+            <div class="footer">
+              <p>Your card will be charged every 5 requests</p>
+            </div>
           </div>
-        </div>
-      </form>
-      <div class="sr-payment-summary hidden completed-view">
-        <h1>Your subscription is <span class="order-status"></span></h1>
-        <h4>
-          <a>View subscription response:</a>
-        </h4>
+        </form>
       </div>
-      <div class="sr-section hidden completed-view">
-        <div class="sr-callout">
-          <pre><code></code></pre>
-        </div>
-        <button onclick="window.location.href='/'">Restart demo</button>
+      <div v-if="mySubscription.status==='active'" class="sr-payment-summary">
+        <el-button style='width:100%;margin:0;' type="success" round>Your subscription is {{mySubscription.status}}</el-button>
       </div>
     </div>
 
@@ -111,19 +103,24 @@ export default{
   data () {
     return {
       checked: false,
-      stripe: ''
+      stripe: '',
+      mySubscription: {status:'noActive'},
+      billingId: null
     }
   },
   created (){
   },
-  mounted () {
+  async mounted () {
     //this.getPublicKey();
-    this.stripeElements('pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs')
+    await this.getCustomerBillingId()
+    await this.getSubscriptionStatus(this.userId,this.billingId)
+    await this.stripeElements('pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs')
+
   },
   methods:{
-    stripeElements (publicKey) {
+    async stripeElements (publicKey) {
 
-      this.stripe = Stripe(publicKey);
+      this.stripe = await Stripe(publicKey);
       var elements = this.stripe.elements();
 
       // Element styles
@@ -203,9 +200,22 @@ export default{
         this.createPaymentMethodAndCustomer(card);
       });
     },
+    async getSubscriptionStatus(userId,subscriptionId) {
+      if(subscriptionId){
+        await axios.get('/api/billings/users/'+ userId +'/'+ subscriptionId,
+        {headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.accessToken}`
+          }
+        }).then((res)=>{
+            console.log(res.data.subscription)
+            this.mySubscription = res.data.subscription
+          })
+      } else {
+        this.mySubscription.status = 'noActive'
+      }
 
-
-
+    },/*
     confirmSubscription (subscriptionId) {
       return axis.post('/subscription', {
         headers: {
@@ -214,14 +224,10 @@ export default{
         body: JSON.stringify({
           subscriptionId: subscriptionId
         })
-      })
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(subscription) {
-          this.orderComplete(subscription);
+      }).then((res)=> {
+          this.orderComplete(res.data.subscription);
         });
-    },
+    },*/
     async getPublicKey () {
       await axios.get('/api/billings/publicKey', {
         headers: {
@@ -235,15 +241,16 @@ export default{
     },
     orderComplete (subscription) {
       this.changeLoadingState(false);
-      var subscriptionJson = JSON.stringify(subscription, null, 2);
-      document.querySelectorAll('.payment-view').forEach(function(view) {
+      //var subscriptionJson = JSON.stringify(subscription, null, 2);
+      this.mySubscription = subscription
+      /*document.querySelectorAll('.payment-view').forEach(function(view) {
         view.classList.add('hidden');
-      });
-      document.querySelectorAll('.completed-view').forEach(function(view) {
+      });*/
+      /*document.querySelectorAll('.completed-view').forEach(function(view) {
         view.classList.remove('hidden');
-      });
-      document.querySelector('.order-status').textContent = subscription.status;
-      document.querySelector('code').textContent = subscriptionJson;
+      });*/
+      //document.querySelector('.order-status').textContent = subscription.status;
+      //document.querySelector('code').textContent = subscriptionJson;
     },
     changeLoadingState (isLoading) {
       if (isLoading) {
@@ -274,7 +281,16 @@ export default{
           }
         });
     },
+    async getCustomerBillingId() {
+      await axios.get('/api/users/me',
+        {headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+        }).then(response => {
 
+          this.billingId = response.data.billing
+          console.log(this.billingI)
+        })
+    },
     createCustomer (paymentMethod, cardholderEmail, fullName) {
       axios.post('/api/billings/users/' + this.userId,
       {
@@ -285,7 +301,7 @@ export default{
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.accessToken}`
         }
-      }).then(async res => {
+      }).then(res => {
         this.orderComplete(res.data.subscription);
         })
     },

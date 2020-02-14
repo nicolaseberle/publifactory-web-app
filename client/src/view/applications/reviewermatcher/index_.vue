@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-if='!loggedIn' class="bandeau">ALPHA v0.3.8</div>
+      <div v-if='!loggedIn' class="bandeau">ALPHA v0.4.0</div>
       <hgroup>
         <h1><span style='letter-spacing: -0.04em;'>Reviewer search engine</span></h1>
         <h2><span style='letter-spacing: -0.04em;'>Getting the most relevant reviewers for your paper <span class='title-highlight'>in 3 steps</span></span></h2>
@@ -433,7 +433,7 @@
         width="65%"
         top='10vh'
         >
-        <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
+        <requestView v-if="centerDialogVisible" :billingId="billingId" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
       </el-dialog>
       <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
@@ -578,7 +578,8 @@ export default {
         password: '',
         firstname: '',
         lastname: ''
-      }
+      },
+      billingId : null
     }
   },
   async mounted () {
@@ -593,6 +594,7 @@ export default {
         this.formMail.cgu = true
 
         this.form.email = response.data.email
+        this.billingId = response.data.billing
         })
         // a guest account has only one role : [guest]
         if (this.roles.includes('guest')) {

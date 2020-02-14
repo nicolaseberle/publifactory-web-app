@@ -1,49 +1,5 @@
 <template>
   <div class='app-container'>
-    <!--<el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
-      <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
-      <el-table
-      ref="listAllMail"
-      highlight-current-row
-      :data="listAllMail">
-
-        <el-table-column type="expand" width="20">
-          <template slot-scope="props">
-            <el-form ref="formList" :model="formList" label-width="120px">
-              <el-form-item v-bind:key="item._id" v-for="item in props.row.list" label="temp">
-                <p slot="label"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+item.id">{{item.name}} ({{item.id}})</a></p>
-                <el-input v-model="item.mail" size="mini"></el-input>
-              </el-form-item>
-              <el-form-item size="mini">
-                <el-button type="primary" @click="">Send List</el-button>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="Title"
-          prop="title"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.title }}</p>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="Mail"
-          prop="mail"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.mail_publisher }}</p>
-          </template>
-        </el-table-column>
-
-      </el-table>
-
-    </el-row>-->
-
-
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
       <content-module name="dataFinal">
@@ -68,7 +24,7 @@
           </el-table-column>
           <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="props">
-              <span>{{ props.row.history[0].date | moment("DD/MM/YYYY, h:mm a") }}</span>
+              <span>{{ props.row.createdAt | moment("DD/MM/YYYY, h:mm a") }}</span>
             </template>
           </el-table-column>
             <el-table-column

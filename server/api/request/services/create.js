@@ -19,25 +19,32 @@ async function create({ reviewer, editor, ...request }, authId, billingId) {
 		...request
 	});
 	billing.requests.push(newRequest._id);
-	const userRole = await serviceRole.journalGetRole({
-		journalId: editor.journal,
-		userId: authId
-	});
-	await newRequest.populate('editor.journal').execPopulate();
-	if (!userRole) {
-		const editorRole = await serviceRole.journalGetRole({
+	if(editor.journal) {
+		const userRole = await serviceRole.journalGetRole({
 			journalId: editor.journal,
-			right: 'editor'
+			userId: authId
 		});
-		newRequest.history.push({
-			status: 'approval',
-			date: new Date().toUTCString()
-		});
-		const emailEditor = new Email(editorRole.id_user.email);
-		emailEditor.sendEmail({
-			subject: `A potential associate editor of ${newRequest.editor.journal.title}'s Journal`,
-			html: emailEditorApproval(newRequest, authId)
-		});
+		await newRequest.populate('editor.journal').execPopulate();
+		if (!userRole) {
+			const editorRole = await serviceRole.journalGetRole({
+				journalId: editor.journal,
+				right: 'editor'
+			});
+			newRequest.history.push({
+				status: 'approval',
+				date: new Date().toUTCString()
+			});
+			const emailEditor = new Email(editorRole.id_user.email);
+			emailEditor.sendEmail({
+				subject: `A potential associate editor of ${newRequest.editor.journal.title}'s Journal`,
+				html: emailEditorApproval(newRequest, authId)
+			});
+		} else {
+			newRequest.history.push({
+				status: 'pending',
+				data: new Date().toUTCString()
+			});
+		}
 	} else {
 		newRequest.history.push({
 			status: 'pending',

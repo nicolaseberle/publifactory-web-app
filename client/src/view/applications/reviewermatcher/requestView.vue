@@ -133,7 +133,7 @@ import modalLogin from './components/modalLogin'
 var Quill = require("quill");
 
 export default {
-	props: ["formPost", "formMail", "rowInfos"],
+	props: ["formPost", "formMail", "rowInfos","billingId"],
 	components:{currentPlanBox,modalLogin},
 	data() {
 		return {
@@ -245,9 +245,6 @@ export default {
 						trigger: "blur"
 					}
 				]
-				// ,issn: [
-				//   {required: true, message: 'You need to enter the issn of your journal', trigger: 'blur'}
-				// ]
 			},
 			receiveCopy: false
 		};
@@ -266,6 +263,7 @@ export default {
 		        this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
 		        this.formMail.firstname = response.data.firstname
 		        this.formMail.lastname =  response.data.lastname
+						this.billingId = response.data.billing
 		        })
 		    }
 			}
@@ -360,6 +358,7 @@ export default {
 			this.$cookie.set("maxInvitation",0);
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 		}
+
 		this.getListJournal()
 	},
 	methods: {
@@ -411,13 +410,14 @@ export default {
 				this.listJournals = [];
 			}
 		},
-		async addRequest(dataJson,billingId) {
+		async addRequest(dataJson) {
 			const response = await axios({
 				method: "post",
-				url: "/api/requests/" + billingId,
+				url: "/api/requests/" + this.billingId,
 				validateStatus: undefined,
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${this.accessToken}`
 				},
 				data: dataJson
 			});
@@ -498,10 +498,7 @@ export default {
 			let dataJson = this.updateDataJson();
 			this.confirmationOfSending = true;
 			if (this.loggedIn)  {
-				this.addRequest(dataJson)
-			} else {
-				let billingId = await this.createGuestAccount()
-				await this.addRequest(dataJson,billingId)
+				await this.addRequest(dataJson)
 			}
 
 			this.$message({
@@ -551,19 +548,19 @@ export default {
 						this.requestInfos["content"] = this.formMail["message"];
 					}
 					this.requestInfos["pub_mail"] = this.formMail["mailDest"];
-					this.requestInfos["pub_journal"] = this.formMail["journal"];
+					this.requestInfos["pub_journal"] = this.formMail["journal"]!=='None'?this.formMail["journal"]:null;
 					this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
 					console.log(this.requestInfos);
 					new Promise((resolve, reject) => {
-						axios
-							.get(
+						axios.get(
 								"https://service.publifactory.co/api/get_mail_id?id=" +
 									this.requestInfos.rev_id
 							)
 							.then(async res => {
 								if (res) {
-									this.requestInfos["rev_mail"] =
-										res["data"][0]["_source"]["mail"];
+									this.requestInfos["rev_mail"] = "";
+									/*this.requestInfos["rev_mail"] =
+										res["data"][0]["_source"]["mail"];*/
 								} else {
 									this.requestInfos["rev_mail"] = "";
 								}
