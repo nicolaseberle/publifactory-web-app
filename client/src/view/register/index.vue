@@ -90,7 +90,7 @@
 					{
 						type: "array",
 						required: true,
-						message: "You need to accept the CGU",
+						message: "You need to accept the Term of Use (CGU)",
 						trigger: "blur"
 					}
 				]
