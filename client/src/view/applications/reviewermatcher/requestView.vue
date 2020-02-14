@@ -67,6 +67,7 @@
 				  active-text="Editorial use"
 				  inactive-text="Personal use">
 				</el-switch>
+				<el-tag type="warning" v-if="editorialUse" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account</el-tag>
 				<el-form-item  label="Journal requesting the reviewing" prop="journal">
 					<el-select
 						v-model="currentJournal"

@@ -235,69 +235,6 @@
 
 
 </el-card>
-<!--<div class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
-  <div class='flex-l items-center justify-between' style='display: table-cell;'>
-    <div class='bill-title-free-plan'>Free Plan</div>
-    <div class='bill-content-free-plan'>Your credit refills with $30 every month</div>
-  </div>
-  <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-    <el-button v-on:click="upgrade()">upgrade to remove the limit</el-button>
-  </div>
-</div>-->
-
-<!--
-<el-dialog title="Activation" :visible.sync="dialogFormVisible" width="75%">
-
-  <div style="display:flex; justify-content:space-between">
-    <div class="text_block">
-      <h2>Activate the account yourself</h2>
-      <p>"A pay as you go" means we will recieve the bill at the end of the month. You can stop using the service when you want</p>
-      <div style="display: block; padding: 10px 10px;">
-        <el-form :model="form">
-          <el-form-item label="Firstname" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Lastname" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Email" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Address" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer" style='text-align:center'>
-        <el-button type="primary" @click="dialogFormVisible = false">Update</el-button>
-      </span>
-    </div>
-    or
-    <div class="text_block">
-      <div style="display: block; padding: 10px 10px;">
-        <h2>Send activation to the publisher</h2>
-        <p>We will send a link to the publisher to activate the journal account.</p>
-        <el-form :model="form">
-          <el-form-item label="Publisher" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Firsname" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Lastname" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="Email" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer" style='text-align:center'>
-        <el-button type="primary" @click="dialogFormVisible = false">Send the request to the publisher</el-button>
-      </span>
-      </div></div>
-  </div>
-</el-dialog>-->
-
 <el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
     <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
 </el-dialog>

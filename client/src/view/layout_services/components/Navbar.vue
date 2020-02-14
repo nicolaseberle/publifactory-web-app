@@ -65,6 +65,7 @@
     title="Contact"
     :visible.sync="centerDialogVisible"
     width="30%"
+    append-to-body
     center>
     <span>You can contact us: contact@publifactory.co</span>
     <span slot="footer" class="dialog-footer">
