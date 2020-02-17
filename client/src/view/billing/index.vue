@@ -161,38 +161,37 @@
   </el-card>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <h2>Invite Publishers to use the service</h2>
-    <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
-      <el-form-item
-        prop="email"
-        label="Email"
-        :rules="[
-          { required: true, message: 'Veuillez entrer l\'adresse e-mail', trigger: 'blur' },
-          { type: 'email', message: 'Veuillez entrer une adresse e-mail valide', trigger: ['blur', 'change'] }
-        ]"
-      >
-        <el-input v-model="dynamicValidateForm.email"></el-input>
-      </el-form-item>
-      <el-form-item
-        v-for="(domain, index) in dynamicValidateForm.domains"
-        :label="'Domain' + index"
-        :key="domain.key"
-        :prop="'domains.' + index + '.value'"
-        :rules="{
-          required: true, message: 'domain ne peut pas être null', trigger: 'blur'
-        }"
-      >
-        <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">Supprimer</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('dynamicValidateForm')">Soumettre</el-button>
-        <el-button @click="addDomain">Nouveau domaine</el-button>
-        <el-button @click="resetForm('dynamicValidateForm')">Réinitialiser</el-button>
-      </el-form-item>
+    <el-form :model="form" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
+      <el-col :span='18'>
+        <el-form-item label="Journal" prop="journal">
+          <el-select
+            v-model="formInvitationPublisher.journal"
+            filterable
+            remote
+            placeholder="Enter your revue"
+            :remote-method="remoteMethod"
+            :loading="loading">
+            <el-option
+              v-for="item in listJournals"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Editor in Chief - Name" prop="nameEditorInChief">
+          <el-input v-model="formInvitationPublisher.nameEditorInChief" ></el-input>
+        </el-form-item>
+        <el-form-item label="Editor in Chief - Email" prop="emailEditorInChief">
+          <el-input v-model="formInvitationPublisher.emailEditorInChief" ></el-input>
+        </el-form-item>
+      </el-col>
     </el-form>
-    <div style='width:100%;text-align:right'>
-      <el-button type='primary' round>Send invitation</el-button>
-    </div>
-
+    <el-col :span='6'>
+      <div style='width:100%;text-align:right'>
+        <el-button type='primary' @click="sendRequest('formInvitationPublisher')" round>Send invitation</el-button>
+      </div>
+    </el-col>
   </el-card>
 
 <el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
@@ -224,12 +223,34 @@ export default{
   },
   data () {
     return {
-      dynamicValidateForm: {
-          domains: [{
-            key: 1,
-            value: ''
-          }],
-          email: ''
+      formInvitationPublisher: {
+        journal: '',
+        emailEditorInChief: '',
+        nameEditorInChief: ''
+      },
+      formInvitationPublisherRules: {
+        journal: [
+          {
+            required: true,
+            message: "You need to enter your journal",
+            trigger: "blur"
+          }
+        ],
+        nameEditorInChief: [
+          {
+            required: true,
+            message: "You need to enter the name of the editor in chief",
+            trigger: "blur"
+          }
+        ],
+        emailEditorInChief: [
+          {
+            required: true,
+            type: "email",
+            message: "You need to enter the email of the editor in chief",
+            trigger: "blur"
+          }
+        ],
       },
       invoice: false,
       formLabelWidth: '100px',
@@ -276,8 +297,12 @@ export default{
 
   },
   methods: {
-    sendRequest () {
+    sendRequest (formInvitationPublisher) {
+      this.$refs[formInvitationPublisher].validate(async (valid) => {
+        if (valid) {
 
+        }
+      })
     },
     setSelectedRow (row, event, column) {
         this.selectedRow = row
@@ -361,18 +386,6 @@ export default{
           console.log(this.myJournals)
 
         })
-
-        /*
-        ...user.profile,
-        billing: {
-          ...user.billing.toObject(),
-          subscription: await user.billing.subscription
-        },
-        journals,
-        page,
-        count
-        */
-
     }
 
   }
