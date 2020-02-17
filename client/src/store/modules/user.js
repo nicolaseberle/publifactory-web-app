@@ -73,7 +73,11 @@ const actions = {
     return new Promise(async (resolve, reject) => {
       // token
       if (email) {
-        await dispatch('getUserInfo', { token: state.access_token })
+        const userInfo = await dispatch('getUserInfo', { token: state.access_token })
+        if (userInfo._id) {
+          commit('SET_USER_INFO', userGetUserInfo)
+        }
+        resolve(userInfo)
       } else {
         resolve()
       }
@@ -97,6 +101,7 @@ const actions = {
     const responseGetInfo = await userGetUserInfo({
       token
     })
+
     const user = Object.assign({}, responseGetInfo.data, {
       // eslint-disable-next-line
 			access_token: token,
@@ -125,7 +130,7 @@ const actions = {
 				value: user.roles // eslint-disable-line
       }
     ])
-    return responseGetInfo
+    return responseGetInfo.data
   },
   async loginSync ({ dispatch }, { email, password }) {
     const responseLogin = await userLoginSync({ email, password })
@@ -157,7 +162,8 @@ const actions = {
           if (!data) {
             reject('error')
           }
-          await dispatch('getUserInfo', { token: data.token })
+          const userInfo = await dispatch('getUserInfo', { token: data.token })
+          resolve(userInfo.access_token)
         })
         .catch(err => {
           reject(err)
