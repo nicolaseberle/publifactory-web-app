@@ -10,24 +10,11 @@
 			<el-form-item label="Your email" prop="mailDest">
 				<el-input v-model="formMail.mailDest"></el-input>
 			</el-form-item>
-			<el-form-item label="Your name" prop="name">
-				<el-input v-model="formMail.name"></el-input>
+			<el-form-item label="Firstname" prop="firstname">
+				<el-input v-model="formMail.firstname"></el-input>
 			</el-form-item>
-			<el-form-item label="Journal requesting the reviewing" prop="journal">
-				<el-select
-					v-model="formMail.journal"
-					filterable
-					remote
-					placeholder="Enter your revue"
-					:remote-method="remoteMethod"
-					:loading="loading">
-					<el-option
-						v-for="item in options2"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value">
-					</el-option>
-				</el-select>
+			<el-form-item label="Lastname" prop="lastname">
+				<el-input v-model="formMail.lastname"></el-input>
 			</el-form-item>
 			<!--
 			<el-form-item label="Journal requesting the reviewing" prop="journal">
@@ -61,7 +48,6 @@
 					</span>
 					<span class="ql-formats">
 						<button class="ql-link"></button>
-						<!--<input  class="ql-input" name="title" type="text"></input>-->
 					</span>
 				</div>
 				<div v-bind:id="idEditor">
@@ -75,41 +61,61 @@
 					v-model="formMail.deadline"
 				></el-date-picker>
 			</el-form-item>
-			<!--
-    <el-form-item label="Relaunch" prop="relaunch">
-      <el-select v-model="formMail.relaunch">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-    </el-form-item>
-  -->
-			<!--
-    <el-form-item label="Option">
-      <el-checkbox v-model="receiveCopy">I would like to receive a copy of the present email</el-checkbox>
-    </el-form-item>
-  -->
+			<el-form-item>
+				<el-switch
+				  v-model="editorialUse"
+				  active-text="Editorial use"
+				  inactive-text="Personal use">
+				</el-switch>
+				<el-tag type="warning" v-if="editorialUse" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account</el-tag>
+				<el-form-item  label="Journal requesting the reviewing" prop="journal">
+					<el-select
+						v-model="currentJournal"
+						filterable
+						remote
+						placeholder="Enter your revue"
+						:remote-method="remoteMethod"
+						:loading="loading"
+						:disabled="editorialUse===false">
+						<el-option
+							v-for="item in listJournals"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value"
+							:disabled="editorialUse===false">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="Editor in Chief to contact" >
+					<el-form-item label="Name" prop="nameEditorInChief">
+	    			<el-input v-model="formMail.nameEditorInChief" :disabled="editorialUse===false"></el-input>
+	  			</el-form-item>
+					<el-form-item label="Email" prop="emailEditorInChief">
+	    			<el-input v-model="formMail.emailEditorInChief" :disabled="editorialUse===false"></el-input>
+	  			</el-form-item>
+				</el-form-item>
+			</el-form-item>
 			<el-form-item label="CGU" prop="type">
 				<el-checkbox-group v-model="formMail.type">
-					<el-checkbox label="I accept the CGU" name="type"></el-checkbox>
+					<el-checkbox label="I accept the Term of Use (CGU)" name="type"></el-checkbox>
 				</el-checkbox-group>
-				<!--<el-checkbox v-model="formMail.cgu" name='type'>-->
-				<!--  I accept the-->
-				<!--<el-tooltip class="item" effect="dark" content="Lorem ipsum dolor sit amet" placement="top">-->
-				<!--<a><router-link :to="'/cgu_publifactory_v1'">CGU</router-link></a>-->
-				<!--</el-tooltip>-->
-				<!--</el-checkbox>-->
 			</el-form-item>
 			<el-form-item class="flex_items">
 				<el-button v-on:click="$emit('close')">Cancel</el-button>
 				<el-button type="primary" @click="sendRequestRev('formMail')" style="margin-left:10px!important"
 					>Send</el-button>
-					<quotaRequestBox :maxInvitation='maxInvitation' :remainingDay="30"/>
+					<currentPlanBox :maxInvitation='maxInvitation' :currentPlan='currentPlan'/>
 			</el-form-item>
 		</el-form>
+
+    <el-dialog class='login-modal'
+		:visible.sync="modalLoginVisible"
+		width="30%"
+		top="20vh"
+		append-to-body>
+      <modalLogin v-on:close='modalLoginVisible=false'/>
+    </el-dialog>
+
 	</div>
 </template>
 <script>
@@ -118,17 +124,20 @@ import "quill";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
-import freePlanStatusBar from "./components/free-plan-status-bar";
-import quotaRequestBox from "./components/free-plan-status-bar/generic";
+import currentPlanBox from "./components/plan";
 import { mapGetters } from "vuex";
+import modalLogin from './components/modalLogin'
 
 var Quill = require("quill");
 
 export default {
-	props: ["formPost", "formMail", "rowInfos"],
-	components:{freePlanStatusBar,quotaRequestBox},
+	props: ["formPost", "formMail", "rowInfos","billingId"],
+	components:{currentPlanBox,modalLogin},
 	data() {
 		return {
+			modalLoginVisible: false,
+			currentJournal: null,
+			editorialUse: false,
 			list: [],
 			editor: {},
 			idEditor: this.setIdEditor(),
@@ -137,8 +146,9 @@ export default {
 			requestInfos: {},
 			dialogVisible: false,
 			maxInvitation: 0,
+			currentPlan: null,
 			journal: ["Nature","Publiscience","the BMJ"],
-			options2: [],
+			listJournals: [],
 			value: [],
 			loading: false,
 			options: [
@@ -184,18 +194,41 @@ export default {
 				mailDest: [
 					{
 						required: true,
+						type: "email",
 						message: "You need to enter your email",
 						trigger: "blur"
 					}
 				],
 				journal: [
 					{
-						required: true,
+						required: false,
 						message: "You need to enter your journal",
 						trigger: "blur"
 					}
 				],
-				name: [
+				nameEditorInChief: [
+					{
+						required: false,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				],
+				emailEditorInChief: [
+					{
+						required: false,
+						type: "email",
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				],
+				firstname: [
+					{
+						required: true,
+						message: "You need to enter your name",
+						trigger: "blur"
+					}
+				],
+				lastname: [
 					{
 						required: true,
 						message: "You need to enter your name",
@@ -210,17 +243,105 @@ export default {
 						trigger: "blur"
 					}
 				]
-				// ,issn: [
-				//   {required: true, message: 'You need to enter the issn of your journal', trigger: 'blur'}
-				// ]
 			},
 			receiveCopy: false
 		};
 	},
 	computed: {
-		...mapGetters(["loggedIn"])
+		...mapGetters(["loggedIn","accessToken"])
+	},
+	watch: {
+		modalLoginVisible (val){
+			if(val==false){
+				if(this.loggedIn) {
+		      axios.get('/api/users/me',{headers: {
+		        'Authorization': `Bearer ${this.accessToken}`}
+		      }).then(response => {
+		        this.formMail.mailDest = response.data.email
+		        this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
+		        this.formMail.firstname = response.data.firstname
+		        this.formMail.lastname =  response.data.lastname
+						this.billingId = response.data.billing
+						this.getSubscription()
+		        })
+
+		    }
+			}
+		},
+		editorialUse (val) {
+			if(val) {
+				this.currentJournal = ''
+				this.formMail.journal = ''
+				this.mailRules.journal = [
+					{
+						required: true,
+						message: "You need to enter your journal",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.nameEditorInChief = [
+					{
+						required: true,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.emailEditorInChief = [
+					{
+						required: true,
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				]
+			}
+			else {
+				this.currentJournal = 'None'
+				this.formMail.journal = 'None'
+				this.formMail.nameEditorInChief = ''
+				this.formMail.emailEditorInChief = ''
+				this.mailRules.nameEditorInChief = [
+					{
+						required: false,
+						message: "You need to enter the name of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.emailEditorInChief= [
+					{
+						required: false,
+						message: "You need to enter the email of the editor in chief",
+						trigger: "blur"
+					}
+				]
+				this.mailRules.journal = [
+					{
+						required: false,
+						message: "You need to enter your journal",
+						trigger: "blur"
+					}
+				]
+				// update the personnal plan to check permission
+				this.getSubscription()
+			}
+		},
+		currentJournal(val){
+			this.formMail.journal = val
+			if(val!=='' && val!=='None'){
+				console.log("watch currentJournal:: ")
+				this.checkJournalSubscription ()
+			}
+		},
+	},
+	async created () {
+		await this.getSubscription()
 	},
 	mounted() {
+		if(this.loggedIn) {
+			this.modalLoginVisible = false
+		} else{
+			this.modalLoginVisible = true
+		}
+
 		var quill = new Quill("#" + this.idEditor, {
 			modules: {
 				toolbar: "#" + this.idToolBar
@@ -237,9 +358,17 @@ export default {
 			this.$cookie.set("maxInvitation",0);
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 		}
+
 		this.getListJournal()
 	},
 	methods: {
+		async checkJournalSubscription () {
+			/*const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+				headers: {'Authorization': `Bearer ${this.accessToken}`}
+			})*/
+			this.currentPlan = 'Non-Activated'
+			//this.currentPlan = response.data.billing ? 'Activated' : 'Non-activated'
+		},
 		async getListJournal() {
 			/*await axios.get('/api/journal/list').then((res)=>{
 				this.journal = res.data
@@ -251,27 +380,42 @@ export default {
 				return { value: `${item}`, label: `${item}` };
 			});
 		},
+		async getSubscription(){
+			try{
+				if(this.loggedIn){
+					const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+						headers: {'Authorization': `Bearer ${this.accessToken}`}
+					})
+					this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+				} else {
+					this.currentPlan="Free"
+				}
+			} catch(err){
+				this.currentPlan="Free"
+			}
+		},
 		remoteMethod(query) {
 			if (query !== '') {
 				this.loading = true;
 				setTimeout(() => {
 					this.loading = false;
-					this.options2 = this.list.filter(item => {
+					this.listJournals = this.list.filter(item => {
 						return item.label.toLowerCase()
 							.indexOf(query.toLowerCase()) > -1;
 					});
 				}, 200);
 			} else {
-				this.options2 = [];
+				this.listJournals = [];
 			}
 		},
 		async addRequest(dataJson) {
 			const response = await axios({
 				method: "post",
-				url: "/api/requests",
+				url: "/api/requests/" + this.billingId,
 				validateStatus: undefined,
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${this.accessToken}`
 				},
 				data: dataJson
 			});
@@ -347,11 +491,14 @@ export default {
 				*/
 
 		},
-		handlePromptSuccess() {
+		async handlePromptSuccess() {
 			this.$emit("close");
 			let dataJson = this.updateDataJson();
 			this.confirmationOfSending = true;
-			this.addRequest(dataJson);
+			if (this.loggedIn)  {
+				await this.addRequest(dataJson)
+			}
+
 			this.$message({
 				type: "success",
 				message: "Invitation sent"
@@ -365,46 +512,74 @@ export default {
 				message: "Invitation canceled"
 			});
 		},
-		sendRequestRev(formMail) {
-			this.confirmationOfSending = false;
-			this.$refs[formMail].validate(valid => {
+		 createGuestAccount(formMail) {
+			this.$refs[formMail].validate(async (valid) => {
 				if (valid) {
-					this.requestInfos["title"] = this.formPost["title"];
-					this.requestInfos["abstract"] = this.formPost["abstract"];
-					this.requestInfos["rev_id"] = this.rowInfos["id"];
-					this.requestInfos["rev_name"] = this.rowInfos["name"];
-					this.requestInfos["deadline"] = this.formMail["deadline"];
-					this.requestInfos["object"] = this.formMail["object"];
-					this.requestInfos["remind"] = this.formMail["relaunch"];
-					this.requestInfos["content"] =
-						"<p class='h2'>Invitation to review in <i>" +
-						this.formMail["journal"] +
-						"</i></p>" +
-						this.formMail["message"];
-					this.requestInfos["pub_mail"] = this.formMail["mailDest"];
-					this.requestInfos["pub_journal"] = this.formMail["journal"];
-					this.requestInfos["pub_name"] = this.formMail["name"];
-					console.log(this.requestInfos);
-					new Promise((resolve, reject) => {
-						axios
-							.get(
-								"https://service.publifactory.co/api/get_mail_id?id=" +
-									this.requestInfos.rev_id
-							)
-							.then(async res => {
-								if (res) {
-									this.requestInfos["rev_mail"] =
-										res["data"][0]["_source"]["mail"];
-								} else {
-									this.requestInfos["rev_mail"] = "";
-								}
-								this.loggedIn
-									? this.showPromptUserConnected()
-									: this.showPromptUserDisconnected();
-							});
-					});
+					await axios.post("/api/users/create-guest/",
+					{
+					  "email": this.formMail["mailDest"],
+					  "firstName": this.formMail["firstname"],
+					  "lastName": this.formMail["lastname"]
+					}).then((res)=>{
+						//if(res.=="USER_ALREADY_EXIST")
+						console.log(res.data)
+						console.log(res.statusText)
+					}).catch((err)=>{
+						console.log("need to sign up or to create an account")
+						this.modalLoginVisible = true
+					})
 				}
-			});
+			})
+		},
+		sendRequestRev(formMail) {
+			if(!this.loggedIn) {
+				this.createGuestAccount(formMail)
+			}
+			if(this.loggedIn) {
+				this.confirmationOfSending = false;
+				this.$refs[formMail].validate(valid => {
+					if (valid) {
+						this.requestInfos["title"] = this.formPost["title"];
+						this.requestInfos["abstract"] = this.formPost["abstract"];
+						this.requestInfos["rev_id"] = this.rowInfos["id"];
+						this.requestInfos["rev_name"] = this.rowInfos["name"];
+						this.requestInfos["deadline"] = this.formMail["deadline"];
+						this.requestInfos["object"] = this.formMail["object"];
+						this.requestInfos["remind"] = this.formMail["relaunch"];
+						if(this.formMail["journal"]!=='None'){
+							this.requestInfos["content"] =
+								"<p class='h2'>Invitation to review in <i>" +
+								this.formMail["journal"] +
+								"</i></p>" +
+								this.formMail["message"];
+						}else{
+							this.requestInfos["content"] = this.formMail["message"];
+						}
+						this.requestInfos["pub_mail"] = this.formMail["mailDest"];
+						this.requestInfos["pub_journal"] = this.formMail["journal"]!=='None'?this.formMail["journal"]:null;
+						this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
+						console.log(this.requestInfos);
+						new Promise((resolve, reject) => {
+							axios.get(
+									"https://service.publifactory.co/api/get_mail_id?id=" +
+										this.requestInfos.rev_id
+								)
+								.then(async res => {
+									if (res) {
+										this.requestInfos["rev_mail"] = "";
+										/*this.requestInfos["rev_mail"] =
+											res["data"][0]["_source"]["mail"];*/
+									} else {
+										this.requestInfos["rev_mail"] = "";
+									}
+									this.loggedIn
+										? this.showPromptUserConnected()
+										: this.showPromptUserDisconnected();
+								});
+						});
+					}
+				});
+			}
 		}
 	}
 };

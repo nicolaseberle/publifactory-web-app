@@ -13,7 +13,7 @@
           @row-click="setSelectedRow">
           <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="props">
-              <span>{{ props.row.history[0].date | moment("DD/MM/YYYY") }}</span>
+              <span>{{ props.row.createdAt | moment("DD/MM/YYYY") }}</span>
             </template>
           </el-table-column>
             <el-table-column
@@ -123,11 +123,11 @@ export default{
       }
       return statusMap[status]
     },
-    getMyRequest(page=1){
-      axios.get('/api/requests/?page='+page+'&count=10'+'&userId=true',{
+    async getMyRequest(page=1){
+      await axios.get('/api/requests/?page='+page+'&count=10'+'&userId=true',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
-      .then( async (res) => {
+      .then( (res) => {
         this.mylistrequest = res.data.data;
         this.page.total = res.data.data.length;
         this.isData = true;

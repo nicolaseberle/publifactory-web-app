@@ -154,6 +154,7 @@
             </el-row>
           </el-form>
 
+
         <el-row style='margin-top:20px'>
           <el-form >
             <el-row>
@@ -165,7 +166,7 @@
                   </el-col>
                   <el-col :span="6" :offset="6">
                     <div style="text-align:right">
-                      <el-button type="danger" icon="el-icon-delete" round v-on:click="deleteAccount()" :loading="loadingOnDelete">Delete</el-button>
+                      <el-button type="danger"  icon="el-icon-delete" round v-on:click="deleteAccount()" :loading="loadingOnDelete">Delete</el-button>
                     </div>
                   </el-col>
                 </el-row>
@@ -175,54 +176,32 @@
         </el-form>
       </el-row>
 
-
-</div>
-
-</el-tab-pane>
 <!--
-  <el-tab-pane label="Biblio">
-    <div style='margin:20px'>
-    <h2>Bibliography</h2>
-      <el-row>
-        <el-col :span='12'>
-        <div class="article-tag header-tag">
-          <a v-for="item in tags" href="#" title="Search more articles with this tag" ><h4>{{item}}</h4></a>
-        </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span='24'>
-          <el-table
-          :data="tableData"
-          style="width: 100%"
-          >
-          <el-table-column
-            prop="date"
-            label="Date"
-            width="60"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="title"
-              label="Title"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="journal"
-              label="Journal"
-              >
-            </el-table-column>
-            <el-table-column
-              prop="cited"
-              label="Cited"
-              width="80"
-              >
-            </el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
+      <el-row style='margin-top:20px'>
+        <el-form >
+          <el-row>
+            <el-col  :offset="4" :span="20">
+              <el-form-item prop="plan">
+                <el-row>
+                  <el-col :span="6">
+                    <h3>{{$t('settings.currentPlan')}}</h3>
+                  </el-col>
+                  <el-col :span="6">
+                    <p>Free Plan</p>
+                  </el-col>
+                  <el-col :span="6">
+                    <div style="text-align:right">
+                      <el-button type="primary" style='background-color: rgb(48, 65, 86);border: none;' icon="el-icon-magic-stick" round v-on:click="updatePlan()" :loading="loadingOnDelete">Upgrade</el-button>
+                    </div>
+                  </el-col>
+                </el-row>
+              </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-row>-->
       </div>
-    </el-tab-pane>-->
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

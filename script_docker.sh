@@ -158,13 +158,13 @@ make_test () {
 save_data () {
   # shellcheck disable=SC2012
   files_number=$(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | wc -l)
-  if [[ ${files_number} -gt 5 ]];
+  if [[ ${files_number} -gt 10 ]];
   then
     cd ${CWD}/database || exit
     # shellcheck disable=SC2046
     # shellcheck disable=SC2012
     # shellcheck disable=SC2003
-    sudo rm -f $(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | head -$(expr "${files_number}" - 5))
+    sudo rm -f $(ls -lrt ${CWD}/database | awk '{print $9}' | tail +2 | head -$(expr "${files_number}" - 10))
     cd ..
   fi
   debug "Creating the database dump file"

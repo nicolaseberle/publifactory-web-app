@@ -44,6 +44,7 @@ async function list({ userId, page = 1, count = 5 }) {
 			return journal;
 		})
 	);
+<<<<<<< HEAD
 
 	return {
 		...user.profile,
@@ -57,6 +58,29 @@ async function list({ userId, page = 1, count = 5 }) {
 		page,
 		count
 	};
+=======
+	if(user.billing){
+		return {
+			...user.profile,
+			billing: {
+				...user.billing.toObject(),
+				subscription: await user.billing.subscription
+			},
+			journals,
+			page,
+			count
+		};
+	} else {
+		return {
+			...user.profile,
+			billing: null,
+			journals,
+			page,
+			count
+		};
+	}
+
+>>>>>>> dev
 }
 
 module.exports = list;

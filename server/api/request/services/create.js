@@ -25,6 +25,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		...request
 	});
 	billing.requests.push(newRequest._id);
+<<<<<<< HEAD
 
 	await newRequest
 		.populate({
@@ -44,6 +45,17 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		if (!userRole) {
 			const editorRole = await serviceRole.journalGetRole({
 				journalId: journal._id,
+=======
+	if(editor.journal) {
+		const userRole = await serviceRole.journalGetRole({
+			journalId: editor.journal,
+			userId: authId
+		});
+		await newRequest.populate('editor.journal').execPopulate();
+		if (!userRole) {
+			const editorRole = await serviceRole.journalGetRole({
+				journalId: editor.journal,
+>>>>>>> dev
 				right: 'editor'
 			});
 			newRequest.history.push({
@@ -52,9 +64,20 @@ async function create({ reviewer, ...request }, authId, billingId) {
 			});
 			const emailEditor = new Email(editorRole.id_user.email);
 			emailEditor.sendEmail({
+<<<<<<< HEAD
 				subject: `A potential associate editor of ${newRequest.journal.title}'s Journal`,
 				html: emailEditorApproval(newRequest, authId)
 			});
+=======
+				subject: `A potential associate editor of ${newRequest.editor.journal.title}'s Journal`,
+				html: emailEditorApproval(newRequest, authId)
+			});
+		} else {
+			newRequest.history.push({
+				status: 'pending',
+				data: new Date().toUTCString()
+			});
+>>>>>>> dev
 		}
 	} else {
 		newRequest.history.push({
