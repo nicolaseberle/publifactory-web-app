@@ -194,33 +194,40 @@ export default {
           })
         })
     },
-    onSubmit () {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          this.loading = true
-          const sth = await this.login({
-            email: this.form.email,
-            password: this.form.password
-          }).then((data) => {
-            this.loading = false
-            this.$router.push(this.$route.query.redirect || '/dashboard/home')
-          }).catch((err) => {
-            let message = null;
-            if (err.body.message === 'ACCOUNTS_INVALID_PASSWORD')
-              message = this.$t("login.passwordFail")
-            this.$message({
-              title: this.$t('message.error'),
-              message: message || this.$t('login.authFail'),
-              type: 'error'
-            })
-            this.loading = false
-            this.loginError = true
-            setTimeout(() => {
-              this.loginError = false
-            }, 5000)
+    async onSubmit() {
+      try {
+      const valid = await this.$refs.form.validate()
+      if (!valid) return;
+      this.loading = true
+      await this.login({
+        email: this.form.email,
+        password: this.form.password
+      })
+      this.loading = false;
+      this.$router.push(this.$route.query.redirect || '/dashboard/home')
+
+      } catch (error) {
+        let message = null;
+        if (error.body.message === 'ACCOUNTS_INVALID_PASSWORD') {
+          message = this.$t("login.passwordFail")
+          this.$message({
+          title: this.$t('message.error'),
+          message: message || this.$t('login.authFail'),
+          type: 'error'
+          })
+        } else {
+          this.$message({
+            title: this.$t('message.error'),
+            message: 'Unknow error',
+            type: 'error'
           })
         }
-      })
+        this.loading = false
+        this.loginError = true
+        setTimeout(() => {
+          this.loginError = false
+        }, 5000)
+      }
     },
     onOAuthLogin() {
       const regExpOrcid = /access_token=(.*?)&token_type=(.*?)&expires_in=(.*?)&.*id_token=(.*?)&tokenId=(.*)/g
