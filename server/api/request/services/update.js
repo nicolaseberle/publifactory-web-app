@@ -40,7 +40,13 @@ async function update(requestId, { reviewer, status, ...request }) {
 		{ $set: mergedRequest },
 		{ runValidators: true }
 	);
-	await updatedRequest.populate('journal user').execPopulate();
+	await updatedRequest
+		.populate({
+			path: 'user',
+			select: 'name firstname lastname role roles email'
+		})
+		.populate({ path: 'journal' })
+		.execPopulate();
 	const email = new Email(updatedRequest.user.email);
 	// send an email to the editor if the status === accept/rejected/outfield
 	if (status && status === 'accepted') {
@@ -54,13 +60,7 @@ async function update(requestId, { reviewer, status, ...request }) {
 			html: emailEditorTemplate.answer(updatedRequest, status)
 		});
 	}
-	await updatedRequest
-		.populate({
-			path: 'user',
-			select: 'name firstname lastname role roles email'
-		})
-		.populate({ path: 'journal' })
-		.execPopulate();
+
 	return updatedRequest;
 }
 

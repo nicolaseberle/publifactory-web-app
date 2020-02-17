@@ -14,7 +14,6 @@ async function create({ reviewer, ...request }, authId, billingId) {
 	const billing = await Billing.findById(billingId);
 	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
 	const journal = await Journal.findById(request.journal);
-	if (!journal) throw new ApiError('JOURNAL_NOT_FOUND');
 	const user = await User.findById(authId);
 	if (!user) throw new ApiError('USER_NOT_FOUND');
 
@@ -26,10 +25,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		...request
 	});
 	billing.requests.push(newRequest._id);
-	const userRole = await serviceRole.journalGetRole({
-		journalId: journal._id,
-		userId: authId
-	});
+
 	await newRequest
 		.populate({
 			path: 'user',
@@ -38,20 +34,27 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		.populate({ path: 'journal' })
 		.execPopulate();
 
-	if (!userRole) {
-		const editorRole = await serviceRole.journalGetRole({
+	// journal use
+	if (journal) {
+		const userRole = await serviceRole.journalGetRole({
 			journalId: journal._id,
-			right: 'editor'
+			userId: authId
 		});
-		newRequest.history.push({
-			status: 'approval',
-			date: new Date().toUTCString()
-		});
-		const emailEditor = new Email(editorRole.id_user.email);
-		emailEditor.sendEmail({
-			subject: `A potential associate editor of ${newRequest.journal.title}'s Journal`,
-			html: emailEditorApproval(newRequest, authId)
-		});
+		if (!userRole) {
+			const editorRole = await serviceRole.journalGetRole({
+				journalId: journal._id,
+				right: 'editor'
+			});
+			newRequest.history.push({
+				status: 'approval',
+				date: new Date().toUTCString()
+			});
+			const emailEditor = new Email(editorRole.id_user.email);
+			emailEditor.sendEmail({
+				subject: `A potential associate editor of ${newRequest.journal.title}'s Journal`,
+				html: emailEditorApproval(newRequest, authId)
+			});
+		}
 	} else {
 		newRequest.history.push({
 			status: 'pending',
