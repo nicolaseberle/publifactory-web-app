@@ -40,6 +40,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 			journalId: journal._id,
 			userId: authId
 		});
+		// user not in journal => 'a_e' or 'editor'
 		if (!userRole) {
 			const editorRole = await serviceRole.journalGetRole({
 				journalId: journal._id,

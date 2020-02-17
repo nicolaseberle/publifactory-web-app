@@ -60,7 +60,8 @@ const RequestSchema = new mongoose.Schema(
 		journal: {
 			// which journal the request is on
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Journal'
+			ref: 'Journal',
+			default: null
 		},
 		history: {
 			type: Array,
