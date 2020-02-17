@@ -17,7 +17,7 @@ async function checkIfBillingNeedUpgrade(billing) {
 	);
 	const max = line.plan.tiers[0].up_to;
 	const quantity = line.quantity;
-	if (quantity + 1 === max && !nextInvoice.default_payment_method) {
+	if (quantity === max && !nextInvoice.default_payment_method) {
 		throw new error.ApiError('BILLING_NEED_UPGRADE');
 	}
 }
