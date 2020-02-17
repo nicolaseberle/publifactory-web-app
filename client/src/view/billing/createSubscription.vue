@@ -2,7 +2,7 @@
   <div class='subscribe-dialog-container'>
 
     <div class="cell example example2" id="example-2">
-      <div v-if="mySubscription.status==='noActive'">
+      <div v-if="currentPlan==='freemium'">
         <form>
           <div data-locale-reversible>
             <div class="row" >
@@ -73,7 +73,7 @@
           </div>
         </form>
       </div>
-      <div v-if="mySubscription.status==='active'" class="sr-payment-summary">
+      <div v-if="currentPlan==='premium'" class="sr-payment-summary">
         <el-button style='width:100%;margin:0;' type="success" round>Your subscription is {{mySubscription.status}}</el-button>
       </div>
     </div>
@@ -103,6 +103,7 @@ export default{
   data () {
     return {
       checked: false,
+      currentPlan: null,
       stripe: '',
       mySubscription: {status:'noActive'},
       billingId: null
@@ -113,7 +114,7 @@ export default{
   async mounted () {
     //this.getPublicKey();
     await this.getCustomerBillingId()
-    await this.getSubscriptionStatus(this.userId,this.billingId)
+    await this.getSubscriptionStatus()
     await this.stripeElements('pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs')
 
   },
@@ -200,21 +201,19 @@ export default{
         this.createPaymentMethodAndCustomer(card);
       });
     },
-    async getSubscriptionStatus(userId,subscriptionId) {
-      if(subscriptionId){
-        await axios.get('/api/billings/users/'+ userId +'/'+ subscriptionId,
+    async getSubscriptionStatus() {
+      if(this.billingId){
+        await axios.get('/api/billings/users/'+ this.userId +'/'+ this.billingId,
         {headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.accessToken}`
           }
         }).then((res)=>{
-            console.log(res.data.subscription)
-            this.mySubscription = res.data.subscription
-          })
+            this.currentPlan = res.data.billing.plan
+          }).catch(()=>this.currentPlan='freemium')
       } else {
-        this.mySubscription.status = 'noActive'
+        this.currentPlan='freemium'
       }
-
     },/*
     confirmSubscription (subscriptionId) {
       return axis.post('/subscription', {
@@ -241,16 +240,15 @@ export default{
     },
     orderComplete (subscription) {
       this.changeLoadingState(false);
-      //var subscriptionJson = JSON.stringify(subscription, null, 2);
       this.mySubscription = subscription
-      /*document.querySelectorAll('.payment-view').forEach(function(view) {
-        view.classList.add('hidden');
-      });*/
-      /*document.querySelectorAll('.completed-view').forEach(function(view) {
-        view.classList.remove('hidden');
-      });*/
-      //document.querySelector('.order-status').textContent = subscription.status;
-      //document.querySelector('code').textContent = subscriptionJson;
+    },
+    orderIncomplete (error) {
+      this.changeLoadingState(false);
+      this.$message({
+        title: this.$t('message.error'),
+        message: error.message,
+        type: 'error'
+      });
     },
     changeLoadingState (isLoading) {
       if (isLoading) {
@@ -277,7 +275,7 @@ export default{
           if (result.error) {
             this.showCardError(result.error);
           } else {
-            this.createCustomer(result.paymentMethod.id, cardholderEmail, fullName);
+            this.upgradePlan(result.paymentMethod.id);
           }
         });
     },
@@ -286,24 +284,23 @@ export default{
         {headers: {
         'Authorization': `Bearer ${this.accessToken}`}
         }).then(response => {
-
           this.billingId = response.data.billing
-          console.log(this.billingI)
         })
-    },
-    createCustomer (paymentMethod, cardholderEmail, fullName) {
-      axios.post('/api/billings/users/' + this.userId,
+    },///upgrade/:userId/:billingId'
+    upgradePlan (paymentMethodId) {
+      axios.post('/api/billings/upgrade/' + this.userId + '/' + this.billingId,
       {
-        fullName: fullName,
-        email: cardholderEmail,
-        paymentMethodId: paymentMethod.id
+        paymentMethodId: paymentMethodId
       }, {headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.accessToken}`
         }
       }).then(res => {
+        console.log(res)
         this.orderComplete(res.data.subscription);
-        })
+      }).catch((err)=>{
+        this.orderIncomplete(err)
+      })
     },
     showCardError (error) {
       this.changeLoadingState(false);

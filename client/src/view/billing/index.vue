@@ -16,7 +16,7 @@
       <el-col :span='18'>
         <div class="one-bill-content">
           <div v-show="currentPlan">
-          <div v-if="currentPlan==='Premium'" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
+          <div v-if="currentPlan==='premium'" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Premium Plan</div>
               <div class='bill-content-free-plan'>You can use the tool as much as you like</div>
@@ -25,10 +25,10 @@
               <el-button v-on:click="downgrade()">Delete your individual plan</el-button>
             </div>
           </div>
-          <div v-else-if="numberTotal<=10" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+          <div v-else-if="currentPlan==='freemium'" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Free Plan</div>
-              <div class='bill-content-free-plan'>Request {{ numberTotal }} out of your 30 free requests</div>
+              <div class='bill-content-free-plan'>Request {{ numberRequestTotal }} out of your 30 free requests</div>
             </div>
             <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
               <el-button v-on:click="upgrade()">Upgrade to remove your individual limit</el-button>
@@ -223,6 +223,8 @@ export default{
   },
   data () {
     return {
+      journal: ["Nature","Publiscience","the BMJ"],
+      listJournals: [],
       formInvitationPublisher: {
         journal: '',
         emailEditorInChief: '',
@@ -263,6 +265,7 @@ export default{
       endMonth: "",
       selectedRow: "",
       numberTotal: 0,
+      numberRequestTotal: 0,
       unitPrice: 1,
       amountTotal: 0,
       toto: 0,
@@ -275,7 +278,8 @@ export default{
       currentPlan: null,
       billingId: null,
       mySubscription: null,
-      myJournals: null
+      myJournals: null,
+      loading: false
     }
   },
   async created () {
@@ -293,7 +297,7 @@ export default{
       this.billingId = response.data.billing
       })
 
-    this.mylistrequest = this.getMyRequest()
+    //this.mylistrequest = this.getMyRequest()
 
   },
   methods: {
@@ -317,23 +321,24 @@ export default{
         cancelButtonText: "Cancel",
         type: "success"
       }).then(()=>{
-        //this.downgradeMySubscription()
+        this.unsubscribe()
       })
     },
-    downgradeMySubscription() {
-      axios.delete('/api/billings/'+this.userId ,{billingId: this.billingId},{
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-      }).then(()=>{this.$message({
-         type: "success",
-         message: "Individual plan deleted"
-       })}).catch((err)=>{
-         console.log(err)
-         this.$message({
-   				type: "error",
-   				message: "Contact us please, something happens!"
-   			});
-       });
-    },
+    remoteMethod(query) {
+			if (query !== '') {
+				this.loading = true;
+				setTimeout(() => {
+					this.loading = false;
+					this.listJournals = this.list.filter(item => {
+						return item.label.toLowerCase()
+							.indexOf(query.toLowerCase()) > -1;
+					});
+				}, 200);
+			} else {
+				this.listJournals = [];
+			}
+		},
+    /*
     getMyRequest(){
       axios.get('/api/requests/?page=1&count=1000&userId=true',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -371,20 +376,28 @@ export default{
            unlock: true
          }]
       })
-    },
+    },*/
     async getSubscription(){
 
         await axios.get('/api/billings/?page=1&count=1000&userId=true',{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then((response)=>{
-          console.log(response)
-          this.currentPlan = response.data.billing ? 'Premium' : 'Free'
+          //console.log(response)
+          this.currentPlan = response.data.billing.plan
           if(response.data.billing){
             this.mySubscription = [response.data.billing.subscription]
+            this.numberRequestTotal = response.data.billing.requests.length
           }
           this.myJournals = response.data.journals
-          console.log(this.myJournals)
+          //console.log(this.myJournals)
 
+        })
+    },
+    async unsubscribe(){
+
+        await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId,{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        }).then((response)=>{
         })
     }
 

@@ -464,11 +464,7 @@ export default {
 		showPromptUserDisconnected() {
 			const createElement = this.$createElement;
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-			/*console.log(
-				this.maxInvitation,
-				typeof this.maxInvitation,
-				this.$cookie.get("maxInvitation")
-			);*/
+
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -476,20 +472,6 @@ export default {
 			})
 				.then(this.handlePromptSuccess)
 				.catch(this.handlePromptFailure);
-
-			/*this.$msgbox({
-				title: "Confirmation",
-				message: createElement(freePlanStatusBar, {
-					props: { this.maxInvitation }
-				}),
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				showCancelButton: true
-			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
-				*/
-
 		},
 		async handlePromptSuccess() {
 			this.$emit("close");
@@ -497,12 +479,19 @@ export default {
 			this.confirmationOfSending = true;
 			if (this.loggedIn)  {
 				await this.addRequest(dataJson)
+				this.$message({
+					type: "success",
+					message: "Invitation sent"
+				});
+			} else {
+				this.confirmationOfSending = false;
+				this.$message({
+					type: "info",
+					message: "Invitation canceled"
+				});
 			}
 
-			this.$message({
-				type: "success",
-				message: "Invitation sent"
-			});
+
 		},
 		handlePromptFailure() {
 			this.confirmationOfSending = false;

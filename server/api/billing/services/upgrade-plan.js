@@ -12,15 +12,15 @@ async function upgradePlan({ billing, billingId }) {
 
 	updatedBilling.plan = 'premium';
 	updatedBilling.planStripeId = stripe.premiumPlanId;
-	updatedBilling.payementMethodId = billing.payementMethodId;
+	updatedBilling.paymentMethodId = billing.paymentMethodId;
 	const paymentMethodId = await attachPayementMethod({
 		customerStripeId: updatedBilling.customerStripeId,
-		payementMethodId: billing.payementMethodId
+		paymentMethodId: billing.paymentMethodId
 	});
-	updatedBilling.payementMethodId = paymentMethodId;
+	updatedBilling.paymentMethodId = paymentMethodId;
 	const subscription = await upgradeSubscriptionPlan({
 		subscriptionId: updatedBilling.subscriptionId,
-		payementMethodId: updatedBilling.payementMethodId,
+		paymentMethodId: updatedBilling.paymentMethodId,
 		premiumPlanId: updatedBilling.planStripeId
 	});
 
