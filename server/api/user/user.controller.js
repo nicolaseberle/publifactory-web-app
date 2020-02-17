@@ -12,6 +12,7 @@ const fs = require('fs')
 const configEmail = require('../../../config.js').email
 var Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
+const serviceBilling = require('../billing/services')
 
 /**
  * @function index
@@ -192,7 +193,14 @@ async function create (req, res, next) {
           resolve(token)
         })
       })
-      res.status(201).json({ token: newToken })
+      await serviceBilling.create({
+        billing: {
+          email: newUser.email,
+          fullName: `${newUser.firstname} ${newUser.lastname}`
+        },
+        userId: newUser._id
+      })
+      return res.status(201).json({ token: newToken })
     } else {
       throw { code: 403, message: 'This email exists already' }
     }
@@ -225,6 +233,13 @@ async function createGuest (req, res, next) {
     newUser.roles = ['guest']
     const user = await newUser.save()
     jwt.sign({ _id: user._id, name: user.name, role: user.role }, config.secrets.session, { expiresIn: '7d' })
+    await serviceBilling.create({
+      billing: {
+        email: newUser.email,
+        fullName: `${newUser.firstname} ${newUser.lastname}`
+      },
+      userId: newUser._id
+    })
     res.json({ user: newUser })
   } catch (e) {
     next(e)
