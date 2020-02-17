@@ -170,7 +170,7 @@ export default {
               this.loginError = true
               setTimeout(() => {
                 this.loginError = false
-              }, 500)
+              }, 5000)
             }).finally(() => {
               this.loading = false
             })
@@ -217,9 +217,8 @@ export default {
             this.loginError = true
             setTimeout(() => {
               this.loginError = false
-            }, 500)
+            }, 5000)
           })
-          debug("THE VALUE OF THE PROMISE : " + sth);
         }
       })
     },

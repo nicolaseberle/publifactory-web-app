@@ -265,7 +265,9 @@ export default {
 		        this.formMail.firstname = response.data.firstname
 		        this.formMail.lastname =  response.data.lastname
 						this.billingId = response.data.billing
+						this.getSubscription()
 		        })
+
 		    }
 			}
 		},
