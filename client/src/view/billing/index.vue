@@ -130,111 +130,71 @@
     </div>
   </el-card>
 
-  <h2 v-if="myJournals.length>0" style='font-size:1.4rem;'>Publisher Plan</h2>
+  <h2 style='font-size:1.4rem;'>Publisher Plan</h2>
   <el-card v-for='publisher in myJournals' v-bind:key="publisher.id" class="box-card " style='margin-bottom:10px;margin-left:30px;'>
     <div class="clearfix one-bill">
-    <el-row>
-      <el-col :span='6'>
-    <h2 style='font-size:1.1rem;'>{{publisher.name}}<!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >PUBLISHER</el-button></span>--></h2>
-
-    </el-col>
-    <el-col :span='18'>
-    <div class="one-bill-content">
-      <div v-if="publisher.unlock" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
-        <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Activated account</div>
-          <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>This publisher has subscribed to use the service. </div>
-        </div>
-      </div>
-      <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
-        <div class='flex-l items-center justify-between' style='display: table-cell;'>
-          <div class='bill-title-free-plan'>Non-activated account</div>
-          <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>Please upgrade to continue using this publisher account</div>
-        </div>
-        <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
-          <el-button v-on:click="dialogSendEditorVisible=true">Request to the editor to upgrade the plan</el-button>
-        </div>
-      </div>
-      </div>
-    </el-col>
-    </el-row>
+      <el-row>
+        <el-col :span='6'>
+          <h2 style='font-size:1.1rem;'>{{publisher.name}}<!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >PUBLISHER</el-button></span>--></h2>
+        </el-col>
+        <el-col :span='18'>
+          <div class="one-bill-content">
+            <div v-if="publisher.unlock" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
+              <div class='flex-l items-center justify-between' style='display: table-cell;'>
+                <div class='bill-title-free-plan'>Activated account</div>
+                <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>This publisher has subscribed to use the service. </div>
+              </div>
+            </div>
+            <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
+              <div class='flex-l items-center justify-between' style='display: table-cell;'>
+                <div class='bill-title-free-plan'>Non-activated account</div>
+                <div class='bill-content-free-plan' style='font-family: "DNLTPro-regular";font-weight:300;'>Please upgrade to continue using this publisher account</div>
+              </div>
+              <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
+                <el-button v-on:click="dialogSendEditorVisible=true">Request to the editor to upgrade the plan</el-button>
+              </div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
-  <div v-if="publisher.hidden===false" class='bill-table' style='margin-top:50px;'>
-    <h4>Current month's spending - From {{beginMonth}} to {{endMonth}}</h4>
-  <el-table
-        :data="listOfPublisher"
-        style="width: 100%">
-        <el-table-column
-          label="Title"
-          >
-          <template slot-scope="props">
-            <p style="text-align:center;">Titre de l'article</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Price($/request)"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">${{unitPrice }}/request</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Usage(request)"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.nb }}</p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="Total"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;"></p>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pv2 ">
-        <div class='flex-subbill items-center mv1'>
-        <div class='w-50 w-75-ns'>
-          <div class='f5 gray tr'>
-            Subtotal
-          </div>
-        </div>
-        <div class='w-50 w-25-ns'>
-          <div class='gray tr'>
-            ${{amountTotal}}
-          </div>
-        </div>
-      </div>
-      <div class='flex-subbill items-center mv1'>
-        <div class='w-50 w-75-ns'>
-          <div class='f5 gray tr'>
-            Free monthly credit
-          </div>
-        </div>
-        <div class='w-50 w-25-ns'>
-          <div class='gray tr'>
-            -$30
-          </div>
-        </div>
-      </div>
-      <div class='flex-subbill items-center mv2'>
-        <div class='w-50 w-75-ns'>
-          <div class='f5 gray tr'>
-            <!--This month’s running total ({{beginMonth}} - Today)-->
-          </div>
-        </div>
-        <div class='w-50 w-25-ns'>
-          <div class='gray tr'>
-            <div class="f0 f00-l green-toto tnum"><!--${{toto}}--></div>
-          </div>
-        </div>
-      </div>
+  </el-card>
+  <el-card style='margin-bottom:50px; margin-left:30px;'>
+    <h2>Invite Publishers to use the service</h2>
+    <el-form :model="dynamicValidateForm" ref="dynamicValidateForm" label-width="120px" class="demo-dynamic">
+      <el-form-item
+        prop="email"
+        label="Email"
+        :rules="[
+          { required: true, message: 'Veuillez entrer l\'adresse e-mail', trigger: 'blur' },
+          { type: 'email', message: 'Veuillez entrer une adresse e-mail valide', trigger: ['blur', 'change'] }
+        ]"
+      >
+        <el-input v-model="dynamicValidateForm.email"></el-input>
+      </el-form-item>
+      <el-form-item
+        v-for="(domain, index) in dynamicValidateForm.domains"
+        :label="'Domain' + index"
+        :key="domain.key"
+        :prop="'domains.' + index + '.value'"
+        :rules="{
+          required: true, message: 'domain ne peut pas être null', trigger: 'blur'
+        }"
+      >
+        <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">Supprimer</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('dynamicValidateForm')">Soumettre</el-button>
+        <el-button @click="addDomain">Nouveau domaine</el-button>
+        <el-button @click="resetForm('dynamicValidateForm')">Réinitialiser</el-button>
+      </el-form-item>
+    </el-form>
+    <div style='width:100%;text-align:right'>
+      <el-button type='primary' round>Send invitation</el-button>
     </div>
-  </div>
 
+  </el-card>
 
-</el-card>
 <el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
     <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
 </el-dialog>
@@ -264,6 +224,13 @@ export default{
   },
   data () {
     return {
+      dynamicValidateForm: {
+          domains: [{
+            key: 1,
+            value: ''
+          }],
+          email: ''
+      },
       invoice: false,
       formLabelWidth: '100px',
       dialogFormVisible: false,
