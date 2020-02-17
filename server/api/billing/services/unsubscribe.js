@@ -9,6 +9,8 @@ async function unsubscribe({ billingId }) {
 		subscriptionId: billing.subscriptionId
 	});
 	billing.canceledFrom = 'user';
+	billing.canceled = true;
+	billing.canceledOnce = true;
 	await billing.save();
 	return subscription;
 }

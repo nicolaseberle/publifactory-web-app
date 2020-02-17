@@ -28,6 +28,7 @@ async function create({ billing, userId = undefined, journalId = undefined }) {
 	if (newBilling.plan === 'premium') {
 		newBilling.planStripeId = stripe.premiumPlanId;
 	}
+
 	const customer = await createCustomer(newBilling);
 	newBilling.customerStripeId = customer.id;
 	const subscription = await createSubscription(newBilling);

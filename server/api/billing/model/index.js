@@ -20,7 +20,12 @@ const BillingSchema = new mongoose.Schema(
 		confirmMethod: { type: String, default: 'automatic' },
 		productStripeId: { type: String, default: productStripeId },
 		planStripeId: { type: String, default: planStripeId },
+		// ever from stripe or user
 		canceledFrom: { type: String, enum: { values: ['api', 'user'] } },
+		// for every time unsubscribe / create is done
+		canceled: Boolean,
+		// keep a footprint of any unsubscribe, don't mutate more than once
+		canceledOnce: Boolean,
 		plan: {
 			type: String,
 			default: 'freemium',
