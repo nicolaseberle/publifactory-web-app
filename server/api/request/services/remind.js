@@ -3,7 +3,12 @@ const sendEmailReviewer = require('./send-email-reviewer');
 const { ApiError } = require('../../../config/error');
 
 async function remind(requestId) {
-	const request = await Request.findById(requestId);
+	const request = await Request.findById(requestId)
+		.populate({
+			path: 'user',
+			select: 'name firstname lastname role roles email'
+		})
+		.populate({ path: 'journal' });
 	if (!request) throw new ApiError('REQUEST_NOT_FOUND');
 	request.remindCount += 1;
 	try {

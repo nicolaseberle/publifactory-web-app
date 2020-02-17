@@ -40,12 +40,21 @@ router.delete(
 	controllers.remove
 );
 
+// 'subscribe'
 router.post(
 	['/upgrade/:userId/:billingId', '/upgrade/:journalId/:billingId'],
 	middlewares.authentication,
 	billingMiddlewares.permissions,
 	billingMiddlewares.canWrite,
 	controllers.upgradePlan
+);
+
+router.post(
+	['/unsubscribe/:userId/:billingId', '/unsubscribe/:journalId/:billingId'],
+	middlewares.authentication,
+	billingMiddlewares.permissions,
+	billingMiddlewares.canWrite,
+	controllers.unsubscribe
 );
 
 router.get('/publicKey', middlewares.authentication, controllers.publicKey);

@@ -24,13 +24,18 @@ export default {
         name: '',
         firstname: '',
         lastname: ''
-      }
+      },
+      journalId: '',
+      status: '',
+      userId: '',
+      requestId: ''
     };
   },
   async created() {
     this.status = this.$route.params.status;
     this.journalId = this.$route.params.journalId;
     this.userId = this.$route.params.userId;
+    this.requestId = this.$route.params.requestId;
     try {
       const associateEditorRole = await this.addAssociateEditor();
       this.associateEditor = await this.getAssociateEditor(associateEditorRole);
@@ -39,13 +44,31 @@ export default {
     }
   },
   methods: {
-    async getAssociateEditor(userId) {
-      const response = await axios({
-        method: 'get',
-        url: `/api/users/${userId}`,
-        headers: { Authorization: `Bearer ${this.accessToken}` }
+    // async
+    approveRequest() {
+      axios({
+        method: 'post',
+        url: `/api/requests/${this.requestId}`,
+        headers: { Authorization: `Bearer ${this.accessToken}` },
+        data: {
+          status: 'pending'
+        }
+      }).then(response => {
+        console.log(response.status);
       });
-      return response.data;
+    },
+    async getAssociateEditor(userId) {
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `/api/users/${userId}`,
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        });
+        return response.data;
+        this.approveRequest();
+      } catch (error) {
+        console.warn(error);
+      }
     },
     async addAssociateEditor() {
       const response = await axios({
