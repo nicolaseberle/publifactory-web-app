@@ -4,7 +4,7 @@
       <div class='headline dmaasNavy--text text--lighten-1 text--bold mb-2'>{{$t('login.signIn')}}
       </div>
       <!--<h1 style='font-size:1.8rem; font-family: "DNLTPro-bold";'>Sign in</h1>-->
-      <p class='caption'><span>or </span><a v-on:click="switchRegister" style='color:#00a97f!important;'>create an account</a></p>
+      <p class='caption'><span>or </span><a v-on:click="switchRegister" style='color:#00a97f!important;'>create a free account</a></p>
       <el-form class="login-form" ref="form" :model="form" :rules="rules">
         <el-form-item prop="email">
           <el-input v-model="form.email" :placeholder="$t('login.email')"></el-input>

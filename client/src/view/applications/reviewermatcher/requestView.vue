@@ -109,9 +109,6 @@
 		</el-form>
 
     <el-dialog class='login-modal'
-		:close-on-click-modal="false"
-		:close-on-press-escape="false"
-		:show-close="false"
 		:visible.sync="modalLoginVisible"
 		width="30%"
 		top="20vh"
@@ -393,11 +390,9 @@ export default {
 				} else {
 					this.currentPlan="Free"
 				}
-			} catch {
+			} catch(err){
 				this.currentPlan="Free"
 			}
-
-
 		},
 		remoteMethod(query) {
 			if (query !== '') {
@@ -517,63 +512,74 @@ export default {
 				message: "Invitation canceled"
 			});
 		},
-		createGuestAccount() {
-			axios.post("/api/users/create-guest/",
-			{
-			  "email": this.formMail["mailDest"],
-			  "firstName": this.formMail["firstname"],
-			  "lastName": this.formMail["lastname"]
-			}).then((res)=>{
-				//if(res.=="USER_ALREADY_EXIST")
-				console.log(res.data)
-				console.log(res.statusText)
+		 createGuestAccount(formMail) {
+			this.$refs[formMail].validate(async (valid) => {
+				if (valid) {
+					await axios.post("/api/users/create-guest/",
+					{
+					  "email": this.formMail["mailDest"],
+					  "firstName": this.formMail["firstname"],
+					  "lastName": this.formMail["lastname"]
+					}).then((res)=>{
+						//if(res.=="USER_ALREADY_EXIST")
+						console.log(res.data)
+						console.log(res.statusText)
+					}).catch((err)=>{
+						console.log("need to sign up or to create an account")
+						this.modalLoginVisible = true
+					})
+				}
 			})
-
 		},
 		sendRequestRev(formMail) {
-			this.confirmationOfSending = false;
-			this.$refs[formMail].validate(valid => {
-				if (valid) {
-					this.requestInfos["title"] = this.formPost["title"];
-					this.requestInfos["abstract"] = this.formPost["abstract"];
-					this.requestInfos["rev_id"] = this.rowInfos["id"];
-					this.requestInfos["rev_name"] = this.rowInfos["name"];
-					this.requestInfos["deadline"] = this.formMail["deadline"];
-					this.requestInfos["object"] = this.formMail["object"];
-					this.requestInfos["remind"] = this.formMail["relaunch"];
-					if(this.formMail["journal"]!=='None'){
-						this.requestInfos["content"] =
-							"<p class='h2'>Invitation to review in <i>" +
-							this.formMail["journal"] +
-							"</i></p>" +
-							this.formMail["message"];
-					}else{
-						this.requestInfos["content"] = this.formMail["message"];
+			if(!this.loggedIn) {
+				this.createGuestAccount(formMail)
+			}
+			if(this.loggedIn) {
+				this.confirmationOfSending = false;
+				this.$refs[formMail].validate(valid => {
+					if (valid) {
+						this.requestInfos["title"] = this.formPost["title"];
+						this.requestInfos["abstract"] = this.formPost["abstract"];
+						this.requestInfos["rev_id"] = this.rowInfos["id"];
+						this.requestInfos["rev_name"] = this.rowInfos["name"];
+						this.requestInfos["deadline"] = this.formMail["deadline"];
+						this.requestInfos["object"] = this.formMail["object"];
+						this.requestInfos["remind"] = this.formMail["relaunch"];
+						if(this.formMail["journal"]!=='None'){
+							this.requestInfos["content"] =
+								"<p class='h2'>Invitation to review in <i>" +
+								this.formMail["journal"] +
+								"</i></p>" +
+								this.formMail["message"];
+						}else{
+							this.requestInfos["content"] = this.formMail["message"];
+						}
+						this.requestInfos["pub_mail"] = this.formMail["mailDest"];
+						this.requestInfos["pub_journal"] = this.formMail["journal"]!=='None'?this.formMail["journal"]:null;
+						this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
+						console.log(this.requestInfos);
+						new Promise((resolve, reject) => {
+							axios.get(
+									"https://service.publifactory.co/api/get_mail_id?id=" +
+										this.requestInfos.rev_id
+								)
+								.then(async res => {
+									if (res) {
+										this.requestInfos["rev_mail"] = "";
+										/*this.requestInfos["rev_mail"] =
+											res["data"][0]["_source"]["mail"];*/
+									} else {
+										this.requestInfos["rev_mail"] = "";
+									}
+									this.loggedIn
+										? this.showPromptUserConnected()
+										: this.showPromptUserDisconnected();
+								});
+						});
 					}
-					this.requestInfos["pub_mail"] = this.formMail["mailDest"];
-					this.requestInfos["pub_journal"] = this.formMail["journal"]!=='None'?this.formMail["journal"]:null;
-					this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
-					console.log(this.requestInfos);
-					new Promise((resolve, reject) => {
-						axios.get(
-								"https://service.publifactory.co/api/get_mail_id?id=" +
-									this.requestInfos.rev_id
-							)
-							.then(async res => {
-								if (res) {
-									this.requestInfos["rev_mail"] = "";
-									/*this.requestInfos["rev_mail"] =
-										res["data"][0]["_source"]["mail"];*/
-								} else {
-									this.requestInfos["rev_mail"] = "";
-								}
-								this.loggedIn
-									? this.showPromptUserConnected()
-									: this.showPromptUserDisconnected();
-							});
-					});
-				}
-			});
+				});
+			}
 		}
 	}
 };
