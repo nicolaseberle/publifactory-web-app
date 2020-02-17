@@ -142,6 +142,7 @@ const actions = {
             reject('error')
           }
           await dispatch('getUserInfo', { token: data.token })
+          resolve()
         })
         .catch(err => {
           reject(err)
