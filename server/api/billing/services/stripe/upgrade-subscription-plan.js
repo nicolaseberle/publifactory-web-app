@@ -25,6 +25,7 @@ async function upgradeSubscriptionPlan({
 		return updatedSubscription;
 	} catch (error) {
 		console.log('ERROR INCREMENT=>', error);
+		throw error;
 	}
 }
 

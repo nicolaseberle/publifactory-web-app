@@ -9,6 +9,7 @@ async function createSubscription({ customerStripeId, planStripeId }) {
 		return subscription;
 	} catch (error) {
 		console.log('ERROR CREATE SUBSCRIPTIOn=>', error);
+		throw error;
 	}
 }
 
