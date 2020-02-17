@@ -1,6 +1,7 @@
 const storage = window.localStorage
 
 export function save (key, value) {
+  console.log("Saving=>", key, value);
   storage.setItem(key, value)
 }
 
