@@ -194,7 +194,7 @@ async function create (req, res, next) {
       })
       res.status(201).json({ token: newToken })
     } else {
-      throw { code: 403, message: 'This email exists already' }
+      return res.json(403, {success: false, message: 'This email exists already' })
     }
   } catch (err) {
     next(err)
