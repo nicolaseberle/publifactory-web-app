@@ -13,7 +13,7 @@ async function upgradeSubscriptionPlan({
 				cancel_at_period_end: false, // eslint-disable-line
 				default_payment_method: payementMethodId, // eslint-disable-line
 				proration_behavior: 'none', // eslint-disable-line
-
+				billing_cycle_anchor: 'now', // eslint-disable-line
 				items: [
 					{
 						id: subscription.items.data[0].id,
@@ -25,6 +25,7 @@ async function upgradeSubscriptionPlan({
 		return updatedSubscription;
 	} catch (error) {
 		console.log('ERROR INCREMENT=>', error);
+		throw error;
 	}
 }
 

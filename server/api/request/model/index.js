@@ -52,19 +52,16 @@ const RequestSchema = new mongoose.Schema(
 				type: String
 			}
 		},
-		editor: {
-			name: {
-				type: String,
-				required: true
-			},
-			email: {
-				type: String,
-				required: true
-			},
-			journal: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Journal'
-			}
+		user: {
+			// creator of the request
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User'
+		},
+		journal: {
+			// which journal the request is on
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Journal',
+			default: null
 		},
 		history: {
 			type: Array,

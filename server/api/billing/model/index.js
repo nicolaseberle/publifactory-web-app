@@ -20,13 +20,7 @@ const BillingSchema = new mongoose.Schema(
 		confirmMethod: { type: String, default: 'automatic' },
 		productStripeId: { type: String, default: productStripeId },
 		planStripeId: { type: String, default: planStripeId },
-		freemium: Boolean, // turn to false on request.length >= 10
-		currency: { type: String, default: 'EUR' },
-		interval: {
-			type: String,
-			default: 'day',
-			enum: { values: ['day', 'week', 'month', 'year'] }
-		},
+		canceledFrom: { type: String, enum: { values: ['api', 'user'] } },
 		plan: {
 			type: String,
 			default: 'freemium',

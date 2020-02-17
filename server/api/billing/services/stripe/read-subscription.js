@@ -6,6 +6,7 @@ async function createSubscription(subscriptionId) {
 		return subscription;
 	} catch (error) {
 		console.log('ERROR CREATE SUBSCRIPTIOn=>', error);
+		throw error;
 	}
 }
 

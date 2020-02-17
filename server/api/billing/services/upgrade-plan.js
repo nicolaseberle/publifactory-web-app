@@ -10,9 +10,6 @@ async function upgradePlan({ billing, billingId }) {
 		throw new ApiError('BILLING_ALREADY_PREMIUM');
 	}
 
-	if (updatedBilling.plan === 'premium') {
-		updatedBilling.planStripeId = stripe.premiumPlanId;
-	}
 	updatedBilling.plan = 'premium';
 	updatedBilling.planStripeId = stripe.premiumPlanId;
 	updatedBilling.payementMethodId = billing.payementMethodId;
@@ -24,8 +21,9 @@ async function upgradePlan({ billing, billingId }) {
 	const subscription = await upgradeSubscriptionPlan({
 		subscriptionId: updatedBilling.subscriptionId,
 		payementMethodId: updatedBilling.payementMethodId,
-		premiumPlanId: updatedBilling.premiumPlanId
+		premiumPlanId: updatedBilling.planStripeId
 	});
+
 	updatedBilling.subscriptionId = subscription.id;
 	updatedBilling.subscriptionItemId = subscription.items.data[0].id;
 

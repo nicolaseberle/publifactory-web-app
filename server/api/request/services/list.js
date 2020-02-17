@@ -12,6 +12,7 @@ async function list({ page = 1, count = 5, filters, userId = undefined }) {
 	const pipeline = [];
 	const sort = { $sort: { createdAt: -1 } };
 	pipeline.push(sort);
+
 	if (filters.title) {
 		pipeline.push({
 			$match: { title: { $regex: `^${filters.title}`, $options: 'i' } }
@@ -34,7 +35,15 @@ async function list({ page = 1, count = 5, filters, userId = undefined }) {
 		});
 	}
 	pipeline.push(...paginate(page, count));
-	const list = await Request.aggregate(pipeline);
+	const list = await Request.populate(await Request.aggregate(pipeline), [
+		{
+			path: 'user',
+			select: 'name firstname lastname role roles email'
+		},
+		{
+			path: 'journal'
+		}
+	]);
 	return { ...response, data: list };
 }
 

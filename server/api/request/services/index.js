@@ -1,4 +1,4 @@
-const create = require('./service');
+const create = require('./create');
 const update = require('./update');
 const remove = require('./remove');
 const read = require('./read');
