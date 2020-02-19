@@ -112,18 +112,15 @@ export default{
   created (){
   },
   async mounted () {
-    //this.getPublicKey();
+    const publicKey = await this.getPublicKey();
     await this.getCustomerBillingId()
     await this.getSubscriptionStatus()
-    await this.stripeElements('pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs')
-
+    await this.stripeElements(publicKey)
   },
   methods:{
     async stripeElements (publicKey) {
-
       this.stripe = await Stripe(publicKey);
       var elements = this.stripe.elements();
-
       // Element styles
       var style = {
         base: {
@@ -214,28 +211,15 @@ export default{
       } else {
         this.currentPlan='freemium'
       }
-    },/*
-    confirmSubscription (subscriptionId) {
-      return axis.post('/subscription', {
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          subscriptionId: subscriptionId
-        })
-      }).then((res)=> {
-          this.orderComplete(res.data.subscription);
-        });
-    },*/
+    },
     async getPublicKey () {
-      await axios.get('/api/billings/publicKey', {
+      const response = await axios.get('/api/billings/publicKey', {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.accessToken}`
         }
       })
-        .then((response) => {
-          this.stripeElements(response.publicKey);
-        });
+      return response.data
 
     },
     orderComplete (subscription) {
