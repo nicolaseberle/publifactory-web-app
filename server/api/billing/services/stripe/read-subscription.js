@@ -1,6 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
-async function createSubscription(subscriptionId) {
+async function readSubscription(subscriptionId) {
 	try {
 		const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 		return subscription;
@@ -10,4 +10,4 @@ async function createSubscription(subscriptionId) {
 	}
 }
 
-module.exports = createSubscription;
+module.exports = readSubscription;
