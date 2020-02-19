@@ -3,7 +3,7 @@ const { ApiError } = require('../../../config/error');
 
 async function create(req, res, next) {
 	try {
-		if (req.body.plan === 'premium' && !req.body.payementMethodId) {
+		if (req.body.plan === 'premium' && !req.body.paymentMethodId) {
 			throw new ApiError('BAD_PARAMETERS');
 		}
 		const response = await serviceCreate({

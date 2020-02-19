@@ -3,14 +3,14 @@ const stripe = require('../../../../config/stripe');
 async function createCustomer({
 	email,
 	fullName,
-	payementMethodId = undefined
+	paymentMethodId = undefined
 }) {
 	// stripe empty field
 	const customer = {
 		email,
 		name: fullName
 	};
-	if (payementMethodId) customer.payment_method = payementMethodId;
+	if (paymentMethodId) customer.payment_method = paymentMethodId;
 	const newCustomer = await stripe.customers.create(customer);
 	return newCustomer;
 }

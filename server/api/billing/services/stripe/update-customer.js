@@ -2,12 +2,12 @@ const stripe = require('../../../../config/stripe');
 
 async function updateCustomer(
 	customerStripeId,
-	{ email = undefined, fullName = undefined, payementMethodId = undefined }
+	{ email = undefined, fullName = undefined, paymentMethodId = undefined }
 ) {
-	let customer = {};
+	const customer = {};
 	if (email) customer.email = email;
 	if (fullName) customer.name = fullName;
-	if (payementMethodId) customer.payementMethodId = payementMethodId;
+	if (paymentMethodId) customer.paymentMethodId = paymentMethodId;
 	const updatedCustomer = await stripe.customers.update(
 		customerStripeId,
 		customer

@@ -1,12 +1,12 @@
 const stripe = require('../../../../config/stripe');
 const { ApiError } = require('../../../../config/error');
 
-async function attachPayementMethod({ paymentMethodId, customerStripeId }) {
+async function attachPaymentMethod({ paymentMethodId, customerStripeId }) {
 	try {
-		const payementMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+		const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
 			customer: customerStripeId
 		});
-		return payementMethod.id;
+		return paymentMethod.id;
 	} catch (error) {
 		// should parse error ~
 		console.log(error);
@@ -14,4 +14,4 @@ async function attachPayementMethod({ paymentMethodId, customerStripeId }) {
 	}
 }
 
-module.exports = attachPayementMethod;
+module.exports = attachPaymentMethod;

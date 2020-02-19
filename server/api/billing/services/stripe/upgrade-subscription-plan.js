@@ -2,7 +2,7 @@ const stripe = require('../../../../config/stripe');
 
 async function upgradeSubscriptionPlan({
 	subscriptionId,
-	payementMethodId,
+	paymentMethodId,
 	premiumPlanId
 }) {
 	try {
@@ -11,7 +11,7 @@ async function upgradeSubscriptionPlan({
 			subscription.id,
 			{
 				cancel_at_period_end: false, // eslint-disable-line
-				default_payment_method: payementMethodId, // eslint-disable-line
+				default_payment_method: paymentMethodId, // eslint-disable-line
 				proration_behavior: 'none', // eslint-disable-line
 				billing_cycle_anchor: 'now', // eslint-disable-line
 				items: [

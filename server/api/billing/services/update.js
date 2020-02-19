@@ -5,7 +5,7 @@ const { updateCustomer } = require('./stripe');
 async function update({ billingId, billing }) {
 	const updatedBilling = await Billing.findById(billingId);
 	if (!updatedBilling) throw new ApiError('BILLING_NOT_FOUND');
-	if (billing.email || billing.fullName || billing.payementMethodId) {
+	if (billing.email || billing.fullName || billing.paymentMethodId) {
 		await updateCustomer(updatedBilling.customerStripeId, billing);
 	}
 	const merged = { ...updatedBilling.toObject(), ...billing };

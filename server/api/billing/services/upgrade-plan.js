@@ -1,6 +1,6 @@
 const { Billing } = require('../model');
 const { ApiError } = require('../../../config/error');
-const { attachPayementMethod, upgradeSubscriptionPlan } = require('./stripe');
+const { attachPaymentMethod, upgradeSubscriptionPlan } = require('./stripe');
 const { stripe } = require('../../../../config');
 
 async function upgradePlan({ billing, billingId }) {
@@ -13,7 +13,7 @@ async function upgradePlan({ billing, billingId }) {
 	updatedBilling.plan = 'premium';
 	updatedBilling.planStripeId = stripe.premiumPlanId;
 	updatedBilling.paymentMethodId = billing.paymentMethodId;
-	const paymentMethodId = await attachPayementMethod({
+	const paymentMethodId = await attachPaymentMethod({
 		customerStripeId: updatedBilling.customerStripeId,
 		paymentMethodId: billing.paymentMethodId
 	});

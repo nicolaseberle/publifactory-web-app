@@ -16,7 +16,7 @@ const BillingSchema = new mongoose.Schema(
 		customerStripeId: { type: String, default: null },
 		subscriptionId: { type: String, default: null },
 		subscriptionItemId: { type: String, default: null },
-		payementMethodId: { type: String, default: null },
+		paymentMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
 		productStripeId: { type: String, default: productStripeId },
 		planStripeId: { type: String, default: planStripeId },
