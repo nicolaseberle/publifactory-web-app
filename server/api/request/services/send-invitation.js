@@ -39,6 +39,8 @@ async function sendInvitation(requestId) {
 		if (billing.plan === 'freemium') {
 			await checkIfBillingNeedUpgrade(billing);
 		}
+
+		if (billing.canceled) throw new error.ApiError('BILLING_IS_CANCELED');
 		await sendEmailReviewer(requestId);
 		request.history.push({
 			status: 'sent',

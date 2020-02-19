@@ -44,7 +44,6 @@ async function list({ userId, page = 1, count = 5 }) {
 			return journal;
 		})
 	);
-
 	return {
 		...user.profile,
 		billing: user.billing
