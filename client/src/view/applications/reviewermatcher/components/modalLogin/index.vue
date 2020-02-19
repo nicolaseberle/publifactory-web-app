@@ -64,6 +64,7 @@
 <script>
 import locales from 'locales/login';
 import { mapActions, mapGetters } from 'vuex';
+import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
 import axios from 'axios';
 
 export default{
