@@ -64,7 +64,6 @@
 <script>
 import locales from 'locales/login';
 import { mapActions, mapGetters } from 'vuex';
-import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
 import axios from 'axios';
 
 export default{
@@ -80,17 +79,19 @@ export default{
       active: 'login',
       loading: false,
       rules: {
-        email: [{
-          required: true, message: this.$t('login.email'), trigger: 'blur'
-        }],
+        email: [
+          { required: true, message: this.$t('login.email'), trigger: 'blur' },
+          { type: 'email', message: this.$t('login.email'), trigger: ['blur', 'change'] }
+        ],
         password: [{
           required: true, message: this.$t('login.password'), trigger: 'blur'
         }]
       },
       rulesRegister:{
-        email: [{
-          required: true, message: this.$t('login.email'),
-        }],
+        email: [
+          { required: true, message: this.$t('login.email'), trigger: 'blur' },
+          { type: 'email', message: this.$t('login.email'), trigger: ['blur', 'change'] }
+        ],
         password: [{
           required: true, message: this.$t('login.password'),
         }],
