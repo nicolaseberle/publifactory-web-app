@@ -10,6 +10,7 @@ const readNextInvoice = require('./read-next-invoice');
 const attachPayementMethod = require('./attach-payment-method');
 const upgradeSubscriptionPlan = require('./upgrade-subscription-plan');
 const unsubscribeSubscriptionPlan = require('./unsubscribe-subscription-plan');
+const updateCustomer = require('./update-customer');
 
 module.exports = {
 	createCustomer,
@@ -23,5 +24,6 @@ module.exports = {
 	readNextInvoice,
 	attachPayementMethod,
 	upgradeSubscriptionPlan,
-	unsubscribeSubscriptionPlan
+	unsubscribeSubscriptionPlan,
+	updateCustomer
 };
