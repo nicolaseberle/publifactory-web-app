@@ -1,8 +1,8 @@
 <template>
   <div style="width:100%">
-    <freePlanStatus v-if="currentPlan==='Free'" :maxInvitation="maxInvitation"/>
-    <premiumPlanStatus v-else-if="currentPlan==='Premium'"/>
-    <publisherPlanStatus v-else-if="currentPlan==='Activated'" :activated="true"/>
+    <freePlanStatus v-if="currentPlan==='freemium'" :maxInvitation="maxInvitation"/>
+    <premiumPlanStatus v-else-if="currentPlan==='premium'"/>
+    <publisherPlanStatus v-else-if="currentPlan==='activated'" :activated="true"/>
     <publisherPlanStatus v-else :activated="false"/>
   </div>
 </template>

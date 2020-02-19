@@ -366,7 +366,7 @@ export default {
 			/*const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
 				headers: {'Authorization': `Bearer ${this.accessToken}`}
 			})*/
-			this.currentPlan = 'Non-Activated'
+			this.currentPlan = 'nonActivated'
 			//this.currentPlan = response.data.billing ? 'Activated' : 'Non-activated'
 		},
 		async getListJournal() {
@@ -383,15 +383,21 @@ export default {
 		async getSubscription(){
 			try{
 				if(this.loggedIn){
-					const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+					await axios.get('/api/billings/?page=1&count=1000&userId=true',{
 						headers: {'Authorization': `Bearer ${this.accessToken}`}
+					}).then((response)=>{
+						this.currentPlan = response.data.billing.plan
+						if(response.data.billing){
+							this.mySubscription = [response.data.billing.subscription]
+							this.numberRequestTotal = response.data.billing.requests.length
+						}
+						this.myJournals = response.data.journals
+						//console.log(this.myJournals
+
 					})
-					this.currentPlan = response.data.billing ? 'Premium' : 'Free'
-				} else {
-					this.currentPlan="Free"
 				}
 			} catch(err){
-				this.currentPlan="Free"
+				this.currentPlan="freemium"
 			}
 		},
 		remoteMethod(query) {
