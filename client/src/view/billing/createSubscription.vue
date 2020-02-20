@@ -201,13 +201,15 @@ export default{
     async getSubscriptionStatus() {
       if(this.billingId){
         await axios.get('/api/billings/users/'+ this.userId +'/'+ this.billingId,
-        {headers: {
+          { headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.accessToken}`
           }
         }).then((res)=>{
             this.currentPlan = res.data.billing.plan
-          }).catch(()=>this.currentPlan='freemium')
+          }).catch(()=>{
+            this.currentPlan='freemium'
+          })
       } else {
         this.currentPlan='freemium'
       }
@@ -225,6 +227,7 @@ export default{
     orderComplete (subscription) {
       this.changeLoadingState(false);
       this.mySubscription = subscription
+      this.getSubscriptionStatus()
     },
     orderIncomplete (error) {
       this.changeLoadingState(false);

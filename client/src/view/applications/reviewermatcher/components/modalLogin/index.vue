@@ -28,7 +28,9 @@
       </el-form>
     </div>
     <div v-else>
-      <div class='headline dmaasNavy--text text--lighten-1 text--bold mb-2'>{{$t('login.createFreeAccount')}}
+      <div class='headline dmaasNavy--text text--lighten-1 text--bold mb-2'>
+        Sign up for free to invite this reviewer
+        <!--{{$t('login.createFreeAccount')}}-->
       </div>
       <!--<h1 style='font-size:1.8rem; font-family: "DNLTPro-bold";'>Sign in</h1>-->
       <p class='caption'><span>or </span><a v-on:click="switchLogin" style='color:#00a97f!important;'>sign in</a></p>
@@ -76,7 +78,7 @@ export default{
         password: '',
         type: [],
       },
-      active: 'login',
+      active: 'register',
       loading: false,
       rules: {
         email: [

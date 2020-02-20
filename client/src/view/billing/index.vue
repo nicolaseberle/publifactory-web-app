@@ -10,10 +10,10 @@
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
-      <el-col :span='6'>
-        <h2 style='font-size:1.1rem;'>{{firstname}} {{lastname}} <!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >USER</el-button></span>--></h2>
-      </el-col >
-      <el-col :span='18'>
+      <!--<el-col :span='6'>
+        <h2 style='font-size:1.1rem;'>{{firstname}} {{lastname}} <!-- <span style='margin-left:20px;'><el-button  type="info" round size="mini" >USER</el-button></span>--><!--</h2>-->
+      <!--</el-col >-->
+      <el-col :span='24'>
         <div class="one-bill-content">
           <div v-show="currentPlan">
           <div v-if="currentPlan==='premium'" class='mv3 bg-lightest-green bl bw2 green' style='  width: 100%;display: table;'>
@@ -52,7 +52,7 @@
       </div>
 
       <div v-if="invoice" class='bill-table' style='margin-top:50px;'>
-        <h4>Current month's spending - From <!--{{beginMonth}} to {{endMonth}}--></h4>
+        <h4>Current month's spending - From <!--{{beginMonth}} to {{endMonth}}--> {{ beginPeriod }} to {{ endPeriod }}</h4>
       <el-table
             :data="mySubscription"
             style="width: 100%">
@@ -72,14 +72,14 @@
               label="Usage(request)"
               width="200">
               <template slot-scope="props">
-                <p style="text-align:center;">{{ props.row.quantity }}</p>
+                <p style="text-align:center;">{{ props.row.quantity}}</p>
               </template>
             </el-table-column>
             <el-table-column
               label="Total"
               width="200">
               <template slot-scope="props">
-                <p style="text-align:center;">{{props.row.amount_due}}</p>
+                <p style="text-align:center;">${{props.row.nextInvoice.amount_due / 100}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -92,13 +92,11 @@
             </div>
             <div class='w-50 w-25-ns'>
               <div class='gray tr'>
-                <template slot-scope="props">
-                  <p>{{props.row.amount_due}}</p>
-                </template>
+                  <p>${{mySubscription[0].nextInvoice.amount_due / 100}}</p>
               </div>
             </div>
           </div>
-          <div class='flex-subbill items-center mv1'>
+          <!--<div class='flex-subbill items-center mv1'>
             <div class='w-50 w-75-ns'>
               <div class='f5 gray tr'>
                 Free monthly credit
@@ -109,18 +107,16 @@
                 -$30
               </div>
             </div>
-          </div>
-          <div class='flex-subbill items-center mv2'>
+          </div>-->
+          <div class='flex-subbill items-center mv1'>
             <div class='w-50 w-75-ns'>
               <div class='f5 gray tr'>
-                This month’s running total (<!--{{beginMonth}}--> - Today)
+                This month’s running total ( {{beginPeriod}} - Today)
               </div>
             </div>
             <div class='w-50 w-25-ns'>
-              <div class='gray tr'>
-                <template slot-scope="props">
-                  <div class="f0 f00-l green-toto tnum">{{props.row.amount_due}}</div>
-                </template>
+              <div class='green-toto gray tr'>
+                <p>${{mySubscription[0].nextInvoice.amount_due / 100}}</p>
               </div>
             </div>
           </div>
@@ -195,7 +191,7 @@
   </el-card>
 
 <el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
-    <showPricing @close="visiblePricing=false" v-on:close-pricing="visiblePricing=false"/>
+    <showPricing @close="closeAndReload()" v-on:close-pricing="closeAndReload()"/>
 </el-dialog>
 <el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
     <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
@@ -279,7 +275,9 @@ export default{
       billingId: null,
       mySubscription: null,
       myJournals: null,
-      loading: false
+      loading: false,
+      beginPeriod: null,
+      endPeriod: null
     }
   },
   async created () {
@@ -300,7 +298,26 @@ export default{
     //this.mylistrequest = this.getMyRequest()
 
   },
+  watch:{
+    visiblePricing (val){
+      if(val===false){
+        this.reloadView()
+      }
+    }
+  },
   methods: {
+    closeAndReload() {
+      this.visiblePricing = false
+    },
+    async reloadView () {
+      await axios.get('/api/users/me',{headers: {
+        'Authorization': `Bearer ${this.accessToken}`}
+      }).then(response => {
+          this.billingId = response.data.billing
+          this.currentPlan = response.data.billing.plan
+          this.$forceUpdate();
+        })
+    },
     sendRequest (formInvitationPublisher) {
       this.$refs[formInvitationPublisher].validate(async (valid) => {
         if (valid) {
@@ -322,6 +339,7 @@ export default{
         type: "success"
       }).then(()=>{
         this.unsubscribe()
+        this.reloadView()
       })
     },
     remoteMethod(query) {
@@ -386,16 +404,20 @@ export default{
           this.currentPlan = response.data.billing.plan
           if(response.data.billing){
             this.mySubscription = [response.data.billing.subscription]
+
+            this.beginPeriod = moment.unix(this.mySubscription[0].current_period_start).format("DD/MM/YYYY");
+            this.endPeriod = moment.unix(this.mySubscription[0].current_period_end).format("DD/MM/YYYY");
+
             this.numberRequestTotal = response.data.billing.requests.length
           }
           this.myJournals = response.data.journals
-          //console.log(this.myJournals)
-
+        }).catch(()=>{
+          this.currentPlan = 'freemium'
         })
     },
     async unsubscribe(){
 
-        await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId,{
+        await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId, { billingId:this.billingId } ,{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then((response)=>{
         })

@@ -8,6 +8,7 @@ async function unsubscribe({ billingId }) {
 	const subscription = await unsubscribeSubscriptionPlan({
 		subscriptionId: billing.subscriptionId
 	});
+	billing.plan = 'freemium';
 	billing.canceledFrom = 'user';
 	billing.canceled = true;
 	billing.canceledOnce = true;

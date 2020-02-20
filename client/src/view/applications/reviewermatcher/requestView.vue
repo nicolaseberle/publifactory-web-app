@@ -112,6 +112,8 @@
 		:visible.sync="modalLoginVisible"
 		width="30%"
 		top="20vh"
+		:close-on-click-modal='false'
+		:close-on-press-escape='false'
 		append-to-body>
       <modalLogin v-on:close='modalLoginVisible=false'/>
     </el-dialog>

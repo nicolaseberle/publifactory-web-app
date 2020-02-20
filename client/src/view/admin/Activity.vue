@@ -102,7 +102,9 @@
       }).catch((e)=>{console.log(e)})
     },
     getTotalRequest () {
-      axios.get('/api/activity/totalRequest')
+      axios.get('/api/activity/totalRequest',{},{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       })
       .then( async (res) => {
         this.nbTotalRequest = res.data.data;
       }).catch((e)=>{console.log(e)})

@@ -42,8 +42,8 @@
               width="120">
               <template slot-scope="props">
                 <el-tooltip class="item" effect="dark" placement="top">
-                  <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
-                  <p style="text-align:center">{{ props.row.editor.journal }}</p>
+                  <div slot="content">{{props.row.user.email}}<br>{{ props.row.user.name }}</div>
+                  <p style="text-align:center">{{ props.row.journal }}</p>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -216,7 +216,9 @@ export default{
           "reviewer":{"email": mail},
         };
         //axios.get('https://service.publifactory.co/api/update_mail?id=' + id + '&mail=' + mail)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-        axios.patch('/api/requests/' + requestId, body )
+        axios.patch('/api/requests/' + requestId, body,{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         } )
         .then( async (res) => {
           console.log(res.data);
         })
@@ -229,7 +231,9 @@ export default{
          })
         .then( async (res) => {
           this.dataFinal = res.data.data;
-          this.isData = true;
+          console.log(this.dataFinal)
+          if(this.dataFinal.length>0)
+            this.isData = true;
         })
       })
     },
@@ -249,7 +253,9 @@ export default{
     },
     sendRequest(id){
       new Promise ((resolve,reject) => {
-        axios.post('/api/requests/send/' + id)
+        axios.post('/api/requests/send/' + id,{},{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         })
         .then( async (res) => {
           await this.getRequests()
         })
@@ -257,7 +263,9 @@ export default{
     },
     remindRequest(id){
       new Promise ((resolve,reject) => {
-        axios.post('/api/requests/remind/' + id)
+        axios.post('/api/requests/remind/' + id,{},{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         })
         .then( async (res) => {
           await this.getRequests()
         })

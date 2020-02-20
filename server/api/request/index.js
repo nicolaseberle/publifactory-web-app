@@ -24,8 +24,8 @@ router.get(
 router.patch(
 	'/:requestId',
 	middlewares.authentication,
-	requestMiddlewares.permissions,
-	requestMiddlewares.canWrite,
+	//requestMiddlewares.permissions,
+	//requestMiddlewares.canWrite,
 	controllers.update
 );
 router.delete(
@@ -39,8 +39,8 @@ router.delete(
 router.post(
 	'/send/:requestId',
 	middlewares.authentication,
-	requestMiddlewares.permissions,
-	requestMiddlewares.canWrite,
+	//requestMiddlewares.permissions,
+	//requestMiddlewares.canWrite,
 	controllers.sendInvitation
 );
 router.post(
