@@ -15,6 +15,9 @@ async function create({ reviewer, ...request }, authId, billingId) {
 	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
 	if (billing.canceled) throw new ApiError('BILLING_IS_CANCELED');
 	const journal = await Journal.findById(request.journal);
+	if (request.journal && !journal) {
+		throw new ApiError('JOURNAL_NOT_FOUND');
+	}
 	const user = await User.findById(authId);
 	if (!user) throw new ApiError('USER_NOT_FOUND');
 
@@ -36,7 +39,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		.execPopulate();
 
 	// journal use
-	if (journal) {
+	if (request.journal) {
 		const userRole = await serviceRole.journalGetRole({
 			journalId: journal._id,
 			userId: authId

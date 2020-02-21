@@ -27,7 +27,12 @@ async function findJournalsByUser(userId, page, count) {
 }
 
 async function list({ userId, page = 1, count = 5 }) {
-	const user = await User.findById(userId).populate('billing');
+	const user = await User.findById(userId).populate({
+		path: 'billing',
+		populate: {
+			path: 'requests'
+		}
+	});
 	if (!user) throw new ApiError('USER_NOT_FOUND');
 	const lists = await findJournalsByUser(userId, page, count);
 	const journals = await Promise.all(
