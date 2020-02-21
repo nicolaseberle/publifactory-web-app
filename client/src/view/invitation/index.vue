@@ -129,6 +129,7 @@ export default{
        })
       .then( (res) => {
         this.mylistrequest = res.data.data;
+        console.log(res.data.data)
         this.page.total = res.data.data.length;
         this.isData = true;
       })
