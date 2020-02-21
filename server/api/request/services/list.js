@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { Request } = require('../model');
 const User = require('../../user/user.model');
 
@@ -7,7 +8,12 @@ function paginate(page = 1, count = 5) {
 	return [skip, limit];
 }
 
-async function list({ page = 1, count = 5, filters = undefined , userId = undefined }) {
+async function list({
+	page = 1,
+	count = 5,
+	filters = undefined,
+	userId = undefined
+}) {
 	const response = { page, count };
 	const pipeline = [];
 	const sort = { $sort: { createdAt: -1 } };
@@ -24,15 +30,21 @@ async function list({ page = 1, count = 5, filters = undefined , userId = undefi
 		});
 	}
 	if (filters.email) {
+		const user = User.findOne({ email: filters.email });
+
 		pipeline.push({
-			$match: { 'user.email': filters.email }
+			$match: {
+				user: { $eq: user._id }
+			}
 		});
 	}
 	if (userId) {
-		const user = await User.findById(userId).exec();
-		pipeline.push({
-			$match: { 'user.email': user.email }
-		});
+		const matchUser = {
+			$match: {
+				user: { $eq: new mongoose.Types.ObjectId(userId) }
+			}
+		};
+		pipeline.push(matchUser);
 	}
 	pipeline.push(...paginate(page, count));
 
