@@ -9,12 +9,6 @@ const {
 const productStripeId = stripe.freemiumProductId;
 const planStripeId = stripe.freemiumPlanId;
 
-/**
- * subscriptionPre  // subscriptionFree => always active => 0 €
- * upgrade => create subscriptionPre => attach to subscriptionId
- * unsubscribe => del subscriptionpre, actualSubscriptionId = freeSubId
- */
-
 const BillingSchema = new mongoose.Schema(
 	{
 		email: { type: String, required: true },
