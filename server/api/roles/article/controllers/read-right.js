@@ -4,7 +4,7 @@ const { ApiError } = require('../../../../config/error');
 async function readRight(req, res, next) {
 	try {
 		if (!req.params.articleId) throw new ApiError('BAD_PARAMETERS');
-		const response = serviceReadRight({
+		const response = await serviceReadRight({
 			userId: req.decoded._id,
 			articleId: req.params.articleId
 		});

@@ -18,7 +18,11 @@
         :flagShowingComment="false"
       ></tree-comment>
     </div>
-    <partial-review-edit v-on:newReport="newReport" :articleId="articleId"></partial-review-edit>
+    <partial-review-edit
+      v-show="userArticleRight !== 'author'"
+      v-on:newReport="newReport"
+      :articleId="articleId"
+    ></partial-review-edit>
   </div>
 </template>
 
@@ -26,6 +30,8 @@
 import { Socket } from 'net';
 import treeComment from './components/tree-comment';
 import partialReviewEdit from './components/partial-review-edit';
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'partialReviewSection',
   props: {
@@ -36,6 +42,9 @@ export default {
   components: {
     treeComment,
     partialReviewEdit
+  },
+  computed: {
+    ...mapGetters(['userArticleRight'])
   },
   methods: {
     reload() {

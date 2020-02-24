@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const actions = {
 	async getUserArticleRight(
-		{ commit, getters: { userId, accessToken } },
+		{ commit, getters: { accessToken } },
 		{ articleId }
 	) {
-		const response = await axios.get(`/api/roles/articles/right/${articleId}`, {
+		const response = await axios.get(`/api/roles/article/right/${articleId}`, {
 			headers: { Authorization: `Bearer ${accessToken}` }
 		});
 		commit('userArticleRight', {
@@ -14,4 +14,4 @@ const actions = {
 	}
 };
 
-module.exports = actions;
+export default actions;

@@ -2,7 +2,7 @@
   <section>
     <div>
       <global-review-list :articleId="articleId"></global-review-list>
-      <global-review-form :articleId="articleId"></global-review-form>
+      <global-review-form v-show="userArticleRight !== 'author'" :articleId="articleId"></global-review-form>
     </div>
   </section>
 </template>
@@ -27,7 +27,7 @@ export default {
     this.articleId = this.$route.params && this.$route.params.id;
   },
   computed: {
-    ...mapGetters(['userId', 'roles', 'accessToken'])
+    ...mapGetters(['userId', 'roles', 'accessToken', 'userArticleRight'])
   }
 };
 </script>

@@ -467,10 +467,7 @@ export function hook(userPromise) {
 							query: { redirect: to.fullPath }
 						});
 					} else {
-						// TODO stopped there
-						console.log('path===>', to.path);
 						if (to.matched.some(record => record.meta.requireArticleRight)) {
-							console.log('COMMITTING actions');
 							store.dispatch('getUserArticleRight', {
 								articleId: to.params.id
 							});
