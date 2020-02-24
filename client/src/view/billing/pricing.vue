@@ -233,13 +233,13 @@ export default{
   margin-top:60px;
 }
 .item-title h2{
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   color: white;
   font-family: 'DNLTPro-bold';
 }
 .item-content{
   color: white;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   text-align: justify;
   text-justify: inter-word;
   font-family: "Helvetica Neue",sans-serif;
