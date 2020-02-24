@@ -6,7 +6,7 @@
       <transition name="slide-fade">
         <el-row>
         <div class='title-pricing'>
-          <h1>Pay as you publish</h1>
+          <h1>Pricing Plans</h1>
         </div>
 
       <div class='wrapper'>
