@@ -4,15 +4,12 @@ const { ApiError } = require('../../../config/error');
 async function update(req, res, next) {
 	try {
 		if (
-			!req.body.canceledOnce ||
-			!req.body.canceled ||
-			!req.body.subscriptionId ||
-			!req.body.subscriptionItemId ||
-			!req.body.productStripeId ||
-			!req.body.planStripeId ||
-			!req.body.canceledFrom ||
-			!req.body.plan ||
-			!req.body.requests
+			req.body.subscriptionId ||
+			req.body.subscriptionItemId ||
+			req.body.productStripeId ||
+			req.body.planStripeId ||
+			req.body.plan ||
+			req.body.requests
 		)
 			throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceUpdate({

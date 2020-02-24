@@ -1,6 +1,6 @@
 const stripe = require('../../../../config/stripe');
 
-async function upgradeSubscriptionPlan({ subscriptionId }) {
+async function unsubscribeSubscriptionPlan({ subscriptionId }) {
 	try {
 		const subscription = await stripe.subscriptions.del(subscriptionId, {
 			// eslint-disable-next-line
@@ -14,4 +14,4 @@ async function upgradeSubscriptionPlan({ subscriptionId }) {
 	}
 }
 
-module.exports = upgradeSubscriptionPlan;
+module.exports = unsubscribeSubscriptionPlan;

@@ -13,7 +13,6 @@ const User = require('../../user/user.model');
 async function create({ reviewer, ...request }, authId, billingId) {
 	const billing = await Billing.findById(billingId);
 	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
-	if (billing.canceled) throw new ApiError('BILLING_IS_CANCELED');
 	const journal = await Journal.findById(request.journal);
 	if (request.journal && !journal) {
 		throw new ApiError('JOURNAL_NOT_FOUND');
@@ -22,7 +21,6 @@ async function create({ reviewer, ...request }, authId, billingId) {
 	if (!user) throw new ApiError('USER_NOT_FOUND');
 
 	const email = new Email(user.email);
-	if (billing.canceled) throw new ApiError('BILLING_IS_CANCELED');
 	const newRequest = new Request({
 		reviewer,
 		user: authId,
