@@ -6,6 +6,14 @@
     </div>
     <div class="m-right-menu">
       <div style='vertical-align:middle'  class='right-menu-item'>
+      <!--  <router-link :to="{path: '/pricing'}">
+          <el-button type="text">Pricing</el-button>
+        </router-link>-->
+        <router-link :to="{path: '/pricing'}">
+          <el-link :underline="false" style='font-size:16px'><span>Pricing</span></el-link>
+        </router-link>
+      </div>
+      <div style='vertical-align:middle'  class='right-menu-item'>
          <el-link :underline="false" style='font-size:16px' href='http://publifactory.co/'><span>Product</span></el-link>
       </div>
       <div class='right-menu-item'>

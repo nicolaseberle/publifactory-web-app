@@ -448,7 +448,10 @@ export const constantRouterMap = [
         }
       },
       {
-        path: '/pricing_',
+        path: '/pricing',
+        meta: {
+          skipAuth: true
+        },
         name: 'my_pricing',
         component: resolve => {
 					import('../view/billing/pricing.vue').then(resolve)
@@ -483,20 +486,6 @@ export const constantRouterMap = [
         name: 'my_billing',
         component: resolve => {
 					import('../view/billing/index.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricing',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricing.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricingAE',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricingAE.vue').then(resolve)
         }
       }
     ]

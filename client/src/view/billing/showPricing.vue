@@ -1,8 +1,15 @@
 <template>
     <div>
     <div class='pricing-container'>
-      <el-row>
+
+
       <transition name="slide-fade">
+        <el-row>
+        <div v-if='!loggedIn' style='margin:0 0 20px 0;'>
+          <h1>Pay as you publish</h1>
+        </div>
+
+
       <div class='wrapper'>
 
           <el-button v-if='state==false'  icon='el-icon-arrow-left' @click="state=true;statePremium=true" round></el-button>
@@ -83,6 +90,7 @@
             </el-row>
           </div>
         </div>
+        <div v-if='loggedIn'>
           <div class='subscription-package' v-show='state==false & statePremium'>
             <div class='name'>Premium Plan Subscription</div>
             <div class='content'>
@@ -95,9 +103,11 @@
               <sendEditorInvitation @close="closeEditorInvitation()"/>
             </div>
           </div>
+        </div>
       </div>
-      </transition>
       </el-row>
+      </transition>
+
 
     </div>
     <!--
@@ -127,6 +137,7 @@ export default{
   name: 'showPrincing',
   computed: {
     ...mapGetters([
+      'loggedIn',
       'userId',
       'accessToken'
     ])

@@ -1,11 +1,14 @@
 <template>
 <div class='app-container bill-page'>
-  <el-alert
-    title="Choose between individual or publisher plan"
-    type="info"
-    description="With updating individual plan, you will be able to use the service even if the publisher has not activated his account. "
-    show-icon>
-  </el-alert>
+  <el-row>
+    <el-alert
+      title="Choose between individual or publisher plan"
+      type="info"
+      description="With updating individual plan, you will be able to use the service even if the publisher has not activated his account. "
+      show-icon>
+    </el-alert>
+
+  </el-row>
 <h2 style='font-size:1.4rem;'>Individual Plan</h2>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <div class="clearfix one-bill">
@@ -294,9 +297,6 @@ export default{
       this.lastname = response.data.lastname
       this.billingId = response.data.billing
       })
-
-    //this.mylistrequest = this.getMyRequest()
-
   },
   watch:{
     visiblePricing (val){
@@ -413,6 +413,7 @@ export default{
           this.myJournals = response.data.journals
         }).catch(()=>{
           this.currentPlan = 'freemium'
+          this.mySubscription = []
         })
     },
     async unsubscribe(){
