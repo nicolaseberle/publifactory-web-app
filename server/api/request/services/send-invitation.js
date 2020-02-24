@@ -46,7 +46,6 @@ async function sendInvitation(requestId) {
 			status: 'sent',
 			date: new Date().toUTCString()
 		});
-		console.log('GONNA CHARGE PLAN~~~~~~~~~');
 		await chargePlan(billing);
 		await request.save();
 		return request;
