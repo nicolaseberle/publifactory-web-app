@@ -30,7 +30,12 @@
               prop="edi_name"
               width="120">
               <template slot-scope="props">
+                <div v-if='props.row.journal'>
                   <p style="text-align:center">{{ props.row.journal }}</p>
+                </div>
+                <div v-else >
+                  <p style="text-align:center">None</p>
+                </div>
               </template>
             </el-table-column>
               <el-table-column
