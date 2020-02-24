@@ -22,9 +22,9 @@
               </el-steps>
             </template>
           </el-table-column>
-          <el-table-column class-name="date-col" width="180px" label="Date">
+          <el-table-column class-name="date-col" width="140px" label="Date">
             <template slot-scope="props">
-              <span>{{ props.row.createdAt | moment("DD/MM/YYYY, h:mm a") }}</span>
+              <span>{{ props.row.createdAt | moment("DD/MM/YYYY") }}<br>{{ props.row.createdAt | moment("h:mm a") }}</span>
             </template>
           </el-table-column>
             <el-table-column
@@ -39,12 +39,20 @@
             <el-table-column
               label="Publisher"
               prop="edi_name"
-              width="120">
+              width="140">
               <template slot-scope="props">
-                <el-tooltip class="item" effect="dark" placement="top">
-                  <div slot="content">{{props.row.user.email}}<br>{{ props.row.user.name }}</div>
-                  <p style="text-align:center">{{ props.row.journal }}</p>
-                </el-tooltip>
+                <div v-if='props.row.journal'>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">{{props.row.user.firstname}}<br>{{ props.row.user.lastname }}</div>
+                    <p style="text-align:center">{{ props.row.journal }}</p>
+                  </el-tooltip>
+                </div>
+                <div v-else>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">{{ props.row.user.email }}</div>
+                    <p style="text-align:center">{{props.row.user.firstname}} {{ props.row.user.lastname }}</p>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
 
@@ -92,7 +100,7 @@
                 </el-select>
               </template>
             </el-table-column>-->
-            <el-table-column class-name="status-col" label="Status" width="120">
+            <el-table-column class-name="status-col" label="Status" width="80">
               <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
                 <!--<el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>-->
                 <el-tag v-if='props.row.history[props.row.history.length - 1].status=="done"' class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 2].status)" >{{ props.row.history[props.row.history.length - 2].status }}</el-tag>
@@ -102,7 +110,7 @@
             <el-table-column
               label="Actions"
               prop="actions"
-              width="100">
+              width="80">
               <template slot-scope="props">
                 <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
                   <div>
@@ -220,7 +228,6 @@ export default{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
          } )
         .then( async (res) => {
-          console.log(res.data);
         })
       })
     },
@@ -231,7 +238,7 @@ export default{
          })
         .then( async (res) => {
           this.dataFinal = res.data.data;
-          console.log(this.dataFinal)
+
           if(this.dataFinal.length>0)
             this.isData = true;
         })

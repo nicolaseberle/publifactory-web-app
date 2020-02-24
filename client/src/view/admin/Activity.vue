@@ -96,13 +96,15 @@
   },
   methods: {
     getTotalInvitation () {
-      axios.get('/api/requests/totalRequest')
+      axios.get('/api/requests/totalRequest',{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       })
       .then( async (res) => {
         this.nbTotalInvitation = res.data.data;
       }).catch((e)=>{console.log(e)})
     },
     getTotalRequest () {
-      axios.get('/api/activity/totalRequest',{},{
+      axios.get('/api/activity/totalRequest',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( async (res) => {

@@ -51,7 +51,7 @@ router.post(
 	controllers.remind
 );
 
-router.get('/totalRequest', controllers.totalRequest);
+router.get('/totalRequest', middlewares.authentication, controllers.totalRequest);
 router.get('/logo', controllers.logo);
 router.post('/:billingId', middlewares.authentication, controllers.create);
 router.post(

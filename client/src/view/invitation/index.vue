@@ -30,7 +30,7 @@
               prop="edi_name"
               width="120">
               <template slot-scope="props">
-                  <p style="text-align:center">{{ props.row.editor.journal }}</p>
+                  <p style="text-align:center">{{ props.row.journal }}</p>
               </template>
             </el-table-column>
               <el-table-column
@@ -89,12 +89,19 @@ export default{
       isData: false,
       currentDate: "",
       mylistrequest: [],
-      page:{current: 1,total:0}
+      page:{current: 1,total:0},
+      billingId: null
     }
   },
-  mounted() {
-    this.mylistrequest = this.getMyRequest(1)
+  async mounted() {
+
     this.currentDate = moment()
+    await axios.get('/api/users/me',{headers: {
+      'Authorization': `Bearer ${this.accessToken}`}
+    }).then(response => {
+      this.billingId = response.data.billing
+      })
+    this.mylistrequest = this.getMyRequest(1)
   },
   methods: {
     nextPage(val){
@@ -124,14 +131,15 @@ export default{
       return statusMap[status]
     },
     async getMyRequest(page=1){
-      await axios.get('/api/requests/?page='+page+'&count=10'+'&userId=true',{
+      await axios.get('/api/billings/',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( (res) => {
-        this.mylistrequest = res.data.data;
-        console.log(res.data.data)
-        this.page.total = res.data.data.length;
+        console.log(res.data)
+        this.mylistrequest = res.data.billing.requests;
+        this.page.total = res.data.billing.requests.length;
         this.isData = true;
+        console.log(this.mylistrequest)
       })
     }
   }
