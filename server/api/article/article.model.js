@@ -72,6 +72,9 @@ const ArticleSchema = new Schema({
 		default: false
 	}, // deprecated
 	status: {
+		/**
+		 * draft, preprint, review, publish
+		 */
 		type: String,
 		required: true,
 		default: 'draft'

@@ -229,12 +229,8 @@ module.exports.validateReview = async (req, res, next) => {
 	try {
 		const article = await await Article.findById(req.params.articleId);
 		const journal = await Journal.findById(req.params.journalId);
-		if (!article) {
-			if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
-		}
-		if (!journal) {
-			if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
-		}
+		if (!article) throw { code: 400, message: 'ARTICLE_NOT_FOUND' };
+		if (!journal) throw { code: 400, message: 'JOURNAL_NOT_FOUND' };
 		if (article.status !== 'preprint') {
 			throw { code: 403, message: 'ARTICLE_BAD_STATUS' };
 		}

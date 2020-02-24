@@ -3,7 +3,7 @@ import getters from './getters';
 import mutations from './mutations';
 
 const state = {
-	userArticleRight: ''
+	partialReviews: []
 };
 
 export default {

@@ -6,7 +6,10 @@ const isAuthorLead = require('./is-author-lead');
 async function submitToCollection({ articleId, userId, journalId }) {
 	const article = await Article.findById(articleId);
 	if (!article) throw new ApiError('ARTICLE_NOT_FOUND');
-	if (article.status !== 'preprint' && article.status !== 'draft') {
+	if (
+		article.status !== 'preprint'
+		//&& article.status !== 'draft') {
+	) {
 		throw new ApiError('ARTICLE_BAD_STATUS');
 	}
 	article.status = 'submit';
