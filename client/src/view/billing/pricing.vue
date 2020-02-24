@@ -124,7 +124,7 @@
               <el-col :span='8'>
                 <div class='item-title'><h2>How does the credit system work?</h2></div>
                 <div class='item-content'>
-                    <p>After signing up, $10 of free credits are offered. If you've used all your free credits, Publifactory will block new invitation</p>
+                    <p>After signing up, $5 of free credits are offered. If you've used all your free credits, Publifactory will block new invitation</p>
                 </div>
                 <div class='item-title'><h2>What forms of payment do you accept?</h2></div>
                 <div class='item-content'>
@@ -239,7 +239,7 @@ export default{
 }
 .item-content{
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   text-align: justify;
   text-justify: inter-word;
   font-family: "Helvetica Neue",sans-serif;
