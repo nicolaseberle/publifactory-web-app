@@ -1,9 +1,9 @@
-const User = require('../../user/user.model');
-const Journal = require('../../journal/journal.model');
-const { Billing } = require('../../billing/model');
-const { ApiError } = require('../../../config/error');
-const serviceRole = require('../../roles/services');
-const { Request } = require('../model');
+const User = require("../../user/user.model");
+const Journal = require("../../journal/journal.model");
+const { Billing } = require("../../billing/model");
+const { ApiError } = require("../../../config/error");
+const serviceRole = require("../../roles/services");
+const { Request } = require("../model");
 
 async function isRequestFromJournal(req, billing) {
 	const journal = await Journal.findOne({ billing: billing._id });
@@ -30,8 +30,8 @@ async function journalPermissions(journalId, authId) {
 	});
 	if (
 		!userRole ||
-		userRole.right !== 'editor' ||
-		userRole.right !== 'associate_editor'
+		userRole.right !== "editor" ||
+		userRole.right !== "associate_editor"
 	) {
 		return { read: false, write: false };
 	}
@@ -45,18 +45,20 @@ async function journalPermissions(journalId, authId) {
 async function permissions(req, res, next) {
 	try {
 		const request = await Request.findById(req.params.requestId);
-		if (!request) throw new ApiError('REQUEST_NOT_FOUND');
+		if (!request) throw new ApiError("REQUEST_NOT_FOUND");
 		const user = await User.findById(req.decoded._id).populate();
-		if (!user) throw new ApiError('USER_NOT_FOUND');
-		// bypass if admin:
-		const isAdmin = user.roles.find(role => role === 'admin');
-		if (isAdmin) req.permissions = { read: true, write: true };
+		if (!user) throw new ApiError("USER_NOT_FOUND");
 		const billing = await Billing.findOne({
 			requests: { $in: [req.params.requestId] }
 		});
 		req.billing = billing;
-		req.user = user;
-		if (!billing) throw new ApiError('BILLING_NOT_FOUND');
+		// bypass if admin:
+		const isAdmin = user.roles.find(role => role === "admin");
+		if (isAdmin) {
+			req.permissions = { read: true, write: true };
+			return next();
+		}
+		if (!billing) throw new ApiError("BILLING_NOT_FOUND");
 		if (isRequestFromUser(billing, user)) {
 			if (isAdmin) return next();
 			else {
