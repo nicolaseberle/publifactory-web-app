@@ -226,7 +226,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/dashboard/home',
     // hidden: true,
-    meta: { title: 'board', icon: 'appsbutton', noCache: true },
+    meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
     children: [
       {
         path: '/article',
@@ -259,6 +259,13 @@ export const constantRouterMap = [
         meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
         component: () =>
 					import('../view/applications/reviewermatcher/index_.vue')
+      },
+      {
+        path: '/boards',
+        hidden: state_,
+        name: 'Journal Board',
+        meta: { title: 'Journal Board', icon: 'book', noCache: true },
+        component: resolve => import('../view/boards/index.vue').then(resolve)
       },
       {
         path: '/dashboard/home',

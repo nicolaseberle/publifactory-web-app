@@ -119,6 +119,10 @@
                 <div class='item-content'>
                     <p>We don't store your code or credit card number on our server, transactions are synchronized with <a href='https://stripe.com/fr'>Stripe</a>, one of the safest service to make safe payments.</p>
                 </div>
+                <div class='item-title'><h2>Am I charged if the newspaper has an activated account?</h2></div>
+                <div class='item-content'>
+                    <p>No, you have to select in the invitation "editorial use", the journal will be charged</p>
+                </div>
 
               </el-col>
               <el-col :span='8'>
