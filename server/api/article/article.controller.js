@@ -1,5 +1,6 @@
 'use strict';
 
+const mongoose = require('mongoose');
 var User = require('../user/user.model');
 var Article = require('./article.model');
 const RolesArticle = require('../roles/article/roles.article.model');

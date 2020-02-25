@@ -2,6 +2,7 @@
   <div>
     <data-table ref="articles" @page-change="fetchArticles">
       <el-table
+        align="center"
         :data="articles"
         @row-click="setSelectedRow"
         fit
@@ -13,16 +14,22 @@
             <span>{{ scope.row.creationDate | moment('DD/MM/YYYY') }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="300px" label="Title">
+        <el-table-column class-name="author-col" min-width="300px" label="Title">
           <template slot-scope="scope">
             <router-link :to="'/articles/' + scope.row.id" class="link-type">
               <span>{{ scope.row.title }}</span>
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column min-width="300px" label="Journal">
+        <el-table-column class-name="author-col" min-width="300px" label="Journal">
           <template slot-scope="scope">
-            <span>{{scope.row.journal ? scope.row.journal.title : 'Preprint Collection'}}</span>
+            <span>
+              {{
+              scope.row.journal
+              ? scope.row.journal.title
+              : 'Preprint Collection'
+              }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column class-name="author-col" width="120px" label="Author">
@@ -73,9 +80,7 @@
           </template>
         </el-table-column>
         <el-table-column class-name="action-col" label="Actions" width="120">
-          <!-- <slot name="actionButton">Empty</slot> -->
-          <div>toto</div>
-          <!-- <action-button v-bind:actions="actions"></action-button> -->
+          <slot name="actionButton">Empty</slot>
         </el-table-column>
       </el-table>
     </data-table>
@@ -171,7 +176,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userId', 'accessToken', 'journalRoles'])
+    ...mapGetters(['userId', 'accessToken'])
   },
   components: {
     DataTable,
@@ -193,33 +198,30 @@ export default {
     actionAssignReviewer() {
       this.$emit('assignReviewer', this.selectedArticleId);
     },
-    async fetchArticlesInPreprint() {
-      const response = await axios.get(
-        '/api/journals/preprint/',
-        {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
-        },
-        {
-          params: {
-            page: 1,
-            count: 2
-          }
-        }
-      );
-      if (this.desiredstatus === 'All') {
-        this.articles = response.data.content.map(article => article.reference);
-      }
-    },
-    async fetchArticlesInJournal() {
-      const response = await axios.get(`/api/journals/`);
-    },
+    // async fetchArticlesInPreprint() {
+    //   const response = await axios.get(
+    //     '/api/journals/preprint/',
+    //     {
+    //       headers: { Authorization: `Bearer ${this.accessToken}` }
+    //     },
+    //     {
+    //       params: {
+    //         page: 1,
+    //         count: 2
+    //       }
+    //     }
+    //   );
+    //   if (this.desiredstatus === 'All') {
+    //     this.articles = response.data.content.map(article => article.reference);
+    //   }
+    // },
+
     actionSendEmailToAuthors() {},
     actionHistoricalActions() {},
     actionGetReferee() {},
     actionSurvey() {},
     async fetchArticles() {
-      await this.fetchArticlesInPreprint();
-      await this.fetchArticlesInJournal();
+      // await this.fetchArticlesInPreprint();
       // axios
       //   .get('/api/articles/', {
       //     headers: { Authorization: `Bearer ${this.accessToken}` }
@@ -233,7 +235,6 @@ export default {
       //       this.articles = list.data.articles.filter(
       //         d => d.status === this.desiredstatus
       //       );
-
       //     console.log(this.articles);
       //   })
       //   .catch(err => {
@@ -283,3 +284,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.center-text {
+  text-align: center;
+}
+</style>

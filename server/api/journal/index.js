@@ -9,11 +9,11 @@ const roles = require('../roles/journal/roles.journal.controller');
 
 const router = express.Router();
 
-router.get('/preprint/', journalController.getPreprintArticles);
+// router.get('/preprint/', journalController.getPreprintArticles);
 
 router.post('/', journalController.createJournal);
+router.get('/articles/:journalId?', journalController.getArticlesByJournal);
 router.get('/:id?', journalController.getJournals);
-
 router.post(
 	'/review/:journalId/:articleId/:answer(accept|reject|revision)',
 	journalController.validateReview

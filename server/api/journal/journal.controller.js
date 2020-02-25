@@ -576,29 +576,32 @@ module.exports.userFollowedJournals = async (req, res, next) => {
 	}
 };
 
-module.exports.getPreprintArticles = async (req, res, next) => {
+module.exports.getArticlesByJournal = async (req, res, next) => {
 	try {
 		const { page = 1, count = 20 } = req.query;
-		const preprint = await Journal.findOne({
-			title: 'Preprint Collection'
-		})
-			.populate({
-				path: 'content.reference',
-				options: {
-					limit: count, // https://github.com/Automattic/mongoose/issues/2151
-					skip: (page - 1) * count
-				},
-				populate: {
-					path: 'authors.author reviewers'
-				}
-			})
-			.sort({ 'content.reference.creationDate': -1 });
+		const populate = {
+			path: 'content.reference',
+			options: {
+				limit: count, // https://github.com/Automattic/mongoose/issues/2151
+				skip: (page - 1) * count
+			},
+			populate: {
+				path: 'authors.author reviewers'
+			}
+		};
+		const journal =
+			req.query.title && !req.params.journalId
+				? await Journal.findOne({ title: req.query.title })
+						.populate(populate)
+						.sort({ 'content.reference.creationDate': -1 })
+				: await Journal.findById(req.params.journalId)
+						.populate(populate)
+						.sort({ 'content.reference.creationDate': -1 });
 		return res
 			.status(200)
-			.json(preprint)
+			.json(journal)
 			.end();
 	} catch (error) {
-		console.log(error);
 		return next(error);
 	}
 };
