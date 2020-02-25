@@ -19,6 +19,10 @@ const emailEditorApproval = (request, userId) => `
       Decline
     </a>
   </p>
+  <p>
+    Text to say you should upgrade your billing. billing.quantity left
+  </p>
+
   <p>You can also do it from your dashboard <a>LINK TO DASHBOARD</a></>
 </div>`;
 

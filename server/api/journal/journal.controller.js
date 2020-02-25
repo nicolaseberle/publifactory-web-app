@@ -8,7 +8,7 @@ const RolesJournal = require('../roles/journal/roles.journal.model')
 const RolesArticle = require('../roles/article/roles.article.model')
 const Invitation = require('../invitations/invitations.model')
 const Email = require('../email/email.controller')
-
+const serviceBilling = require('../billing/services')
 const shortid = require('shortid')
 const configEmail = require('../../../config.js').email
 
@@ -52,7 +52,6 @@ exports.getJournals = async (req, res, next) => {
         populate: 'users content.reference',
         lean: true
       })
-      console.log(JSON.stringify(journals, null, '\t'))
       renameObjectProperty(journals, 'docs', 'journals')
     } else {
       // console.log(JSON.stringify("findJournalById", null, "\t"))
@@ -60,7 +59,6 @@ exports.getJournals = async (req, res, next) => {
         .populate('users')
         .populate('content.reference')
         .lean()
-      console.log(JSON.stringify(journals, null, '\t'))
       if (!journals) { throw { code: 404, message: 'Journals not found.' } }
     }
     console.log(journals)
@@ -135,11 +133,20 @@ module.exports.createJournal = async (req, res, next) => {
     const abstract = req.body.abstract.trim()
     const tags = req.body.tags
     const published = req.body.published
-    const newJournal = new Journal({ title, abstract, tags, published })
+    const newJournal = new Journal({ title, abstract, tags, published, slug: title })
     newJournal.users[0] = req.decoded._id
     const journal = await newJournal.save()
     new RolesJournal({ id_user: req.decoded._id, id_journal: journal._id, right: 'editor' }).save()
-    res.status(201).json({ success: true, journal: journal })
+    const editor = await UserModel.findById(req.decoded._id)
+    await serviceBilling.create({
+      billing: {
+        email: editor.email,
+        fullName: title
+      },
+      journalId: journal._id
+    })
+    const j = await journal.save()
+    res.status(201).json({ success: true, journal: j })
   } catch (err) {
     next(err)
   }

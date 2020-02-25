@@ -5,6 +5,7 @@ const list = require('./list');
 const upgradePlan = require('./upgrade-plan');
 const stripe = require('./stripe');
 const unsubscribe = require('./unsubscribe');
+const requestUpgrade = require('./request-upgrade');
 
 module.exports = {
 	create,
@@ -13,5 +14,6 @@ module.exports = {
 	list,
 	upgradePlan,
 	unsubscribe,
+	requestUpgrade,
 	...stripe
 };
