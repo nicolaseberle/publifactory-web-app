@@ -12,6 +12,7 @@ const shortid = require('shortid');
 const configEmail = require('../../../config.js').email;
 const userService = require('../user/services');
 const serviceRole = require('../roles/services');
+
 /**
  * Get list of articles
  * restriction: 'admin'
@@ -572,5 +573,32 @@ module.exports.userFollowedJournals = async (req, res, next) => {
 	} catch (e) {
 		console.log('userFollowedJournals :: error :: ', e);
 		next(e);
+	}
+};
+
+module.exports.getPreprintArticles = async (req, res, next) => {
+	try {
+		const { page = 1, count = 20 } = req.query;
+		const preprint = await Journal.findOne({
+			title: 'Preprint Collection'
+		})
+			.populate({
+				path: 'content.reference',
+				options: {
+					limit: count, // https://github.com/Automattic/mongoose/issues/2151
+					skip: (page - 1) * count
+				},
+				populate: {
+					path: 'authors.author reviewers'
+				}
+			})
+			.sort({ 'content.reference.creationDate': -1 });
+		return res
+			.status(200)
+			.json(preprint)
+			.end();
+	} catch (error) {
+		console.log(error);
+		return next(error);
 	}
 };

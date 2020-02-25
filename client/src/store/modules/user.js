@@ -69,6 +69,7 @@ const actions = {
           if (data._id) {
             commit('SET_USER_INFO', data)
           }
+          dispatch('getUserRoles', null, {root: true})
           resolve(data)
         }).catch(err => { reject(err) })
       } else {
@@ -115,6 +116,7 @@ const actions = {
         if (!data) {
           reject('error')
         }
+        dispatch('getUserRoles', null, {root: true})
         getUserInfo(data.token).then(user => {
           /* const userInfo = merge({}, user, {
             email: payload.email,
@@ -214,6 +216,7 @@ const actions = {
   },
   // updateUser action
   updateUser ({ commit, dispatch }, payload) {
+
     return new Promise((resolve, reject) => {
       updateUser(payload.firstname,
                   payload.lastname,
@@ -222,6 +225,7 @@ const actions = {
                     if (!data) {
                       reject('error')
                     }
+                    dispatch('getUserRoles', null, {root: true})
                     resolve()
                   }).catch(err => { reject(err) })
     })

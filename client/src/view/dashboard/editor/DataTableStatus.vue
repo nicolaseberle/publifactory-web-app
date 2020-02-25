@@ -10,23 +10,29 @@
       >
         <el-table-column class-name="date-col" width="140px" label="Date">
           <template slot-scope="scope">
-            <span>{{ scope.row.creationDate | moment("DD/MM/YYYY") }}</span>
+            <span>{{ scope.row.creationDate | moment('DD/MM/YYYY') }}</span>
           </template>
         </el-table-column>
         <el-table-column min-width="300px" label="Title">
           <template slot-scope="scope">
-            <router-link :to="'/articles/'+scope.row.id" class="link-type">
+            <router-link :to="'/articles/' + scope.row.id" class="link-type">
               <span>{{ scope.row.title }}</span>
             </router-link>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="300px" label="Journal">
+          <template slot-scope="scope">
+            <span>{{scope.row.journal ? scope.row.journal.title : 'Preprint Collection'}}</span>
           </template>
         </el-table-column>
         <el-table-column class-name="author-col" width="120px" label="Author">
           <template slot-scope="articles">
             <div v-if="articles.row.authors.length">
               <div v-for="item_author in articles.row.authors">
-                <div
-                  v-if="item_author.author"
-                >{{ item_author.author.firstname[0] }}. {{ item_author.author.lastname }}</div>
+                <div v-if="item_author.author">
+                  {{ item_author.author.firstname }}.
+                  {{ item_author.author.lastname }}
+                </div>
               </div>
             </div>
           </template>
@@ -34,15 +40,19 @@
         <el-table-column class-name="author-col" width="120px" label="Ass. Editor">
           <template slot-scope="articles">
             <div v-for="associate_editor in articles.row.associate_editor">
-              <div
-                v-if="associate_editor"
-              >{{ associate_editor.firstname[0] }}. {{ associate_editor.lastname }}</div>
+              <div v-if="associate_editor">
+                {{ associate_editor.firstname }}.
+                {{ associate_editor.lastname }}
+              </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column class-name="author-col" width="120px" label="Reviewer">
           <template slot-scope="articles">
-            <div v-if="articles.row.reviewers.length>0" v-for="reviewer in articles.row.reviewers">
+            <div
+              v-if="articles.row.reviewers.length > 0"
+              v-for="reviewer in articles.row.reviewers"
+            >
               <div v-if="reviewer">
                 <span style="white-space: pre;">{{ reviewer.firstname[0] }}. {{ reviewer.lastname }}</span>
               </div>
@@ -63,9 +73,9 @@
           </template>
         </el-table-column>
         <el-table-column class-name="action-col" label="Actions" width="120">
-          <template slot-scope="scope">
-            <action-button v-bind:actions="actions"></action-button>
-          </template>
+          <!-- <slot name="actionButton">Empty</slot> -->
+          <div>toto</div>
+          <!-- <action-button v-bind:actions="actions"></action-button> -->
         </el-table-column>
       </el-table>
     </data-table>
@@ -82,7 +92,8 @@ import actionButton from '../components/action-button';
 export default {
   locales,
   props: {
-    desiredstatus: String
+    desiredstatus: String,
+    articles: Array
   },
   data() {
     return {
@@ -145,22 +156,22 @@ export default {
       formVisible: false,
       flagAddReviewer: false,
       selectedRow: '',
-      selectedArticleId: '',
-      articles: [
-        {
-          id: '',
-          creationDate: '',
-          title: '',
-          address: '',
-          status: '',
-          authors: '',
-          reviewers: ''
-        }
-      ]
+      selectedArticleId: ''
+      // articles: [
+      //   {
+      //     id: '',
+      //     creationDate: '',
+      //     title: '',
+      //     address: '',
+      //     status: '',
+      //     authors: '',
+      //     reviewers: ''
+      //   }
+      // ]
     };
   },
   computed: {
-    ...mapGetters(['userId', 'accessToken'])
+    ...mapGetters(['userId', 'accessToken', 'journalRoles'])
   },
   components: {
     DataTable,
@@ -182,30 +193,52 @@ export default {
     actionAssignReviewer() {
       this.$emit('assignReviewer', this.selectedArticleId);
     },
+    async fetchArticlesInPreprint() {
+      const response = await axios.get(
+        '/api/journals/preprint/',
+        {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        },
+        {
+          params: {
+            page: 1,
+            count: 2
+          }
+        }
+      );
+      if (this.desiredstatus === 'All') {
+        this.articles = response.data.content.map(article => article.reference);
+      }
+    },
+    async fetchArticlesInJournal() {
+      const response = await axios.get(`/api/journals/`);
+    },
     actionSendEmailToAuthors() {},
     actionHistoricalActions() {},
     actionGetReferee() {},
     actionSurvey() {},
-    fetchArticles() {
-      axios
-        .get('/api/articles/', {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
-        })
-        .then(list => {
-          if (this.desiredstatus === 'All')
-            this.articles = list.data.articles.filter(
-              d => d.status !== 'draft'
-            );
-          else
-            this.articles = list.data.articles.filter(
-              d => d.status === this.desiredstatus
-            );
+    async fetchArticles() {
+      await this.fetchArticlesInPreprint();
+      await this.fetchArticlesInJournal();
+      // axios
+      //   .get('/api/articles/', {
+      //     headers: { Authorization: `Bearer ${this.accessToken}` }
+      //   })
+      //   .then(list => {
+      //     if (this.desiredstatus === 'All')
+      //       this.articles = list.data.articles.filter(
+      //         d => d.status !== 'draft'
+      //       );
+      //     else
+      //       this.articles = list.data.articles.filter(
+      //         d => d.status === this.desiredstatus
+      //       );
 
-          console.log(this.articles);
-        })
-        .catch(err => {
-          console.error(err);
-        });
+      //     console.log(this.articles);
+      //   })
+      //   .catch(err => {
+      //     console.error(err);
+      //   });
     },
     closeCreationDialog() {
       this.formVisible = false;
@@ -242,8 +275,11 @@ export default {
       });
     }
   },
-  mounted() {
-    this.fetchArticles();
+  async mounted() {
+    console.log('datatable=>', this.articles);
+    // this.fetchArticles();
+    // console.log('----',this.journalRoles);
+    // await this.fetchArticlesInPreprint();
   }
 };
 </script>

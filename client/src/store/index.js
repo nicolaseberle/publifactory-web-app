@@ -10,6 +10,7 @@ import getters from './getters';
 import partialReview from './modules/partial-review';
 import globalReviews from './modules/global-review';
 import rights from './modules/rights';
+import roles from './modules/roles';
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ const store = new Vuex.Store({
 		routeLoading,
 		partialReview,
 		globalReviews,
-		rights
+		rights,
+		roles
 	},
 	getters
 });
