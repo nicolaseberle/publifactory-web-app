@@ -396,6 +396,8 @@ export default {
 						//console.log(this.myJournals
 
 					})
+				} else {
+					this.currentPlan="disconnected"
 				}
 			} catch(err){
 				this.currentPlan="freemium"
@@ -547,7 +549,7 @@ export default {
 		},
 		sendRequestRev(formMail) {
 			if(!this.loggedIn) {
-				this.createGuestAccount(formMail)
+				this.modalLoginVisible = true
 			}
 			if(this.loggedIn) {
 				this.confirmationOfSending = false;

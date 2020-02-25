@@ -327,6 +327,17 @@ export default{
     sendRequest (formInvitationPublisher) {
       this.$refs[formInvitationPublisher].validate(async (valid) => {
         if (valid) {
+          let journalId = null
+          axios.post("/api/billing/request-upgrade/"+journalId,
+          {
+            headers: {'Authorization': `Bearer ${this.accessToken}`}
+          }).then((response)=>{
+
+          })
+          .catch((error)=>{
+
+          })
+
 
         }
       })
@@ -383,6 +394,7 @@ export default{
           this.mySubscription = []
         })
     },
+
     async unsubscribe(){
 
         await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId, { billingId:this.billingId } ,{
