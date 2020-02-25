@@ -9,7 +9,7 @@
     </el-alert>
 
   </el-row>
-<h2 style='font-size:1.4rem;'>Individual Plan {{currentPlan}}</h2>
+<h2 style='font-size:1.4rem;'>Individual Plan</h2>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
@@ -164,6 +164,7 @@
   </el-card>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <h2>Invite Publishers to use the service</h2>
+    <el-tag type="info" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account. </el-tag>
     <el-form :model="form" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
       <el-col :span='18'>
         <el-form-item label="Journal" prop="journal">
