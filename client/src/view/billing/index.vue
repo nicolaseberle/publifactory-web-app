@@ -9,7 +9,7 @@
     </el-alert>
 
   </el-row>
-<h2 style='font-size:1.4rem;'>Individual Plan</h2>
+<h2 style='font-size:1.4rem;'>Individual Plan {{currentPlan}}</h2>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
@@ -28,10 +28,11 @@
               <el-button v-on:click="downgrade()">Delete your individual plan</el-button>
             </div>
           </div>
-          <div v-else-if="currentPlan==='freemium'" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+          <div v-else-if="currentPlan==='freemium' & numberRequestTotal<10" class='mv3 bg-lightest-light-blue bl bw2 light-blue' style='  width: 100%;display: table;'>
+
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
               <div class='bill-title-free-plan'>Free Plan</div>
-              <div class='bill-content-free-plan'>Request {{ numberRequestTotal }} out of your 30 free requests</div>
+              <div class='bill-content-free-plan'>Request {{ numberRequestTotal }} out of your 10 free requests</div>
             </div>
             <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
               <el-button v-on:click="upgrade()">Upgrade to remove your individual limit</el-button>
@@ -39,7 +40,7 @@
           </div>
           <div v-else class='mv3 bg-lightest-yellow bl bw2 yellow' style='  width: 100%;display: table;'>
             <div class='flex-l items-center justify-between' style='display: table-cell;'>
-              <div class='bill-title-free-plan'>Locked account</div>
+              <div class='bill-title-free-plan'>Free Plan</div>
               <div class='bill-content-free-plan'>You have reached the limit of free invitations</div>
             </div>
             <div  style='display: table-cell;text-align:right;vertical-align: middle;'>
@@ -72,7 +73,7 @@
                 <p style="text-align:center;">$1/request</p>
             </el-table-column>
             <el-table-column
-              label="Usage(request)"
+              label="Usage(request) (*)"
               width="200">
               <template slot-scope="props">
                 <p style="text-align:center;">{{ props.row.quantity}}</p>
@@ -123,6 +124,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div style='font-size:0.8rem;text-align:right;'>
+        <p><i>*The invoice may show a discrepancy between the number of requests made and the number indicated. A delay of 24 hours regularizes the situation.</i></p>
         </div>
       </div>
 
@@ -193,8 +197,8 @@
     </el-col>
   </el-card>
 
-<el-dialog destroy-on-close custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
-    <showPricing @close="closeAndReload()" v-on:close-pricing="closeAndReload()"/>
+<el-dialog  custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
+    <showPricing :currentPlan='currentPlan' @close="closeAndReload()" v-on:close-pricing="closeAndReload()"/>
 </el-dialog>
 <el-dialog :visible.sync="dialogSendEditorVisible" title="Invitation">
     <sendEditorInvitation @close="dialogSendEditorVisible=false"/>
@@ -297,26 +301,27 @@ export default{
       this.lastname = response.data.lastname
       this.billingId = response.data.billing
       })
+      this.getSubscription()
   },
   watch:{
     visiblePricing (val){
       if(val===false){
         this.reloadView()
+        console.log("watch visiblePricing",val)
+        console.log("currentPlan",this.currentPlan)
       }
     }
   },
   methods: {
     closeAndReload() {
       this.visiblePricing = false
+      console.log("closeAndReload")
+
     },
     async reloadView () {
-      await axios.get('/api/users/me',{headers: {
-        'Authorization': `Bearer ${this.accessToken}`}
-      }).then(response => {
-          this.billingId = response.data.billing
-          this.currentPlan = response.data.billing.plan
-          this.$forceUpdate();
-        })
+      this.getSubscription()
+      this.$forceUpdate();
+      console.log("$forceUpdate")
     },
     sendRequest (formInvitationPublisher) {
       this.$refs[formInvitationPublisher].validate(async (valid) => {
@@ -337,9 +342,9 @@ export default{
         confirmButtonText: "OK",
         cancelButtonText: "Cancel",
         type: "success"
-      }).then(()=>{
+      }).then(async ()=>{
         this.unsubscribe()
-        this.reloadView()
+        await this.reloadView()
       })
     },
     remoteMethod(query) {
@@ -356,45 +361,6 @@ export default{
 				this.listJournals = [];
 			}
 		},
-    /*
-    getMyRequest(){
-      axios.get('/api/requests/?page=1&count=1000&userId=true',{
-        headers: {'Authorization': `Bearer ${this.accessToken}`}
-       })
-      .then( async (res) => {
-        var outJSON = res.data.data.map(item=>{return {journal:item.editor.journal}})
-
-        var groupBy = function(xs, key) {
-          return xs.reduce(function(rv, x) {
-            (rv[x[key]] = rv[x[key]] || []).push(x);
-            return rv;
-          }, {});
-        };
-        var groubedByPublisher = groupBy(outJSON, 'journal')
-        //this.listOfPublisher = Object.keys(groubedByPublisher)
-        Object.keys(groubedByPublisher).forEach((category)=>{
-          console.log(category,groubedByPublisher[category].length)
-          this.listOfPublisher.push({'name':category,'nb':groubedByPublisher[category].length,'hidden':true,"unlock": false})
-        });
-        this.numberTotal = res.data.data.length;
-        this.amountTotal = this.unitPrice * this.numberTotal;
-        if ((this.amountTotal - this.unitPrice*30)<=0){
-          this.toto = 0
-        }
-        else{
-          this.toto = this.amountTotal - this.unitPrice*10
-        }
-        this.isData = true;
-
-        this.tableData= [{
-            user: this.userId,
-           numberTotal: this.numberTotal,
-           amountTotal: this.amountTotal,
-           unitPrice: this.unitPrice,
-           unlock: true
-         }]
-      })
-    },*/
     async getSubscription(){
 
         await axios.get('/api/billings/?page=1&count=1000&userId=true',{
@@ -421,6 +387,7 @@ export default{
         await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId, { billingId:this.billingId } ,{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then((response)=>{
+          this.getSubscription()
         })
     }
 

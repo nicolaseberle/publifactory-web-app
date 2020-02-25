@@ -67,7 +67,7 @@
 				  active-text="Editorial use"
 				  inactive-text="Personal use">
 				</el-switch>
-				<el-tag type="warning" v-if="editorialUse" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account</el-tag>
+				<el-tag type="warning" v-if="editorialUse" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account.<br> The invitation will be sent after his/her confirmation and a email will inform you about it.</el-tag>
 				<el-form-item  label="Journal requesting the reviewing" prop="journal">
 					<el-select
 						v-model="currentJournal"
@@ -355,11 +355,11 @@ export default {
 		this.editor.on("text-change", (delta, oldDelta, source) => {
 			this.formMail.message = this.editor.root.innerHTML;
 		});
-		this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		/*this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 		if (Number.isNaN(this.maxInvitation)) {
 			this.$cookie.set("maxInvitation",0);
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-		}
+		}*/
 
 		this.getListJournal()
 	},
@@ -391,7 +391,7 @@ export default {
 						this.currentPlan = response.data.billing.plan
 						if(response.data.billing){
 							this.mySubscription = [response.data.billing.subscription]
-							this.numberRequestTotal = response.data.billing.requests.length
+							this.maxInvitation = response.data.billing.requests.length
 						}
 						this.myJournals = response.data.journals
 						//console.log(this.myJournals
@@ -461,6 +461,7 @@ export default {
 			return "toolbar-container";
 		},
 		showPromptUserConnected() {
+			if(this.currentPlan==="premium" | (this.currentPlan==="freemium" & this.maxInvitation<10)){
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -468,10 +469,18 @@ export default {
 			})
 				.then(this.handlePromptSuccess)
 				.catch(this.handlePromptFailure);
+			} else {
+				this.$confirm("You have reached your quota of free requests", "Blocked account", {
+					confirmButtonText: "OK",
+					type: "error"
+				})
+					.then(this.handlePromptUpdgrade)
+					.catch(this.handlePromptFailure);
+			}
 		},
 		showPromptUserDisconnected() {
 			const createElement = this.$createElement;
-			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+			//this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
@@ -500,6 +509,15 @@ export default {
 			}
 
 
+		},
+		handlePromptUpdgrade() {
+			this.confirmationOfSending = false;
+			this.$emit("close");
+			this.$message({
+				type: "info",
+				message: "Invitation canceled"
+			});
+			this.$router.push('/billing')
 		},
 		handlePromptFailure() {
 			this.confirmationOfSending = false;

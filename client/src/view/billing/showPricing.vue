@@ -34,7 +34,12 @@
           </ul>
           </div>
           <div class='footer-pricing'>
-            <el-button class='blue-button-trial' disabled round>Current trial</el-button>
+            <div v-if='currentPlan==="freemium"'>
+              <el-button type="success" disabled round>Current trial</el-button>
+            </div>
+            <div v-else>
+              <el-button class='blue-button' round>Freemium</el-button>
+            </div>
           </div>
         </div>
           <div class='package' v-if='statePremium'>
@@ -56,10 +61,15 @@
             </ul>
             </div>
             <div class='footer-pricing'>
+              <div v-if='currentPlan==="premium"'>
+                <el-button  type="success"  disable round>Current Plan</el-button>
+              </div>
+              <div v-else>
               <el-button v-if='state' class='blue-button' @click="showSubscriptionView()" round>Update</el-button>
               <el-row v-if='state==false'>
                 <el-button  icon='el-icon-arrow-left' @click="state=true" circle></el-button>
               </el-row>
+              </div>
             </div>
           </div>
         <div class='package' v-if='state || !statePremium'>
@@ -116,12 +126,12 @@
     </el-row>
     -->
 
-    <el-dialog custom-class='subscribe-dialog-container' top='10vh' :visible.sync="visibleDiagSubscription"  title="Subscription" width="30%" append-to-body>
+    <!--<el-dialog custom-class='subscribe-dialog-container' top='10vh' :visible.sync="visibleDiagSubscription"  title="Subscription" width="30%" append-to-body>
         <createSubscription @close="closeCheckout()"/>
     </el-dialog>
     <el-dialog custom-class='subscribe-dialog-container' :visible.sync="dialogSendEditorVisible"  title="Invitation" append-to-body>
         <sendEditorInvitation @close="closeEditorInvitation()"/>
-    </el-dialog>
+    </el-dialog>-->
 
   </div>
 </template>
@@ -142,6 +152,7 @@ export default{
       'accessToken'
     ])
   },
+  props:['currentPlan'],
   components: {createSubscription,sendEditorInvitation},
   data () {
     return {
@@ -151,7 +162,8 @@ export default{
       statePremium: true
     }
   },
-  mounted () {
+  async mounted () {
+
   },
   watch: {
     visibleDiagSubscription (val) {
@@ -164,16 +176,15 @@ export default{
     showSubscriptionView () {
       this.state = false
       this.statePremium = true
-      //visibleDiagSubscription=true
     },
     showEditorView () {
       this.state = false
       this.statePremium = false
-      //visibleDiagSubscription=true
     },
     closeCheckout () {
       this.visibleDiagSubscription=false
       this.$emit('close-pricing')
+      
 
     },
     closeEditorInvitation () {
