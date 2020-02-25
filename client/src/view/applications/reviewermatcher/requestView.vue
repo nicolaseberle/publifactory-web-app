@@ -67,7 +67,7 @@
 				  active-text="Editorial use"
 				  inactive-text="Personal use">
 				</el-switch>
-				<div style="color:#e6a23c;line-height:1.2rem;font-size:0.7rem;border: 1px solid #faecd8;border-radius:4px;background-color:#fdf6ec;padding: 6px;margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account.<br> The invitation will be sent after his/her confirmation and a email will inform you about it.</div>
+				<div v-if='editorialUse' style="color:#e6a23c;line-height:1.2rem;font-size:0.7rem;border: 1px solid #faecd8;border-radius:4px;background-color:#fdf6ec;padding: 6px;margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account.<br> The invitation will be sent after his/her confirmation and an email will inform you about it.</div>
 				<el-form-item  label="Journal requesting the reviewing" prop="journal">
 					<el-select
 						v-model="currentJournal"
@@ -329,7 +329,6 @@ export default {
 		currentJournal(val){
 			this.formMail.journal = val
 			if(val!=='' && val!=='None'){
-				console.log("watch currentJournal:: ")
 				this.checkJournalSubscription ()
 			}
 		},
@@ -461,7 +460,7 @@ export default {
 			return "toolbar-container";
 		},
 		showPromptUserConnected() {
-			if(this.currentPlan==="premium" | (this.currentPlan==="freemium" & this.maxInvitation<10)){
+			if(this.currentPlan==="premium" | this.currentPlan==='nonActivated' | this.currentPlan==='activated' | (this.currentPlan==="freemium" & this.maxInvitation<10)){
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
