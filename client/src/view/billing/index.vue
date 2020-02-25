@@ -367,7 +367,7 @@ export default{
         await axios.get('/api/billings/?page=1&count=1000&userId=true',{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then((response)=>{
-          //console.log(response)
+          console.log(response.data)
           this.currentPlan = response.data.billing.plan
           if(response.data.billing){
             this.mySubscription = [response.data.billing.subscription]
