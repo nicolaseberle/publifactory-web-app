@@ -1,7 +1,7 @@
 const { ApiError } = require('../../../config/error');
 const Journal = require('../journal.model');
 
-async function read(journalId, filters = undefined) {
+async function read(journalId = undefined, filters = undefined) {
 	const journal =
 		filters && filters.title
 			? await Journal.findOne({ title: filters.title }).populate(

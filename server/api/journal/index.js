@@ -7,7 +7,6 @@ const journalMiddlewares = require('./middlewares');
 const middlewares = require('../../middlewares/index');
 const rolesJournal = require('../roles/journal/roles.journal.controller');
 
-const auth = require('../../auth/auth.service');
 const roles = require('../roles/journal/roles.journal.controller');
 
 const router = express.Router();
