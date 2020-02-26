@@ -174,14 +174,14 @@
     <el-row>
     <h2>Invite Publishers to use the service</h2>
     <el-tag type="info" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account. </el-tag>
-    <el-form :model="formInvitationPublisher" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
+    <el-form :model="formInvitationPublisher" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="140px">
 
-      <el-col :span='18'>
-        <el-row>
-        <el-col :span='12'>
-        <el-form-item label="Journal" prop="journal">
+
+      <el-row :gutter='10'>
+        <el-col :span="16">
+        <el-form-item label="Journal" prop="title">
           <el-select
-            v-model="formInvitationPublisher.journal"
+            v-model="formInvitationPublisher.title"
             filterable
             remote
             placeholder="Enter your revue"
@@ -197,40 +197,49 @@
           </el-select>
         </el-form-item>
         </el-col>
-        <el-col :span='12'>
-          <el-form-item label="ISSN" prop="issn">
-            <div>{{formInvitationPublisher.journal.issn}}</div>
-          </el-form-item>
+        <el-col :span="8">
+        <el-form-item label="ISSN" prop="issn">
+          <div>{{formInvitationPublisher.issn}}</div>
+        </el-form-item>
         </el-col>
-        </el-row>
+      </el-row>
+        <el-form-item label="Editor in chief:" >
+          <el-form-item label="Firstname" prop="firstnameEditorInChief">
+            <el-input v-model="formInvitationPublisher.firstnameEditorInChief"></el-input>
+          </el-form-item>
+          <el-form-item label="Lastname" prop="lastnameEditorInChief">
+            <el-input v-model="formInvitationPublisher.lastnameEditorInChief" ></el-input>
+          </el-form-item>
+          <el-form-item label="Email" prop="emailEditorInChief">
+            <el-input v-model="formInvitationPublisher.emailEditorInChief" ></el-input>
+          </el-form-item>
+        </el-form-item>
 
-        <el-form-item label="Editor in Chief - Name" prop="nameEditorInChief">
-          <el-input v-model="formInvitationPublisher.nameEditorInChief" ></el-input>
+
+
+
+<!--
+
+        <el-form-item label="Fields" >
+        <el-tag
+          :key="tag"
+          v-for="tag in formInvitationPublisher.journal.tags"
+           effect="plain"
+          :disable-transitions="false"
+          @close="handleCloseCat(tag)">
+          {{tag}}
+        </el-tag>
         </el-form-item>
-        <el-form-item label="Editor in Chief - Email" prop="emailEditorInChief">
-          <el-input v-model="formInvitationPublisher.emailEditorInChief" ></el-input>
-        </el-form-item>
-        <el-row>
-          <el-col :span='24'>
-            <el-form-item label="Fields" >
-            <el-tag
-              :key="tag"
-              v-for="tag in formInvitationPublisher.journal.tags"
-               effect="plain"
-              :disable-transitions="false"
-              @close="handleCloseCat(tag)">
-              {{tag}}
-            </el-tag>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-col>
+
+-->
+
+      <el-form-item  style='width:100%;text-align:right;'>
+        <el-button type='primary' @click="sendRequest()" round disabled>Send invitation</el-button>
+      </el-form-item>
     </el-form>
-    <el-col :span='6'>
-      <div style='width:100%;text-align:right;'>
-        <el-button type='primary' @click="sendRequest()" round>Send invitation</el-button>
-      </div>
-    </el-col>
+
+
+
     </el-row>
   </el-card>
 
@@ -267,20 +276,30 @@ export default{
       journal: ["Nature"],
       listJournals: [],
       formInvitationPublisher: {
-        journal: {title:'',issn:'',tags:[]},
+        title: '',
+        tags: [],
+        issn: '',
         emailEditorInChief: '',
-        nameEditorInChief: '',
-        issn: ''
+        firstnameEditorInChief: '',
+        lastnameEditorInChief: ''
+
       },
       formInvitationPublisherRules: {
-        journal: [
+        title: [
           {
             required: true,
             message: "You need to enter your journal",
             trigger: "blur"
           }
         ],
-        nameEditorInChief: [
+        firstnameEditorInChief: [
+          {
+            required: true,
+            message: "You need to enter the name of the editor in chief",
+            trigger: "blur"
+          }
+        ],
+        lastnameEditorInChief: [
           {
             required: true,
             message: "You need to enter the name of the editor in chief",
@@ -371,19 +390,50 @@ export default{
       console.log(this.formInvitationPublisher)
       this.$refs['formInvitationPublisher'].validate(async (valid) => {
         if (valid) {
-          /*let journalId = null
-          axios.post("/api/billing/request-upgrade/"+journalId,
+          /*2 cases : the journal exist in the base and the journal doesn't exist in the base*/
+          let journal = null;
+          await axios.get("/api/journals/title?title=" + this.formInvitationPublisher.title,
           {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
-          }).then((response)=>{
-
           })
-          .catch((error)=>{
+          .then(async (response)=>{
+           console.log("ce journal existe déjà dans la base de donnée")
+           journal = response.data
+           console.log(journal)
+           await this.sendInvitationToEic(journal)
 
-          })*/
-          console.log(this.formInvitationPublisher)
-
+         }).catch(async (err)=>{
+            console.log("ce journal n'existe pas dans la base de donnée")
+            journal = await this.createJournal()
+            console.log(journal.data)
+            await this.sendInvitationToEic(journal.data)
+          })
         }
+      })
+    },
+    async createJournal () {
+      try{
+        const response = await axios.post("/api/journals/",
+        { title: this.formInvitationPublisher.title},
+        {
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+        })
+        return response
+      }
+      catch{
+        return null
+      }
+
+    },
+    async sendInvitationToEic (journal) {
+      await axios.post("/api/billings/request-upgrade/"+journal._id,{},
+      {
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+      }).then((response)=>{
+
+      })
+      .catch((error)=>{
+
       })
     },
     setSelectedRow (row, event, column) {
@@ -451,9 +501,11 @@ export default{
       var itemSelected = await this.listJournals.find(function(item) {
         return item.title===selected;
       });
-      this.formInvitationPublisher.journal = {title: itemSelected.title,issn: itemSelected.issn, tags: itemSelected.tags}
+      this.formInvitationPublisher.title =  itemSelected.title
+      this.formInvitationPublisher.issn = itemSelected.issn
+      this.formInvitationPublisher.tags = itemSelected.tags
 
-       await axios.get("/api/journals/title?title=" + itemSelected.title)
+       await axios.get("/api/journals/title?title=" +   this.formInvitationPublisher.title)
        .then((response)=>{
         console.log("ce journal existe déjà dans la base de donnée")
        }).catch((err)=>{
@@ -656,5 +708,8 @@ display: inline;
 .right-item{
 display: inline;
 margin: 20px;
+}
+.el-select{
+  width:100%;
 }
 </style>

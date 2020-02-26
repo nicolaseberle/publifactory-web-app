@@ -27,7 +27,7 @@
 
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" width='100%' @click='submit()'>Send</el-button>
+      <el-button type="primary" width='100%' @click='submit()' disabled>Send</el-button>
     </el-form-item>
   </el-form>
   </div>
