@@ -188,8 +188,8 @@
             :loading="loading">
             <el-option
               v-for="item in listJournals"
-              :key="item.title"
-              :label="item.label"
+              :key="item.label"
+              :label="item.title"
               :value="{title: item.title,issn: item.issn, tags: item.tags}">
             </el-option>
           </el-select>
@@ -267,7 +267,7 @@ export default{
       journal: ["Nature"],
       listJournals: [],
       formInvitationPublisher: {
-        journal: '',
+        journal: {title:'',issn:'',tags:[]},
         emailEditorInChief: '',
         nameEditorInChief: '',
         issn: ''
@@ -415,9 +415,9 @@ export default{
   						item.label = item.title
               item.value = item.title
               item.title = item.title
-              item.issn = item.issn1 + "/" + item.issn2 + "/" + item.issn3
+              item.issn = item.issn1 + "  " + item.issn2 + "  " + item.issn3
               item.tags = [item.forOneName]
-              return item
+              return item;
   					});}
             )
 				}, 200);
@@ -447,12 +447,14 @@ export default{
         })
     },
     async loadJournalInformation (selected){
+      console.log(selected.title)
+      this.formInvitationPublisher.journal = {title: selected.title,issn: selected.issn, tags: selected.tags}
       if(!selected.title){
        await axios.get("/api/journals/title?title=" + selected.title)
        .then((response)=>{
         console.log("ce journal existe déjà dans la base de donnée")
        }).catch((err)=>{
-         console.log("une erreur s'est produite")
+         console.log("Le journal n'existe pas")
        })
       }
     },
