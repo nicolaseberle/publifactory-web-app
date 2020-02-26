@@ -61,7 +61,6 @@ async function create(req, res, next) {
 				}
 			}
 		}
-
 		const response = await serviceCreate(
 			req.body,
 			req.decoded._id,

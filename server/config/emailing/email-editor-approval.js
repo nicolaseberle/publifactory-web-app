@@ -8,12 +8,12 @@ const emailEditorApproval = (request, userId) => `
   <p>Publifactory allows Editors from a journal to identify the best suited reviewers for research articles from any field.</p>
 
   <p>
-  ${request.editor.name} (${request.editor.email}) declared being an
-  Associate Editor for your journal: ${request.editor.journal.title}, could you confirm this information ?
-  <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/accepted">
+  ${request.user.name} (${request.user.email}) declared being an
+  Associate Editor for your journal: ${request.journal.title}, could you confirm this information ?
+  <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.journal._id}/${userId}/${request._id}/accepted">
       Yes
   </a>
-    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/rejected">
+    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.journal._id}/${userId}/${request._id}/rejected">
       Decline
     </a>
     <p>You can also do it from your dashboard <a>LINK TO DASHBOARD</a></>

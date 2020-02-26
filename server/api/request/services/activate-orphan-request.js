@@ -3,7 +3,7 @@ const { Billing } = require('../../billing/model')
 const Journal = require('../../journal/journal.model')
 const create = require('./create')
 
-async function activateOrphanRequest (journalId, userId) {
+async function activateOrphanRequest (journalId) {
   const journal = await Journal.findById(journalId).populate({
     path: 'billing',
     populate: {
@@ -15,7 +15,7 @@ async function activateOrphanRequest (journalId, userId) {
   await Billing.updateOne({ _id: journal.billing._id }, {
     $set: { requests: [] }
   }, { runValidators: true })
-  await journal.save()
+	await journal.save()
   const orphanRequestIds = await Promise.all(
     requests.map(async request => {
       const { _id, __v, ...req } = request.toObject() // eslint-disable-line
