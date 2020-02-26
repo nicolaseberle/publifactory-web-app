@@ -2,54 +2,13 @@
   <div class="components-container-journal">
   <el-row :gutter="10" @page-change="fetch">
       <div>
-        <el-button round @click="flagCreateJournal=true" style="float:left;margin: 10px 10px 20px 10px; " icon='el-icon-plus'>Create Collection</el-button>
-        <el-dialog title="Create journal" width="70%" :visible.sync="flagCreateJournal">
-          <CreateJournal v-if="flagCreateJournal" v-on:close="flagCreateJournal=false"></CreateJournal>
+        <el-button round @click="flagAddJournal=true" style="float:left;margin: 10px 10px 20px 10px; " icon='el-icon-plus'>Add Journal in my board</el-button>
+        <el-dialog title="Add a Journal in my Board" width="50%" :visible.sync="flagAddJournal">
+          <AddUserToJournal v-if="flagAddJournal" v-on:close="flagAddJournal=false"></AddUserToJournal>
         </el-dialog>
       </div>
     <el-col :span="22" v-for="(journal,key) in journals" :key='changeState'>
-      <el-card class="box-card"  style='margin-bottom:20px;'>
-        <div slot="header" class="clearfix" style='text-align:left;margin-left:10px'>
-          <a :href="'/journals/' + journal._id "><span>{{journal.title}}</span></a>
-          <!--<i class="ai ai-open-access ai-2x"></i>-->
-          <div style='float:right'>
-            <el-button  v-on:click="handleCreateJournal()" type=""  round>Submit your article</el-button>
-            <el-button v-show='journal.followed===false'  v-on:click="handleFollowJournal(key,journal._id)" type="" plain round>Follow the journal</el-button>
-            <el-button v-show='journal.followed===true' v-on:click="handleUnFollowJournal(key,journal._id)" type="primary" plain round>Followed</el-button>
-          </div>
-        </div>
-        <div class="body">
-          <el-row :gutter="10">
-            <el-col :span="4">
-          <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
-              <g>
-            <defs>
-              <linearGradient :id=journal._id x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" v-bind:style="{'stop-color': journal.color_1 , 'stop-opacity':1}" />
-                <stop offset="100%" v-bind:style="{'stop-color': journal.color_2 , 'stop-opacity':1}" />
-              </linearGradient>
-            </defs>
-            <rect width="120" height="150" class="GradientBorder" :style="{'fill': 'url(#'+ journal._id + ')'}" />
-            <rect x="10" y="10" width="100" height="130"  style="fill:url(#grad1);stroke-width:1;stroke:rgb(51,51,51)" />
-            <text x="20" y="30" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" >{{journal.title.split(" ")[0]}}</text>
-            <text x="60" y="50" font-family="Calibri" font-size="11" fill="rgb(33,33,33)" >{{journal.title.split(" ")[1]}}</text>
-            </g>
-          </svg>
-          </el-col>
-          <el-col :span="12">
-            <span style="margin-left: 5em;">{{journal.abstract}}</span>
 
-
-
-          </el-col>
-          <el-col :span="6" :offset="2">
-            <strong>Created on : </strong>{{ journal.creationDate | moment("DD/MM/YYYY") }}
-            <p><strong>Editor-In-Chief:</strong> <a v-for="item in journal.users" href="#" title="author">{{item.firstname}} {{item.lastname}}, </a></p>
-            <p><strong>Associate Editor:</strong> </p>
-          </el-col>
-        </el-row>
-        </div>
-      </el-card>
     </el-col>
   </el-row>
 </div>
@@ -58,10 +17,11 @@
   import { mapGetters } from 'vuex'
   import locales from '../../locales/article'
   import axios from 'axios'
-  import CreateJournal from '../../components/Journal/CreateJournal'
+  import AddUserToJournal from './components/AddUserToJournal'
 
   export default {
   locales,
+  name: "EditorBoard",
   data () {
     return {
       journals: [],
@@ -69,7 +29,7 @@
       dialogCreationJournal : false,
       links: [],
       state2: '',
-      flagCreateJournal: false,
+      flagAddJournal: false,
       changeState : 0
     }
   },
@@ -80,7 +40,7 @@
     ])
   },
   components: {
-    CreateJournal
+    AddUserToJournal
   },
   created () {
 
