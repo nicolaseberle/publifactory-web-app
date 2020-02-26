@@ -190,7 +190,7 @@
               v-for="item in listJournals"
               :key="item.label"
               :label="item.title"
-              :value="{title: item.title,issn: item.issn, tags: item.tags}">
+              :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -249,8 +249,6 @@ import * as moment from 'moment';
 
 import sendEditorInvitation from './sendRequestToEditor'
 import showPricing from './showPricing'
-
-const querystring = require('query-string');
 
 export default{
   name: 'billing',
@@ -408,15 +406,16 @@ export default{
 				this.loading = true;
 				setTimeout(() => {
           axios.get('/api/journal-names/?count=20&title='+query)
-            .then((response)=>{
+            .then( (response)=>{
             this.list = response.data;
             this.loading = false;
   					this.listJournals = this.list.filter(item => {
   						item.label = item.title
-              item.value = item.title
+
               item.title = item.title
               item.issn = item.issn1 + "  " + item.issn2 + "  " + item.issn3
               item.tags = [item.forOneName]
+              item.value = item.title
               return item;
   					});}
             )
@@ -447,8 +446,10 @@ export default{
         })
     },
     async loadJournalInformation (selected){
-      console.log(selected.title)
-      this.formInvitationPublisher.journal = {title: selected.title,issn: selected.issn, tags: selected.tags}
+      var itemSelected = this.listJournals.find(function(item) {
+        return item.title===selected;
+      });
+      this.formInvitationPublisher.journal = {title: itemSelected.title,issn: itemSelected.issn, tags: itemSelected.tags}
       if(!selected.title){
        await axios.get("/api/journals/title?title=" + selected.title)
        .then((response)=>{
