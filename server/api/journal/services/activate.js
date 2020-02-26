@@ -3,6 +3,7 @@ const JournalRole = require('../../roles/journal/roles.journal.model');
 const User = require('../../user/user.model');
 const read = require('./read');
 const Email = require('../../email/email.controller');
+const { activateOrphanRequest } = require('../../request/services');
 
 async function activate({ journalId, userId }) {
 	const journal = await read(journalId);
@@ -16,11 +17,13 @@ async function activate({ journalId, userId }) {
 		id_journal: journal._id, // eslint-disable-line
 		right: 'editor'
 	}).save();
-	await journal.save();
+
 	new Email(user.email).sendEmail({
 		subject: ``,
 		html: ''
 	});
+	await journal.save();
+	await activateOrphanRequest(journal._id, user._id);
 	return journal;
 }
 
