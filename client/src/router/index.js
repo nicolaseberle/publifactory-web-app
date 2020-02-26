@@ -262,9 +262,8 @@ export const constantRouterMap = [
       },
       {
         path: '/boards',
-        hidden: state_,
-        name: 'Journal Board',
-        meta: { title: 'Journal Board', icon: 'book', noCache: true },
+        name: 'Editorial Board',
+        meta: { title: 'Editorial Board', icon: 'book', noCache: true },
         component: resolve => import('../view/boards/index.vue').then(resolve)
       },
       {

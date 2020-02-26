@@ -171,9 +171,11 @@
     </div>
   </el-card>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
+    <el-row>
     <h2>Invite Publishers to use the service</h2>
     <el-tag type="info" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account. </el-tag>
     <el-form :model="formInvitationPublisher" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
+
       <el-col :span='18'>
         <el-row>
         <el-col :span='12'>
@@ -214,7 +216,7 @@
             <el-tag
               :key="tag"
               v-for="tag in formInvitationPublisher.journal.tags"
-              effect="dark"
+               effect="plain"
               :disable-transitions="false"
               @close="handleCloseCat(tag)">
               {{tag}}
@@ -229,7 +231,7 @@
         <el-button type='primary' @click="sendRequest()" round>Send invitation</el-button>
       </div>
     </el-col>
-
+    </el-row>
   </el-card>
 
 <el-dialog  custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
@@ -446,18 +448,18 @@ export default{
         })
     },
     async loadJournalInformation (selected){
-      var itemSelected = this.listJournals.find(function(item) {
+      var itemSelected = await this.listJournals.find(function(item) {
         return item.title===selected;
       });
       this.formInvitationPublisher.journal = {title: itemSelected.title,issn: itemSelected.issn, tags: itemSelected.tags}
-      if(!selected.title){
-       await axios.get("/api/journals/title?title=" + selected.title)
+
+       await axios.get("/api/journals/title?title=" + itemSelected.title)
        .then((response)=>{
         console.log("ce journal existe déjà dans la base de donnée")
        }).catch((err)=>{
          console.log("Le journal n'existe pas")
        })
-      }
+
     },
     async unsubscribe(){
         await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId, { billingId:this.billingId } ,{
