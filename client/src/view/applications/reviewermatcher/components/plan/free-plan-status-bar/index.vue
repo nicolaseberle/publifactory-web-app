@@ -5,8 +5,8 @@
 		<div>
 			<div class="free-plan-box mv3 bw2 bl bg-lightest-light-blue">
 				<div class="free-plan-content" style='font-size:11px'>
-					<span><b>Free Plan</b> - Request {{ this.maxInvitation }} out of your 10 free requests</span>
-					<span>{{ this.maxInvitation }} / 10</span>
+					<span><b>Free Plan</b> - Request {{Math.min(this.maxInvitation,10) }} out of your 10 free requests</span>
+					<span>{{Math.min(this.maxInvitation,10) }} / 10</span>
 				</div>
 				<el-progress
 					:show-text="false"
@@ -35,8 +35,8 @@ export default {
 	},
 	data() {
 		return {
-			computedPercentage: this.maxInvitation * 10,
-			invitationNumber: this.maxInvitation,
+			computedPercentage: Math.min(this.maxInvitation,10) * 10,
+			invitationNumber: Math.min(this.maxInvitation,10),
 			colors: [
 				{color: '#5cb87a', percentage: 60},
 				{color: '#5cb87a', percentage: 80},
@@ -55,11 +55,11 @@ export default {
 	      handler(val) {
 	        if (Number.isNaN(val)) {
 	          this.invitationNumber = 0;
-	          this.computedPercentage = this.invitationNumber * 10;
+	          this.computedPercentage = Math.min(this.maxInvitation,10) * 10;
 	          return;
 	        }
-	        this.computedPercentage = val * 10;
-	        this.invitationNumber = val;
+	        this.computedPercentage = Math.min(val,10) * 10;
+	        this.invitationNumber = Math.min(val,10) ;
 	        return;
 	      }
 	    }

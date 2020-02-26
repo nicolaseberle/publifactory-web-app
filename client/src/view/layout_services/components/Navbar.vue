@@ -20,7 +20,7 @@
          <el-link :underline="false"  style='font-size:16px' @click='centerDialogVisible = true'><span>Contact</span></el-link>
       </div>
       <div class='right-menu-item' v-show="loggedIn">
-         <el-link :underline="false"  style='font-size:16px' @click='goToDashboard'><span>Dashboard</span></el-link>
+         <el-link :underline="false"  style='font-size:16px' @click='goToDashboard'><svg-icon icon-class='appsbutton'/><!--<span>Dashboard</span>--></el-link>
       </div>
       <el-dropdown v-show="loggedIn" style='vertical-align:middle' class="right-menu-item" trigger="click">
         <div class="avatar-wrapper">
@@ -34,6 +34,9 @@
             </el-dropdown-item>
             <el-dropdown-item @click.native="doSettings">
               {{ $t('navbar.settings') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="doBilling">
+              {{ $t('navbar.billing') }}
             </el-dropdown-item>
             <!--</router-link>-->
             <el-dropdown-item @click.native="doLogout">
@@ -136,6 +139,9 @@ export default {
     goToDashboard () {
       this.$router.push(this.$route.query.redirect || '/dashboard/home')
     },
+    doBilling () {
+      this.$router.push('/billing')
+    }
   }
 }
 </script>
