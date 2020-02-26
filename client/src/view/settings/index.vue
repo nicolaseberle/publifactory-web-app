@@ -176,7 +176,7 @@
         </el-form>
       </el-row>
 
-
+<!--
       <el-row style='margin-top:20px'>
         <el-form >
           <el-row>
@@ -199,7 +199,7 @@
               </el-col>
             </el-row>
           </el-form>
-        </el-row>
+        </el-row>-->
       </div>
       </el-tab-pane>
     </el-tabs>

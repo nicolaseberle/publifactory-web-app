@@ -9,9 +9,16 @@ import Layout_services from '../view/layout_services/Layout'
 
 Vue.use(VueRouter)
 
-const state_ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? true : false;
-const state__ = (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') ? false : true;
-
+const state_ = !!(
+  process.env.DEV_LOCAL === 'true' ||
+	process.env.NODE_ENV === 'production' ||
+	process.env.NODE_ENV === 'staging'
+)
+const state__ = !(
+  process.env.DEV_LOCAL === 'true' ||
+	process.env.NODE_ENV === 'production' ||
+	process.env.NODE_ENV === 'staging'
+)
 
 export const constantRouterMap = [
   {
@@ -65,11 +72,7 @@ export const constantRouterMap = [
       skipAuth: true
     },
     props: route => ({ userId: route.query.userId })
-  }, /*
-	{
-		path: '/services_test',
-		component: Layout_services,
-		redirect: 'services_test',
+  }, /*	{		path: '/services_test',		component: Layout_services,		redirect: 'services_test',
 		hidden: true,
 		children: [
 			{
@@ -118,13 +121,49 @@ export const constantRouterMap = [
     hidden: true,
     children: [
       {
-        path: '/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
+        path:
+					'/approvals/:journalId/:userId/:requestId/:status(accepted|rejected)',
+        name: 'approvals',
+        meta: {
+          skipAuth: false
+        },
+        component: resolve => {
+					import('../view/approvals/').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path: '/account-validation/:token',
+        name: 'account-validation',
+        meta: {
+          skipAuth: true
+        },
+        component: resolve => {
+					import('../view/account-validation/').then(resolve)
+        }
+      }
+    ]
+  },
+  {
+    path: '',
+    component: Layout_services,
+    hidden: true,
+    children: [
+      {
+        path:
+					'/requests/:requestId/:status(accepted|rejected|outfield|unsubscribed)',
         name: 'answer',
         meta: {
           skipAuth: true
         },
         component: resolve => {
-          import('../view/request/').then(resolve)
+					import('../view/request/').then(resolve)
         }
       }
     ]
@@ -187,45 +226,52 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/dashboard/home',
     // hidden: true,
-    meta: { title: 'board', icon: 'appsbutton', noCache: true },
+    meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
     children: [
       {
         path: '/article',
-        hidden: state_ ,
+        hidden: state_,
         name: 'my_articles',
         meta: { title: 'my_articles', icon: 'edit', noCache: true },
-        component: (resolve) => import('../view/dashboard/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/dashboard/index.vue').then(resolve)
       },
       {
         path: '/journal',
-        hidden: state_ ,
+        hidden: state_,
         name: 'my_journals',
         meta: { title: 'my_journals', icon: 'book', noCache: true },
-        component: (resolve) => import('../view/journals/index.vue').then(resolve)
-      },/*
-      {
-        path: '/data',
-        name: 'my_data',
-        meta: { title: 'my_data', icon: 'database', noCache: true },
+        component: resolve => import('../view/journals/index.vue').then(resolve)
+      }, /*      {        path: '/data',        name: 'my_data',        meta: { title: 'my_data', icon: 'database', noCache: true },
         component: () => import('../view/data/index.vue')
       },*/
       {
         path: '/invitation',
         name: 'my_invitation',
         meta: { title: 'my_invitation', icon: 'guide 2', noCache: true },
-        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/invitation/index.vue').then(resolve)
       },
       {
         path: '/reviewermatcher',
         name: 'reviewer_matcher',
         hidden: state__,
         meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
-        component: () => import('../view/applications/reviewermatcher/index_.vue')
+        component: () =>
+					import('../view/applications/reviewermatcher/index_.vue')
+      },
+      {
+        path: '/boards',
+        hidden: state_,
+        name: 'Editorial Board',
+        meta: { title: 'Editorial Board', icon: 'book', noCache: true },
+        component: resolve => import('../view/boards/index.vue').then(resolve)
       },
       {
         path: '/dashboard/home',
         hidden: true,
-        component: (resolve) => import('../view/invitation/index.vue').then(resolve)
+        component: resolve =>
+					import('../view/invitation/index.vue').then(resolve)
       }
     ]
   }, //
@@ -268,10 +314,7 @@ export const constantRouterMap = [
         },
         component: () =>
 					import('../view/applications/reviewermatcher/index_.vue')
-      }, /*
-			{
-				path: 'summarize',
-				name: 'summarize_text',
+      }, /*			{				path: 'summarize',				name: 'summarize_text',
 				meta: {
 					title: 'summarize_text',
 					icon: 'network',
@@ -341,7 +384,19 @@ export const constantRouterMap = [
           roles: ['admin']
         },
         component: () => import('../view/admin/invitationReviewer.vue')
+      },
+      {
+        path: 'evaluation',
+        name: 'Evaluation',
+        meta: {
+          title: 'Evaluation',
+          icon: 'exam',
+          noCache: true,
+          roles: ['admin']
+        },
+        component: () => import('../view/admin/Evaluation.vue')
       }
+
     ]
   },
   {
@@ -400,7 +455,10 @@ export const constantRouterMap = [
         }
       },
       {
-        path: '/pricing_',
+        path: '/pricing',
+        meta: {
+          skipAuth: true
+        },
         name: 'my_pricing',
         component: resolve => {
 					import('../view/billing/pricing.vue').then(resolve)
@@ -435,20 +493,6 @@ export const constantRouterMap = [
         name: 'my_billing',
         component: resolve => {
 					import('../view/billing/index.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricing',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricing.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricingAE',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricingAE.vue').then(resolve)
         }
       }
     ]

@@ -97,6 +97,17 @@
             v-popover:popdel>
           </el-button>
         </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="I don't know" placement="top">
+          <el-button
+            type="primary"
+            size="mini"
+            plain
+            icon='el-icon-warning-outline'
+            circle
+            v-on:click="$emit('dontknow')">
+          </el-button>
+
+        </el-tooltip>
       </div>
     </div>
   </div>

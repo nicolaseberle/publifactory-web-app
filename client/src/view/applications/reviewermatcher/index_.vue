@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <div v-if='!loggedIn' class="bandeau">ALPHA v0.3.8</div>
+      <div v-if='!loggedIn' class="bandeau">ALPHA v0.4.0</div>
       <hgroup>
         <h1><span style='letter-spacing: -0.04em;'>Reviewer search engine</span></h1>
         <h2><span style='letter-spacing: -0.04em;'>Getting the most relevant reviewers for your paper <span class='title-highlight'>in 3 steps</span></span></h2>
@@ -292,7 +292,7 @@
           <el-table-column type="expand" width="1">
             <template slot-scope="props">
               <div class="box-card" shadow="never" v-if="state_click[props.$index] == 1">
-                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)"/>
+                <researcherCard :author="props.row" :index="props.$index" :list="listPertinence" v-on:close="deleteRow(props.$index, tableData, props.row)" v-on:validate="validateRow(props.$index, tableData, props.row)" v-on:dontknow="unvalidateRow(props.$index, tableData, props.row)"/>
               </div>
               <!--<article v-if="state_click[props.$index] == 2">
                 <strong>Contacts :</strong>
@@ -411,34 +411,6 @@
                 @click="displayInfosB(scope.$index, scope.row)"
                 v-popover:popcon>
               </el-button>
-<!--              <el-popover
-                ref="popcheck"
-                placement="top"
-                trigger="hover"
-                content="The author matches correctly">
-              </el-popover>
-              <el-button
-                type="success"
-                plain
-                icon="el-icon-check"
-                circle
-                @click.native.prevent="validateRow(scope.$index, tableData)"
-                v-popover:popcheck/>
-              <el-popover
-                ref="popdel"
-                placement="top"
-                trigger="hover"
-                content="The author does not match">
-              </el-popover>
-              <el-button
-                type="info"
-                plain
-                icon="el-icon-close"
-                circle
-                @click.native.prevent="deleteRow(scope.$index, tableData)"
-                v-popover:popdel>
-              </el-button>
--->
             </template>
           </el-table-column>
         </el-table>
@@ -454,31 +426,35 @@
       </el-row>
     </div>
     </div>
-    <el-dialog
-      title="Send a Request to Review"
-      :visible.sync="centerDialogVisible"
-      width="65%">
-      <requestView v-if="centerDialogVisible" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
+    <div class="request-modal">
+      <el-dialog
+        title="Send a Request to Review"
+        :visible.sync="centerDialogVisible"
+        width="65%"
+        top='10vh'
+        >
+        <requestView v-if="centerDialogVisible" :billingId="billingId" :formPost="formPost" :formMail='formMail' :rowInfos='rowInfos' v-on:close="centerDialogVisible = false"/>
 
-    </el-dialog>
-    <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
-      <h1 style='font-size:1.5rem;'>Welcome </h1>
-      <h2></h2>
-      <p>Change your password</p>
-      <br>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="Email">
-          <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="New Password">
-          <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type='primary' @click="doLogout">Quit</el-button>
-        <el-button type='primary' @click="changePassword" :loading="loadingAccess">Save</el-button>
-      </span>
-    </el-dialog>
+      </el-dialog>
+      <el-dialog :visible.sync="visibleDiagFirstConnexion" title="Access & Permission" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false">
+        <h1 style='font-size:1.5rem;'>Welcome </h1>
+        <h2></h2>
+        <p>Change your password</p>
+        <br>
+        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+          <el-form-item label="Email">
+            <el-input v-model="form.email" :value="form.email"  :placeholder="form.email" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="New Password">
+            <el-input v-model="form.password" type="password" placeholder="password" ></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button type='primary' @click="doLogout">Quit</el-button>
+          <el-button type='primary' @click="changePassword" :loading="loadingAccess">Save</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -508,11 +484,16 @@ export default {
   },
   data () {
     return {
+      modalLoginVisible: true,
       formMail: {
         object: '',
         mailDest: '',
         name: '',
+        firstname: '',
+        lastname: '',
         journal: 'None',
+        nameEditorInChief: '',
+        emailEditorInChief: '',
         message: '',
         deadline: '',
         relaunch: '2x1month',
@@ -597,7 +578,8 @@ export default {
         password: '',
         firstname: '',
         lastname: ''
-      }
+      },
+      billingId : null
     }
   },
   async mounted () {
@@ -607,9 +589,12 @@ export default {
       }).then(response => {
         this.formMail.mailDest = response.data.email
         this.formMail.name = response.data.firstname + ' ' +  response.data.lastname
+        this.formMail.firstname = response.data.firstname
+        this.formMail.lastname =  response.data.lastname
         this.formMail.cgu = true
 
         this.form.email = response.data.email
+        this.billingId = response.data.billing
         })
         // a guest account has only one role : [guest]
         if (this.roles.includes('guest')) {
@@ -685,7 +670,7 @@ export default {
           this.requestInfos["deadline"] = this.formMail["deadline"]
           this.requestInfos["pub_mail"] = this.formMail["mailDest"]
           this.requestInfos["pub_journal"] = this.formMail["journal"]
-          this.requestInfos["pub_name"] = this.formMail["name"]
+          this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"]
 
           new Promise ((resolve,reject) => {
             axios.get('https://service.publifactory.co/api/get_mail_id?id=' + this.requestInfos.rev_id)
@@ -698,6 +683,8 @@ export default {
               }
               this.centerDialogVisible = false;
               console.log(this.requestInfos);
+            }).catch((e)=>{
+              console.log(e);
             })
           })
         }
@@ -1217,7 +1204,14 @@ export default {
         this.$refs.refTable.toggleRowExpansion(row);
       }
     },
-    deleteRow(index, rows, row) {
+    async deleteRow(index, rows, row) {
+
+      await axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":0,"evaluationNegative":1,"evaluationUnknown":0})
+      .then((res) => {
+          console.log("sendEvaluation :: ", res.data);
+        }
+      )
+
       this.$refs.refTable.toggleRowExpansion(row);
       this.isExpanded[index] = false;
       this.state_click[index] = 0;
@@ -1230,15 +1224,23 @@ export default {
       let temp = JSON.stringify(this.listPertinence)
       let today = new Date();
       let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
-      console.log(token);
+      /*console.log(token);
       new Promise ((resolve,reject) => {
         axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
         .then( async (res) => {
           console.log("after", res.data);
         })
-      })
+      })*/
+
     },
-    validateRow(index, rows, row) {
+    async validateRow(index, rows, row) {
+
+      await axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":1,"evaluationNegative":0,"evaluationUnknown":0})
+      .then((res) => {
+          console.log("sendEvaluation :: ", res.data);
+        }
+      )
+
       if (typeof this.listPertinence.list_failed[index] != 'undefined'){
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;
@@ -1251,13 +1253,46 @@ export default {
         let temp = JSON.stringify(this.listPertinence)
         let today = new Date();
         let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
-        console.log(token);
+        /*console.log(token);
         new Promise ((resolve,reject) => {
           axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
           .then( async (res) => {
             console.log("after", res.data);
           })
-        })
+        })*/
+
+
+      } else {
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+      }
+    },
+    unvalidateRow(index, rows, row) {
+      if (typeof this.listPertinence.list_failed[index] != 'undefined'){
+        this.$refs.refTable.toggleRowExpansion(row);
+        this.isExpanded[index] = false;
+        this.state_click[index] = 0;
+
+        this.listPertinence.list_failed.splice(index, 1);
+
+        this.listPertinence.ratio = this.listPertinence.list_failed.length / this.listPertinence.nb_suggestion
+        console.log("before", this.listPertinence);
+        let temp = JSON.stringify(this.listPertinence)
+        let today = new Date();
+        let token = this.formPost.title.replace(/\s/g, '').substring(0, 3) + today.getDate() + today.getMonth() + today.getFullYear() + this.formPost.title.replace(/\s/g, '').substr(this.formPost.title.length - 3)
+        /*console.log(token);
+        new Promise ((resolve,reject) => {
+          axios.get('https://service.publifactory.co/api/add_list_pertinence?data=' + temp + '&token=' + token)
+          .then( async (res) => {
+            console.log("after", res.data);
+          })
+        })*/
+        axios.post("api/services/sendEvaluation",{"fields":this.formPost.fields,"subfields":this.formPost.sub_cat,"evaluationPositive":0,"evaluationNegative":0,"evaluationUnknown":1})
+        .then((res) => {
+            console.log("sendEvaluation :: ", res.data);
+          }
+        )
       } else {
         this.$refs.refTable.toggleRowExpansion(row);
         this.isExpanded[index] = false;
@@ -1596,4 +1631,17 @@ hgroup {
   top: 14px;
   z-index: 1;
 }
+
+.request-modal  .el-dialog .el-dialog__header {
+    background-color: #FFF;
+    border-top: 5px solid #2F4155!important;
+}
+
+.request-modal .el-dialog__header .el-dialog__title{
+ color: #333;
+ font-size: 1.8rem;
+ font-family: 'DNLTPro-bold';
+ }
+
+
 </style>

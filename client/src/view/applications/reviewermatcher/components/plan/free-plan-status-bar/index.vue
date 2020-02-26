@@ -3,30 +3,21 @@
 	<div class="free-plan-container">
 		<!--<p class="free-plan-align-center-title"><strong>Free Plan</strong></p>-->
 		<div>
-			<div class="free-plan-box">
+			<div class="free-plan-box mv3 bw2 bl bg-lightest-light-blue">
 				<div class="free-plan-content" style='font-size:11px'>
-					<span>Request {{ this.maxInvitation }} out of your 10 free requests</span>
-					<span>{{ this.maxInvitation }} / 10</span>
+					<span><b>Free Plan</b> - Request {{Math.min(this.maxInvitation,10) }} out of your 10 free requests</span>
+					<span>{{Math.min(this.maxInvitation,10) }} / 10</span>
 				</div>
 				<el-progress
 					:show-text="false"
-					:stroke-width="strokeWidth"
+					:stroke-width="8"
 					:percentage="computedPercentage"
 					:color="colors"
 					type="line"
 				>
 				</el-progress>
-				<div class="free-plan-content" style='font-size:11px'>
-					<span>Monthly requests reset in {{remainingDay}} days.</span>
-				</div>
 			</div>
 		</div>
-		<!--
-		<div class="free-plan-button-container">
-			<el-button @click="upgrade" type="danger" :disabled="true"
-				>Upgrade</el-button
-			>
-		</div>-->
 	</div>
 </template>
 
@@ -36,24 +27,16 @@ import { mapGetters } from "vuex";
 // To get cookies : this.$cookie.get("maxInvitation");
 
 export default {
-	name: "quotaRequestBox",
+	name: "freePlanStatusBar",
 	props: {
-		strokeWidth: {
-			type: Number,
-			default: 8
-		},
 		maxInvitation: {
 			type: Number
-		},
-		remainingDay: {
-			type: Number
-		},
-
+		}
 	},
 	data() {
 		return {
-			computedPercentage: this.maxInvitation * 10,
-			invitationNumber: this.maxInvitation,
+			computedPercentage: Math.min(this.maxInvitation,10) * 10,
+			invitationNumber: Math.min(this.maxInvitation,10),
 			colors: [
 				{color: '#5cb87a', percentage: 60},
 				{color: '#5cb87a', percentage: 80},
@@ -72,11 +55,11 @@ export default {
 	      handler(val) {
 	        if (Number.isNaN(val)) {
 	          this.invitationNumber = 0;
-	          this.computedPercentage = this.invitationNumber * 10;
+	          this.computedPercentage = Math.min(this.maxInvitation,10) * 10;
 	          return;
 	        }
-	        this.computedPercentage = val * 10;
-	        this.invitationNumber = val;
+	        this.computedPercentage = Math.min(val,10) * 10;
+	        this.invitationNumber = Math.min(val,10) ;
 	        return;
 	      }
 	    }
@@ -92,7 +75,6 @@ export default {
 	display: flex;
 	flex-direction: column;
 	line-height: 16px;
-	width: 100%;
 	margin-left:40px;
 	margin-right:20px;
 }
@@ -113,5 +95,20 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	padding: 5px 0px 5px 0px;
+}
+.bg-lightest-light-blue {
+    background-color: #F0F7FF;
+}
+.bl{
+  border-left-style: solid;
+}
+.mv3{
+  margin: 1rem 0;
+  padding:  0.5rem 1rem ;
+  border-radius: 2px;
+}
+
+.bw2 {
+    border-width: 4px;
 }
 </style>

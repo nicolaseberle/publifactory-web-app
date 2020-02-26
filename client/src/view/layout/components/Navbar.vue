@@ -84,7 +84,7 @@ export default {
     return {
       flag_user: false,
       navbar_user: false,
-      state_: (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'production') ? false : true
+      state_: (process.env.DEV_LOCAL === 'true' || process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production') ? false : true
     }
   },
   computed: {

@@ -13,7 +13,7 @@
           @row-click="setSelectedRow">
           <el-table-column class-name="date-col" width="180px" label="Date">
             <template slot-scope="props">
-              <span>{{ props.row.history[0].date | moment("DD/MM/YYYY") }}</span>
+              <span>{{ props.row.createdAt | moment("DD/MM/YYYY") }}</span>
             </template>
           </el-table-column>
             <el-table-column
@@ -30,7 +30,12 @@
               prop="edi_name"
               width="120">
               <template slot-scope="props">
-                  <p style="text-align:center">{{ props.row.editor.journal }}</p>
+                <div v-if='props.row.journal'>
+                  <p style="text-align:center">{{ props.row.journal }}</p>
+                </div>
+                <div v-else >
+                  <p style="text-align:center">None</p>
+                </div>
               </template>
             </el-table-column>
               <el-table-column
@@ -89,12 +94,19 @@ export default{
       isData: false,
       currentDate: "",
       mylistrequest: [],
-      page:{current: 1,total:0}
+      page:{current: 1,total:0},
+      billingId: null
     }
   },
-  mounted() {
-    this.mylistrequest = this.getMyRequest(1)
+  async mounted() {
+
     this.currentDate = moment()
+    await axios.get('/api/users/me',{headers: {
+      'Authorization': `Bearer ${this.accessToken}`}
+    }).then(response => {
+      this.billingId = response.data.billing
+      })
+    this.mylistrequest = this.getMyRequest(1)
   },
   methods: {
     nextPage(val){
@@ -123,13 +135,13 @@ export default{
       }
       return statusMap[status]
     },
-    getMyRequest(page=1){
-      axios.get('/api/requests/?page='+page+'&count=10'+'&userId=true',{
+    async getMyRequest(page=1){
+      await axios.get('/api/billings/',{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
-      .then( async (res) => {
-        this.mylistrequest = res.data.data;
-        this.page.total = res.data.data.length;
+      .then( (res) => {
+        this.mylistrequest = res.data.billing.requests;
+        this.page.total = res.data.billing.requests.length;
         this.isData = true;
       })
     }

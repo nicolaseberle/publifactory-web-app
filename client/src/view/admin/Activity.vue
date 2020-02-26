@@ -47,82 +47,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <!--
-    <el-row :gutter='10'>
-      <el-col :span='4'>
-        <el-card>
-          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-            <svg-icon icon-class="user"/>
-              Total Users
-            </div>
-          <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>350</div>
-        </el-card>
-      </el-col>
-        <el-col :span='4'>
-      <el-card>
-        <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-          <svg-icon icon-class="flask-outline"/>
-            Total lab
-          </div>
-        <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>55</div>
-      </el-card>
-      </el-col>
-      <el-col :span='4'>
-        <el-card>
-          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-          <svg-icon icon-class="layers"/>
-            Total Articles
-          </div>
-        <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>2500</div>
-      </el-card>
-      </el-col>
-      <el-col :span='4'>
-        <el-card>
-          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-          <svg-icon icon-class="book"/>
-            Total Collections
-          </div>
-        <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>10</div>
-      </el-card>
-      </el-col>
-      <el-col :span='4'>
-        <el-card>
-          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-          <svg-icon icon-class="consulting-message"/>
-            Total Reviews
-          </div>
-        <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>547</div>
-      </el-card>
-      </el-col>
-      <el-col :span='4'>
-        <el-card>
-          <div style='color:#696969;font-size:1rem;margin:-10px -5px 0 0;'>
-          <svg-icon icon-class="eye_open"/>
-            Total Views
-          </div>
-        <div style='color:#696969;font-size:3rem;padding-top:1rem;font-weight:800'>1k</div>
-      </el-card>
-      </el-col>
-    </el-row>
     <el-row style='margin-top:20px'>
-      <el-card>
-        <div slot="header" class="clearfix">
-          <span>Platform activity</span>
-        </div>
-        <platform-chart id='platform-chart'/>
-      </el-card>
-    </el-row>-->
-    <el-row style='margin-top:20px'>
-        <!--<el-col :span='8'>
-          <el-card>
-            <div slot="header" class="clearfix">
-              <span>Recent Activity</span>
-            </div>
-            <div>
-              <activityList/>
-            </div>
-          </el-card>
-        </el-col>-->
         <el-col :span='24'>
           <el-card>
             <div slot="header" class="clearfix">
@@ -171,13 +96,17 @@
   },
   methods: {
     getTotalInvitation () {
-      axios.get('/api/requests/totalRequest')
+      axios.get('/api/requests/totalRequest',{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       })
       .then( async (res) => {
         this.nbTotalInvitation = res.data.data;
       }).catch((e)=>{console.log(e)})
     },
     getTotalRequest () {
-      axios.get('/api/activity/totalRequest')
+      axios.get('/api/activity/totalRequest',{
+        headers: {'Authorization': `Bearer ${this.accessToken}`}
+       })
       .then( async (res) => {
         this.nbTotalRequest = res.data.data;
       }).catch((e)=>{console.log(e)})

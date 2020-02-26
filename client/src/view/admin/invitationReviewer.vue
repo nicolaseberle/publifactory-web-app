@@ -1,49 +1,5 @@
 <template>
   <div class='app-container'>
-    <!--<el-row style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
-      <h2 style="font-family:DNLTPro-regular;">Listing mail request</h2>
-      <el-table
-      ref="listAllMail"
-      highlight-current-row
-      :data="listAllMail">
-
-        <el-table-column type="expand" width="20">
-          <template slot-scope="props">
-            <el-form ref="formList" :model="formList" label-width="120px">
-              <el-form-item v-bind:key="item._id" v-for="item in props.row.list" label="temp">
-                <p slot="label"><a target="new" v-bind:href="'https://www.semanticscholar.org/author/'+item.id">{{item.name}} ({{item.id}})</a></p>
-                <el-input v-model="item.mail" size="mini"></el-input>
-              </el-form-item>
-              <el-form-item size="mini">
-                <el-button type="primary" @click="">Send List</el-button>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="Title"
-          prop="title"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.title }}</p>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          label="Mail"
-          prop="mail"
-          width="200">
-          <template slot-scope="props">
-            <p style="text-align:center;">{{ props.row.mail_publisher }}</p>
-          </template>
-        </el-table-column>
-
-      </el-table>
-
-    </el-row>-->
-
-
     <el-row v-if="isData" style='padding: 20px; margin-bottom: 20px; font-family:DNLTPro-regular;'>
       <h2 style="font-family:DNLTPro-regular;">List of requests</h2>
       <content-module name="dataFinal">
@@ -66,9 +22,9 @@
               </el-steps>
             </template>
           </el-table-column>
-          <el-table-column class-name="date-col" width="180px" label="Date">
+          <el-table-column class-name="date-col" width="140px" label="Date">
             <template slot-scope="props">
-              <span>{{ props.row.history[0].date | moment("DD/MM/YYYY, h:mm a") }}</span>
+              <span>{{ props.row.createdAt | moment("DD/MM/YYYY") }}<br>{{ props.row.createdAt | moment("h:mm a") }}</span>
             </template>
           </el-table-column>
             <el-table-column
@@ -83,12 +39,20 @@
             <el-table-column
               label="Publisher"
               prop="edi_name"
-              width="120">
+              width="140">
               <template slot-scope="props">
-                <el-tooltip class="item" effect="dark" placement="top">
-                  <div slot="content">{{props.row.editor.email}}<br>{{ props.row.editor.name }}</div>
-                  <p style="text-align:center">{{ props.row.editor.journal }}</p>
-                </el-tooltip>
+                <div v-if='props.row.journal'>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">{{props.row.user.firstname}}<br>{{ props.row.user.lastname }}</div>
+                    <p style="text-align:center">{{ props.row.journal }}</p>
+                  </el-tooltip>
+                </div>
+                <div v-else>
+                  <el-tooltip class="item" effect="dark" placement="top">
+                    <div slot="content">{{ props.row.user.email }}</div>
+                    <p style="text-align:center">{{props.row.user.firstname}} {{ props.row.user.lastname }}</p>
+                  </el-tooltip>
+                </div>
               </template>
             </el-table-column>
 
@@ -136,7 +100,7 @@
                 </el-select>
               </template>
             </el-table-column>-->
-            <el-table-column class-name="status-col" label="Status" width="120">
+            <el-table-column class-name="status-col" label="Status" width="80">
               <template slot-scope="props"><!-- :type="props.row.history.status | requestStatusFilter" -->
                 <!--<el-tag class-name="el-tag-status">{{ props.row.history[props.row.history.length - 1].status }}</el-tag>-->
                 <el-tag v-if='props.row.history[props.row.history.length - 1].status=="done"' class-name="el-tag-status"  :type="statusInvitationFilter(props.row.history[props.row.history.length - 2].status)" >{{ props.row.history[props.row.history.length - 2].status }}</el-tag>
@@ -146,7 +110,7 @@
             <el-table-column
               label="Actions"
               prop="actions"
-              width="100">
+              width="80">
               <template slot-scope="props">
                 <el-dropdown trigger="click" class="international" @command="actionHandleCommand" style="margin:0 auto; display:block; text-align:center;">
                   <div>
@@ -155,9 +119,9 @@
                   </div>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item  command="send">Send</el-dropdown-item>
+                    <el-dropdown-item  command="remind">Remind</el-dropdown-item>
                     <el-dropdown-item  command="accept">Accept</el-dropdown-item>
                     <el-dropdown-item  command="decline">Decline</el-dropdown-item>
-                    <el-dropdown-item  command="relaunch">Relaunch</el-dropdown-item>
                     <el-dropdown-item  command="unsubscribe"  style='color:red'>Unsubscribe</el-dropdown-item>
                     <el-dropdown-item  command="remove" style='color:red'>Remove</el-dropdown-item>
                   </el-dropdown-menu>
@@ -260,9 +224,10 @@ export default{
           "reviewer":{"email": mail},
         };
         //axios.get('https://service.publifactory.co/api/update_mail?id=' + id + '&mail=' + mail)//+ '&keywords=' + this.formPost.keywords + '&title=' + this.formPost.title)
-        axios.patch('/api/requests/' + requestId, body )
+        axios.patch('/api/requests/' + requestId, body,{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         } )
         .then( async (res) => {
-          console.log(res.data);
         })
       })
     },
@@ -273,7 +238,9 @@ export default{
          })
         .then( async (res) => {
           this.dataFinal = res.data.data;
-          this.isData = true;
+
+          if(this.dataFinal.length>0)
+            this.isData = true;
         })
       })
     },
@@ -293,7 +260,19 @@ export default{
     },
     sendRequest(id){
       new Promise ((resolve,reject) => {
-        axios.post('/api/requests/remind/' + id)
+        axios.post('/api/requests/send/' + id,{},{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         })
+        .then( async (res) => {
+          await this.getRequests()
+        })
+      })
+    },
+    remindRequest(id){
+      new Promise ((resolve,reject) => {
+        axios.post('/api/requests/remind/' + id,{},{
+          headers: {'Authorization': `Bearer ${this.accessToken}`}
+         })
         .then( async (res) => {
           await this.getRequests()
         })
@@ -301,8 +280,10 @@ export default{
     },
     actionHandleCommand(command) {
       if (command == "send") {
-        console.log(command);
         this.sendRequest(this.selectedRow._id)
+      }
+      else if (command == "remind") {
+        this.remindRequest(this.selectedRow._id)
       }
       else if (command == "remove") {
         console.log(command);
@@ -313,10 +294,6 @@ export default{
         console.log("no action");
       }
       else if (command == "decline") {
-        console.log(command);
-        console.log("no action");
-      }
-      else if (command == "relaunch") {
         console.log(command);
         console.log("no action");
       }

@@ -1,10 +1,13 @@
-const create = require('./service');
+const create = require('./create');
 const update = require('./update');
 const remove = require('./remove');
 const read = require('./read');
 const list = require('./list');
 const remind = require('./remind');
 const totalRequest = require('./totalRequest');
+const sendInvitation = require('./send-invitation');
+const getRawStatus = require('./get-raw-status');
+const activateOrphanRequest = require('./activate-orphan-request');
 
 module.exports = {
 	create,
@@ -13,5 +16,8 @@ module.exports = {
 	read,
 	list,
 	remind,
-	totalRequest
+	totalRequest,
+	sendInvitation,
+	getRawStatus,
+	activateOrphanRequest
 };
