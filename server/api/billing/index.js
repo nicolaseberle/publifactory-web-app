@@ -57,6 +57,14 @@ router.post(
 	controllers.unsubscribe
 );
 
+router.post(
+	'/request-upgrade/:journalId/',
+	middlewares.authentication,
+	billingMiddlewares.permissions,
+	billingMiddlewares.canRead,
+	controllers.requestUpgrade
+);
+
 router.get('/publicKey', middlewares.authentication, controllers.publicKey);
 
 module.exports = router;

@@ -1,25 +1,25 @@
 const config = require('../../../config');
 
 const frontUrl = config.url;
-const backUrl =
-	config.env === 'development' ? `http://localhost:4000` : config.url;
 
 const emailEditorApproval = (request, userId) => `
 <div>
-  <p>A potential associate editor ${request.editor.email} ${request.editor.name} used the ${request.editor.journal.title}'s journal to send
-  a request.</p>
+  <p>Dear Mr/Ms,</p>
+  <p>Publifactory allows Editors from a journal to identify the best suited reviewers for research articles from any field.</p>
 
-  <p>This user actually doesn't have any right concerning your journal, if you trust this user as an associate editor you can give
-  him the right to send requests to reviewers by clicking:
-    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/accepted">
-      Here
-    </a>
-  Or :
-    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.editor.journal._id}/${userId}/${request._id}/rejected">
+  <p>
+  ${request.user.name} (${request.user.email}) declared being an
+  Associate Editor for your journal: ${request.journal.title}, could you confirm this information ?
+  <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.journal._id}/${userId}/${request._id}/accepted">
+      Yes
+  </a>
+    <a style="text-decoration: none;" href="${frontUrl}/approvals/${request.journal._id}/${userId}/${request._id}/rejected">
       Decline
     </a>
+    <p>You can also do it from your dashboard <a>LINK TO DASHBOARD</a></>
   </p>
-  <p>You can also do it from your dashboard <a>LINK TO DASHBOARD</a></>
+  <p>Sincerely,</p>
+  <p>Publifactory Team</p>
 </div>`;
 
 module.exports = emailEditorApproval;

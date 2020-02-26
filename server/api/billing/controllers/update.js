@@ -1,11 +1,19 @@
 const serviceUpdate = require('../services/update');
+const { ApiError } = require('../../../config/error');
 
 async function update(req, res, next) {
 	try {
+		if (
+			req.body.subscriptionId ||
+			req.body.subscriptionItemId ||
+			req.body.productStripeId ||
+			req.body.planStripeId ||
+			req.body.plan ||
+			req.body.requests
+		)
+			throw new ApiError('BAD_PARAMETERS');
 		const response = await serviceUpdate({
 			billingId: req.params.billingId,
-			userId: req.params.userId,
-			journalId: req.params.journalId,
 			billing: req.body
 		});
 		return res

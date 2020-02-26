@@ -9,7 +9,7 @@ async function journalGetRole({
 	if (journalId) query.id_journal = journalId;
 	if (right) query.right = right;
 	if (userId) query.id_user = userId;
-	console.log('-----------------', query, journalId);
+	console.log('-----------------', query);
 	const journalRole = await RolesJournal.findOne(query).populate(
 		'id_user id_journal'
 	);

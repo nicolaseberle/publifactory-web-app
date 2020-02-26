@@ -226,7 +226,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/dashboard/home',
     // hidden: true,
-    meta: { title: 'board', icon: 'appsbutton', noCache: true },
+    meta: { title: 'Dashboard', icon: 'appsbutton', noCache: true },
     children: [
       {
         path: '/article',
@@ -259,6 +259,13 @@ export const constantRouterMap = [
         meta: { title: 'reviewer_matcher', icon: 'network', noCache: true },
         component: () =>
 					import('../view/applications/reviewermatcher/index_.vue')
+      },
+      {
+        path: '/boards',
+        hidden: state_,
+        name: 'Editorial Board',
+        meta: { title: 'Editorial Board', icon: 'book', noCache: true },
+        component: resolve => import('../view/boards/index.vue').then(resolve)
       },
       {
         path: '/dashboard/home',
@@ -448,7 +455,10 @@ export const constantRouterMap = [
         }
       },
       {
-        path: '/pricing_',
+        path: '/pricing',
+        meta: {
+          skipAuth: true
+        },
         name: 'my_pricing',
         component: resolve => {
 					import('../view/billing/pricing.vue').then(resolve)
@@ -483,20 +493,6 @@ export const constantRouterMap = [
         name: 'my_billing',
         component: resolve => {
 					import('../view/billing/index.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricing',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricing.vue').then(resolve)
-        }
-      },
-      {
-        path: '/pricingAE',
-        name: 'my_pricing',
-        component: resolve => {
-					import('../view/billing/pricingAE.vue').then(resolve)
         }
       }
     ]

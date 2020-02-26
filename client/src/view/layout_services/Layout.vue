@@ -11,7 +11,7 @@
     <div class='app-container-2'>
       <app-main/>
     </div>
-    <el-row style='margin:20px 0px 0px 0px'>
+    <el-row style='margin:0px 0px 0px 0px'>
       <footbar/>
     </el-row>
   </div>

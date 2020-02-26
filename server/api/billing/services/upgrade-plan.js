@@ -1,6 +1,10 @@
 const { Billing } = require('../model');
 const { ApiError } = require('../../../config/error');
-const { attachPayementMethod, upgradeSubscriptionPlan } = require('./stripe');
+const {
+	attachPaymentMethod,
+	upgradeSubscriptionPlan,
+	createSubscription
+} = require('./stripe');
 const { stripe } = require('../../../../config');
 
 async function upgradePlan({ billing, billingId }) {
@@ -12,18 +16,14 @@ async function upgradePlan({ billing, billingId }) {
 
 	updatedBilling.plan = 'premium';
 	updatedBilling.planStripeId = stripe.premiumPlanId;
-	updatedBilling.payementMethodId = billing.payementMethodId;
-	const paymentMethodId = await attachPayementMethod({
+	updatedBilling.productStripeId = stripe.premiumProductId;
+	updatedBilling.paymentMethodId = billing.paymentMethodId;
+	const paymentMethodId = await attachPaymentMethod({
 		customerStripeId: updatedBilling.customerStripeId,
-		payementMethodId: billing.payementMethodId
+		paymentMethodId: billing.paymentMethodId
 	});
-	updatedBilling.payementMethodId = paymentMethodId;
-	const subscription = await upgradeSubscriptionPlan({
-		subscriptionId: updatedBilling.subscriptionId,
-		payementMethodId: updatedBilling.payementMethodId,
-		premiumPlanId: updatedBilling.planStripeId
-	});
-
+	updatedBilling.paymentMethodId = paymentMethodId;
+	const subscription = await createSubscription(updatedBilling);
 	updatedBilling.subscriptionId = subscription.id;
 	updatedBilling.subscriptionItemId = subscription.items.data[0].id;
 

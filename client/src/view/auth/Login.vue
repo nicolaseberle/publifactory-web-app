@@ -115,9 +115,10 @@ export default {
         password: ''
       },
       rules: {
-        email: [{
-          required: true, message: this.$t('login.email'), trigger: 'blur'
-        }],
+        email: [
+          { required: true, message: this.$t('login.email'), trigger: 'blur' },
+          { type: 'email', message: this.$t('login.email'), trigger: ['blur', 'change'] }
+        ],
         password: [{
           required: true, message: this.$t('login.password'), trigger: 'blur'
         }]

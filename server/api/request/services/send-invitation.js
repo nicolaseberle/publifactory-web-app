@@ -15,6 +15,7 @@ async function checkIfBillingNeedUpgrade(billing) {
 	const line = nextInvoice.lines.data.find(
 		line => line.plan.id === stripe.freemiumPlanId
 	);
+	console.log(line, JSON.stringify(nextInvoice));
 	const max = line.plan.tiers[0].up_to;
 	const quantity = line.quantity;
 	if (quantity === max && !nextInvoice.default_payment_method) {
@@ -40,7 +41,6 @@ async function sendInvitation(requestId) {
 			await checkIfBillingNeedUpgrade(billing);
 		}
 
-		if (billing.canceled) throw new error.ApiError('BILLING_IS_CANCELED');
 		await sendEmailReviewer(requestId);
 		request.history.push({
 			status: 'sent',

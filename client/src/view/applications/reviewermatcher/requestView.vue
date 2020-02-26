@@ -67,7 +67,7 @@
 				  active-text="Editorial use"
 				  inactive-text="Personal use">
 				</el-switch>
-				<el-tag type="warning" v-if="editorialUse" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account</el-tag>
+				<div v-if='editorialUse' style="color:#e6a23c;line-height:1.2rem;font-size:0.7rem;border: 1px solid #faecd8;border-radius:4px;background-color:#fdf6ec;padding: 6px;margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account.<br> The invitation will be sent after his/her confirmation and an email will inform you about it.</div>
 				<el-form-item  label="Journal requesting the reviewing" prop="journal">
 					<el-select
 						v-model="currentJournal"
@@ -112,6 +112,8 @@
 		:visible.sync="modalLoginVisible"
 		width="30%"
 		top="20vh"
+		:close-on-click-modal='false'
+		:close-on-press-escape='false'
 		append-to-body>
       <modalLogin v-on:close='modalLoginVisible=false'/>
     </el-dialog>
@@ -327,7 +329,6 @@ export default {
 		currentJournal(val){
 			this.formMail.journal = val
 			if(val!=='' && val!=='None'){
-				console.log("watch currentJournal:: ")
 				this.checkJournalSubscription ()
 			}
 		},
@@ -353,11 +354,11 @@ export default {
 		this.editor.on("text-change", (delta, oldDelta, source) => {
 			this.formMail.message = this.editor.root.innerHTML;
 		});
-		this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		/*this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
 		if (Number.isNaN(this.maxInvitation)) {
 			this.$cookie.set("maxInvitation",0);
 			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-		}
+		}*/
 
 		this.getListJournal()
 	},
@@ -366,7 +367,7 @@ export default {
 			/*const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
 				headers: {'Authorization': `Bearer ${this.accessToken}`}
 			})*/
-			this.currentPlan = 'Non-Activated'
+			this.currentPlan = 'nonActivated'
 			//this.currentPlan = response.data.billing ? 'Activated' : 'Non-activated'
 		},
 		async getListJournal() {
@@ -383,15 +384,23 @@ export default {
 		async getSubscription(){
 			try{
 				if(this.loggedIn){
-					const response = await axios.get('/api/billings/?page=1&count=1000&userId=true',{
+					await axios.get('/api/billings/?page=1&count=1000&userId=true',{
 						headers: {'Authorization': `Bearer ${this.accessToken}`}
+					}).then((response)=>{
+						this.currentPlan = response.data.billing.plan
+						if(response.data.billing){
+							this.mySubscription = [response.data.billing.subscription]
+							this.maxInvitation = response.data.billing.requests.length
+						}
+						this.myJournals = response.data.journals
+						//console.log(this.myJournals
+
 					})
-					this.currentPlan = response.data.billing ? 'Premium' : 'Free'
 				} else {
-					this.currentPlan="Free"
+					this.currentPlan="disconnected"
 				}
 			} catch(err){
-				this.currentPlan="Free"
+				this.currentPlan="freemium"
 			}
 		},
 		remoteMethod(query) {
@@ -453,6 +462,7 @@ export default {
 			return "toolbar-container";
 		},
 		showPromptUserConnected() {
+			if(this.currentPlan==="premium" | this.currentPlan==='nonActivated' | this.currentPlan==='activated' | (this.currentPlan==="freemium" & this.maxInvitation<10)){
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -460,15 +470,19 @@ export default {
 			})
 				.then(this.handlePromptSuccess)
 				.catch(this.handlePromptFailure);
+			} else {
+				this.$confirm("You have reached your quota of free requests", "Blocked account", {
+					confirmButtonText: "OK",
+					type: "error"
+				})
+					.then(this.handlePromptUpdgrade)
+					.catch(this.handlePromptFailure);
+			}
 		},
 		showPromptUserDisconnected() {
 			const createElement = this.$createElement;
-			this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
-			/*console.log(
-				this.maxInvitation,
-				typeof this.maxInvitation,
-				this.$cookie.get("maxInvitation")
-			);*/
+			//this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+
 			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
 				confirmButtonText: "OK",
 				cancelButtonText: "Cancel",
@@ -476,20 +490,6 @@ export default {
 			})
 				.then(this.handlePromptSuccess)
 				.catch(this.handlePromptFailure);
-
-			/*this.$msgbox({
-				title: "Confirmation",
-				message: createElement(freePlanStatusBar, {
-					props: { this.maxInvitation }
-				}),
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				showCancelButton: true
-			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
-				*/
-
 		},
 		async handlePromptSuccess() {
 			this.$emit("close");
@@ -497,12 +497,28 @@ export default {
 			this.confirmationOfSending = true;
 			if (this.loggedIn)  {
 				await this.addRequest(dataJson)
+				this.$message({
+					type: "success",
+					message: "Invitation sent"
+				});
+			} else {
+				this.confirmationOfSending = false;
+				this.$message({
+					type: "info",
+					message: "Invitation canceled"
+				});
 			}
 
+
+		},
+		handlePromptUpdgrade() {
+			this.confirmationOfSending = false;
+			this.$emit("close");
 			this.$message({
-				type: "success",
-				message: "Invitation sent"
+				type: "info",
+				message: "Invitation canceled"
 			});
+			this.$router.push('/billing')
 		},
 		handlePromptFailure() {
 			this.confirmationOfSending = false;
@@ -533,7 +549,7 @@ export default {
 		},
 		sendRequestRev(formMail) {
 			if(!this.loggedIn) {
-				this.createGuestAccount(formMail)
+				this.modalLoginVisible = true
 			}
 			if(this.loggedIn) {
 				this.confirmationOfSending = false;
