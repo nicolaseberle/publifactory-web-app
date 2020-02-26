@@ -11,7 +11,6 @@ const Journal = require('../../journal/journal.model');
 const User = require('../../user/user.model');
 
 async function createRequest(request) {
-	console.log("ORPHAN CREATION")
 	request.history.push({
 		status: 'pending',
 		data: new Date().toUTCString()
@@ -58,7 +57,6 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		...request
 	});
 	billing.requests.push(newRequest._id);
-
 	await newRequest
 		.populate({
 			path: 'user',
@@ -66,7 +64,6 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		})
 		.populate({ path: 'journal' })
 		.execPopulate();
-	console.log("jjjj=>", journal, request)
 	if (journal.activate && request.journal) {
 		// journal use
 		await createJournalRequest(newRequest, journal._id, authId);
@@ -78,7 +75,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 	}
 	await newRequest.save();
 	await billing.save();
-	if (user.email) {
+	if (user.email && journal.activate) {
 		email.sendEmail({
 			subject: 'Copy of your reviewing request',
 			html: emailEditorTemplate.summary(newRequest)

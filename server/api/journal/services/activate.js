@@ -23,7 +23,7 @@ async function activate({ journalId, userId }) {
 		html: ''
 	});
 	await journal.save();
-	await activateOrphanRequest(journal._id, user._id);
+	await activateOrphanRequest(journal._id);
 	return journal;
 }
 
