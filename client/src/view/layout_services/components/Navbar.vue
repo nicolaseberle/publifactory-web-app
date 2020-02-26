@@ -5,11 +5,13 @@
       <div class='logo'><a href='/'>PubliFactory</a></div>
     </div>
     <div class="m-right-menu">
-      <div style='vertical-align:middle'  class='right-menu-item'>
-      <!--  <router-link :to="{path: '/pricing'}">
-          <el-button type="text">Pricing</el-button>
-        </router-link>-->
+      <div style='vertical-align:middle'  class='right-menu-item' v-show="!loggedIn">
         <router-link :to="{path: '/pricing'}">
+          <el-link :underline="false" style='font-size:16px'><span>Pricing</span></el-link>
+        </router-link>
+      </div>
+      <div style='vertical-align:middle'  class='right-menu-item' v-show="loggedIn">
+        <router-link :to="{path: '/billing' }">
           <el-link :underline="false" style='font-size:16px'><span>Pricing</span></el-link>
         </router-link>
       </div>

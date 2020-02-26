@@ -9,7 +9,15 @@
     </el-alert>
 
   </el-row>
-<h2 style='font-size:1.4rem;'>Individual Plan</h2>
+  <div class='header-section'>
+  <div class='left-item'>
+    <h2 style='font-size:1.4rem;'>Individual Plan</h2>
+  </div>
+  <div class='right-item'>
+    <a @click='currentPlan==="freemium" ? upgrade(): downgrade()' style='font-size:0.9rem;'><u>show pricing</u></a>
+   <!--<el-button  plain  round><span>show pricing</span></el-button>-->
+  </div>
+  </div>
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <div class="clearfix one-bill">
     <el-row>
@@ -165,8 +173,10 @@
   <el-card style='margin-bottom:50px; margin-left:30px;'>
     <h2>Invite Publishers to use the service</h2>
     <el-tag type="info" style="margin-bottom:28px;width:100%">We will send a link to the publisher to activate the journal account. </el-tag>
-    <el-form :model="form" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
+    <el-form :model="formInvitationPublisher" ref="formInvitationPublisher" :rules="formInvitationPublisherRules" label-width="160px">
       <el-col :span='18'>
+        <el-row>
+        <el-col :span='12'>
         <el-form-item label="Journal" prop="journal">
           <el-select
             v-model="formInvitationPublisher.journal"
@@ -174,28 +184,52 @@
             remote
             placeholder="Enter your revue"
             :remote-method="remoteMethod"
+            @change="loadJournalInformation"
             :loading="loading">
             <el-option
               v-for="item in listJournals"
-              :key="item.value"
+              :key="item.title"
               :label="item.label"
-              :value="item.value">
+              :value="{title: item.title,issn: item.issn, tags: item.tags}">
             </el-option>
           </el-select>
         </el-form-item>
+        </el-col>
+        <el-col :span='12'>
+          <el-form-item label="ISSN" prop="issn">
+            <div>{{formInvitationPublisher.journal.issn}}</div>
+          </el-form-item>
+        </el-col>
+        </el-row>
+
         <el-form-item label="Editor in Chief - Name" prop="nameEditorInChief">
           <el-input v-model="formInvitationPublisher.nameEditorInChief" ></el-input>
         </el-form-item>
         <el-form-item label="Editor in Chief - Email" prop="emailEditorInChief">
           <el-input v-model="formInvitationPublisher.emailEditorInChief" ></el-input>
         </el-form-item>
+        <el-row>
+          <el-col :span='24'>
+            <el-form-item label="Fields" >
+            <el-tag
+              :key="tag"
+              v-for="tag in formInvitationPublisher.journal.tags"
+              effect="dark"
+              :disable-transitions="false"
+              @close="handleCloseCat(tag)">
+              {{tag}}
+            </el-tag>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-col>
     </el-form>
     <el-col :span='6'>
-      <div style='width:100%;text-align:right'>
-        <el-button type='primary' @click="sendRequest('formInvitationPublisher')" round>Send invitation</el-button>
+      <div style='width:100%;text-align:right;'>
+        <el-button type='primary' @click="sendRequest()" round>Send invitation</el-button>
       </div>
     </el-col>
+
   </el-card>
 
 <el-dialog  custom-class='pricing-dialog-container' :visible.sync="visiblePricing" width="80%" top="10vh"  title="Pricing">
@@ -207,6 +241,7 @@
 </div>
 </template>
 <script>
+
 import locales from 'locales/article'
 import { mapGetters } from 'vuex'
 import axios from 'axios'
@@ -214,6 +249,8 @@ import * as moment from 'moment';
 
 import sendEditorInvitation from './sendRequestToEditor'
 import showPricing from './showPricing'
+
+const querystring = require('query-string');
 
 export default{
   name: 'billing',
@@ -227,12 +264,13 @@ export default{
   },
   data () {
     return {
-      journal: ["Nature","Publiscience","the BMJ"],
+      journal: ["Nature"],
       listJournals: [],
       formInvitationPublisher: {
         journal: '',
         emailEditorInChief: '',
-        nameEditorInChief: ''
+        nameEditorInChief: '',
+        issn: ''
       },
       formInvitationPublisherRules: {
         journal: [
@@ -293,8 +331,10 @@ export default{
     //this.currentMonth = moment().format('M')
     this.beginMonth    = moment().startOf('M').format('DD/MM');
     this.endMonth    = moment().endOf('M').format('DD/MM');
+
   },
   async mounted () {
+
     await axios.get('/api/users/me',{headers: {
       'Authorization': `Bearer ${this.accessToken}`}
     }).then(response => {
@@ -314,6 +354,9 @@ export default{
     }
   },
   methods: {
+    handleCloseCat(cat) {
+      this.formInvitationPublisher.tags.splice(this.formInvitationPublisher.tags.indexOf(cat), 1);
+    },
     closeAndReload() {
       this.visiblePricing = false
       console.log("closeAndReload")
@@ -324,10 +367,11 @@ export default{
       this.$forceUpdate();
       console.log("$forceUpdate")
     },
-    sendRequest (formInvitationPublisher) {
-      this.$refs[formInvitationPublisher].validate(async (valid) => {
+    sendRequest () {
+      console.log(this.formInvitationPublisher)
+      this.$refs['formInvitationPublisher'].validate(async (valid) => {
         if (valid) {
-          let journalId = null
+          /*let journalId = null
           axios.post("/api/billing/request-upgrade/"+journalId,
           {
             headers: {'Authorization': `Bearer ${this.accessToken}`}
@@ -336,8 +380,8 @@ export default{
           })
           .catch((error)=>{
 
-          })
-
+          })*/
+          console.log(this.formInvitationPublisher)
 
         }
       })
@@ -363,11 +407,19 @@ export default{
 			if (query !== '') {
 				this.loading = true;
 				setTimeout(() => {
-					this.loading = false;
-					this.listJournals = this.list.filter(item => {
-						return item.label.toLowerCase()
-							.indexOf(query.toLowerCase()) > -1;
-					});
+          axios.get('/api/journal-names/?count=20&title='+query)
+            .then((response)=>{
+            this.list = response.data;
+            this.loading = false;
+  					this.listJournals = this.list.filter(item => {
+  						item.label = item.title
+              item.value = item.title
+              item.title = item.title
+              item.issn = item.issn1 + "/" + item.issn2 + "/" + item.issn3
+              item.tags = [item.forOneName]
+              return item
+  					});}
+            )
 				}, 200);
 			} else {
 				this.listJournals = [];
@@ -394,9 +446,17 @@ export default{
           this.mySubscription = []
         })
     },
-
+    async loadJournalInformation (selected){
+      if(!selected.title){
+       await axios.get("/api/journals/title?title=" + selected.title)
+       .then((response)=>{
+        console.log("ce journal existe déjà dans la base de donnée")
+       }).catch((err)=>{
+         console.log("une erreur s'est produite")
+       })
+      }
+    },
     async unsubscribe(){
-
         await axios.post('/api/billings/unsubscribe/' + this.userId + '/' + this.billingId, { billingId:this.billingId } ,{
           headers: {'Authorization': `Bearer ${this.accessToken}`}
         }).then((response)=>{
@@ -579,4 +639,17 @@ h4{
   border-radius: 5px;
 }
 
+.header-section{
+width: 100%;
+vertical-align: center;
+display: flex;
+justify-content: space-between;
+}
+.left-item{
+display: inline;
+}
+.right-item{
+display: inline;
+margin: 20px;
+}
 </style>
