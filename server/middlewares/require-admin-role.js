@@ -1,5 +1,4 @@
-const { ApiError } = require('../../../config/error');
-const User = require('../api/user/user.model');
+const { ApiError } = require('../config/error');
 
 async function requireActivation(req, res, next) {
 	try {

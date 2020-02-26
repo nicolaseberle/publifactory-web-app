@@ -23,6 +23,7 @@ router.post(
 );
 
 router.get('/:id', controllers.read);
+router.get('/title', controllers.read);
 
 router.post(
 	'/:id/article',
