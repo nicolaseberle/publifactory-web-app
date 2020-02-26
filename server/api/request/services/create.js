@@ -10,10 +10,14 @@ const Email = require('../../email/email.controller');
 const Journal = require('../../journal/journal.model');
 const User = require('../../user/user.model');
 
+async function createOrphanRequest() {}
+
 async function create({ reviewer, ...request }, authId, billingId) {
 	const billing = await Billing.findById(billingId);
 	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
 	const journal = await Journal.findById(request.journal);
+	if (!journal.activate) {
+	}
 	if (request.journal && !journal) {
 		throw new ApiError('JOURNAL_NOT_FOUND');
 	}

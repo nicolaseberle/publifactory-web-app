@@ -2,6 +2,7 @@ const { ApiError } = require('../../../config/error');
 const JournalRole = require('../../roles/journal/roles.journal.model');
 const User = require('../../user/user.model');
 const read = require('./read');
+const Email = require('../../email/email.controller');
 
 async function activate({ journalId, userId }) {
 	const journal = await read(journalId);
@@ -16,6 +17,10 @@ async function activate({ journalId, userId }) {
 		right: 'editor'
 	}).save();
 	await journal.save();
+	new Email(user.email).sendEmail({
+		subject: ``,
+		html: ''
+	});
 	return journal;
 }
 

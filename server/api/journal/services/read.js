@@ -8,7 +8,7 @@ async function read(journalId = undefined, filters = undefined) {
 					'users content.reference'
 			  )
 			: await Journal.findById(journalId).populate('users content.reference');
-	if (!journal) throw new ApiError('JOURNAL_NOT_FOUND');
+	if (journalId && !journal) throw new ApiError('JOURNAL_NOT_FOUND');
 	return journal;
 }
 
