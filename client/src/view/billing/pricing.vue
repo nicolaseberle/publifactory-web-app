@@ -25,7 +25,7 @@
               <b>Unlimited</b> research
             </li>
             <li><i class="el-icon-check"></i>
-              <b>5 invitations</b>
+              <b>10 invitations</b>
             </li>
             <li><i class="el-icon-check"></i>
               <b>Unlimited</b> access to your board
@@ -128,7 +128,7 @@
               <el-col :span='8'>
                 <div class='item-title'><h2>How does the credit system work?</h2></div>
                 <div class='item-content'>
-                    <p>After signing up, $5 of free credits are offered. If you've used all your free credits, Publifactory will block new invitation</p>
+                    <p>After signing up, $10 of free credits are offered. If you've used all your free credits, Publifactory will block new invitation</p>
                 </div>
                 <div class='item-title'><h2>What forms of payment do you accept?</h2></div>
                 <div class='item-content'>

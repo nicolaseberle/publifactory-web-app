@@ -26,7 +26,7 @@
               <b>Unlimited</b> research
             </li>
             <li><i class="el-icon-check"></i>
-              <b>5 invitations</b>
+              <b>10 invitations</b>
             </li>
             <li><i class="el-icon-check"></i>
               <b>Unlimited</b> access to your board
@@ -184,7 +184,7 @@ export default{
     closeCheckout () {
       this.visibleDiagSubscription=false
       this.$emit('close-pricing')
-      
+
 
     },
     closeEditorInvitation () {
