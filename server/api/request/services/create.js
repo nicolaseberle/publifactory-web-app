@@ -43,7 +43,8 @@ async function createJournalRequest(request, journalId, authId) {
 async function create({ reviewer, ...request }, authId, billingId) {
 	const billing = await Billing.findById(billingId);
 	if (!billing) throw new ApiError('BILLING_NOT_FOUND');
-	const journal = await Journal.findById(request.journal);
+
+	const journal = await Journal.findById(request.editor.journal);
 	if (request.journal && !journal) {
 		throw new ApiError('JOURNAL_NOT_FOUND');
 	}
@@ -64,10 +65,18 @@ async function create({ reviewer, ...request }, authId, billingId) {
 		})
 		.populate({ path: 'journal' })
 		.execPopulate();
-	if (journal.activate && request.journal) {
-		// journal use
-		await createJournalRequest(newRequest, journal._id, authId);
-	} else {
+	if(request.editor.journal) {
+		if (journal.activate) {
+			// journal use
+			await createJournalRequest(newRequest, journal._id, authId);
+		} else {
+			// user use
+			//  or
+			// EiC not valid use, those requests will be recreated on journal activation
+			await createRequest(newRequest);
+		}
+	}
+	else {
 		// user use
 		//  or
 		// EiC not valid use, those requests will be recreated on journal activation
@@ -75,7 +84,7 @@ async function create({ reviewer, ...request }, authId, billingId) {
 	}
 	await newRequest.save();
 	await billing.save();
-	if (user.email && journal.activate) {
+	if (user.email){ // && journal.activate) {
 		email.sendEmail({
 			subject: 'Copy of your reviewing request',
 			html: emailEditorTemplate.summary(newRequest)

@@ -427,12 +427,12 @@ export default {
 					"Authorization": `Bearer ${this.accessToken}`
 				},
 				data: dataJson
+			}).then((response)=>{
+				return true
+			}).catch((err)=>{
+				return false
 			});
-			if (response.status !== 200) {
-				console.log("Failed");
-			} else {
-				console.log(response);
-			}
+			return response;
 		},
 		updateDataJson() {
 			let dataJson = {
@@ -496,11 +496,18 @@ export default {
 			let dataJson = this.updateDataJson();
 			this.confirmationOfSending = true;
 			if (this.loggedIn)  {
-				await this.addRequest(dataJson)
-				this.$message({
-					type: "success",
-					message: "Invitation sent"
-				});
+				const response = await this.addRequest(dataJson)
+				if(response) {
+					this.$message({
+						type: "success",
+						message: "Invitation sent"
+					});
+				}else{
+					this.$message({
+						type: "error",
+						message: "Something happened"
+					});
+				}
 			} else {
 				this.confirmationOfSending = false;
 				this.$message({
