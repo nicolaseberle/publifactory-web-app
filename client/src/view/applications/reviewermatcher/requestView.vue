@@ -10,10 +10,10 @@
 			<el-form-item label="Your email" prop="mailDest">
 				<el-input v-model="formMail.mailDest"></el-input>
 			</el-form-item>
-			<el-form-item label="Firstname" prop="firstname">
+			<el-form-item label="Your Firstname" prop="firstname">
 				<el-input v-model="formMail.firstname"></el-input>
 			</el-form-item>
-			<el-form-item label="Lastname" prop="lastname">
+			<el-form-item label="Your Lastname" prop="lastname">
 				<el-input v-model="formMail.lastname"></el-input>
 			</el-form-item>
 			<!--
@@ -407,11 +407,20 @@ export default {
 			if (query !== '') {
 				this.loading = true;
 				setTimeout(() => {
-					this.loading = false;
-					this.listJournals = this.list.filter(item => {
-						return item.label.toLowerCase()
-							.indexOf(query.toLowerCase()) > -1;
-					});
+					axios.get('/api/journal-names/?count=20&title='+query)
+						.then( (response)=>{
+						this.list = response.data;
+						this.loading = false;
+						this.listJournals = this.list.filter(item => {
+							item.label = item.title
+
+							item.title = item.title
+							item.issn = item.issn1 + "  " + item.issn2 + "  " + item.issn3
+							item.tags = [item.forOneName]
+							item.value = item.title
+							return item;
+						});}
+						)
 				}, 200);
 			} else {
 				this.listJournals = [];
@@ -612,5 +621,8 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
+}
+.el-select{
+	width:100%;
 }
 </style>

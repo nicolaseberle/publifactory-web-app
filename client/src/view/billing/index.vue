@@ -14,7 +14,7 @@
     <h2 style='font-size:1.4rem;'>Individual Plan</h2>
   </div>
   <div class='right-item'>
-    <a @click='currentPlan==="freemium" ? upgrade(): downgrade()' style='font-size:0.9rem;'><u>show pricing</u></a>
+    <a @click='upgrade()' style='font-size:0.9rem;'><u>show pricing</u></a>
    <!--<el-button  plain  round><span>show pricing</span></el-button>-->
   </div>
   </div>

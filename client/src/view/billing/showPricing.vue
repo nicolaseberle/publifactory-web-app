@@ -35,11 +35,11 @@
           </div>
           <div class='footer-pricing'>
             <div v-if='currentPlan==="freemium"'>
-              <el-button type="success" disabled round>Current trial</el-button>
-            </div>
+              <el-button type="success" round>Current trial</el-button>
+            </div><!--
             <div v-else>
               <el-button class='blue-button' round>Freemium</el-button>
-            </div>
+            </div>-->
           </div>
         </div>
           <div class='package' v-if='statePremium'>
