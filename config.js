@@ -146,8 +146,8 @@ const stripeDev = {
 };
 
 const stripeProd = {
-	publicKey: '',
-	privateKey: '',
+	publicKey: 'pk_live_OSO88IUGoNpZYzfT61h0LfSb00d7yaVLlw',
+	privateKey: 'sk_live_Nk1gduAkUw95TqZs0EsskSyv00em2J6FrE',
 	freemiumProductId: '',
 	premiumProductId: '',
 	freemiumPlanId: '',
