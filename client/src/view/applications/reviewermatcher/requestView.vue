@@ -470,35 +470,71 @@ export default {
 		setIdToolBar() {
 			return "toolbar-container";
 		},
-		showPromptUserConnected() {
-			if(this.currentPlan==="premium" | this.currentPlan==='nonActivated' | this.currentPlan==='activated' | (this.currentPlan==="freemium" & this.maxInvitation<10)){
-			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				type: "success"
-			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
-			} else {
-				this.$confirm("You have reached your quota of free requests", "Blocked account", {
-					confirmButtonText: "OK",
-					type: "error"
-				})
-					.then(this.handlePromptUpdgrade)
-					.catch(this.handlePromptFailure);
-			}
-		},
-		showPromptUserDisconnected() {
-			const createElement = this.$createElement;
-			//this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		async sendInvitationToEic (journal) {
+			await axios.post("/api/billings/request-upgrade/"+journal._id,{},
+			{
+				headers: {'Authorization': `Bearer ${this.accessToken}`}
+			}).then((response)=>{
 
-			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				type: "success"
 			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
+			.catch((error)=>{
+
+			})
+		},
+		async createJournal () {
+			try{
+				const response = await axios.post("/api/journals/",
+				{ title: this.formMail.journal},
+				{
+					headers: {'Authorization': `Bearer ${this.accessToken}`}
+				})
+				return response
+			}
+			catch{
+				return null
+			}
+
+		},
+		async showPromptUserConnected() {
+			if(editorialUse===true){
+
+				let journal = null;
+				await axios.get("/api/journals/title?title=" + this.formMail.journal,
+				{
+					headers: {'Authorization': `Bearer ${this.accessToken}`}
+				})
+				.then(async (response)=>{
+				 console.log("ce journal existe déjà dans la base de donnée")
+				 journal = response.data
+				 console.log(journal)
+				 await this.sendInvitationToEic(journal)
+
+			 }).catch(async (err)=>{
+					console.log("ce journal n'existe pas dans la base de donnée")
+					journal = await this.createJournal()
+					console.log(journal.data)
+					await this.sendInvitationToEic(journal.data)
+				})
+
+
+			}else{
+				if(this.currentPlan==="premium" | (this.currentPlan==="freemium" & this.maxInvitation<10)){
+				this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
+					confirmButtonText: "OK",
+					cancelButtonText: "Cancel",
+					type: "success"
+				})
+					.then(this.handlePromptSuccess)
+					.catch(this.handlePromptFailure);
+				} else {
+					this.$confirm("You have reached your quota of free requests", "Blocked account", {
+						confirmButtonText: "OK",
+						type: "error"
+					})
+						.then(this.handlePromptUpdgrade)
+						.catch(this.handlePromptFailure);
+				}
+			}
 		},
 		async handlePromptSuccess() {
 			this.$emit("close");
@@ -604,9 +640,7 @@ export default {
 									} else {
 										this.requestInfos["rev_mail"] = "";
 									}
-									this.loggedIn
-										? this.showPromptUserConnected()
-										: this.showPromptUserDisconnected();
+									this.showPromptUserConnected();
 								});
 						});
 					}
