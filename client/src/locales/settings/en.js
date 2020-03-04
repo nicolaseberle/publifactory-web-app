@@ -20,6 +20,7 @@ export default {
     button: 'Save & quit',
     cancelButton: 'Cancel',
     deleteAccount: 'Delete your account',
+    serviceNotAvailable: 'Sorry this action is not yet available',
     successSaving: 'Success to save settings',
     successChangingPassword: 'Success to change password',
     badOldPassword: 'Wrong old password'

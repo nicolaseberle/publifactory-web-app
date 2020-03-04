@@ -139,10 +139,10 @@ const stripeDev = {
 	publicKey: 'pk_test_B5NEIJrmVXYt6iLyxaAwfVrY00rWgvQyAs',
 	privateKey: 'sk_test_b9eIkUCav37bCcEOdMAoB2jJ00vLO95PS0',
 	// productId: 'prod_GiN2vv8ZQTb6N9',
-	freemiumProductId: 'prod_GnHdv8ms8HqCmp',
-	premiumProductId: 'prod_GnHfGHsqb4WyYX',
-	freemiumPlanId: 'plan_GnIMGf8T12pBpw',
-	premiumPlanId: 'plan_GnHgEDiknMJqar'
+	freemiumProductId: 'prod_Gqfw8f0QSzDzI9',
+	premiumProductId: 'prod_Gqg5TLrJ9gxZdW',
+	freemiumPlanId: 'plan_GqgFvahrXXS5oK',
+	premiumPlanId: 'plan_Gqg9lK7L86ZatL'
 };
 
 const stripeProd = {
