@@ -10,10 +10,10 @@
 			<el-form-item label="Your email" prop="mailDest">
 				<el-input v-model="formMail.mailDest"></el-input>
 			</el-form-item>
-			<el-form-item label="Firstname" prop="firstname">
+			<el-form-item label="Your Firstname" prop="firstname">
 				<el-input v-model="formMail.firstname"></el-input>
 			</el-form-item>
-			<el-form-item label="Lastname" prop="lastname">
+			<el-form-item label="Your Lastname" prop="lastname">
 				<el-input v-model="formMail.lastname"></el-input>
 			</el-form-item>
 			<!--
@@ -407,11 +407,20 @@ export default {
 			if (query !== '') {
 				this.loading = true;
 				setTimeout(() => {
-					this.loading = false;
-					this.listJournals = this.list.filter(item => {
-						return item.label.toLowerCase()
-							.indexOf(query.toLowerCase()) > -1;
-					});
+					axios.get('/api/journal-names/?count=20&title='+query)
+						.then( (response)=>{
+						this.list = response.data;
+						this.loading = false;
+						this.listJournals = this.list.filter(item => {
+							item.label = item.title
+
+							item.title = item.title
+							item.issn = item.issn1 + "  " + item.issn2 + "  " + item.issn3
+							item.tags = [item.forOneName]
+							item.value = item.title
+							return item;
+						});}
+						)
 				}, 200);
 			} else {
 				this.listJournals = [];
@@ -461,35 +470,71 @@ export default {
 		setIdToolBar() {
 			return "toolbar-container";
 		},
-		showPromptUserConnected() {
-			if(this.currentPlan==="premium" | this.currentPlan==='nonActivated' | this.currentPlan==='activated' | (this.currentPlan==="freemium" & this.maxInvitation<10)){
-			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				type: "success"
-			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
-			} else {
-				this.$confirm("You have reached your quota of free requests", "Blocked account", {
-					confirmButtonText: "OK",
-					type: "error"
-				})
-					.then(this.handlePromptUpdgrade)
-					.catch(this.handlePromptFailure);
-			}
-		},
-		showPromptUserDisconnected() {
-			const createElement = this.$createElement;
-			//this.maxInvitation = parseInt(this.$cookie.get("maxInvitation"), 10);
+		async sendInvitationToEic (journal) {
+			await axios.post("/api/billings/request-upgrade/"+journal._id,{},
+			{
+				headers: {'Authorization': `Bearer ${this.accessToken}`}
+			}).then((response)=>{
 
-			this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
-				confirmButtonText: "OK",
-				cancelButtonText: "Cancel",
-				type: "success"
 			})
-				.then(this.handlePromptSuccess)
-				.catch(this.handlePromptFailure);
+			.catch((error)=>{
+
+			})
+		},
+		async createJournal () {
+			try{
+				const response = await axios.post("/api/journals/",
+				{ title: this.formMail.journal},
+				{
+					headers: {'Authorization': `Bearer ${this.accessToken}`}
+				})
+				return response
+			}
+			catch{
+				return null
+			}
+
+		},
+		async showPromptUserConnected() {
+			if(editorialUse===true){
+
+				let journal = null;
+				await axios.get("/api/journals/title?title=" + this.formMail.journal,
+				{
+					headers: {'Authorization': `Bearer ${this.accessToken}`}
+				})
+				.then(async (response)=>{
+				 console.log("ce journal existe déjà dans la base de donnée")
+				 journal = response.data
+				 console.log(journal)
+				 await this.sendInvitationToEic(journal)
+
+			 }).catch(async (err)=>{
+					console.log("ce journal n'existe pas dans la base de donnée")
+					journal = await this.createJournal()
+					console.log(journal.data)
+					await this.sendInvitationToEic(journal.data)
+				})
+
+
+			}else{
+				if(this.currentPlan==="premium" | (this.currentPlan==="freemium" & this.maxInvitation<10)){
+				this.$confirm("Are you sure to invite this reviewer ?", "Confirmation", {
+					confirmButtonText: "OK",
+					cancelButtonText: "Cancel",
+					type: "success"
+				})
+					.then(this.handlePromptSuccess)
+					.catch(this.handlePromptFailure);
+				} else {
+					this.$confirm("You have reached your quota of free requests", "Blocked account", {
+						confirmButtonText: "OK",
+						type: "error"
+					})
+						.then(this.handlePromptUpdgrade)
+						.catch(this.handlePromptFailure);
+				}
+			}
 		},
 		async handlePromptSuccess() {
 			this.$emit("close");
@@ -595,9 +640,7 @@ export default {
 									} else {
 										this.requestInfos["rev_mail"] = "";
 									}
-									this.loggedIn
-										? this.showPromptUserConnected()
-										: this.showPromptUserDisconnected();
+									this.showPromptUserConnected();
 								});
 						});
 					}
@@ -612,5 +655,8 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
+}
+.el-select{
+	width:100%;
 }
 </style>

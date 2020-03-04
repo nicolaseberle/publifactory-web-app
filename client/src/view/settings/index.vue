@@ -400,6 +400,12 @@
 
         }
       })
+    },
+    deleteAccount () {
+      this.$message({
+        title: this.$t('message.error'),
+        message: this.$t('settings.serviceNotAvailable'),
+        type: 'info'})
     }
   }
 }
