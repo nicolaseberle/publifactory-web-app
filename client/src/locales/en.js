@@ -60,6 +60,7 @@ export default {
     },
     error: 'Error',
     created: 'Create successed',
+    sentConfirmation: ' Check your email, and follow the steps in the email to confirm your email address',
     createFailed: 'Create failed',
     updated: 'Update successed',
     updateFailed: 'Update failed',

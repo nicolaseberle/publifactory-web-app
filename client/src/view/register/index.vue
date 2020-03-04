@@ -86,9 +86,10 @@
         type: []
       },
       rules: {
-        email: [{
-          required: true, message: this.$t('register.email'), trigger: 'blur'
-        }],
+        email: [
+          { required: true, message: this.$t('register.email'), trigger: 'blur' },
+          { type: 'email', message: this.$t('register.email'), trigger: ['blur', 'change'] }
+        ],
         firstname: [{
           required: true, message: this.$t('register.firstname'), trigger: 'blur'
         }],
@@ -134,6 +135,15 @@
                 message: this.$t('message.created'),
                 type: 'success'
               })
+              this.$alert(this.$t('message.sentConfirmation'), 'Welcome', {
+                confirmButtonText: 'OK',
+                callback: action => {
+                  this.$message({
+                    type: 'info',
+                    message: `action: ${ action }`
+                  });
+                }
+              });
               this.$router.push(this.$route.query.redirect || '/')
             }).catch((err) => {
             this.$message({

@@ -2,6 +2,8 @@ export default {
 	login: {
 		email: "Email",
 		username: "Please input the username",
+		firstname: "First Name",
+		lastname: "Last Name",
 		password: "Password",
 		button: "Log in with your email",
 		signIn: "Sign in",

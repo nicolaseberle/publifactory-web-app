@@ -35,6 +35,12 @@
       <!--<h1 style='font-size:1.8rem; font-family: "DNLTPro-bold";'>Sign in</h1>-->
       <p class='caption'><span>or </span><a v-on:click="switchLogin" style='color:#00a97f!important;'>sign in</a></p>
       <el-form  class="login-form" ref="formRegister" :model="form" :rules="rulesRegister">
+        <el-form-item prop="firstname">
+          <el-input v-model="form.firstname" :placeholder="$t('login.firstname')"></el-input>
+        </el-form-item>
+        <el-form-item prop="lastname">
+          <el-input v-model="form.lastname" :placeholder="$t('login.lastname')"></el-input>
+        </el-form-item>
         <el-form-item prop="email">
           <el-input v-model="form.email" :placeholder="$t('login.email')"></el-input>
         </el-form-item>
@@ -76,6 +82,8 @@ export default{
       form: {
         email: '',
         password: '',
+        firstname: '',
+        lastname: '',
         type: [],
       },
       active: 'register',
@@ -94,6 +102,12 @@ export default{
           { required: true, message: this.$t('login.email'), trigger: 'blur' },
           { type: 'email', message: this.$t('login.email'), trigger: ['blur', 'change'] }
         ],
+        firstname: [{
+          required: true, message: this.$t('register.firstname'), trigger: 'blur'
+        }],
+        lastname: [{
+          required: true, message: this.$t('register.lastname'), trigger: 'blur'
+        }],
         password: [{
           required: true, message: this.$t('login.password'),
         }],
@@ -180,7 +194,7 @@ export default{
       this.$refs.formRegister.validate(valid => {
         if (valid) {
             this.loading = true
-            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
+            axios.post('/api/users/',{ "email": this.form.email, "firstname": this.form.firstname,"lastname": this.form.lastname, "password":this.form.password, provider: 'local'})
             .then(response => {
               this.loading = false
               this.$message({
