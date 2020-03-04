@@ -11,11 +11,17 @@
 
     <!--<h1 style='font-size:1.8rem; font-family:"Calibri"'>{{$t('registerTitle')}} in Publifactory</h1>-->
     <el-form class="login-form" ref="form" :model="form" :rules="rules">
-      <el-form-item>
+      <!--<el-form-item>
         <el-select :value="globalConfig.lang" @input="changeLang(arguments[0])">
           <el-option v-for="lang in globalConfig.langs" :key="lang.value"
             :label="lang.label" :value="lang.value"></el-option>
         </el-select>
+      </el-form-item>-->
+      <el-form-item prop="firstname">
+        <el-input v-model="form.firstname" :placeholder="$t('register.firstname')"></el-input>
+      </el-form-item>
+      <el-form-item prop="lastname">
+        <el-input v-model="form.lastname" :placeholder="$t('register.lastname')"></el-input>
       </el-form-item>
       <el-form-item prop="email">
         <el-input v-model="form.email" :placeholder="$t('register.email')"></el-input>
@@ -83,6 +89,12 @@
         email: [{
           required: true, message: this.$t('register.email'), trigger: 'blur'
         }],
+        firstname: [{
+          required: true, message: this.$t('register.firstname'), trigger: 'blur'
+        }],
+        lastname: [{
+          required: true, message: this.$t('register.lastname'), trigger: 'blur'
+        }],
         password: [{
           required: true, message: this.$t('register.password'), trigger: 'blur'
         }],
@@ -103,9 +115,14 @@
     ...mapGetters(['loggedIn', 'globalConfig', 'accessToken'])
   },
   methods: {
-    ...mapActions(['login', 'loginOrcid', 'changeLang']),
+    ...mapActions(['changeLang']),
     onSubmitGoogle () {
 
+    },
+    created () {
+      if(this.loggedIn) {
+        this.$router.push(this.$route.query.redirect || '/')
+      }
     },
     onSubmitOrcid () {
       this.$refs.form.validate(valid => {
@@ -137,7 +154,7 @@
       this.$refs.form.validate(valid => {
         if (valid) {
             this.loading = true
-            axios.post('/api/users/',{ "email": this.form.email,"password":this.form.password, provider: 'local'})
+            axios.post('/api/users/',{ "email": this.form.email, "firstname": this.form.firstname,"lastname": this.form.lastname, "password":this.form.password, provider: 'local'})
             .then(response => {
               this.loading = false
               this.$message({

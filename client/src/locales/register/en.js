@@ -4,6 +4,8 @@ export default {
     subtitle: 'Create your account with you email, you will recieve a email to confirm the creation',
     email: 'Email',
     username: 'Username',
+    firstname: 'First Name',
+    lastname: 'Last Name',
     password: 'Password',
     button: 'Register using your email',
     googleButton: 'Register using Google',

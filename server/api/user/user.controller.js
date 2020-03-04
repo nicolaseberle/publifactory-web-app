@@ -173,11 +173,13 @@ async function create (req, res, next) {
     /*
     * On teste l'existance de l'eamil dans la base avant de l'enregistrer.
     */
-    if (!(req.body.email !== undefined && req.body.password !== undefined && req.body.provider !== undefined)) { throw { code: 422, message: 'Missing parameters.' } }
+    if (!(req.body.email !== undefined && req.body.password !== undefined && req.body.firstname !== undefined && req.body.lastname !== undefined &&  req.body.provider !== undefined)) { throw { code: 422, message: 'Missing parameters.' } }
     const user = await User.findOne({ email: req.body.email })
     if (user === null) {
       var newUser = new User(req.body)
       newUser.provider = req.body.provider
+      newUser.firstname = req.body.firstname
+      newUser.lastname = req.body.lastname
       newUser.role = 'user'
       newUser.roles = ['user']
       const newToken = await new Promise((resolve, reject) => {

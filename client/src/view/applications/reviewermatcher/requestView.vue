@@ -496,7 +496,7 @@ export default {
 
 		},
 		async showPromptUserConnected() {
-			if(editorialUse===true){
+			if(this.editorialUse===true){
 
 				let journal = null;
 				await axios.get("/api/journals/title?title=" + this.formMail.journal,
@@ -504,15 +504,15 @@ export default {
 					headers: {'Authorization': `Bearer ${this.accessToken}`}
 				})
 				.then(async (response)=>{
-				 console.log("ce journal existe déjà dans la base de donnée")
+				 //console.log("ce journal existe déjà dans la base de donnée")
 				 journal = response.data
-				 console.log(journal)
+				 //console.log(journal)
 				 await this.sendInvitationToEic(journal)
 
 			 }).catch(async (err)=>{
-					console.log("ce journal n'existe pas dans la base de donnée")
+					//console.log("ce journal n'existe pas dans la base de donnée")
 					journal = await this.createJournal()
-					console.log(journal.data)
+					//console.log(journal.data)
 					await this.sendInvitationToEic(journal.data)
 				})
 
@@ -590,10 +590,10 @@ export default {
 					  "lastName": this.formMail["lastname"]
 					}).then((res)=>{
 						//if(res.=="USER_ALREADY_EXIST")
-						console.log(res.data)
-						console.log(res.statusText)
+						//console.log(res.data)
+						//console.log(res.statusText)
 					}).catch((err)=>{
-						console.log("need to sign up or to create an account")
+						//console.log("need to sign up or to create an account")
 						this.modalLoginVisible = true
 					})
 				}
@@ -626,7 +626,7 @@ export default {
 						this.requestInfos["pub_mail"] = this.formMail["mailDest"];
 						this.requestInfos["pub_journal"] = this.formMail["journal"]!=='None'?this.formMail["journal"]:null;
 						this.requestInfos["pub_name"] = this.formMail["firstname"] + " " + this.formMail["lastname"];
-						console.log(this.requestInfos);
+						//console.log(this.requestInfos);
 						new Promise((resolve, reject) => {
 							axios.get(
 									"https://service.publifactory.co/api/get_mail_id?id=" +
