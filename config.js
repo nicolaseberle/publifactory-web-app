@@ -142,7 +142,7 @@ const stripeDev = {
 	freemiumProductId: 'prod_Gqfw8f0QSzDzI9',
 	premiumProductId: 'prod_Gqg5TLrJ9gxZdW',
 	freemiumPlanId: 'plan_GqgFvahrXXS5oK',
-	premiumPlanId: 'plan_Gqg9lK7L86ZatL'
+	premiumPlanId: 'plan_Gr2obTMbNNHzuH'
 };
 
 const stripeProd = {

@@ -255,7 +255,7 @@ export default{
     getTotalRequest () {
       axios.get('/api/activity/totalRequest')
       .then( async (res) => {
-        this.page.total = res.data.data;
+        this.page.total = Math.floor(res.data.data/10);
       }).catch((e)=>{console.log(e)})
     },
     sendRequest(id){

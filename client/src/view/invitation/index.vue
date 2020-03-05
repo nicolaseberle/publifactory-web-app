@@ -140,8 +140,11 @@ export default{
         headers: {'Authorization': `Bearer ${this.accessToken}`}
        })
       .then( (res) => {
-        this.mylistrequest = res.data.billing.requests;
-        this.page.total = res.data.billing.requests.length;
+
+        this.mylistrequest = res.data.billing.requests.slice((page-1)*10,page*10);
+        //this.mylistrequest = res.data.billing.requests;
+        this.page.total = res.data.billing.requests.length;//Math.floor(Math.max(res.data.billing.requests.length-1,0) / 10)+1;
+        console.log(this.mylistrequest)
         this.isData = true;
       })
     }

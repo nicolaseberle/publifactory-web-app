@@ -135,15 +135,7 @@
                 message: this.$t('message.created'),
                 type: 'success'
               })
-              this.$alert(this.$t('message.sentConfirmation'), 'Welcome', {
-                confirmButtonText: 'OK',
-                callback: action => {
-                  this.$message({
-                    type: 'info',
-                    message: `action: ${ action }`
-                  });
-                }
-              });
+
               this.$router.push(this.$route.query.redirect || '/')
             }).catch((err) => {
             this.$message({
@@ -172,6 +164,15 @@
                 message: this.$t('message.created'),
                 type: 'success'
               })
+              this.$alert(this.$t('message.sentConfirmation'), 'You are almost finished registering', {
+                confirmButtonText: 'OK',
+                callback: action => {
+                  this.$message({
+                    type: 'info',
+                    message: `action: ${ action }`
+                  });
+                }
+              });
               this.$router.push(this.$route.query.redirect || '/login')
           }).catch((err) => {
             this.loading = false
