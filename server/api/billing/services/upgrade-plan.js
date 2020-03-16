@@ -1,8 +1,8 @@
 const { Billing } = require('../model');
 const { ApiError } = require('../../../config/error');
 const {
+	createCustomer,
 	attachPaymentMethod,
-	upgradeSubscriptionPlan,
 	createSubscription
 } = require('./stripe');
 const { stripe } = require('../../../../config');
@@ -14,6 +14,8 @@ async function upgradePlan({ billing, billingId }) {
 		throw new ApiError('BILLING_ALREADY_PREMIUM');
 	}
 
+	const customer = await createCustomer(updatedBilling);
+	billing.customerStripeId = customer.id;
 	updatedBilling.plan = 'premium';
 	updatedBilling.planStripeId = stripe.premiumPlanId;
 	updatedBilling.productStripeId = stripe.premiumProductId;

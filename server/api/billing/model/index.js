@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
-const { stripe } = require('../../../../config');
 const {
 	readSubscription,
 	readInvoice,
 	readNextInvoice
 } = require('../services/stripe/');
-
-const productStripeId = stripe.freemiumProductId;
-const planStripeId = stripe.freemiumPlanId;
 
 const BillingSchema = new mongoose.Schema(
 	{
@@ -15,12 +11,11 @@ const BillingSchema = new mongoose.Schema(
 		fullName: { type: String, required: true },
 		customerStripeId: { type: String, default: null },
 		subscriptionId: { type: String, default: null },
-		subscriptionFreemiumId: { type: String, default: null },
 		subscriptionItemId: { type: String, default: null },
 		paymentMethodId: { type: String, default: null },
 		confirmMethod: { type: String, default: 'automatic' },
-		productStripeId: { type: String, default: productStripeId },
-		planStripeId: { type: String, default: planStripeId },
+		productStripeId: { type: String, default: null },
+		planStripeId: { type: String, default: null },
 		plan: {
 			type: String,
 			default: 'freemium',
@@ -31,8 +26,10 @@ const BillingSchema = new mongoose.Schema(
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Request'
 			}
-		]
+		],
+		freemiumCount: { type: Number, default: 0 }
 	},
+
 	{ timestamps: true }
 );
 
@@ -64,5 +61,3 @@ BillingSchema.virtual('subscription').get(async function() {
 
 module.exports.Billing = mongoose.model('Billing', BillingSchema);
 module.exports.BillingSchema = BillingSchema;
-module.exports.productStripeId = productStripeId;
-module.exports.planStripeId = planStripeId;

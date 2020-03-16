@@ -1,7 +1,6 @@
 const { Billing } = require('../model');
 const { ApiError } = require('../../../config/error');
-const { unsubscribeSubscriptionPlan, readSubscription } = require('./stripe');
-const { stripe } = require('../../../../config');
+const { unsubscribeSubscriptionPlan } = require('./stripe');
 
 async function unsubscribe({ billingId }) {
 	const billing = await Billing.findById(billingId);
@@ -13,11 +12,10 @@ async function unsubscribe({ billingId }) {
 		subscriptionId: billing.subscriptionId
 	});
 	billing.plan = 'freemium';
-	billing.productStripeId = stripe.freemiumProductId;
-	billing.planStripeId = stripe.freemiumPlanId;
-	const subscription = await readSubscription(billing.subscriptionFreemiumId);
-	billing.subscriptionId = billing.subscriptionFreemiumId;
-	billing.subscriptionItemId = subscription.items.data[0].id;
+	billing.productStripeId = null;
+	billing.planStripeId = null;
+	billing.subscriptionId = null;
+	billing.subscriptionItemId = null;
 	await billing.save();
 	return billing;
 }
